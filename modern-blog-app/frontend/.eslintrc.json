@@ -3,6 +3,7 @@
   "rules": {
     "react-hooks/exhaustive-deps": "warn",
     "@next/next/no-img-element": "warn",
-    "prefer-const": "warn"
+    "prefer-const": "warn",
+    "react/no-unescaped-entities": "off"
   }
 }
