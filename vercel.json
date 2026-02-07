@@ -8,5 +8,5 @@
       }
     }
   ],
-  "outputDirectory": "modern-blog-app/frontend/.next"
+  "outputDirectory": "modern-blog-app/frontend/public"
 }
