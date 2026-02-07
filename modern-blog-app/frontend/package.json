@@ -4,7 +4,7 @@
   "description": "Next.js frontend for personal tech blog and portfolio",
   "scripts": {
     "dev": "next dev",
-    "build": "next build --output public",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write ."

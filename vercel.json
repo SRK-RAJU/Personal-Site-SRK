@@ -1,9 +1,5 @@
 {
-  "builds": [
-    {
-      "src": "modern-blog-app/frontend/package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "outputDirectory": "modern-blog-app/frontend/.next"
+  "buildCommand": "cd modern-blog-app/frontend && npm run build",
+  "outputDirectory": "modern-blog-app/frontend/.next",
+  "framework": "nextjs"
 }
