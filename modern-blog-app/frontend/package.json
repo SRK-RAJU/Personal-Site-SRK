@@ -4,11 +4,10 @@
   "description": "Next.js frontend for personal tech blog and portfolio",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next export -o public",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write .",
-    "export": "next export"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "react": "^18.3.0",
