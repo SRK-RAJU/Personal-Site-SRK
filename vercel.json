@@ -1,6 +1,12 @@
 {
   "builds": [
-    { "src": "modern-blog-app/frontend/package.json", "use": "@vercel/next" }
+    {
+      "src": "modern-blog-app/frontend/package.json",
+      "use": "@vercel/next",
+      "config": {
+        "zeroConfig": true
+      }
+    }
   ],
-  "routes": []
+  "outputDirectory": "modern-blog-app/frontend/.next"
 }
