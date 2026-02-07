@@ -1,5 +1,5 @@
 {
-  "root": "modern-blog-app/frontend",
-  "buildCommand": "npm install --legacy-peer-deps && npm run build",
-  "installCommand": "npm install --legacy-peer-deps"
+  "buildCommand": "cd modern-blog-app/frontend && npm install --legacy-peer-deps && npm run build",
+  "outputDirectory": "modern-blog-app/frontend/.next",
+  "public": "modern-blog-app/frontend/public"
 }
