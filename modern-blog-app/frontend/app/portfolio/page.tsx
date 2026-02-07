@@ -5,26 +5,38 @@ export const metadata = {
   description: 'Check out my projects and recent work.',
 };
 
-// This would normally fetch from API
-async function getProjects() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`, {
-      cache: 'revalidate',
-      next: { revalidate: 3600 },
-    });
-
-    if (!res.ok) throw new Error('Failed to fetch projects');
-    const data = await res.json();
-    return data.data || [];
-  } catch (error) {
-    console.error('Error fetching projects:', error);
-    return [];
-  }
-}
+// Static portfolio projects
+const projects = [
+  {
+    id: 1,
+    title: 'Personal Tech Blog',
+    description: 'Modern full-stack blog platform built with Next.js and Supabase',
+    technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Supabase'],
+    link: '/',
+    github: 'https://github.com/SRK-RAJU/Personal-Site-SRK',
+    image: '/projects/blog.jpg',
+  },
+  {
+    id: 2,
+    title: 'E-commerce Platform',
+    description: 'Full-featured e-commerce solution with shopping cart and payments',
+    technologies: ['React', 'Node.js', 'Express', 'PostgreSQL', 'Stripe'],
+    link: 'https://example.com',
+    github: 'https://github.com',
+    image: '/projects/ecommerce.jpg',
+  },
+  {
+    id: 3,
+    title: 'Task Management App',
+    description: 'Collaborative task management tool with real-time updates',
+    technologies: ['Next.js', 'WebSockets', 'MongoDB', 'Socket.io'],
+    link: 'https://example.com',
+    github: 'https://github.com',
+    image: '/projects/tasks.jpg',
+  },
+];
 
 export default async function Portfolio() {
-  const projects = await getProjects();
-
   return (
     <div className="container-max py-12">
       {/* Heading */}

@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "vercel-build": "cd modern-blog-app/frontend && npm ci && npm run build",
+    "build": "cd modern-blog-app/frontend && npm run build"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}

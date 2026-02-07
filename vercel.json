@@ -1,0 +1,6 @@
+{
+  "builds": [
+    { "src": "modern-blog-app/frontend/package.json", "use": "@vercel/next" }
+  ],
+  "routes": []
+}
