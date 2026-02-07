@@ -4,5 +4,6 @@
       "src": "modern-blog-app/frontend/package.json",
       "use": "@vercel/next"
     }
-  ]
+  ],
+  "outputDirectory": "modern-blog-app/frontend/.next"
 }
