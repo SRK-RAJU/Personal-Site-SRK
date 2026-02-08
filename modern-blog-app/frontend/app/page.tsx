@@ -8,11 +8,11 @@ export default function Home() {
       <section className="mb-20">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Welcome to My Tech Blog
+            Welcome to My CloudGauardStackOpsSentra Tech Blog
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-400 mb-8">
-            Exploring web development, tech innovations, and best practices.
-            Join me on my journey through the world of programming.
+            Exploring web development, Cloud tech innovations, and best practices.
+            Join me on my journey through the world of Cloud, Security and Programming.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/blog" className="btn btn-primary px-6 py-3">
@@ -30,7 +30,7 @@ export default function Home() {
         <div className="flex justify-center gap-6">
           <a
             href="https://github.com"
-            target="_blank"
+            target="https://github.com/SRK-RAJU"
             rel="noopener noreferrer"
             className="text-3xl hover:text-blue-600 transition-colors"
             title="GitHub"
@@ -39,7 +39,7 @@ export default function Home() {
           </a>
           <a
             href="https://linkedin.com"
-            target="_blank"
+            target="https://www.linkedin.com/in/srajukumargoud"
             rel="noopener noreferrer"
             className="text-3xl hover:text-blue-600 transition-colors"
             title="LinkedIn"
@@ -62,13 +62,13 @@ export default function Home() {
       <section className="bg-slate-50 dark:bg-slate-800 rounded-lg p-8 mb-20">
         <h2 className="text-3xl font-bold mb-4">About Me</h2>
         <p className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-          Hi! I'm Raju SRK, a passionate full-stack developer with expertise in
-          React, Node.js, and PostgreSQL. I love building scalable web
+          Hi! I'm Raju, a passionate full-stack Cloud, Security and DevOps developer with expertise in
+          React, Node.js, Cloud, Security, DevOps, Terraform, Kubernetes, Ansible, Python and PostgreSQL. I love building scalable web
           applications and sharing knowledge with the community.
         </p>
         <p className="text-lg text-slate-600 dark:text-slate-400">
           This blog is where I share my insights on web development, best
-          practices, and interesting projects I'm working on.
+          practices, and interesting projects I'm working on personally.
         </p>
       </section>
 

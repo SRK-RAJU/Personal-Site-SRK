@@ -95,7 +95,7 @@ export default async function Portfolio() {
                 {project.github_url && (
                   <a
                     href={project.github_url}
-                    target="_blank"
+                    target="https://github.com/SRK-RAJU"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors"
                     title="GitHub"
@@ -106,7 +106,7 @@ export default async function Portfolio() {
                 {project.live_url && (
                   <a
                     href={project.live_url}
-                    target="_blank"
+                    target="https://srk-rajus-portfolio.vercel.app"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors"
                     title="Live Demo"

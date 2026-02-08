@@ -154,13 +154,13 @@ export default function Contact() {
             </div>
             <div className="card">
               <h3 className="font-bold text-lg mb-2">GitHub</h3>
-              <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              <a href="https://github.com/yourusername" target="https://github.com/SRK-RAJU" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                 @yourusername
               </a>
             </div>
             <div className="card">
               <h3 className="font-bold text-lg mb-2">LinkedIn</h3>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              <a href="https://linkedin.com" target="https://www.linkedin.com/in/srajukumargoud" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                 Your LinkedIn Profile
               </a>
             </div>
