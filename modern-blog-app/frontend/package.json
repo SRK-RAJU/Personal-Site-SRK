@@ -10,8 +10,8 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "next": "^14.2.0",
     "@supabase/supabase-js": "^2.40.0",
     "markdown-it": "^14.0.0",
@@ -31,6 +31,6 @@
     "typescript": "^5.3.3"
   },
   "engines": {
-    "node": "18.0.0 || 20.0.0 || >=22.0.0"
+    "node": "18.x || 20.x || 22.x || 24.x"
   }
 }
