@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="bg-slate-900 text-white mt-20">
       <div className="container-max py-12">
-        <div className="grid grid-cols-1 md:grid- cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>
             <h3 className="text-xl font-bold mb-4">Raju SRK</h3>
