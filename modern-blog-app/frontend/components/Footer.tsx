@@ -273,6 +273,18 @@ export default function Footer() {
           </p>
         </motion.div>
 
+        {/* Copyright Note */}
+        <motion.div
+          className="text-center text-xs text-slate-500 dark:text-slate-500 mb-4"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          <p>
+            &copy; {currentYear} Raju SRK — This is my personal blog. All content reflects my own interests and experiences. Unauthorized copying is prohibited.
+          </p>
+        </motion.div>
+
         {/* Bottom Section */}
         <motion.div
           className="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-600 dark:text-slate-400"
@@ -288,11 +300,11 @@ export default function Footer() {
 
           <p className="flex flex-wrap items-center gap-2 justify-center">
             Powered by
-            <span className="font-semibold text-slate-900 dark:text-white">Next.js</span>
+            <span className="font-semibold text-slate-900 dark:text-white">Raju</span>
             <span>•</span>
-            <span className="font-semibold text-slate-900 dark:text-white">Supabase</span>
+            {/* <span className="font-semibold text-slate-900 dark:text-white">Supabase</span>
             <span>•</span>
-            <span className="font-semibold text-slate-900 dark:text-white">Vercel</span>
+            <span className="font-semibold text-slate-900 dark:text-white">Vercel</span> */}
           </p>
 
           <p className="flex items-center gap-1">
