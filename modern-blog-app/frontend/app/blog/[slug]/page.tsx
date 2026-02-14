@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { FaArrowLeft, FaCalendar, FaUser } from 'react-icons/fa';
 import { supabase } from '../../../lib/supabaseClient';
 import { notFound } from 'next/navigation';
@@ -121,10 +122,13 @@ export default async function BlogPostPage({
         {/* Featured Image */}
         {post.featured_image_url && (
           <div className="mb-8 rounded-lg overflow-hidden">
-            <img
+            <Image
               src={post.featured_image_url}
               alt={post.title}
+              width={1200}
+              height={400}
               className="w-full h-96 object-cover"
+              priority
             />
           </div>
         )}

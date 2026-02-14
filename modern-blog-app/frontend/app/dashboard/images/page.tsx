@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
 import { FaUpload, FaTrash, FaDownload, FaCopy, FaBolt } from 'react-icons/fa';
 import { validateImageFile, sanitizeFileName } from '@/lib/security';
@@ -263,10 +265,11 @@ export default function ImagesPage() {
                 className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden hover:shadow-lg hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-300"
               >
                 {/* Image Preview */}
-                <div className="bg-slate-100 dark:bg-slate-900 h-48 flex items-center justify-center overflow-hidden">
-                  <img
+                <div className="bg-slate-100 dark:bg-slate-900 h-48 flex items-center justify-center overflow-hidden relative">
+                  <Image
                     src={image.url}
                     alt={image.name}
+                    fill
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>

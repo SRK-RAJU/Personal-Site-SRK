@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { FaCalendar, FaClock, FaEye, FaArrowRight, FaTag } from 'react-icons/fa';
 import { formatDistanceToNow } from 'date-fns';
@@ -64,11 +65,11 @@ export default function BlogCard({
           {/* Image */}
           {featured_image_url && (
             <div className="relative h-48 sm:h-56 overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800">
-              <img
+              <Image
                 src={featured_image_url}
                 alt={title}
+                fill
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
             </div>

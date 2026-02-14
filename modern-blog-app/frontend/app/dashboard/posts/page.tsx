@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { FaEdit, FaTrash, FaPlus, FaEye, FaSearch } from 'react-icons/fa';
@@ -25,9 +25,9 @@ export default function PostsPage() {
 
   useEffect(() => {
     fetchPosts();
-  }, [filterStatus, searchQuery]);
+  }, [filterStatus, searchQuery, fetchPosts]);
 
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
       let query = supabase.from('posts').select('*');
@@ -59,7 +59,7 @@ export default function PostsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterStatus, searchQuery]);
 
   const handleDelete = async (postId: string) => {
     if (!window.confirm('Are you sure you want to delete this post?')) {

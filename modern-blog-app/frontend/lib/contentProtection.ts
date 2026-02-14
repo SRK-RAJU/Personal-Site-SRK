@@ -16,7 +16,7 @@ export function disableRightClick() {
 
 export function disableDeveloperTools() {
   // Detect console open
-  let devtools = { open: false };
+  const devtools = { open: false };
   const threshold = 160; // Height threshold for detecting devtools
 
   setInterval(() => {
@@ -64,9 +64,10 @@ export function disableDeveloperTools() {
 export function disableCopyProtection() {
   // Prevent text selection on important content
   document.addEventListener('copy', (e) => {
-    const selectedText = window.getSelection().toString();
+    const selection = window.getSelection();
+    const selectedText = selection ? selection.toString() : '';
     const textToCopy = `${selectedText}\n\n© ${new Date().getFullYear()} Raju SRK. All rights reserved. Unauthorized copying is prohibited.`;
-    e.clipboardData!.setData('text/plain', textToCopy);
+    e.clipboardData?.setData('text/plain', textToCopy);
     e.preventDefault();
   });
 }

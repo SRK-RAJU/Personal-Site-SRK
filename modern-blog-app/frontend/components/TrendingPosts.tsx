@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FaEye, FaFire, FaArrowRight } from 'react-icons/fa';
 import { createClient } from '@supabase/supabase-js';
 
@@ -95,9 +96,10 @@ export default function TrendingPosts() {
               {/* Background Image */}
               {post.featured_image_url && (
                 <div className="relative h-40 overflow-hidden bg-slate-200 dark:bg-slate-700">
-                  <img
+                  <Image
                     src={post.featured_image_url}
                     alt={post.title}
+                    fill
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
