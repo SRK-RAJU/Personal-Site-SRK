@@ -187,8 +187,8 @@ export default function LoginPage() {
         {/* Info Box */}
         <div className="mt-6 p-4 bg-slate-700/50 rounded-lg text-slate-300 text-sm">
           <p className="font-semibold mb-2">Demo credentials (for testing):</p>
-          <p>Email: demo@example.com</p>
-          <p>Password: Demo@123</p>
+          <p>Email: User-Name@google.com</p>
+          <p>Password: Any High Secured password</p>
         </div>
       </div>
     </div>
