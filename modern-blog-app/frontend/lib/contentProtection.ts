@@ -6,12 +6,66 @@
  * - Add security headers
  */
 
+// export function disableRightClick() {
+//   // Disable right-click context menu
+//   document.addEventListener('contextmenu', (e) => {
+//     e.preventDefault();
+//     return false;
+//   }, false);
+// }
+
+
+// lib/contentProtection.ts
+
 export function disableRightClick() {
-  // Disable right-click context menu
-  document.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-    return false;
-  }, false);
+  document.addEventListener(
+    'contextmenu',
+    (e) => {
+      e.preventDefault();
+
+      // Play beep sound
+      const beep = new Audio(
+        'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA='
+      );
+      beep.play().catch(() => {});
+
+      // Create the warning overlay
+      const warning = document.createElement('div');
+      warning.textContent = '⚠️ Content is protected';
+      warning.style.position = 'fixed';
+      warning.style.top = '50%';
+      warning.style.left = '50%';
+      warning.style.transform = 'translate(-50%, -50%)';
+      warning.style.backgroundColor = 'red';
+      warning.style.color = 'white';
+      warning.style.padding = '20px 30px';
+      warning.style.borderRadius = '8px';
+      warning.style.fontSize = '18px';
+      warning.style.fontWeight = 'bold';
+      warning.style.zIndex = '9999';
+      warning.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+      warning.style.opacity = '0';
+      warning.style.transition = 'opacity 0.3s ease';
+
+      document.body.appendChild(warning);
+
+      // Fade in
+      requestAnimationFrame(() => {
+        warning.style.opacity = '1';
+      });
+
+      // Auto‑hide after 2 seconds with fade‑out
+      setTimeout(() => {
+        warning.style.opacity = '0';
+        setTimeout(() => {
+          warning.remove();
+        }, 300);
+      }, 2000);
+
+      return false;
+    },
+    false
+  );
 }
 
 export function disableDeveloperTools() {

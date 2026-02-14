@@ -9,7 +9,6 @@ export default function ContentProtectionWrapper({
   children: React.ReactNode;
 }) {
   useEffect(() => {
-    // Apply content protection on client side
     disableRightClick();
     disableDeveloperTools();
 
