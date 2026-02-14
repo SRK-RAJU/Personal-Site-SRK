@@ -23,10 +23,6 @@ export default function PostsPage() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'published' | 'draft'>('all');
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchPosts();
-  }, [filterStatus, searchQuery, fetchPosts]);
-
   const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
@@ -60,6 +56,10 @@ export default function PostsPage() {
       setLoading(false);
     }
   }, [filterStatus, searchQuery]);
+  
+  useEffect(() => {
+    fetchPosts();
+  }, [filterStatus, searchQuery, fetchPosts]);
 
   const handleDelete = async (postId: string) => {
     if (!window.confirm('Are you sure you want to delete this post?')) {
