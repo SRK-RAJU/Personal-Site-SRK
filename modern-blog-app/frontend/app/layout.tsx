@@ -4,12 +4,13 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ContentProtectionWrapper from '../components/ContentProtectionWrapper';
 import { AuthProvider } from '../lib/authContext';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_SITE_NAME || 'Tech Blog & Portfolio',
-  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Tech blog and portfolio website',
+  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Modern tech blog with cloud, security, and DevOps insights',
   authors: [{ name: process.env.NEXT_PUBLIC_AUTHOR || 'Raju SRK' }],
-  keywords: ['tech', 'blog', 'portfolio', 'web development'],
+  keywords: ['tech', 'blog', 'portfolio', 'web development', 'cloud', 'devops', 'security'],
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -37,6 +38,14 @@ export default function RootLayout({
       <body className="flex flex-col min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50">
         <ContentProtectionWrapper>
           <AuthProvider>
+            <Toaster
+              position="top-right"
+              reverseOrder={false}
+              gutter={8}
+              toastOptions={{
+                duration: 4000,
+              }}
+            />
             <Header />
             <main className="flex-1 w-full pt-20">
               {children}

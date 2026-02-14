@@ -8,59 +8,163 @@
   }
 
   body {
-    @apply bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100;
+    @apply bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100;
     transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Gradient backgrounds */
+  .bg-gradient-dark {
+    @apply bg-gradient-to-br from-slate-900 via-slate-950 to-black;
+  }
+
+  .bg-gradient-light {
+    @apply bg-gradient-to-br from-white via-slate-50 to-slate-100;
   }
 }
 
 @layer components {
   .container-max {
-    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
   .btn {
-    @apply inline-flex items-center justify-center rounded-lg font-medium transition-colors duration-200;
+    @apply inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 cursor-pointer;
   }
 
   .btn-primary {
-    @apply btn bg-blue-600 text-white hover:bg-blue-700;
+    @apply btn bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-700 hover:to-teal-700 shadow-lg hover:shadow-xl;
   }
 
   .btn-secondary {
     @apply btn bg-slate-200 text-slate-900 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600;
   }
 
+  .btn-outline {
+    @apply btn border-2 border-emerald-600 text-emerald-600 dark:border-emerald-500 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20;
+  }
+
   .card {
-    @apply bg-white dark:bg-slate-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6;
+    @apply bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border border-slate-100 dark:border-slate-700;
+  }
+
+  .card-hover {
+    @apply card hover:-translate-y-1 cursor-pointer;
+  }
+
+  .card-glass {
+    @apply backdrop-blur-xl bg-white/80 dark:bg-slate-800/80 rounded-xl border border-white/20 dark:border-slate-700/30 p-6 shadow-lg;
   }
 
   .prose-custom {
     @apply prose dark:prose-dark max-w-none;
   }
+
+  .input-custom {
+    @apply w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all;
+  }
+
+  .textarea-custom {
+    @apply input-custom resize-none;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400;
+  }
+
+  .badge-secondary {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent;
+  }
+
+  /* Animations */
+  .animate-fade {
+    animation: fadeIn 0.5s ease-in;
+  }
+
+  .animate-slide-up-stagger {
+    animation: slideUp 0.6s ease-out;
+  }
+
+  /* Effects */
+  .blur-effect {
+    backdrop-filter: blur(8px);
+  }
+
+  .glow-emerald {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+  }
+
+  .glow-emerald-intense {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
+  }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Modern style */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  @apply bg-slate-100 dark:bg-slate-900;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  @apply bg-gradient-to-b from-emerald-500 to-teal-500 rounded-xl;
+  min-height: 40px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  @apply from-emerald-600 to-teal-600;
 }
 
-dark ::-webkit-scrollbar-thumb {
-  background: #475569;
+/* Selection color */
+::selection {
+  @apply bg-emerald-500 text-white;
 }
 
-dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+/* Smooth transitions on all elements */
+* {
+  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
 }
+
+/* Remove transition from motion-safe users */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Loading skeleton animation */
+@keyframes skeleton-loading {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  animation: skeleton-loading 2s infinite;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 25%,
+    #f1f5f9 50%,
+    #e2e8f0 75%
+  );
+  background-size: 1000px 100%;
+}
+
+.dark .skeleton {
+  background: linear-gradient(
+    90deg,
+    #1e293b 25%,
+    #334155 50%,
+    #1e293b 75%
+  );
+  background-size: 1000px 100%;
+}
+

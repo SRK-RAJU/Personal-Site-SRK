@@ -6,11 +6,11 @@ import { useState } from 'react';
 import { useAuth } from '@/lib/authContext';
 import {
   FaHome,
-  FaFileAlt,
+  FaFileLines,
   FaImage,
   FaUsers,
   FaCog,
-  FaSignOutAlt,
+  FaRightFromBracket,
   FaBars,
   FaTimes,
 } from 'react-icons/fa';
@@ -35,7 +35,7 @@ export function AdminSidebar() {
     {
       label: 'Posts',
       href: '/dashboard/posts',
-      icon: <FaFileAlt />,
+      icon: <FaFileLines />,
       roles: ['admin', 'author'],
     },
     {
@@ -110,7 +110,7 @@ export function AdminSidebar() {
             onClick={handleSignOut}
             className="w-full flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
           >
-            <FaSignOutAlt />
+            <FaRightFromBracket />
             Sign Out
           </button>
         </div>
