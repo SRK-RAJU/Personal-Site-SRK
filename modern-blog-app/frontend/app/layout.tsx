@@ -2,6 +2,7 @@ import '../styles/globals.css';
 import type { Metadata } from 'next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { AuthProvider } from '../lib/authContext';
 
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_SITE_NAME || 'Tech Blog & Portfolio',
@@ -30,11 +31,13 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 w-full">
-          {children}
-        </main>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <main className="flex-1 w-full">
+            {children}
+          </main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
