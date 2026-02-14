@@ -8,7 +8,7 @@ export default function Home() {
       <section className="mb-20">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Welcome to My CloudGauardStackOpsSentra Tech Blog
+            Welcome to My CloudGuard Tech Insights Blog
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-400 mb-8">
             Exploring web development, Cloud tech innovations, and best practices.
@@ -29,7 +29,7 @@ export default function Home() {
       <section className="mb-20">
         <div className="flex justify-center gap-6">
           <a
-            href="https://github.com"
+            href="https://github.com/SRK-RAJU"
             target="https://github.com/SRK-RAJU"
             rel="noopener noreferrer"
             className="text-3xl hover:text-blue-600 transition-colors"
@@ -38,7 +38,7 @@ export default function Home() {
             <FaGithub />
           </a>
           <a
-            href="https://linkedin.com"
+            href="https://www.linkedin.com/in/srajukumargoud"
             target="https://www.linkedin.com/in/srajukumargoud"
             rel="noopener noreferrer"
             className="text-3xl hover:text-blue-600 transition-colors"
