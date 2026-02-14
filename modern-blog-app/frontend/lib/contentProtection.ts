@@ -77,7 +77,7 @@ export function addSecurityHeaders() {
   
   // Prevent clickjacking
   if (window.self !== window.top) {
-    window.top!.location = window.self.location;
+    window.top!.location.href = window.self.location.href;
   }
 
   // Prevent MIME type sniffing
