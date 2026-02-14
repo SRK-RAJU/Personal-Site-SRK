@@ -8,13 +8,13 @@ import {
   FaTimes,
   FaUser,
   FaHome,
-  FaFileLines,
+  FaBook,
   FaBriefcase,
-  FaCircleInfo,
+  FaInfoCircle,
   FaEnvelope,
   FaTachometerAlt,
-  FaRightFromBracket,
-  FaRightToBracket,
+  FaSignOutAlt,
+  FaSignInAlt,
   FaSearch,
   FaMoon,
   FaSun,
@@ -51,9 +51,9 @@ export default function Header() {
 
   const navItems = [
     { href: '/', label: 'Home', icon: FaHome },
-    { href: '/blog', label: 'Blog', icon: FaFileLines },
+    { href: '/blog', label: 'Blog', icon: FaBook },
     { href: '/portfolio', label: 'Portfolio', icon: FaBriefcase },
-    { href: '/about', label: 'About', icon: FaCircleInfo },
+    { href: '/about', label: 'About', icon: FaInfoCircle },
     { href: '/contact', label: 'Contact', icon: FaEnvelope },
   ];
 
@@ -194,7 +194,7 @@ export default function Header() {
                 onClick={handleSignOut}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors font-semibold text-sm"
               >
-                <FaRightFromBracket className="text-sm" />
+                <FaSignOutAlt className="text-sm" />
                 Sign Out
               </button>
             </>
@@ -304,7 +304,7 @@ export default function Header() {
                   onClick={handleSignOut}
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg font-semibold hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors"
                 >
-                  <FaRightFromBracket />
+                  <FaSignOutAlt />
                   Sign Out
                 </button>
               </>
@@ -315,7 +315,7 @@ export default function Header() {
                   onClick={() => setIsOpen(false)}
                   className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 font-semibold transition-colors"
                 >
-                  <FaRightToBracket />
+                  <FaSignInAlt />
                   Sign In
                 </Link>
                 <Link

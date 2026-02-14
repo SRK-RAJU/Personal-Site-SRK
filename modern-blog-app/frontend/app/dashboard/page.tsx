@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { FaFileLines, FaImage, FaUsers, FaEye } from 'react-icons/fa';
+import { FaBook, FaImage, FaUsers, FaEye } from 'react-icons/fa';
 
 export default function DashboardHome() {
   const [stats, setStats] = useState({
@@ -56,7 +56,7 @@ export default function DashboardHome() {
     {
       label: 'Total Posts',
       value: stats.totalPosts,
-      icon: <FaFileLines className="text-3xl" />,
+      icon: <FaBook className="text-3xl" />,
       color: 'bg-blue-500',
     },
     {

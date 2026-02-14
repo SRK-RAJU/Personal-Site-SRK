@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { FaUpload, FaTrash, FaDownload, FaCopy, FaZap } from 'react-icons/fa';
+import { FaUpload, FaTrash, FaDownload, FaCopy, FaBolt } from 'react-icons/fa';
 import { validateImageFile, sanitizeFileName } from '@/lib/security';
 import { compressImage, calculateCompressionSavings } from '@/lib/imageCompression';
 
@@ -307,7 +307,7 @@ export default function ImagesPage() {
       {/* Tips */}
       <div className="mt-8 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-300 dark:border-emerald-700 rounded-lg p-6">
         <div className="flex items-start gap-3 mb-4">
-          <FaZap className="text-2xl text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
+          <FaBolt className="text-2xl text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <h3 className="font-semibold text-lg mb-4 text-emerald-900 dark:text-emerald-300">
               🚀 Image Optimization with Auto-Compression

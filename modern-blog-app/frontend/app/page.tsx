@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaGithub, FaLinkedin, FaTwitter, FaCode, FaServer, FaDatabase, FaClock, FaEye, FaFire, FaRocket, FaSparkles } from 'react-icons/fa';
+import { FaArrowRight, FaGithub, FaLinkedin, FaTwitter, FaCode, FaServer, FaDatabase, FaClock, FaEye, FaFire, FaRocket, FaStar } from 'react-icons/fa';
 import TrendingPosts from '@/components/TrendingPosts';
 
 const containerVariants = {
@@ -95,7 +95,7 @@ export default function Home() {
               variants={itemVariants}
             >
               <p className="text-sm font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent flex items-center gap-2">
-                <FaSparkles /> Welcome to my tech universe
+                <FaStar /> Welcome to my tech universe
               </p>
             </motion.div>
 
