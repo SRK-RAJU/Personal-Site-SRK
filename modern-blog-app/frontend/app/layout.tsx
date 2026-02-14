@@ -2,6 +2,7 @@ import '../styles/globals.css';
 import type { Metadata } from 'next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ContentProtectionWrapper from '../components/ContentProtectionWrapper';
 import { AuthProvider } from '../lib/authContext';
 
 export const metadata: Metadata = {
@@ -29,15 +30,20 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#10b981" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="flex flex-col min-h-screen">
-        <AuthProvider>
-          <Header />
-          <main className="flex-1 w-full">
-            {children}
-          </main>
-          <Footer />
-        </AuthProvider>
+      <body className="flex flex-col min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50">
+        <ContentProtectionWrapper>
+          <AuthProvider>
+            <Header />
+            <main className="flex-1 w-full pt-20">
+              {children}
+            </main>
+            <Footer />
+          </AuthProvider>
+        </ContentProtectionWrapper>
       </body>
     </html>
   );
