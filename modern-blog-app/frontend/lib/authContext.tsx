@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { supabase } from './supabaseClient';
 
 interface AuthContextType {
@@ -24,28 +24,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userRole, setUserRole] = useState<'admin' | 'author' | 'user' | null>(null);
 
   useEffect(() => {
-    // Check active session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchUserRole(session.user.id);
+    const loadSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      const currentSession: Session | null = data.session;
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+      if (currentSession?.user) {
+        await fetchUserRole(currentSession.user.id);
       }
       setLoading(false);
-    });
+    };
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await fetchUserRole(session.user.id);
-      } else {
-        setUserRole(null);
+    loadSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event: AuthChangeEvent, newSession: Session | null) => {
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+        if (newSession?.user) {
+          await fetchUserRole(newSession.user.id);
+        } else {
+          setUserRole(null);
+        }
       }
-    });
+    );
 
     return () => subscription?.unsubscribe();
   }, []);
@@ -82,7 +84,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error;
 
-      // Create user_roles entry
       if (data.user) {
         await supabase.from('user_roles').insert([
           {
@@ -136,7 +137,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, userRole, signUp, signIn, signOut, resetPassword }}>
+    <AuthContext.Provider
+      value={{ user, session, loading, userRole, signUp, signIn, signOut, resetPassword }}
+    >
       {children}
     </AuthContext.Provider>
   );
