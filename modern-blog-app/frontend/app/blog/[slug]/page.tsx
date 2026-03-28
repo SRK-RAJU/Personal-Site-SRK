@@ -7,6 +7,13 @@ import { notFound } from 'next/navigation';
 export const revalidate = 60; // Revalidate every 60 seconds
 
 export async function generateStaticParams() {
+  // Skip static generation if Supabase credentials are not available
+  // This allows builds to succeed without credentials (the page will be generated on-demand)
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.log('[Build] Skipping static param generation - Supabase credentials not available (on-demand generation enabled)');
+    return [];
+  }
+
   try {
     const { data: posts, error } = await supabase
       .from('posts')
@@ -29,6 +36,12 @@ export async function generateStaticParams() {
 
 async function getPost(slug: string) {
   try {
+    // Handle missing Supabase credentials gracefully
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.log('[Build] Supabase credentials not available - returning null for build');
+      return null;
+    }
+
     const { data: post, error } = await supabase
       .from('posts')
       .select('*')
@@ -49,6 +62,11 @@ async function getPost(slug: string) {
 
 async function incrementViews(postId: string) {
   try {
+    // Handle missing Supabase credentials gracefully
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return;
+    }
+
     const { data } = await supabase
       .from('posts')
       .select('views_count')

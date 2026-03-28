@@ -1,17 +1,23 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FaCalendar, FaUser, FaEye, FaArrowRight } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabaseClient';
 
-export const metadata = {
-  title: 'Blog | Raju SRK',
-  description: 'Read my latest blog posts on web development, cloud, DevOps, and technology.',
-  keywords: ['blog', 'articles', 'tutorials', 'web development', 'cloud', 'devops'],
-};
+// Note: Metadata is handled by layout.tsx for this client component
 
 // Fetch posts from Supabase
 async function getBlogPosts() {
   try {
+    // Handle missing Supabase credentials gracefully for builds
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.log('[Build] Supabase credentials not available - returning empty posts array');
+      return []
+    }
+
     const { data, error } = await supabase
       .from('posts')
       .select('*')
@@ -30,8 +36,18 @@ async function getBlogPosts() {
   }
 }
 
-export default async function Blog() {
-  const posts = await getBlogPosts();
+export default function Blog() {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      const postsData = await getBlogPosts();
+      setPosts(postsData);
+      setLoading(false);
+    };
+    loadPosts();
+  }, []);
 
   return (
     <div className="min-h-screen w-full">
@@ -57,7 +73,12 @@ export default async function Blog() {
       {/* Posts Section */}
       <section className="section-padding">
         <div className="container-max">
-          {posts.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-16 sm:py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-cyan-500 border-t-transparent mx-auto"></div>
+              <p className="mt-4 text-slate-600 dark:text-slate-400">Loading articles...</p>
+            </div>
+          ) : posts.length > 0 ? (
             <motion.div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
               initial="hidden"
@@ -86,9 +107,10 @@ export default async function Blog() {
                       {/* Image */}
                       {post.featured_image_url && (
                         <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-cyan-500/10 to-blue-500/10 mb-4 sm:mb-6">
-                          <img
+                          <Image
                             src={post.featured_image_url}
                             alt={post.title}
+                            fill
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />

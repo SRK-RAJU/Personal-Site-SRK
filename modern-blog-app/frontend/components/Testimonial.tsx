@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { FaStar } from 'react-icons/fa';
 
 interface TestimonialProps {
@@ -51,10 +52,12 @@ export default function Testimonial({
       {/* Author */}
       <div className="flex items-center gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
         {avatar && (
-          <img
+          <Image
             src={avatar}
             alt={author}
-            className="w-10 h-10 rounded-full object-cover border-2 border-cyan-500"
+            width={40}
+            height={40}
+            className="rounded-full object-cover border-2 border-cyan-500"
           />
         )}
         <div className="flex-1">

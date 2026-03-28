@@ -24,9 +24,15 @@ export default function TrendingPosts() {
   useEffect(() => {
     const fetchTrendingPosts = async () => {
       try {
+        // Return early if credentials are not available
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+          setLoading(false);
+          return;
+        }
+
         const supabase = createClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
         );
 
         const { data, error: queryError } = await supabase

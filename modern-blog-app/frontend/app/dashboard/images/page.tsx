@@ -9,11 +9,11 @@ import { validateImageFile, sanitizeFileName } from '@/lib/security';
 import { compressImage, calculateCompressionSavings } from '@/lib/imageCompression';
 
 interface Image {
-  id: string;
+  id: string | null;
   name: string;
   url: string;
   size: number;
-  created_at: string;
+  created_at: string | null;
 }
 
 export default function ImagesPage() {
@@ -43,8 +43,8 @@ export default function ImagesPage() {
       }
 
       const imageList = (data || [])
-        .filter((file) => file.name !== '.emptyFolderPlaceholder')
-        .map((file) => {
+        .filter((file: any) => file.name !== '.emptyFolderPlaceholder')
+        .map((file: any) => {
           const { data } = supabase.storage
             .from('blog-images')
             .getPublicUrl(file.name);
