@@ -4,14 +4,16 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FaArrowRight, FaGithub, FaLinkedin, FaTwitter, FaCode, FaServer, FaDatabase, FaClock, FaEye, FaFire, FaRocket, FaStar } from 'react-icons/fa';
 import TrendingPosts from '@/components/TrendingPosts';
+import { useWebsiteStats } from '@/lib/useAnalytics';
+import { useEffect, useState } from 'react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.3,
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
     },
   },
 };
@@ -22,18 +24,45 @@ const itemVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5,
+      duration: 0.6,
+      ease: 'easeOut',
+    },
+  },
+};
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: 'easeOut',
     },
   },
 };
 
 export default function Home() {
-  const stats = [
-    { icon: FaClock, label: 'Articles', value: '25+' },
-    { icon: FaEye, label: 'Monthly Views', value: '10k+' },
-    { icon: FaFire, label: 'Topics', value: '15+' },
-    { icon: FaRocket, label: 'Projects', value: '12+' },
-  ];
+  const { stats: fetchedStats } = useWebsiteStats();
+  const [animatedStats, setAnimatedStats] = useState([
+    { icon: FaClock, label: 'Articles', value: 0 },
+    { icon: FaEye, label: 'Monthly Views', value: 0 },
+    { icon: FaFire, label: 'Topics', value: 0 },
+    { icon: FaRocket, label: 'Projects', value: 0 },
+  ]);
+
+  useEffect(() => {
+    // Animate numbers increment
+    const timer = setTimeout(() => {
+      setAnimatedStats([
+        { icon: FaClock, label: 'Articles', value: fetchedStats.articles },
+        { icon: FaEye, label: 'Monthly Views', value: fetchedStats.monthly_views },
+        { icon: FaFire, label: 'Topics', value: fetchedStats.topics },
+        { icon: FaRocket, label: 'Projects', value: fetchedStats.projects },
+      ]);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [fetchedStats]);
 
   const skills = [
     {
@@ -149,21 +178,33 @@ export default function Home() {
 
             {/* Stats */}
             <motion.div
-              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+              className="grid grid-cols-2 md:grid-cols-4 section-gap-tight"
               variants={containerVariants}
             >
-              {stats.map((stat) => {
+              {animatedStats.map((stat) => {
                 const Icon = stat.icon;
+                const formatValue = (value: number) => {
+                  if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                  if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
+                  return value.toString();
+                };
                 return (
                   <motion.div
                     key={stat.label}
-                    className="card-glass text-center"
+                    className="card-glass text-center py-6 sm:py-8"
                     variants={itemVariants}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ scale: 1.05, y: -5 }}
                   >
-                    <Icon className="text-2xl text-emerald-500 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">{stat.label}</p>
+                    <Icon className="text-2xl sm:text-3xl text-emerald-500 mx-auto mb-3" />
+                    <motion.p 
+                      className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white"
+                      key={stat.value}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                    >
+                      {formatValue(stat.value)}
+                    </motion.p>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">{stat.label}</p>
                   </motion.div>
                 );
               })}
@@ -174,11 +215,11 @@ export default function Home() {
 
       {/* Trending Posts */}
       <motion.section
-        className="bg-gradient-to-b from-slate-50 via-emerald-50/50 to-slate-50 dark:from-slate-900 dark:via-emerald-900/10 dark:to-slate-900 border-y border-slate-200 dark:border-slate-800"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
+        className="bg-gradient-to-b from-slate-50 via-emerald-50/50 to-slate-50 dark:from-slate-900 dark:via-emerald-900/10 dark:to-slate-900 border-y border-slate-200 dark:border-slate-800 section-padding"
+        initial="hidden"
+        whileInView="visible"
+        variants={sectionVariants}
+        viewport={{ once: true, margin: '-100px' }}
       >
         <div className="container-max">
           <TrendingPosts />
@@ -187,11 +228,11 @@ export default function Home() {
 
       {/* Skills Section */}
       <motion.section
-        className="container-max py-20"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
+        className="container-max section-padding"
+        initial="hidden"
+        whileInView="visible"
+        variants={sectionVariants}
+        viewport={{ once: true, margin: '-100px' }}
       >
         <motion.div
           className="mb-16 text-center"
@@ -257,11 +298,11 @@ export default function Home() {
 
       {/* About Section */}
       <motion.section
-        className="container-max py-20"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
+        className="container-max section-padding"
+        initial="hidden"
+        whileInView="visible"
+        variants={sectionVariants}
+        viewport={{ once: true, margin: '-100px' }}
       >
         <div className="bg-gradient-to-r from-emerald-50/50 to-teal-50/50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl p-8 md:p-16 border border-emerald-200 dark:border-emerald-800/50 backdrop-blur-sm">
           <motion.div
@@ -298,11 +339,11 @@ export default function Home() {
 
       {/* Social Links */}
       <motion.section
-        className="container-max py-20"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
+        className="container-max section-padding"
+        initial="hidden"
+        whileInView="visible"
+        variants={sectionVariants}
+        viewport={{ once: true, margin: '-100px' }}
       >
         <motion.div
           className="text-center mb-12"
@@ -358,11 +399,11 @@ export default function Home() {
 
       {/* CTA Section */}
       <motion.section
-        className="container-max py-20"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
+        className="container-max section-padding"
+        initial="hidden"
+        whileInView="visible"
+        variants={sectionVariants}
+        viewport={{ once: true, margin: '-100px' }}
       >
         <motion.div
           className="relative bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-700 dark:via-teal-700 dark:to-cyan-700 rounded-2xl p-12 md:p-20 text-center shadow-2xl overflow-hidden"

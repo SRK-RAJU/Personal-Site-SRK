@@ -12,8 +12,10 @@ import {
   FaLock,
   FaArrowRight,
   FaRocket,
+  FaEye,
 } from 'react-icons/fa';
 import { useState } from 'react';
+import VisitorCounter from './VisitorCounter';
 
 export default function Footer() {
   const [copyrightTooltip, setCopyrightTooltip] = useState(false);
@@ -297,6 +299,9 @@ export default function Footer() {
             <span className="text-red-600 dark:text-red-400 animate-pulse">❤️</span> by
             <span className="font-semibold text-emerald-600 dark:text-emerald-400">Raju SRK</span>
           </p>
+          <div className="flex items-center gap-3">
+            <VisitorCounter />
+          </div>
 
           <p className="flex flex-wrap items-center gap-2 justify-center">
             Powered by
