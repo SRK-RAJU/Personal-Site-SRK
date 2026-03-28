@@ -36,7 +36,7 @@ export default function DashboardHome() {
 
       let totalViews = 0;
       if (postsData) {
-        totalViews = postsData.reduce((sum, post: any) => sum + (post.views_count || 0), 0);
+        totalViews = postsData.reduce((sum: number, post: any) => sum + (post.views_count || 0), 0);
       }
 
       setStats({
