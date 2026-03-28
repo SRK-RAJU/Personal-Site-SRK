@@ -1,10 +1,12 @@
 import Link from 'next/link';
-import { FaCalendar, FaUser, FaEye } from 'react-icons/fa';
+import { FaCalendar, FaUser, FaEye, FaArrowRight } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabaseClient';
 
 export const metadata = {
-  title: 'Blog',
-  description: 'Read my latest blog posts on web development and tech.',
+  title: 'Blog | Raju SRK',
+  description: 'Read my latest blog posts on web development, cloud, DevOps, and technology.',
+  keywords: ['blog', 'articles', 'tutorials', 'web development', 'cloud', 'devops'],
 };
 
 // Fetch posts from Supabase
@@ -32,84 +34,133 @@ export default async function Blog() {
   const posts = await getBlogPosts();
 
   return (
-    <div className="container-max py-12">
-      {/*Heading */}
-      <div className="mb-12">
-        <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-          Latest Blog Posts
-        </h1>
-        <p className="text-xl text-slate-600 dark:text-slate-400">
-          Insights, tutorials, and thoughts on web development and technology.
-        </p>
-      </div>
+    <div className="min-h-screen w-full">
+      {/* Hero Section */}
+      <section className="section-padding bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 dark:from-cyan-500/10 dark:via-transparent dark:to-blue-500/10 border-b border-cyan-500/20">
+        <div className="container-max">
+          <motion.div
+            className="text-center max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6">
+              <span className="gradient-text">Latest</span> Articles
+            </h1>
+            <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto">
+              Insights, tutorials, and thoughts on web development, cloud architecture, DevOps, and modern technology practices.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
-      {/* Posts Grid */}
-      {posts.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {posts.map((post: any) => (
-            <Link
-              key={post.id}
-              href={`/blog/${post.slug}`}
-              className="card hover:shadow-xl cursor-pointer"
+      {/* Posts Section */}
+      <section className="section-padding">
+        <div className="container-max">
+          {posts.length > 0 ? (
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
+                  },
+                },
+              }}
             >
-              {post.featured_image_url && (
-                <div
-                  className="w-full h-48 bg-gradient-to-r from-blue-400 to-purple-400 rounded-lg mb-4"
-                  style={{
-                    backgroundImage: `url(${post.featured_image_url})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
+              {posts.map((post: any, idx: number) => (
+                <motion.div
+                  key={post.id}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 },
                   }}
-                />
-              )}
+                  transition={{ duration: 0.3, delay: idx * 0.1 }}
+                >
+                  <Link href={`/blog/${post.slug}`} className="group block h-full">
+                    <div className="card-glass card-gradient h-full flex flex-col hover:border-cyan-500/50 transition-all duration-300 overflow-hidden">
+                      {/* Image */}
+                      {post.featured_image_url && (
+                        <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-cyan-500/10 to-blue-500/10 mb-4 sm:mb-6">
+                          <img
+                            src={post.featured_image_url}
+                            alt={post.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                        </div>
+                      )}
 
-              <div className="flex gap-2 mb-3 text-sm text-slate-500 dark:text-slate-400 flex-wrap">
-                {post.tags?.map((tag: string) => (
-                  <span key={tag} className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
-                    #{tag}
-                  </span>
-                ))}
-              </div>
+                      {/* Badge */}
+                      {post.category && (
+                        <div className="mb-3 flex gap-2">
+                          <span className="badge text-xs">{post.category}</span>
+                        </div>
+                      )}
 
-              <h2 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">
-                {post.title}
-              </h2>
+                      {/* Title */}
+                      <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 line-clamp-2 group-hover:text-cyan-500 transition-colors">
+                        {post.title}
+                      </h3>
 
-              <p className="text-slate-600 dark:text-slate-400 mb-4">
-                {post.excerpt}
-              </p>
+                      {/* Excerpt */}
+                      <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-3 flex-1">
+                        {post.excerpt || post.content?.slice(0, 150)}
+                      </p>
 
-              <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400">
-                <div className="flex items-center gap-4">
-                  {post.author_name && (
-                    <div className="flex items-center gap-1">
-                      <FaUser className="text-xs" />
-                      {post.author_name}
+                      {/* Meta Info */}
+                      <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                        {post.published_at && (
+                          <div className="flex items-center gap-1.5">
+                            <FaCalendar className="text-cyan-500" />
+                            <span>{new Date(post.published_at).toLocaleDateString()}</span>
+                          </div>
+                        )}
+                        
+                        {post.author_name && (
+                          <div className="flex items-center gap-1.5">
+                            <FaUser className="text-blue-500" />
+                            <span>{post.author_name}</span>
+                          </div>
+                        )}
+
+                        {post.views_count !== undefined && (
+                          <div className="flex items-center gap-1.5">
+                            <FaEye className="text-purple-500" />
+                            <span>{post.views_count}</span>
+                          </div>
+                        )}
+
+                        <FaArrowRight className="ml-auto text-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
                     </div>
-                  )}
-                  <div className="flex items-center gap-1">
-                    <FaCalendar className="text-xs" />
-                    {new Date(post.published_at).toLocaleDateString()}
-                  </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  <FaEye className="text-xs" />
-                  {post.views_count}
-                </div>
-              </div>
-            </Link>
-          ))}
+                  </Link>
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              className="text-center py-16 sm:py-20"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div className="text-6xl mb-4">📝</div>
+              <h3 className="text-2xl sm:text-3xl font-bold mb-2">No Articles Yet</h3>
+              <p className="text-slate-600 dark:text-slate-400 mb-6">
+                Check back soon for interesting content!
+              </p>
+              <Link href="/" className="btn-primary inline-flex">
+                Back to Home
+                <FaArrowRight className="ml-2" />
+              </Link>
+            </motion.div>
+          )}
         </div>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-xl text-slate-600 dark:text-slate-400 mb-4">
-            No posts yet. Check back soon!
-          </p>
-          <p className="text-slate-500 dark:text-slate-500">
-            In the meantime, browse the portfolio or check out my projects.
-          </p>
-        </div>
-      )}
+      </section>
     </div>
   );
 }
