@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import ContentProtectionWrapper from '../components/ContentProtectionWrapper';
 import { AuthProvider } from '../lib/authContext';
 import { Toaster } from 'react-hot-toast';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_SITE_NAME || 'Tech Blog & Portfolio - Raju SRK',
@@ -61,6 +62,7 @@ export default function RootLayout({
             <Footer />
           </AuthProvider>
         </ContentProtectionWrapper>
+        <SpeedInsights />
       </body>
     </html>
   );
