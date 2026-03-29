@@ -302,7 +302,7 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
             <VisitorCounter />
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              Tracks total visits in real time via Supabase analytics.
+              Tracks total visits in real time via analytics.
             </span>
           </div>
 
