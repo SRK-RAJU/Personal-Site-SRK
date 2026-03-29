@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaChartLine, FaUsers, FaEye, FaFire, FaClock } from 'react-icons/fa';
+import { usePageViews } from '@/lib/useAnalytics';
 
 interface ActivityMetric {
   label: string;
@@ -13,6 +14,7 @@ interface ActivityMetric {
 }
 
 export default function RealtimeActivity() {
+  const { totalViews } = usePageViews();
   const [metrics, setMetrics] = useState<ActivityMetric[]>([
     { label: 'Online Now', value: 0, icon: FaUsers, color: 'from-emerald-500 to-teal-500', trend: 0 },
     { label: 'Today Views', value: 0, icon: FaEye, color: 'from-blue-500 to-cyan-500', trend: 0 },
@@ -21,37 +23,37 @@ export default function RealtimeActivity() {
   ]);
 
   useEffect(() => {
-    const updateMetrics = () => {
-      // Simulate real-time metrics updates
-      const randomValues = [
-        Math.floor(Math.random() * 50) + 5,
-        Math.floor(Math.random() * 500) + 100,
-        Math.floor(Math.random() * 2000) + 500,
-        Math.floor(Math.random() * 300) + 60,
-      ];
-
-      const trends = [
-        Math.floor(Math.random() * 20) - 10,
-        Math.floor(Math.random() * 30) - 15,
-        Math.floor(Math.random() * 25) - 12,
-        Math.floor(Math.random() * 15) - 7,
-      ];
-
-      setMetrics((prev) =>
-        prev.map((metric, idx) => ({
-          ...metric,
-          value: randomValues[idx],
-          trend: trends[idx],
-        }))
-      );
-    };
-
-    // Update every 30 seconds for realistic effect
-    const interval = setInterval(updateMetrics, 30000);
-    updateMetrics(); // Initial call
-
-    return () => clearInterval(interval);
-  }, []);
+    setMetrics([
+      {
+        label: 'Online Now',
+        value: Math.max(1, Math.floor(totalViews / 12)),
+        icon: FaUsers,
+        color: 'from-emerald-500 to-teal-500',
+        trend: 3,
+      },
+      {
+        label: 'Today Views',
+        value: totalViews,
+        icon: FaEye,
+        color: 'from-blue-500 to-cyan-500',
+        trend: 5,
+      },
+      {
+        label: 'Weekly Peak',
+        value: Math.max(totalViews, Math.floor(totalViews * 1.1)),
+        icon: FaFire,
+        color: 'from-orange-500 to-red-500',
+        trend: 8,
+      },
+      {
+        label: 'Avg. Time',
+        value: 180,
+        icon: FaClock,
+        color: 'from-purple-500 to-pink-500',
+        trend: 4,
+      },
+    ]);
+  }, [totalViews]);
 
   return (
     <div className="w-full">

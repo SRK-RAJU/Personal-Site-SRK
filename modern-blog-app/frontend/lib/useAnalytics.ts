@@ -13,10 +13,10 @@ export interface WebsiteStats {
 
 export function useWebsiteStats() {
   const [stats, setStats] = useState<WebsiteStats>({
-    articles: 12,
-    monthly_views: 5200,
-    topics: 8,
-    projects: 6,
+    articles: 0,
+    monthly_views: 0,
+    topics: 0,
+    projects: 0,
     total_visits: 0,
   });
   const [loading, setLoading] = useState(true);
@@ -28,11 +28,11 @@ export function useWebsiteStats() {
         setLoading(true);
         const response = await axios.get('/api/analytics?action=stats');
         setStats({
-          articles: response.data.articles || 12,
-          monthly_views: response.data.monthly_views || 5200,
-          topics: response.data.topics || 8,
-          projects: response.data.projects || 6,
-          total_visits: response.data.total_visits || 0,
+          articles: response.data.articles ?? 0,
+          monthly_views: response.data.monthly_views ?? 0,
+          topics: response.data.topics ?? 0,
+          projects: response.data.projects ?? 0,
+          total_visits: response.data.total_visits ?? 0,
         });
         setError(null);
       } catch (err) {

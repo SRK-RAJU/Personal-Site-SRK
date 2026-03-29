@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaGithub, FaLinkedin, FaTwitter, FaCode, FaServer, FaDatabase, FaClock, FaEye, FaFire, FaRocket, FaStar } from 'react-icons/fa';
+import { FaArrowRight, FaGithub, FaLinkedin, FaTwitter, FaCode, FaServer, FaDatabase, FaClock, FaEye, FaFire, FaRocket, FaStar, FaUsers } from 'react-icons/fa';
 import TrendingPosts from '@/components/TrendingPosts';
+import RealtimeActivity from '@/components/RealtimeActivity';
 import { useWebsiteStats } from '@/lib/useAnalytics';
 import { useEffect, useState } from 'react';
 
@@ -49,6 +50,7 @@ export default function Home() {
     { icon: FaEye, label: 'Monthly Views', value: 0 },
     { icon: FaFire, label: 'Topics', value: 0 },
     { icon: FaRocket, label: 'Projects', value: 0 },
+    { icon: FaUsers, label: 'Total Visits', value: 0 },
   ]);
 
   useEffect(() => {
@@ -59,6 +61,7 @@ export default function Home() {
         { icon: FaEye, label: 'Monthly Views', value: fetchedStats.monthly_views },
         { icon: FaFire, label: 'Topics', value: fetchedStats.topics },
         { icon: FaRocket, label: 'Projects', value: fetchedStats.projects },
+        { icon: FaUsers, label: 'Total Visits', value: fetchedStats.total_visits },
       ]);
     }, 300);
     return () => clearTimeout(timer);
@@ -215,7 +218,7 @@ export default function Home() {
 
       {/* Trending Posts */}
       <motion.section
-        className="bg-gradient-to-b from-slate-50 via-emerald-50/50 to-slate-50 dark:from-slate-900 dark:via-emerald-900/10 dark:to-slate-900 border-y border-slate-200 dark:border-slate-800 section-padding"
+        className="bg-gradient-to-b from-slate-50 via-emerald-50/50 to-slate-50 dark:from-slate-900 dark:via-emerald-900/10 dark:to-slate-900 border-y border-slate-200 dark:border-slate-800 section-padding-tight"
         initial="hidden"
         whileInView="visible"
         variants={sectionVariants}
@@ -226,9 +229,21 @@ export default function Home() {
         </div>
       </motion.section>
 
+      {/* Real-time Activity Panel */}
+      <motion.section
+        className="container-max section-padding-tight"
+        initial="hidden"
+        whileInView="visible"
+        variants={sectionVariants}
+        viewport={{ once: true, margin: '-100px' }}
+      >
+        <h2 className="text-3xl font-bold mb-4 text-slate-900 dark:text-white">Live Site Activity</h2>
+        <RealtimeActivity />
+      </motion.section>
+
       {/* Skills Section */}
       <motion.section
-        className="container-max section-padding"
+        className="container-max section-padding-tight"
         initial="hidden"
         whileInView="visible"
         variants={sectionVariants}
@@ -298,7 +313,7 @@ export default function Home() {
 
       {/* About Section */}
       <motion.section
-        className="container-max section-padding"
+        className="container-max section-padding-tight"
         initial="hidden"
         whileInView="visible"
         variants={sectionVariants}
@@ -339,7 +354,7 @@ export default function Home() {
 
       {/* Social Links */}
       <motion.section
-        className="container-max section-padding"
+        className="container-max section-padding-tight"
         initial="hidden"
         whileInView="visible"
         variants={sectionVariants}
@@ -399,7 +414,7 @@ export default function Home() {
 
       {/* CTA Section */}
       <motion.section
-        className="container-max section-padding"
+        className="container-max section-padding-tight"
         initial="hidden"
         whileInView="visible"
         variants={sectionVariants}

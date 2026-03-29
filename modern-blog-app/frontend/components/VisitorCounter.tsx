@@ -6,7 +6,7 @@ import { FaEye, FaUsers, FaArrowUp } from 'react-icons/fa';
 import { usePageViews } from '@/lib/useAnalytics';
 
 export default function VisitorCounter() {
-  const { totalViews } = usePageViews();
+  const { totalViews, loading } = usePageViews();
   const [displayCount, setDisplayCount] = useState(0);
   const [animateCounter, setAnimateCounter] = useState(false);
 
@@ -49,7 +49,7 @@ export default function VisitorCounter() {
         <FaEye className="text-emerald-600 dark:text-emerald-400 text-sm" />
       </motion.div>
       <span className="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-        {formatNumber(displayCount)} visits
+        {loading ? 'Loading page views...' : `${formatNumber(displayCount)} visits`}
       </span>
     </motion.div>
   );

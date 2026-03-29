@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (action === 'stats') {
-      // Get all stats
+      // Get stored stats + fallback to live queries for accuracy and to avoid stale seeded values
       const { data: statsData, error: statsError } = await supabase
         .from('website_stats')
         .select('*')
@@ -39,12 +39,65 @@ export async function GET(request: NextRequest) {
         throw statsError;
       }
 
+      const fallbackStats = {
+        articles: 0,
+        monthly_views: 0,
+        topics: 0,
+        projects: 0,
+        total_visits: 0,
+      };
+
+      // If there is a posts table, use it for live counts
+      try {
+        const { count: articleCount } = await supabase.from('posts').select('id', { count: 'exact', head: true });
+        if (typeof articleCount === 'number') fallbackStats.articles = articleCount;
+      } catch (err) {
+        console.warn('Could not fetch posts count for stats:', err);
+      }
+
+      // Use page_analytics for actual views stat when available
+      try {
+        const { data: pageData } = await supabase
+          .from('page_analytics')
+          .select('view_count')
+          .eq('page', 'homepage')
+          .single();
+        if (pageData?.view_count != null) fallbackStats.monthly_views = pageData.view_count;
+      } catch (err) {
+        console.warn('Could not fetch page analytics for stats:', err);
+      }
+
+      // Count projects and topics if tables exist
+      try {
+        const { count: projectsCount } = await supabase.from('projects').select('id', { count: 'exact', head: true });
+        if (typeof projectsCount === 'number') fallbackStats.projects = projectsCount;
+      } catch (_err) {
+        // ignore if table not present
+      }
+
+      try {
+        const { count: topicsCount } = await supabase.from('topics').select('id', { count: 'exact', head: true });
+        if (typeof topicsCount === 'number') fallbackStats.topics = topicsCount;
+      } catch (_err) {
+        // ignore if table not present
+      }
+
+      try {
+        const { data: totalVisitsData } = await supabase
+          .from('website_stats')
+          .select('total_visits')
+          .single();
+        if (totalVisitsData?.total_visits != null) fallbackStats.total_visits = totalVisitsData.total_visits;
+      } catch (_err) {
+        // ignore
+      }
+
       return NextResponse.json({
-        articles: statsData?.article_count || 0,
-        monthly_views: statsData?.monthly_views || 0,
-        topics: statsData?.topics_count || 0,
-        projects: statsData?.projects_count || 0,
-        total_visits: statsData?.total_visits || 0,
+        articles: statsData?.article_count ?? fallbackStats.articles,
+        monthly_views: statsData?.monthly_views ?? fallbackStats.monthly_views,
+        topics: statsData?.topics_count ?? fallbackStats.topics,
+        projects: statsData?.projects_count ?? fallbackStats.projects,
+        total_visits: statsData?.total_visits ?? fallbackStats.total_visits,
       });
     }
 
@@ -101,6 +154,16 @@ export async function POST(request: NextRequest) {
           .from('website_stats')
           .update({ total_visits: (stats.total_visits || 0) + 1 })
           .eq('id', stats.id);
+      } else {
+        await supabase.from('website_stats').insert([
+          {
+            article_count: 0,
+            monthly_views: 0,
+            topics_count: 0,
+            projects_count: 0,
+            total_visits: 1,
+          },
+        ]);
       }
 
       return NextResponse.json({ success: true });
