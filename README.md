@@ -2,6 +2,7 @@
 
 **A modern, production-ready blog and portfolio website - Built with Next.js, Supabase, and 100% FREE!**
 
+
 - ⚡ **Fast**: Next.js 14 with optimized images and code splitting
 - 🎨 **Modern UI**: Futuristic design with dark mode support
 - 📱 **Responsive**: Perfect on mobile, tablet, and desktop
@@ -256,3 +257,5 @@ Check the docs folder for detailed guides, or open an issue on GitHub.
 ---
 
 **Ready to launch?** Start with the Quick Start above, or read the detailed guides in the `docs/` folder. Your site will be live in 5 minutes! 🚀
+
+** This project is maintained by Raju SRK @ rjexa inc. Visit [rjexa.com](https://rjexa.com) for more DevSecOps insights and cloud engineering content!**
