@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
@@ -258,9 +259,11 @@ export default function About() {
 
           {/* Complete Tech Stack Image */}
           <div className="bg-slate-900 dark:bg-slate-950 rounded-2xl p-8 border border-slate-700 overflow-hidden">
-            <img 
-              src="/images/tech-stack.svg" 
-              alt="Complete Tech Stack - Cloud, DevOps, Security, Development" 
+            <Image
+              src="/images/tech-stack.svg"
+              alt="Complete Tech Stack - Cloud, DevOps, Security, Development"
+              width={800}
+              height={600}
               className="w-full h-auto"
             />
           </div>
