@@ -1,0 +1,90 @@
+<svg viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0284c7;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="400" fill="url(#bgGradient)"/>
+
+  <!-- Grid Pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse" opacity="0.1">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#06b6d4" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="400" fill="url(#grid)"/>
+
+  <!-- Decorative Circles Background -->
+  <circle cx="150" cy="80" r="100" fill="#06b6d4" opacity="0.05"/>
+  <circle cx="1050" cy="320" r="120" fill="#0284c7" opacity="0.05"/>
+
+  <!-- Left Icon - Shield (Security) -->
+  <g filter="url(#glow)">
+    <rect x="80" y="120" width="80" height="90" rx="8" fill="url(#accentGradient)" opacity="0.2"/>
+    <path d="M 120 140 L 145 125 L 145 175 Q 145 200 120 210 Q 95 200 95 175 L 95 125 Z" 
+          fill="#06b6d4" stroke="#00ffff" stroke-width="2"/>
+    <circle cx="120" cy="170" r="8" fill="#00ffff"/>
+  </g>
+
+  <!-- Center Icon - Cloud (Cloud) -->
+  <g filter="url(#glow)">
+    <rect x="550" y="120" width="100" height="90" rx="8" fill="url(#accentGradient)" opacity="0.2"/>
+    <path d="M 580 180 Q 570 165 585 155 Q 600 145 615 155 Q 625 140 640 150 Q 645 165 635 175 L 580 180 Z" 
+          fill="#06b6d4" stroke="#0284c7" stroke-width="2"/>
+    <path d="M 610 185 L 610 200 M 595 190 L 595 205 M 625 190 L 625 205" 
+          stroke="#00ffff" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Right Icon - Gears (DevOps) -->
+  <g filter="url(#glow)">
+    <rect x="1020" y="120" width="80" height="90" rx="8" fill="url(#accentGradient)" opacity="0.2"/>
+    <circle cx="1040" cy="160" r="15" fill="none" stroke="#0284c7" stroke-width="2"/>
+    <path d="M 1040 150 L 1040 145 M 1050 160 L 1055 160 M 1040 170 L 1040 175 M 1030 160 L 1025 160" 
+          stroke="#0284c7" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="1070" cy="185" r="12" fill="none" stroke="#06b6d4" stroke-width="2"/>
+    <path d="M 1070 177 L 1070 173 M 1078 185 L 1082 185 M 1070 193 L 1070 197 M 1062 185 L 1058 185" 
+          stroke="#06b6d4" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Main Heading -->
+  <text x="600" y="280" font-size="72" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial, sans-serif">
+    DevSecOps
+  </text>
+
+  <!-- Subheading -->
+  <text x="600" y="330" font-size="24" text-anchor="middle" fill="#06b6d4" font-family="Arial, sans-serif" letter-spacing="2">
+    SECURITY • DEVELOPMENT • OPERATIONS
+  </text>
+
+  <!-- Bottom accent line -->
+  <line x1="300" y1="360" x2="900" y2="360" stroke="url(#accentGradient)" stroke-width="3" opacity="0.8"/>
+
+  <!-- Icon Labels -->
+  <text x="120" y="255" font-size="14" text-anchor="middle" fill="#00ffff" font-family="Arial, sans-serif">
+    Security
+  </text>
+  
+  <text x="600" y="255" font-size="14" text-anchor="middle" fill="#00ffff" font-family="Arial, sans-serif">
+    Cloud
+  </text>
+  
+  <text x="1060" y="255" font-size="14" text-anchor="middle" fill="#00ffff" font-family="Arial, sans-serif">
+    DevOps
+  </text>
+</svg>

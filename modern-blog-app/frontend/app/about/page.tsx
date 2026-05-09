@@ -58,17 +58,21 @@ export default function About() {
           </h2>
           <div className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
             <p className="text-lg">
-              Hi! I'm <strong>Raju SRK</strong> from <strong className="text-cyan-600 dark:text-cyan-400">rjexa inc</strong>, a DevSecOps specialist and cloud engineer with 5+ years of experience
+              Hi! I'm <strong>Raju SRK</strong> from <strong className="text-cyan-600 dark:text-cyan-400">rjexa inc</strong>, a DevSecOps specialist and cloud engineer with 8+ years of experience
               in building secure web applications and managing cloud infrastructure. I specialize in React, Node.js, Kubernetes, and Cloud Security.
             </p>
             <p>
               I started my career with curiosity and a desire to build things. Over the years, I've worked on various projects from
-              startups to enterprise-scale applications. Now, I'm focused on DevSecOps—integrating security throughout the development lifecycle,
+              small to large-scale applications. Now, I'm focused on building cloud-native development lifecycle,
               building secure CI/CD pipelines, and automating infrastructure with enterprise-grade tools.
             </p>
             <p>
               At rjexa, I help teams build secure, scalable cloud solutions. I'm passionate about documenting best practices,
-              mentoring developers, and advancing the DevSecOps ecosystem through technical writing and open-source contributions.
+              mentoring developers, and advancing the DevSecOps ecosystem through technical writing and continuous learning. 
+            </p>
+            {/* Personal Note */}
+            <p className="italic text-slate-600 dark:text-slate-400">
+              These sites are designed from scratch based on client requirements. The code is maintained in my personal workspace, and I often design during weekends or holidays out of interest to support, design, and maintain. If anything feels misconfigured, I apologize — I keep updating, improving security, user experience, and overall quality. My goal is to build impactful solutions, to grow business, attract projects, and continuous learning.
             </p>
           </div>
         </motion.section>
@@ -248,6 +252,22 @@ export default function About() {
             />
           </div>
         </motion.section>
+
+        
+        {/* Final Note Section */}
+        <motion.section variants={itemVariants} className="mb-12 p-8 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white">Our Commitment</h2>
+          <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+            At <strong>rjexa inc</strong>, we design and deliver sites from scratch, based on client requirements. 
+            All code is maintained carefully, and we continuously update to improve security, user experience, and performance. 
+            If anything feels misconfigured, we sincerely apologize and work to correct it quickly.
+          </p>
+          <p className="text-slate-700 dark:text-slate-300 leading-relaxed mt-4">
+            Our vision is client satisfaction and User Satisfaction — to grow business, attract projects, and through hard work. 
+            We learn, adapt, and deliver with confidence, ensuring every project reflects our dedication and values.
+          </p>
+        </motion.section>
+
       </motion.div>
     </div>
   );

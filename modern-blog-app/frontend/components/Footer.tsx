@@ -44,8 +44,8 @@ export default function Footer() {
       title: 'Connect',
       links: [
         { label: 'GitHub', href: 'https://github.com/SRK-RAJU' },
-        { label: 'LinkedIn', href: 'https://linkedin.com/in/srajukumargoud' },
-        { label: 'Twitter', href: 'https://twitter.com' },
+        { label: 'LinkedIn', href: 'https://www.linkedin.com/in/srajukumargoud/' },
+        { label: 'Twitter', href: 'https://twitter.com/srajukumargoud' },
         { label: 'Email', href: 'mailto:contact@rjexa.com' },
       ],
     },
@@ -53,8 +53,8 @@ export default function Footer() {
 
   const socialLinks = [
     { icon: FaGithub, href: 'https://github.com/SRK-RAJU', label: 'GitHub', color: 'hover:text-slate-900 dark:hover:text-white' },
-    { icon: FaLinkedin, href: 'https://linkedin.com/in/srajukumargoud', label: 'LinkedIn', color: 'hover:text-blue-600' },
-    { icon: FaTwitter, href: 'https://twitter.com', label: 'Twitter', color: 'hover:text-blue-400' },
+    { icon: FaLinkedin, href: 'https://www.linkedin.com/in/srajukumargoud/', label: 'LinkedIn', color: 'hover:text-blue-600' },
+    { icon: FaTwitter, href: 'https://twitter.com/srajukumargoud', label: 'Twitter', color: 'hover:text-blue-400' },
     { icon: FaEnvelope, href: 'mailto:contact@rjexa.com', label: 'Email', color: 'hover:text-red-600' },
   ];
 
@@ -104,10 +104,10 @@ export default function Footer() {
                   <FaRocket className="text-2xl text-emerald-600 dark:text-emerald-400" />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold gradient-text mt-3">SRK Tech</h3>
+              <h3 className="text-2xl font-bold gradient-text mt-3">rjexa</h3>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Building the future of technology, one blog post at a time. Explore cloud, DevOps, and modern development practices.
+              DevSecOps insights, cloud engineering, and modern development practices. Building secure, scalable infrastructure.
             </p>
             <motion.div
               className="flex gap-3"

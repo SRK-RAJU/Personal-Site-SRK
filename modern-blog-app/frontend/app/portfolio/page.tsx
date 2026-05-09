@@ -9,28 +9,28 @@ export const metadata = {
 const projects = [
   {
     id: 1,
-    title: 'Personal Tech Blog',
-    description: 'Modern full-stack blog platform built with Next.js and Supabase',
+    title: 'Personal Blog Platform',
+    description: 'Modern full-stack blog platform built with Next.js, verce, Supabase and cloudflare.',
     technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Supabase'],
-    link: '/',
+    link: 'https://rjexa.com',
     github: 'https://github.com/SRK-RAJU/Personal-Site-SRK',
     image: '/projects/blog.jpg',
   },
   {
     id: 2,
-    title: 'E-commerce Platform',
+    title: 'Local E-commerce Store',
     description: 'Full-featured e-commerce solution with shopping cart and payments',
     technologies: ['React', 'Node.js', 'Express', 'PostgreSQL', 'Stripe'],
-    link: 'https://example.com',
+    link: 'https://jayalakshmikiranashop.vercel.app',
     github: 'https://github.com',
     image: '/projects/ecommerce.jpg',
   },
   {
     id: 3,
-    title: 'Task Management App',
-    description: 'Collaborative task management tool with real-time updates',
-    technologies: ['Next.js', 'WebSockets', 'MongoDB', 'Socket.io'],
-    link: 'https://example.com',
+    title: 'Professional Facility Management System',
+    description: 'Comprehensive facility management system for maintenance and operations',
+    technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Supabase', 'PostgreSQL'],
+    link: 'https://zispark-services.vercel.app/',
     github: 'https://github.com',
     image: '/projects/tasks.jpg',
   },
@@ -45,7 +45,7 @@ export default async function Portfolio() {
           My Projects
         </h1>
         <p className="text-xl text-slate-600 dark:text-slate-400">
-          Selected projects showcasing my skills and expertise.
+          Selected projects showcasing my skills and expertise. These are live projects, but I keep updating and improving them. If you find any issues or have suggestions, please reach out! I’m always looking to learn and grow.
         </p>
       </div>
 
@@ -106,7 +106,7 @@ export default async function Portfolio() {
                 {project.live_url && (
                   <a
                     href={project.live_url}
-                    target="https://srk-rajus-portfolio.vercel.app"
+                    target="https://rjexa.com"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors"
                     title="Live Demo"
