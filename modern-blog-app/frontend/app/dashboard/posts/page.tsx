@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import { FaEdit, FaTrash, FaPlus, FaEye, FaSearch } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaEye, FaSearch, FaArrowLeft } from 'react-icons/fa';
 
 interface Post {
   id: string;
@@ -12,11 +13,12 @@ interface Post {
   excerpt: string;
   published: boolean;
   published_at: string;
-  views_count: number;
+  view_count: number;
   author_name: string;
 }
 
 export default function PostsPage() {
+  const router = useRouter();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -87,10 +89,18 @@ export default function PostsPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
-          Manage Posts
-        </h1>
+      <div className="flex items-center justify-between gap-4 mb-8">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+          >
+            <FaArrowLeft /> Back
+          </button>
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
+            Manage Posts
+          </h1>
+        </div>
         <Link
           href="/dashboard/posts/new"
           className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
@@ -196,7 +206,7 @@ export default function PostsPage() {
                   <td className="px-6 py-4 text-slate-700 dark:text-slate-300">
                     <div className="flex items-center gap-2">
                       <FaEye className="text-sm" />
-                      {post.views_count || 0}
+                      {post.view_count || 0}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">

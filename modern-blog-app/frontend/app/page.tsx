@@ -95,7 +95,7 @@ export default function Home() {
     <div className="w-full">
       {/* Hero Section with animated background */}
       <motion.section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -103,14 +103,19 @@ export default function Home() {
         {/* Animated background elements */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <motion.div
-            className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl"
+            className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-full blur-3xl"
             animate={{ y: [0, -30, 0], x: [0, 30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
-            className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl"
+            className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl"
             animate={{ y: [0, 30, 0], x: [0, -30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+          />
+          <motion.div
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-emerald-400/10 to-emerald-600/10 rounded-full blur-3xl"
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           />
         </div>
 
@@ -123,30 +128,30 @@ export default function Home() {
           >
             {/* Badge */}
             <motion.div
-              className="mb-8 inline-block px-4 py-2 rounded-full bg-gradient-to-r from-emerald-100/50 to-teal-100/50 dark:from-emerald-900/30 dark:to-teal-900/30 border border-emerald-300 dark:border-emerald-700/50 backdrop-blur-sm"
+              className="mb-8 inline-block px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/30 to-teal-500/30 border border-emerald-400/50 dark:border-emerald-500/50 backdrop-blur-sm hover:border-emerald-400 transition-colors"
               variants={itemVariants}
             >
-              <p className="text-sm font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent flex items-center gap-2">
-                <FaStar /> Welcome to my tech universe
+              <p className="text-sm font-semibold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent flex items-center gap-2">
+                <FaStar className="text-emerald-400" /> Welcome to the Next-Gen Tech Universe
               </p>
             </motion.div>
 
             {/* Main heading */}
             <motion.h1
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6"
+              className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-6 tracking-tight"
               variants={itemVariants}
             >
-              <span className="gradient-text">
-                Cloud, Security & DevOps
+              <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
+                Architecting the Future
               </span>
-              <span className="block text-slate-900 dark:text-white mt-2">
-                Insights & Innovation
+              <span className="block text-slate-100 dark:text-slate-100 mt-4 text-5xl sm:text-6xl">
+                of Cloud & DevOps
               </span>
             </motion.h1>
 
             {/* Description */}
             <motion.p
-              className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 mb-8 leading-relaxed max-w-3xl mx-auto"
+              className="text-lg sm:text-xl text-slate-300 dark:text-slate-300 mb-12 leading-relaxed max-w-3xl mx-auto"
               variants={itemVariants}
             >
               Dive deep into cloud technologies, security practices, DevOps workflows, and cutting-edge software development. 

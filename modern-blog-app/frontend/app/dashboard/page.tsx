@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { FaBook, FaImage, FaUsers, FaEye } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+import { FaBook, FaImage, FaUsers, FaEye, FaArrowLeft } from 'react-icons/fa';
 
 export default function DashboardHome() {
+  const router = useRouter();
   const [stats, setStats] = useState({
     totalPosts: 0,
     totalImages: 0,
@@ -22,21 +24,21 @@ export default function DashboardHome() {
       // Fetch posts count
       const { data: postsData, error: postsError } = await supabase
         .from('posts')
-        .select('id, views_count', { count: 'exact' });
+        .select('id, view_count', { count: 'exact' });
 
       // Fetch images count
       const { data: imagesData, count: imagesCount, error: imagesError } = await supabase
         .from('storage')
         .select('id', { count: 'exact' });
 
-      // Fetch users count
+      // Fetch users count (from users table, not user_roles)
       const { data: usersData, count: usersCount, error: usersError } = await supabase
-        .from('user_roles')
+        .from('users')
         .select('id', { count: 'exact' });
 
       let totalViews = 0;
       if (postsData) {
-        totalViews = postsData.reduce((sum: number, post: any) => sum + (post.views_count || 0), 0);
+        totalViews = postsData.reduce((sum: number, post: any) => sum + (post.view_count || 0), 0);
       }
 
       setStats({
@@ -81,9 +83,17 @@ export default function DashboardHome() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold mb-8 text-slate-900 dark:text-white">
-        Welcome to Admin Dashboard
-      </h1>
+      <div className="flex items-center gap-4 mb-8">
+        <button
+          onClick={() => router.push('/')}
+          className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+        >
+          <FaArrowLeft size={24} />
+        </button>
+        <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
+          Welcome to Admin Dashboard
+        </h1>
+      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

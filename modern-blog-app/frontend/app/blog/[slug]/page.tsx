@@ -69,14 +69,14 @@ async function incrementViews(postId: string) {
 
     const { data } = await supabase
       .from('posts')
-      .select('views_count')
+      .select('view_count')
       .eq('id', postId)
       .single();
 
     if (data) {
       await supabase
         .from('posts')
-        .update({ views_count: (data.views_count || 0) + 1 })
+        .update({ view_count: (data.view_count || 0) + 1 })
         .eq('id', postId);
     }
   } catch (err) {

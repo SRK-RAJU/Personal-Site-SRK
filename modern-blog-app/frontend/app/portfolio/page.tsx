@@ -1,4 +1,5 @@
-import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaGithub, FaExternalLinkAlt, FaArrowLeft } from 'react-icons/fa';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'Portfolio - Raju Tech',
@@ -39,6 +40,15 @@ const projects = [
 export default async function Portfolio() {
   return (
     <div className="container-max py-12">
+      {/* Back Button */}
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 mb-8 font-semibold transition-colors"
+      >
+        <FaArrowLeft className="text-sm" />
+        Back to Home
+      </Link>
+
       {/* Heading */}
       <div className="mb-12">
         <h1 className="text-4xl sm:text-5xl font-bold mb-4">

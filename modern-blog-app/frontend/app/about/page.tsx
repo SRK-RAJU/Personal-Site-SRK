@@ -10,7 +10,8 @@ import {
   FaTools, 
   FaCode, 
   FaDatabase, 
-  FaRocket 
+  FaRocket,
+  FaArrowLeft
 } from 'react-icons/fa';
 
 const containerVariants = {
@@ -35,6 +36,17 @@ export default function About() {
         initial="hidden" 
         animate="visible"
       >
+        {/* Back Button */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold transition-colors"
+          >
+            <FaArrowLeft className="text-sm" />
+            Back to Home
+          </Link>
+        </motion.div>
+
         {/* Header - Combined Names */}
         <motion.div variants={itemVariants} className="mb-12">
           <h1 className="text-5xl sm:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">

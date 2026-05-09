@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { FaArrowLeft } from 'react-icons/fa';
 
 export default function Privacy() {
   const containerVariants = {
@@ -38,6 +39,17 @@ export default function Privacy() {
         initial="hidden"
         animate="visible"
       >
+        {/* Back Button */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold transition-colors"
+          >
+            <FaArrowLeft className="text-sm" />
+            Back to Home
+          </Link>
+        </motion.div>
+
         {/* Header */}
         <motion.div variants={itemVariants} className="mb-12">
           <h1 className="text-5xl sm:text-6xl font-bold mb-4">Privacy Policy</h1>

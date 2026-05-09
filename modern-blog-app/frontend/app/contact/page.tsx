@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaEnvelope, FaLinkedin, FaGithub, FaPhone, FaMapMarkerAlt, FaPaperPlane } from 'react-icons/fa';
+import { FaEnvelope, FaLinkedin, FaGithub, FaPhone, FaMapMarkerAlt, FaPaperPlane, FaArrowLeft } from 'react-icons/fa';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function Contact() {
@@ -76,6 +76,17 @@ export default function Contact() {
         initial="hidden" 
         animate="visible"
       >
+        {/* Back Button */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold transition-colors"
+          >
+            <FaArrowLeft className="text-sm" />
+            Back to Home
+          </Link>
+        </motion.div>
+
         {/* Header */}
         <motion.div variants={itemVariants} className="mb-12">
           <h1 className="text-5xl sm:text-6xl font-bold mb-4">Get In Touch</h1>

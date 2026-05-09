@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
-import { FaUpload, FaTrash, FaDownload, FaCopy, FaBolt } from 'react-icons/fa';
+import { FaUpload, FaTrash, FaDownload, FaCopy, FaBolt, FaArrowLeft } from 'react-icons/fa';
 import { validateImageFile, sanitizeFileName } from '@/lib/security';
 import { compressImage, calculateCompressionSavings } from '@/lib/imageCompression';
 
@@ -17,6 +18,7 @@ interface Image {
 }
 
 export default function ImagesPage() {
+  const router = useRouter();
   const [images, setImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -174,9 +176,17 @@ export default function ImagesPage() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-        Image Manager
-      </h1>
+      <div className="flex items-center gap-4 mb-2">
+        <button
+          onClick={() => router.back()}
+          className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+        >
+          <FaArrowLeft size={24} />
+        </button>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+          Image Manager
+        </h1>
+      </div>
       <p className="text-slate-600 dark:text-slate-400 mb-8">
         Upload and manage your blog featured images with automatic compression
       </p>

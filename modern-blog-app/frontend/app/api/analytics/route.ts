@@ -93,10 +93,10 @@ export async function GET(request: NextRequest) {
       }
 
       return NextResponse.json({
-        articles: statsData?.article_count ?? fallbackStats.articles,
+        articles: statsData?.articles ?? fallbackStats.articles,
         monthly_views: statsData?.monthly_views ?? fallbackStats.monthly_views,
-        topics: statsData?.topics_count ?? fallbackStats.topics,
-        projects: statsData?.projects_count ?? fallbackStats.projects,
+        topics: statsData?.topics ?? fallbackStats.topics,
+        projects: statsData?.projects ?? fallbackStats.projects,
         total_visits: statsData?.total_visits ?? fallbackStats.total_visits,
       });
     }
@@ -157,10 +157,10 @@ export async function POST(request: NextRequest) {
       } else {
         await supabase.from('website_stats').insert([
           {
-            article_count: 0,
+            articles: 0,
             monthly_views: 0,
-            topics_count: 0,
-            projects_count: 0,
+            topics: 0,
+            projects: 0,
             total_visits: 1,
           },
         ]);
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'update-stats') {
-      const { article_count, monthly_views, topics_count, projects_count } = data;
+      const { articles, monthly_views, topics, projects } = data;
 
       const { data: stats } = await supabase
         .from('website_stats')
@@ -181,19 +181,19 @@ export async function POST(request: NextRequest) {
         await supabase
           .from('website_stats')
           .update({
-            article_count,
+            articles,
             monthly_views,
-            topics_count,
-            projects_count,
+            topics,
+            projects,
           })
           .eq('id', stats.id);
       } else {
         await supabase.from('website_stats').insert([
           {
-            article_count,
+            articles,
             monthly_views,
-            topics_count,
-            projects_count,
+            topics,
+            projects,
             total_visits: 0,
           },
         ]);
