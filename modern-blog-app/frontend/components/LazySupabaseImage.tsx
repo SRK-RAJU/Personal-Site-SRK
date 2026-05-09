@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { getImageUrl } from '@/lib/supabaseStorage';
 
@@ -35,14 +35,29 @@ export default function LazySupabaseImage({
   const [error, setError] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
+  const loadImage = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const url = await getImageUrl(bucket, path);
+      if (url.url) {
+        setImageSrc(url.url);
+      } else {
+        setError(true);
+      }
+    } catch (err) {
+      console.error('Error loading image:', err);
+      setError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [bucket, path]);
+
   useEffect(() => {
-    // If priority, fetch immediately
     if (priority) {
       loadImage();
       return;
     }
 
-    // Otherwise, use Intersection Observer to load only when visible
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -62,24 +77,7 @@ export default function LazySupabaseImage({
     }
 
     return () => observer.disconnect();
-  }, [priority]);
-
-  const loadImage = async () => {
-    try {
-      setIsLoading(true);
-      const url = await getImageUrl(bucket, path);
-      if (url.url) {
-        setImageSrc(url.url);
-      } else {
-        setError(true);
-      }
-    } catch (err) {
-      console.error('Error loading image:', err);
-      setError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [priority, loadImage]);
 
   return (
     <div ref={ref} className={`relative ${className}`}>
@@ -88,7 +86,13 @@ export default function LazySupabaseImage({
       )}
 
       {error && fallback ? (
-        <img src={fallback} alt={alt} width={width} height={height} className={className} />
+        <Image
+          src={fallback}
+          alt={alt}
+          width={width}
+          height={height}
+          className={className}
+        />
       ) : imageSrc ? (
         <Image
           src={imageSrc}
