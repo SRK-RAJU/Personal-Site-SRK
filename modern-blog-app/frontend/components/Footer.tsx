@@ -104,10 +104,10 @@ export default function Footer() {
                   <FaRocket className="text-2xl text-emerald-600 dark:text-emerald-400" />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold gradient-text mt-3">rjexa</h3>
+              <h3 className="text-2xl font-bold gradient-text mt-3">Raju Tech</h3>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              DevSecOps insights, cloud engineering, and modern development practices. Building secure, scalable infrastructure.
+              Full-stack development, cloud architecture, and modern web solutions. Building secure applications.
             </p>
             <motion.div
               className="flex gap-3"
@@ -214,7 +214,7 @@ export default function Footer() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                © {currentYear - (new Date().getFullYear() - 2024)} - {currentYear} rjexa inc
+                © {currentYear - (new Date().getFullYear() - 2024)} - {currentYear} rjexa inc.
               </motion.div>
             )}
           </motion.div>

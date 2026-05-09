@@ -1,4 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+);
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,8 +28,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: In production, integrate with Supabase or email service
-    // For now, just log the contact message
+    // Log the contact message
     console.log('New contact message:', {
       name,
       email,
@@ -32,20 +37,25 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
 
-    // Optional: Save to Supabase
-    // const { error } = await supabase
-    //   .from('contact_messages')
-    //   .insert([{ name, email, subject, message }]);
-    
-    // if (error) {
-    //   return NextResponse.json(
-    //     { error: 'Failed to send message' },
-    //     { status: 500 }
-    //   );
-    // }
+    // Try to save to Supabase if configured
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)) {
+      try {
+        const { error } = await supabase
+          .from('contact_messages')
+          .insert([{ name, email, subject, message, created_at: new Date().toISOString() }]);
+        
+        if (error && error.code !== 'PGRST116') {
+          console.warn('Supabase insert warning:', error);
+          // Still return success even if table doesn't exist yet
+        }
+      } catch (dbErr) {
+        console.warn('Database save attempt:', dbErr);
+        // Don't fail the request if database is not ready
+      }
+    }
 
     return NextResponse.json(
-      { message: 'Thank you for your message. I will get back to you soon!' },
+      { message: 'Thank you for your message! I will get back to you soon!' },
       { status: 200 }
     );
   } catch (error) {

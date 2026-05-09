@@ -223,7 +223,7 @@ export default function Contact() {
                     <FaGithub size={20} />
                   </a>
                   <a 
-                    href="https://linkedin.com/in/srajukumargoud" 
+                    href="https://www.linkedin.com/in/srajukumargoud/" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="bg-blue-700 text-white p-3 rounded-lg hover:scale-110 transition"

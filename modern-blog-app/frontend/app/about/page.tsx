@@ -38,41 +38,42 @@ export default function About() {
         {/* Header - Combined Names */}
         <motion.div variants={itemVariants} className="mb-12">
           <h1 className="text-5xl sm:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-            Raju SRK
+            Raju
           </h1>
           <h2 className="text-2xl text-slate-700 dark:text-slate-300 font-semibold mb-2">
-            DevSecOps Engineer & Cloud Architect
+            Full-Stack Developer, DevOps, Security & Cloud Engineer
           </h2>
           <p className="text-lg text-cyan-600 dark:text-cyan-400 font-semibold mb-4">
             @ rjexa inc
           </p>
           <p className="text-lg text-slate-600 dark:text-slate-400">
-            Building secure, scalable cloud infrastructure through DevSecOps practices.
+            Building modern web applications and cloud solutions with a focus on performance and security.
           </p>
         </motion.div>
 
-        {/* About & Journey Section - Using your preferred sentences */}
+        {/* About & Journey Section */}
         <motion.section variants={itemVariants} className="mb-12 p-8 bg-blue-50 dark:bg-slate-800/50 rounded-2xl border border-blue-100 dark:border-slate-700">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <FaRocket className="text-blue-600" /> My Journey
+            <FaRocket className="text-blue-600" /> My Story
           </h2>
           <div className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
             <p className="text-lg">
-              Hi! I'm <strong>Raju SRK</strong> from <strong className="text-cyan-600 dark:text-cyan-400">rjexa inc</strong>, a DevSecOps specialist and cloud engineer with 8+ years of experience
-              in building secure web applications and managing cloud infrastructure. I specialize in React, Node.js, Kubernetes, and Cloud Security.
+              Hi! I'm <strong>Raju</strong>, a full-stack developer, security, DevOps and cloud engineer passionate about building efficient, scalable web applications. 
+              I specialize in React, Next.js, Node.js, k8, Terraform, Docker, Ansible and cloud technologies like AWS and Azure.
             </p>
             <p>
-              I started my career with curiosity and a desire to build things. Over the years, I've worked on various projects from
-              small to large-scale applications. Now, I'm focused on building cloud-native development lifecycle,
-              building secure CI/CD pipelines, and automating infrastructure with enterprise-grade tools.
+              I started my journey with curiosity and a strong desire to build things. Over the years, I've developed expertise in frontend development, 
+              backend systems, and cloud infrastructure. I focus on writing clean, maintainable code and creating user-friendly applications.
             </p>
             <p>
-              At rjexa, I help teams build secure, scalable cloud solutions. I'm passionate about documenting best practices,
-              mentoring developers, and advancing the DevSecOps ecosystem through technical writing and continuous learning. 
+              I've built several projects including this personal portfolio, a local e-commerce store for a kirana shop, and a facilities management system. 
+              Each project taught me valuable lessons about full-stack development, DevOps practices, and user experience design.
             </p>
             {/* Personal Note */}
             <p className="italic text-slate-600 dark:text-slate-400">
-              These sites are designed from scratch based on client requirements. The code is maintained in my personal workspace, and I often design during weekends or holidays out of interest to support, design, and maintain. If anything feels misconfigured, I apologize — I keep updating, improving security, user experience, and overall quality. My goal is to build impactful solutions, to grow business, attract projects, and continuous learning.
+              These sites are designed and built by me based on client requirements and my learning journey. I often work on these projects during weekends and holidays 
+              out of genuine interest in supporting clients and continuously improving my skills. My goal is to build impactful solutions, improve my expertise, 
+              and deliver high-quality applications. If you find any issues or have suggestions, please reach out!
             </p>
           </div>
         </motion.section>

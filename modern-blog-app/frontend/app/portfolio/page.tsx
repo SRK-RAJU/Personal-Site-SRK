@@ -1,8 +1,8 @@
 import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 
 export const metadata = {
-  title: 'Portfolio - rjexa',
-  description: 'DevSecOps solutions and cloud engineering projects. Explore projects built with security-first practices and modern cloud technologies.',
+  title: 'Portfolio - Raju Tech',
+  description: 'Full-stack web development, devops, security, and cloud engineering projects. Explore projects built with modern technologies and best practices.',
 };
 
 // Static portfolio projects
@@ -10,29 +10,29 @@ const projects = [
   {
     id: 1,
     title: 'Personal Blog Platform',
-    description: 'Modern full-stack blog platform built with Next.js, verce, Supabase and cloudflare.',
+    description: 'Modern full-stack blog platform built with Next.js, Supabase, and Cloudflare. Features include real-time analytics, content management, and advanced security.',
     technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Supabase'],
     link: 'https://rjexa.com',
     github: 'https://github.com/SRK-RAJU/Personal-Site-SRK',
-    image: '/projects/blog.jpg',
+    image: '/projects/blog.svg',
   },
   {
     id: 2,
-    title: 'Local E-commerce Store',
-    description: 'Full-featured e-commerce solution with shopping cart and payments',
-    technologies: ['React', 'Node.js', 'Express', 'PostgreSQL', 'Stripe'],
+    title: 'Local Kirana Shop - E-commerce Store',
+    description: 'Full-featured e-commerce solution for a local kirana shop with shopping cart, product management, and payment integration.',
+    technologies: ['React', 'Next.js', 'TypeScript', 'PostgreSQL', 'Supabase'],
     link: 'https://jayalakshmikiranashop.vercel.app',
-    github: 'https://github.com',
-    image: '/projects/ecommerce.jpg',
+    github: 'https://github.com/SRK-RAJU',
+    image: '/projects/ecommerce.svg',
   },
   {
     id: 3,
-    title: 'Professional Facility Management System',
-    description: 'Comprehensive facility management system for maintenance and operations',
+    title: 'Facility Management System',
+    description: 'Comprehensive facility management system for maintenance operations, scheduling, and resource management. Built for professional service providers.',
     technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Supabase', 'PostgreSQL'],
     link: 'https://zispark-services.vercel.app/',
-    github: 'https://github.com',
-    image: '/projects/tasks.jpg',
+    github: 'https://github.com/SRK-RAJU',
+    image: '/projects/tasks.svg',
   },
 ];
 
@@ -45,7 +45,7 @@ export default async function Portfolio() {
           My Projects
         </h1>
         <p className="text-xl text-slate-600 dark:text-slate-400">
-          Selected projects showcasing my skills and expertise. These are live projects, but I keep updating and improving them. If you find any issues or have suggestions, please reach out! I’m always looking to learn and grow.
+          Selected projects showcasing my skills in full-stack development and cloud engineering. All projects are actively maintained and regularly updated. Check them out and share your feedback!
         </p>
       </div>
 

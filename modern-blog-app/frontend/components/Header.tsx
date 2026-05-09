@@ -82,23 +82,22 @@ export default function Header() {
             href="/"
             className="flex items-center gap-2 group hover:scale-105 transition-transform"
           >
-            {/* SVG Logo */}
+            {/* RJ Logo - Modern Design */}
             <div className="w-12 h-12">
               <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                 <defs>
-                  <linearGradient id="srkLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style={{ stopColor: '#00d4ff', stopOpacity: 1 }} />
+                  <linearGradient id="rjLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{ stopColor: '#00f5ff', stopOpacity: 1 }} />
                     <stop offset="100%" style={{ stopColor: '#0099ff', stopOpacity: 1 }} />
                   </linearGradient>
                 </defs>
-                <circle cx="100" cy="100" r="95" fill="#1a1a2e" stroke="url(#srkLogoGrad)" strokeWidth="3"/>
-                <text x="100" y="115" fontSize="48" fontWeight="bold" textAnchor="middle" fill="url(#srkLogoGrad)" fontFamily="Arial, sans-serif" letterSpacing="2">SRK</text>
-                <circle cx="165" cy="165" r="15" fill="#ff006e" opacity="0.8"/>
+                <circle cx="100" cy="100" r="95" fill="#1a1a2e" stroke="url(#rjLogoGrad)" strokeWidth="2"/>
+                <text x="100" y="120" fontSize="56" fontWeight="bold" textAnchor="middle" fill="url(#rjLogoGrad)" fontFamily="Arial, sans-serif" letterSpacing="3">RJ</text>
               </svg>
             </div>
             <div className="hidden sm:block">
-              <p className="text-lg font-bold gradient-text">SRK</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 -mt-1">DevSecOps</p>
+              <p className="text-lg font-bold gradient-text">RJ</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 -mt-1">Modern Tech Blog</p>
             </div>
           </Link>
         </motion.div>
