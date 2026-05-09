@@ -1,8 +1,8 @@
 import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 
 export const metadata = {
-  title: 'Portfolio',
-  description: 'Check out my projects and recent work.',
+  title: 'Portfolio - rjexa',
+  description: 'DevSecOps solutions and cloud engineering projects. Explore projects built with security-first practices and modern cloud technologies.',
 };
 
 // Static portfolio projects

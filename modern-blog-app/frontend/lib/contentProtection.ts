@@ -120,7 +120,7 @@ export function disableCopyProtection() {
   document.addEventListener('copy', (e) => {
     const selection = window.getSelection();
     const selectedText = selection ? selection.toString() : '';
-    const textToCopy = `${selectedText}\n\n© ${new Date().getFullYear()} Raju SRK. All rights reserved. Unauthorized copying is prohibited.`;
+    const textToCopy = `${selectedText}\n\n© ${new Date().getFullYear()} rjexa inc. All rights reserved.`;
     e.clipboardData?.setData('text/plain', textToCopy);
     e.preventDefault();
   });

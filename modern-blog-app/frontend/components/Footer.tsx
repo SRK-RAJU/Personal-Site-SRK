@@ -46,7 +46,7 @@ export default function Footer() {
         { label: 'GitHub', href: 'https://github.com/SRK-RAJU' },
         { label: 'LinkedIn', href: 'https://linkedin.com/in/srajukumargoud' },
         { label: 'Twitter', href: 'https://twitter.com' },
-        { label: 'Email', href: 'mailto:contact@example.com' },
+        { label: 'Email', href: 'mailto:contact@rjexa.com' },
       ],
     },
   ];
@@ -55,7 +55,7 @@ export default function Footer() {
     { icon: FaGithub, href: 'https://github.com/SRK-RAJU', label: 'GitHub', color: 'hover:text-slate-900 dark:hover:text-white' },
     { icon: FaLinkedin, href: 'https://linkedin.com/in/srajukumargoud', label: 'LinkedIn', color: 'hover:text-blue-600' },
     { icon: FaTwitter, href: 'https://twitter.com', label: 'Twitter', color: 'hover:text-blue-400' },
-    { icon: FaEnvelope, href: 'mailto:contact@example.com', label: 'Email', color: 'hover:text-red-600' },
+    { icon: FaEnvelope, href: 'mailto:contact@rjexa.com', label: 'Email', color: 'hover:text-red-600' },
   ];
 
   const containerVariants = {
@@ -204,7 +204,7 @@ export default function Footer() {
                   Copyright Protection
                 </p>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                  © {currentYear} Raju SRK. All rights reserved.
+                  © {currentYear} rjexa inc. All rights reserved.
                 </p>
               </div>
             </div>
@@ -214,7 +214,7 @@ export default function Footer() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                © 2024 - {currentYear} Raju SRK
+                © {currentYear - (new Date().getFullYear() - 2024)} - {currentYear} rjexa inc
               </motion.div>
             )}
           </motion.div>

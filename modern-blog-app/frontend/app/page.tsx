@@ -334,14 +334,14 @@ export default function Home() {
             </motion.h2>
             <div className="space-y-4 text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
               <motion.p variants={itemVariants}>
-                Hi! I'm <span className="font-bold gradient-text">Raju SRK</span>, a full-stack developer and DevOps enthusiast 
+                Hi! I'm <span className="font-bold gradient-text">Raju SRK</span> from <span className="font-bold text-cyan-400">rjexa inc</span>, a DevSecOps specialist and cloud engineer 
                 with a passion for building scalable, secure, and efficient systems. With expertise spanning cloud architecture, 
-                containerization, infrastructure automation, and modern web development, I help teams transform ideas into reality.
+                containerization, infrastructure automation, security practices, and modern web development, I help teams transform ideas into secure reality.
               </motion.p>
               <motion.p variants={itemVariants}>
-                This platform is my digital garden where I share deep dives into cloud technologies, security best practices, 
-                DevOps patterns, and innovative software solutions. Whether you're exploring containerization strategies or diving 
-                into cloud-native architectures, you'll find actionable insights and real-world examples.
+                This platform is rjexa's knowledge hub where we share deep dives into cloud technologies, security best practices, 
+                DevSecOps patterns, and innovative software solutions. Whether you're exploring containerization strategies, CI/CD pipelines,
+                security scanning, or cloud-native architectures, you'll find actionable insights and real-world examples from industry practice.
               </motion.p>
               <motion.p variants={itemVariants}>
                 Beyond coding, I'm passionate about mentoring, open-source contributions, and building communities. 

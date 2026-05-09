@@ -80,17 +80,25 @@ export default function Header() {
         >
           <Link
             href="/"
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-2 group hover:scale-105 transition-transform"
           >
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-300" />
-              <div className="relative px-3 py-2 bg-white dark:bg-slate-950 rounded-lg">
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold text-lg">Raju-SRK</span>
-              </div>
+            {/* SVG Logo */}
+            <div className="w-12 h-12">
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                <defs>
+                  <linearGradient id="srkLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{ stopColor: '#00d4ff', stopOpacity: 1 }} />
+                    <stop offset="100%" style={{ stopColor: '#0099ff', stopOpacity: 1 }} />
+                  </linearGradient>
+                </defs>
+                <circle cx="100" cy="100" r="95" fill="#1a1a2e" stroke="url(#srkLogoGrad)" strokeWidth="3"/>
+                <text x="100" y="115" fontSize="48" fontWeight="bold" textAnchor="middle" fill="url(#srkLogoGrad)" fontFamily="Arial, sans-serif" letterSpacing="2">SRK</text>
+                <circle cx="165" cy="165" r="15" fill="#ff006e" opacity="0.8"/>
+              </svg>
             </div>
             <div className="hidden sm:block">
-              <p className="text-lg font-bold gradient-text">Tech & Dev</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 -mt-1">Blog & Portfolio</p>
+              <p className="text-lg font-bold gradient-text">SRK</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 -mt-1">DevSecOps</p>
             </div>
           </Link>
         </motion.div>
