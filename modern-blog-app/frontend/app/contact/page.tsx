@@ -6,11 +6,6 @@ import { motion } from 'framer-motion';
 import { FaEnvelope, FaLinkedin, FaGithub, FaPhone, FaMapMarkerAlt, FaPaperPlane } from 'react-icons/fa';
 import { supabase } from '@/lib/supabaseClient';
 
-export const metadata = {
-  title: 'Contact - rjexa inc',
-  description: 'Get in touch with rjexa for DevSecOps consulting, cloud architecture, or technical discussions. Reach out to Raju SRK.',
-};
-
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
@@ -198,8 +193,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="font-semibold text-slate-900 dark:text-white">Email</p>
-                  <a href="mailto:srajukumargoud@gmail.com" className="text-blue-600 dark:text-blue-400 hover:underline">
-                    srajukumargoud@gmail.com
+                  <a href="mailto:contact@rjexa.com" className="text-blue-600 dark:text-blue-400 hover:underline">
+                    contact@rjexa.com
                   </a>
                 </div>
               </div>
@@ -220,7 +215,7 @@ export default function Contact() {
                 <p className="font-semibold text-slate-900 dark:text-white mb-4">Connect With Me</p>
                 <div className="flex gap-4">
                   <a 
-                    href="https://github.com" 
+                    href="https://github.com/SRK-RAJU" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-3 rounded-lg hover:scale-110 transition"
@@ -228,7 +223,7 @@ export default function Contact() {
                     <FaGithub size={20} />
                   </a>
                   <a 
-                    href="https://linkedin.com/in/rajukumar" 
+                    href="https://linkedin.com/in/srajukumargoud" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="bg-blue-700 text-white p-3 rounded-lg hover:scale-110 transition"
@@ -236,7 +231,7 @@ export default function Contact() {
                     <FaLinkedin size={20} />
                   </a>
                   <a 
-                    href="mailto:srajukumargoud@gmail.com"
+                    href="mailto:contact@rjexa.com"
                     className="bg-red-600 text-white p-3 rounded-lg hover:scale-110 transition"
                   >
                     <FaEnvelope size={20} />
