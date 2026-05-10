@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaChartLine, FaUsers, FaEye, FaFire, FaClock } from 'react-icons/fa';
-import { usePageViews } from '@/lib/useAnalytics';
+import { FaChartLine, FaUsers, FaEye, FaFire, FaClock, FaRocket } from 'react-icons/fa';
+import { usePageViews, useWebsiteStats } from '@/lib/useAnalytics';
 
 interface ActivityMetric {
   label: string;
@@ -15,45 +15,49 @@ interface ActivityMetric {
 
 export default function RealtimeActivity() {
   const { totalViews } = usePageViews();
+  const { stats } = useWebsiteStats();
   const [metrics, setMetrics] = useState<ActivityMetric[]>([
-    { label: 'Online Now', value: 0, icon: FaUsers, color: 'from-emerald-500 to-teal-500', trend: 0 },
-    { label: 'Today Views', value: 0, icon: FaEye, color: 'from-blue-500 to-cyan-500', trend: 0 },
-    { label: 'Weekly Peak', value: 0, icon: FaFire, color: 'from-orange-500 to-red-500', trend: 0 },
-    { label: 'Avg. Time', value: 0, icon: FaClock, color: 'from-purple-500 to-pink-500', trend: 0 },
+    { label: 'Articles', value: 0, icon: FaChartLine, color: 'from-cyan-500 to-blue-500', trend: 0 },
+    { label: 'Total Visits', value: 0, icon: FaEye, color: 'from-emerald-500 to-teal-500', trend: 0 },
+    { label: 'Projects', value: 3, icon: FaRocket, color: 'from-orange-500 to-red-500', trend: 0 },
+    { label: 'Monthly Views', value: 0, icon: FaFire, color: 'from-purple-500 to-pink-500', trend: 0 },
   ]);
 
   useEffect(() => {
+    // Update metrics with real data from API
+    const estimatedOnline = Math.max(1, Math.floor((totalViews || stats.total_visits || 0) / 100));
+    
     setMetrics([
       {
-        label: 'Online Now',
-        value: Math.max(1, Math.floor(totalViews / 12)),
-        icon: FaUsers,
-        color: 'from-emerald-500 to-teal-500',
-        trend: 3,
+        label: 'Articles',
+        value: stats.articles || 0,
+        icon: FaChartLine,
+        color: 'from-cyan-500 to-blue-500',
+        trend: 2,
       },
       {
-        label: 'Today Views',
-        value: totalViews,
+        label: 'Total Visits',
+        value: totalViews || stats.total_visits || 0,
         icon: FaEye,
-        color: 'from-blue-500 to-cyan-500',
+        color: 'from-emerald-500 to-teal-500',
         trend: 5,
       },
       {
-        label: 'Weekly Peak',
-        value: Math.max(totalViews, Math.floor(totalViews * 1.1)),
+        label: 'Projects',
+        value: stats.projects || 3,
         icon: FaFire,
         color: 'from-orange-500 to-red-500',
-        trend: 8,
+        trend: 1,
       },
       {
-        label: 'Avg. Time',
-        value: 180,
+        label: 'Monthly Views',
+        value: stats.monthly_views || totalViews || 0,
         icon: FaClock,
         color: 'from-purple-500 to-pink-500',
-        trend: 4,
+        trend: 3,
       },
     ]);
-  }, [totalViews]);
+  }, [totalViews, stats]);
 
   return (
     <div className="w-full">

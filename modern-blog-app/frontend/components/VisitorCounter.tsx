@@ -2,29 +2,37 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaEye, FaUsers, FaArrowUp } from 'react-icons/fa';
+import { FaEye } from 'react-icons/fa';
 import { usePageViews } from '@/lib/useAnalytics';
 
 export default function VisitorCounter() {
   const { totalViews, loading } = usePageViews();
   const [displayCount, setDisplayCount] = useState(0);
-  const [animateCounter, setAnimateCounter] = useState(false);
+  const [hasUpdated, setHasUpdated] = useState(false);
 
+  // Animate counter increment
   useEffect(() => {
-    if (totalViews > 0 && displayCount !== totalViews) {
-      setAnimateCounter(true);
-      const interval = setInterval(() => {
-        setDisplayCount((prev) => {
-          if (prev < totalViews) {
-            return Math.min(prev + Math.ceil((totalViews - prev) / 10), totalViews);
-          }
-          return prev;
-        });
-      }, 50);
+    if (!hasUpdated || totalViews <= 0) return;
 
-      return () => clearInterval(interval);
+    const increment = Math.max(1, Math.ceil(totalViews / 20));
+    const interval = setInterval(() => {
+      setDisplayCount((prev) => {
+        if (prev < totalViews) {
+          return Math.min(prev + increment, totalViews);
+        }
+        return prev;
+      });
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [totalViews, hasUpdated]);
+
+  // Update display count when totalViews changes
+  useEffect(() => {
+    if (totalViews > 0) {
+      setHasUpdated(true);
     }
-  }, [totalViews, displayCount]);
+  }, [totalViews]);
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) {
@@ -37,7 +45,7 @@ export default function VisitorCounter() {
 
   return (
     <motion.div
-      className="flex items-center justify-center gap-2 px-3 py-1 rounded-lg bg-gradient-to-r from-emerald-500/10 to-teal-500/10 dark:from-emerald-600/20 dark:to-teal-600/20 border border-emerald-500/30 dark:border-emerald-500/40 backdrop-blur-sm"
+      className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-emerald-500/10 to-teal-500/10 dark:from-emerald-600/20 dark:to-teal-600/20 border border-emerald-500/30 dark:border-emerald-500/40 backdrop-blur-sm"
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
@@ -48,8 +56,12 @@ export default function VisitorCounter() {
       >
         <FaEye className="text-emerald-600 dark:text-emerald-400 text-sm" />
       </motion.div>
-      <span className="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-        {loading ? 'Loading page views...' : `${formatNumber(displayCount)} visits`}
+      <span className="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-300 min-w-[80px]">
+        {loading ? (
+          <span>Loading...</span>
+        ) : (
+          <span>{formatNumber(displayCount)} visits</span>
+        )}
       </span>
     </motion.div>
   );

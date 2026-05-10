@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 export interface WebsiteStats {
@@ -16,7 +16,7 @@ export function useWebsiteStats() {
     articles: 0,
     monthly_views: 0,
     topics: 0,
-    projects: 0,
+    projects: 3, // Default to 3 projects
     total_visits: 0,
   });
   const [loading, setLoading] = useState(true);
@@ -26,25 +26,33 @@ export function useWebsiteStats() {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('/api/analytics?action=stats');
+        const response = await axios.get('/api/analytics?action=stats', {
+          timeout: 5000 // 5 second timeout
+        });
+        
+        // Ensure we have valid numbers
         setStats({
           articles: response.data.articles ?? 0,
           monthly_views: response.data.monthly_views ?? 0,
           topics: response.data.topics ?? 0,
-          projects: response.data.projects ?? 0,
+          projects: response.data.projects ?? 3,
           total_visits: response.data.total_visits ?? 0,
         });
         setError(null);
       } catch (err) {
-        console.error('Error fetching stats:', err);
-        // Use default values on error
-        setError('Failed to fetch stats');
+        console.warn('Stats fetch warning (using defaults):', err);
+        // Use sensible defaults on error
+        setError('Using default values');
       } finally {
         setLoading(false);
       }
     };
 
     fetchStats();
+    
+    // Refresh stats every 30 seconds for real-time updates
+    const interval = setInterval(fetchStats, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   return { stats, loading, error };
@@ -53,25 +61,35 @@ export function useWebsiteStats() {
 export function usePageViews() {
   const [totalViews, setTotalViews] = useState(0);
   const [loading, setLoading] = useState(true);
+  const trackedRef = useRef(false);
 
   useEffect(() => {
     const trackPageView = async () => {
+      // Only track once per session
+      if (trackedRef.current) return;
+      trackedRef.current = true;
+
       try {
-        // Track the page view
-        await axios.post('/api/analytics', {
+        // Track the page view (fire and forget, don't block on this)
+        axios.post('/api/analytics', {
           action: 'track-page-view',
           data: {
             page_name: 'homepage',
             user_ip: 'unknown',
             user_agent: navigator.userAgent,
           },
-        });
+        }).catch(err => console.warn('Tracking error (silent):', err));
 
-        // Get total views
-        const response = await axios.get('/api/analytics?action=page-views');
-        setTotalViews(response.data.total_views || 0);
-      } catch (err) {
-        console.error('Error tracking page view:', err);
+        // Get total views with timeout
+        try {
+          const response = await axios.get('/api/analytics?action=page-views', {
+            timeout: 5000
+          });
+          setTotalViews(response.data.total_views || 0);
+        } catch (err) {
+          console.warn('Could not fetch page views:', err);
+          setTotalViews(0); // Default to 0
+        }
       } finally {
         setLoading(false);
       }

@@ -1,13 +1,23 @@
+'use client';
+
 import { FaGithub, FaExternalLinkAlt, FaArrowLeft } from 'react-icons/fa';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { motion } from 'framer-motion';
 
-export const metadata = {
-  title: 'Portfolio - Raju Tech',
-  description: 'Full-stack web development, devops, security, and cloud engineering projects. Explore projects built with modern technologies and best practices.',
-};
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  technologies: string[];
+  link?: string;
+  github?: string;
+  image?: string;
+}
 
-// Static portfolio projects
-const projects = [
+// Fallback projects if API fails
+const FALLBACK_PROJECTS: Project[] = [
   {
     id: 1,
     title: 'Personal Blog Platform (rjexa.com)',
@@ -37,7 +47,36 @@ const projects = [
   },
 ];
 
-export default async function Portfolio() {
+export default function Portfolio() {
+  const [projects, setProjects] = useState<Project[]>(FALLBACK_PROJECTS);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        // Try to fetch from API first
+        const response = await axios.get('/api/projects?limit=20', {
+          timeout: 5000
+        });
+        
+        if (response.data.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
+          setProjects(response.data.data);
+        } else {
+          // Use fallback if no API data
+          setProjects(FALLBACK_PROJECTS);
+        }
+      } catch (err) {
+        console.warn('Could not fetch projects from API, using defaults:', err);
+        // Use fallback projects
+        setProjects(FALLBACK_PROJECTS);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, []);
+
   return (
     <div className="container-max py-12">
       {/* Back Button */}
@@ -60,10 +99,26 @@ export default async function Portfolio() {
       </div>
 
       {/* Projects Grid */}
-      {projects.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project: any) => (
-            <div key={project.id} className="card">
+      {loading ? (
+        <div className="text-center py-16">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent mx-auto"></div>
+          <p className="mt-4 text-slate-600 dark:text-slate-400">Loading projects...</p>
+        </div>
+      ) : projects.length > 0 ? (
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {projects.map((project: Project, idx: number) => (
+            <motion.div 
+              key={project.id} 
+              className="card"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: idx * 0.1 }}
+            >
               {project.image && (
                 <div
                   className="w-full h-48 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-lg mb-4 overflow-hidden border-2 border-emerald-500/30 hover:border-emerald-500/60 transition-all"
@@ -107,38 +162,36 @@ export default async function Portfolio() {
               )}
 
               {/* Links */}
-              <div className="flex gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-                {project.github && (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:scale-105"
-                    title="GitHub Repository"
-                  >
-                    <FaGithub /> Code
-                  </a>
-                )}
+              <div className="flex gap-3 mt-auto pt-4">
                 {project.link && (
                   <a
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:scale-105 ml-auto"
-                    title="Live Demo"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors flex-1"
                   >
-                    <FaExternalLinkAlt /> Live
+                    <FaExternalLinkAlt className="text-sm" />
+                    View Live
+                  </a>
+                )}
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex-1"
+                  >
+                    <FaGithub className="text-sm" />
+                    GitHub
                   </a>
                 )}
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       ) : (
-        <div className="text-center py-12">
-          <p className="text-xl text-slate-600 dark:text-slate-400">
-            Projects coming soon! Stay tuned.
-          </p>
+        <div className="text-center py-16">
+          <p className="text-slate-600 dark:text-slate-400">No projects available yet.</p>
         </div>
       )}
     </div>
