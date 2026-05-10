@@ -72,21 +72,21 @@ export default function Home() {
       icon: FaServer,
       title: 'Cloud & Infrastructure',
       description: 'Cloud platforms, containerization, and infrastructure as code',
-      skills: ['AWS', 'Azure', 'Google Cloud', 'Git', 'Terraform', 'Kubernetes', 'Docker', 'Ansible', 'CI/CD', 'Jenkins', 'GitHub Actions', 'GitLab CI', 'Azure DevOps'],
+      skills: ['AWS (EC2, S3, RDS, Lambda)', 'Azure (VMs, App Service, DevOps)', 'Google Cloud Platform', 'Terraform', 'Kubernetes', 'Docker', 'Ansible', 'CI/CD (Jenkins, GitHub Actions, GitLab CI, Azure DevOps)', 'Git & Version Control', 'Infrastructure as Code', 'Linux/Unix Administration', 'Networking (TCP/IP, HTTP/HTTPS)'],
       color: 'from-emerald-500 to-teal-500',
     },
     {
       icon: FaCode,
       title: 'Full-Stack Development',
       description: 'Modern web development with focus on scalability and performance',
-      skills: ['React', 'Next.js', 'Node.js', 'Express', 'TypeScript', 'PostgreSQL', 'MongoDB', 'Tailwind CSS', 'Python', 'Rest APIs'],
+      skills: ['React', 'Next.js 13+', 'Node.js & Express.js', 'TypeScript', 'PostgreSQL', 'MongoDB', 'Supabase', 'REST APIs', 'GraphQL', 'Tailwind CSS', 'Python', 'JavaScript/ES6+', 'Web Design (Responsive)', 'Vercel Deployment'],
       color: 'from-blue-500 to-cyan-500',
     },
     {
       icon: FaDatabase,
       title: 'Security & DevOps',
       description: 'Security practices, monitoring, and operational excellence',
-      skills: ['Zscaler', 'Networking', 'DNS', 'VPN', 'OpenVPN', 'Microsoft Entra', 'AD/AAD', 'Grafana', 'Prometheus', 'Git', 'VS Code'],
+      skills: ['Zscaler', 'Cloudflare', 'Networking (DNS, SMTP, HTTP)', 'VPN & OpenVPN', 'Microsoft Entra ID', 'Active Directory (AD/AAD)', 'Monitoring (Grafana, Prometheus)', 'Logging & Analytics', 'VS Code', 'Terminal/Bash', 'System Administration', 'Data Protection', 'Cybersecurity Best Practices'],
       color: 'from-orange-500 to-red-500',
     },
   ];
@@ -95,7 +95,7 @@ export default function Home() {
     <div className="w-full">
       {/* Hero Section with animated background */}
       <motion.section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-white via-emerald-50 to-teal-50 dark:from-slate-900 dark:via-emerald-900/20 dark:to-slate-900"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-50 via-emerald-50/50 to-teal-50/30 dark:from-slate-950 dark:via-emerald-950/20 dark:to-slate-950"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -141,17 +141,17 @@ export default function Home() {
               className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-6 tracking-tight"
               variants={itemVariants}
             >
-              <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
                 Architecting the Future
               </span>
-              <span className="block text-slate-100 dark:text-slate-100 mt-4 text-5xl sm:text-6xl">
+              <span className="block text-slate-900 dark:text-white mt-4 text-5xl sm:text-6xl font-bold">
                 of Cloud & DevOps
               </span>
             </motion.h1>
 
             {/* Description */}
             <motion.p
-              className="text-lg sm:text-xl text-slate-300 dark:text-slate-300 mb-12 leading-relaxed max-w-3xl mx-auto"
+              className="text-lg sm:text-xl text-slate-800 dark:text-slate-100 mb-12 leading-relaxed max-w-3xl mx-auto font-semibold"
               variants={itemVariants}
             >
               Dive deep into cloud technologies, security practices, DevOps workflows, and cutting-edge software development. 

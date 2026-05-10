@@ -28,30 +28,43 @@ export default function PostsPage() {
   const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
-      let query = supabase.from('posts').select('*');
-
-      // Filter by status
-      if (filterStatus === 'published') {
-        query = query.eq('published', true);
-      } else if (filterStatus === 'draft') {
-        query = query.eq('published', false);
-      }
-
-      // Search by title
-      if (searchQuery) {
-        query = query.or(
-          `title.ilike.%${searchQuery}%,slug.ilike.%${searchQuery}%`
-        );
-      }
-
-      const { data, error } = await query.order('published_at', { ascending: false });
+      
+      // Use API endpoint instead of direct Supabase call
+      const url = new URL('/api/posts', window.location.origin);
+      
+      const { data, error } = await fetch(url.toString()).then(r => r.json());
 
       if (error) {
         console.error('Error fetching posts:', error);
         return;
       }
 
-      setPosts(data || []);
+      // Filter locally
+      let filtered = data || [];
+      
+      if (filterStatus === 'published') {
+        filtered = filtered.filter((p: Post) => p.published === true);
+      } else if (filterStatus === 'draft') {
+        filtered = filtered.filter((p: Post) => p.published === false);
+      }
+
+      // Search locally
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filtered = filtered.filter((p: Post) =>
+          p.title.toLowerCase().includes(query) ||
+          p.slug.toLowerCase().includes(query)
+        );
+      }
+
+      // Sort by published_at
+      filtered.sort((a: Post, b: Post) => {
+        const dateA = new Date(a.published_at).getTime();
+        const dateB = new Date(b.published_at).getTime();
+        return dateB - dateA;
+      });
+
+      setPosts(filtered);
     } catch (err) {
       console.error('Error fetchPosts:', err);
     } finally {
@@ -70,10 +83,14 @@ export default function PostsPage() {
 
     try {
       setDeleting(postId);
-      const { error } = await supabase.from('posts').delete().eq('id', postId);
+      const response = await fetch(`/api/admin/posts/${postId}`, {
+        method: 'DELETE',
+      });
 
-      if (error) {
-        alert('Error deleting post: ' + error.message);
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert('Error deleting post: ' + result.error);
         return;
       }
 

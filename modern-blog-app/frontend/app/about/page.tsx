@@ -91,36 +91,67 @@ export default function About() {
           </div>
         </motion.section>
 
-        {/* Skills Grid - Merged Technical & Creative */}
+        {/* Skills Grid - Comprehensive Tech Stack */}
         <motion.section variants={itemVariants} className="mb-12">
           <h2 className="text-2xl font-bold mb-8 flex items-center gap-2">
             <FaTools className="text-blue-600" /> Skills & Expertise
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* Cloud & DevOps */}
-            <div className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
-              <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+            <div className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-sm border border-blue-200 dark:border-blue-700/30">
+              <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
                 <FaCloud className="text-blue-500" /> Cloud & Infrastructure
               </h3>
-              <ul className="grid grid-cols-1 gap-2 text-slate-600 dark:text-slate-400">
-                <li>• AWS & Azure Architecture</li>
+              <ul className="grid grid-cols-1 gap-2 text-slate-700 dark:text-slate-300 text-sm">
+                <li>• AWS (EC2, S3, RDS, Lambda, Route53)</li>
+                <li>• Azure (VMs, App Service, DevOps, AKS)</li>
+                <li>• Google Cloud Platform (GCP)</li>
                 <li>• Terraform (Infrastructure as Code)</li>
-                <li>• Kubernetes & Docker Orchestration</li>
-                <li>• CI/CD (Jenkins, GitLab, GitHub Actions)</li>
+                <li>• Kubernetes & Container Orchestration</li>
+                <li>• Docker & Docker Compose</li>
+                <li>• Ansible Configuration Management</li>
+                <li>• CI/CD (Jenkins, GitLab, GitHub Actions, Azure DevOps)</li>
+                <li>• Git & Version Control</li>
+                <li>• Linux/Unix System Administration</li>
               </ul>
             </div>
 
-            {/* Development */}
-            <div className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
-              <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+            {/* Full-Stack Development */}
+            <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-sm border border-purple-200 dark:border-purple-700/30">
+              <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
                 <FaCode className="text-purple-500" /> Full-Stack Development
               </h3>
-              <ul className="grid grid-cols-1 gap-2 text-slate-600 dark:text-slate-400">
-                <li>• React & Next.js Frontend</li>
-                <li>• Node.js & Express Backend</li>
+              <ul className="grid grid-cols-1 gap-2 text-slate-700 dark:text-slate-300 text-sm">
+                <li>• React & Next.js 13+ Frontend</li>
+                <li>• Node.js & Express.js Backend</li>
+                <li>• TypeScript (Frontend & Backend)</li>
                 <li>• PostgreSQL & Database Optimization</li>
-                <li>• Responsive & Modern Web Design</li>
+                <li>• MongoDB & NoSQL Databases</li>
+                <li>• Supabase & Real-time APIs</li>
+                <li>• REST APIs & GraphQL</li>
+                <li>• Tailwind CSS & UI Design</li>
+                <li>• Python (Backend & Scripting)</li>
+                <li>• Vercel & Cloud Deployment</li>
+              </ul>
+            </div>
+
+            {/* Security & DevOps */}
+            <div className="p-6 bg-gradient-to-br from-red-50 to-orange-50 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-sm border border-red-200 dark:border-red-700/30">
+              <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
+                <FaDatabase className="text-red-500" /> Security & DevOps
+              </h3>
+              <ul className="grid grid-cols-1 gap-2 text-slate-700 dark:text-slate-300 text-sm">
+                <li>• Zscaler Zero Trust Security</li>
+                <li>• Cloudflare CDN & Security</li>
+                <li>• Networking (DNS, SMTP, HTTP/HTTPS)</li>
+                <li>• VPN & OpenVPN Configuration</li>
+                <li>• Microsoft Entra ID (formerly AAD)</li>
+                <li>• Active Directory Management</li>
+                <li>• Monitoring (Grafana & Prometheus)</li>
+                <li>• Logging & Analytics</li>
+                <li>• Data Protection & Encryption</li>
+                <li>• VS Code & Development Tools</li>
               </ul>
             </div>
           </div>

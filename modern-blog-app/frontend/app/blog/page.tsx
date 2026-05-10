@@ -5,53 +5,33 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaCalendar, FaUser, FaEye, FaArrowRight } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabaseClient';
-
-// Note: Metadata is handled by layout.tsx for this client component
-
-// Fetch posts from Supabase
-async function getBlogPosts() {
-  try {
-    // Handle missing Supabase credentials gracefully for builds
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      console.log('[Build] Supabase credentials not available - returning empty posts array');
-      return []
-    }
-
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*')
-      .order('published_at', { ascending: false })
-      .limit(100)
-
-    if (error) {
-      console.error('Supabase error:', error)
-      return []
-    }
-
-    return data || []
-  } catch (err) {
-    console.error('Error fetching posts:', err)
-    return []
-  }
-}
+import axios from 'axios';
 
 export default function Blog() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadPosts = async () => {
-      const postsData = await getBlogPosts();
-      setPosts(postsData);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const response = await axios.get('/api/posts?published=true&order=published_at&ascending=false&limit=100');
+        setPosts(response.data.data || []);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching posts:', err);
+        setError('Failed to load articles. Please try again later.');
+        setPosts([]);
+      } finally {
+        setLoading(false);
+      }
     };
     loadPosts();
   }, []);
 
   return (
     <div className="min-h-screen w-full">
-      {/* Hero Section */}
       <section className="section-padding bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 dark:from-cyan-500/10 dark:via-transparent dark:to-blue-500/10 border-b border-cyan-500/20">
         <div className="container-max">
           <motion.div
@@ -70,7 +50,6 @@ export default function Blog() {
         </div>
       </section>
 
-      {/* Posts Section */}
       <section className="section-padding">
         <div className="container-max">
           {loading ? (
@@ -104,7 +83,6 @@ export default function Blog() {
                 >
                   <Link href={`/blog/${post.slug}`} className="group block h-full">
                     <div className="card-glass card-gradient h-full flex flex-col hover:border-cyan-500/50 transition-all duration-300 overflow-hidden">
-                      {/* Image */}
                       {post.featured_image_url && (
                         <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-cyan-500/10 to-blue-500/10 mb-4 sm:mb-6">
                           <Image
@@ -117,24 +95,20 @@ export default function Blog() {
                         </div>
                       )}
 
-                      {/* Badge */}
                       {post.category && (
                         <div className="mb-3 flex gap-2">
                           <span className="badge text-xs">{post.category}</span>
                         </div>
                       )}
 
-                      {/* Title */}
                       <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 line-clamp-2 group-hover:text-cyan-500 transition-colors">
                         {post.title}
                       </h3>
 
-                      {/* Excerpt */}
                       <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-3 flex-1">
                         {post.excerpt || post.content?.slice(0, 150)}
                       </p>
 
-                      {/* Meta Info */}
                       <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                         {post.published_at && (
                           <div className="flex items-center gap-1.5">

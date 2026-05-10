@@ -97,15 +97,15 @@ export default function Footer() {
         >
           {/* Brand Section */}
           <motion.div className="col-span-1 space-y-4" variants={itemVariants}>
-            <div className="group cursor-pointer">
+            <Link href="/" className="group cursor-pointer inline-block">
               <div className="relative inline-block">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800 dark:from-white dark:to-slate-100 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-300" />
                 <div className="relative px-4 py-3 bg-white dark:bg-slate-950 rounded-lg">
-                  <FaRocket className="text-2xl text-emerald-600 dark:text-emerald-400" />
+                  <h3 className="text-3xl font-black text-slate-900 dark:text-white">rj</h3>
                 </div>
               </div>
-              <h3 className="text-2xl font-bold gradient-text mt-3">Raju Tech</h3>
-            </div>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-3 font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Raju Tech</p>
+            </Link>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               Cloud & DevOps specialist. Full-stack development, security engineering, and modern infrastructure solutions. Building secure, scalable applications.
             </p>
@@ -317,10 +317,10 @@ export default function Footer() {
             <Link href="/" className="font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
               Raju [rjexa.com]
             </Link>
-            <span>•</span>
+            {/* <span>•</span>
             <span className="font-semibold text-slate-900 dark:text-white">Supabase</span>
             <span>•</span>
-            <span className="font-semibold text-slate-900 dark:text-white">Vercel</span>
+            <span className="font-semibold text-slate-900 dark:text-white">Vercel</span> */}
           </p>
 
           <p className="flex items-center gap-1">

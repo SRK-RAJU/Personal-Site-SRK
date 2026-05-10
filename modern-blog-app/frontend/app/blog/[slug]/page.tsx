@@ -1,20 +1,22 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaArrowLeft, FaCalendar, FaUser } from 'react-icons/fa';
-import { supabase } from '../../../lib/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
-export async function generateStaticParams() {
-  // Skip static generation if Supabase credentials are not available
-  // This allows builds to succeed without credentials (the page will be generated on-demand)
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    console.log('[Build] Skipping static param generation - Supabase credentials not available (on-demand generation enabled)');
-    return [];
-  }
+// Initialize Supabase client with service role key for server-side operations
+function getSupabaseServer() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  );
+}
 
+export async function generateStaticParams() {
   try {
+    const supabase = getSupabaseServer();
     const { data: posts, error } = await supabase
       .from('posts')
       .select('slug')
@@ -36,11 +38,7 @@ export async function generateStaticParams() {
 
 async function getPost(slug: string) {
   try {
-    // Handle missing Supabase credentials gracefully
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      console.log('[Build] Supabase credentials not available - returning null for build');
-      return null;
-    }
+    const supabase = getSupabaseServer();
 
     const { data: post, error } = await supabase
       .from('posts')
@@ -62,10 +60,7 @@ async function getPost(slug: string) {
 
 async function incrementViews(postId: string) {
   try {
-    // Handle missing Supabase credentials gracefully
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      return;
-    }
+    const supabase = getSupabaseServer();
 
     const { data } = await supabase
       .from('posts')
