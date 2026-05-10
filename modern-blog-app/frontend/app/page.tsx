@@ -69,24 +69,24 @@ export default function Home() {
 
   const skills = [
     {
-      icon: FaCode,
-      title: 'Frontend Development',
-      description: 'Building modern, responsive, and interactive user interfaces',
-      skills: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Vue.js'],
-      color: 'from-blue-500 to-cyan-500',
-    },
-    {
       icon: FaServer,
-      title: 'Backend & DevOps',
-      description: 'Scalable infrastructure and deployment solutions',
-      skills: ['Node.js', 'Python', 'Kubernetes', 'Docker', 'Terraform'],
+      title: 'Cloud & Infrastructure',
+      description: 'Cloud platforms, containerization, and infrastructure as code',
+      skills: ['AWS', 'Azure', 'Google Cloud', 'Git', 'Terraform', 'Kubernetes', 'Docker', 'Ansible', 'CI/CD', 'Jenkins', 'GitHub Actions', 'GitLab CI', 'Azure DevOps'],
       color: 'from-emerald-500 to-teal-500',
     },
     {
+      icon: FaCode,
+      title: 'Full-Stack Development',
+      description: 'Modern web development with focus on scalability and performance',
+      skills: ['React', 'Next.js', 'Node.js', 'Express', 'TypeScript', 'PostgreSQL', 'MongoDB', 'Tailwind CSS', 'Python', 'Rest APIs'],
+      color: 'from-blue-500 to-cyan-500',
+    },
+    {
       icon: FaDatabase,
-      title: 'Databases & Cloud',
-      description: 'Data management and cloud infrastructure expertise',
-      skills: ['PostgreSQL', 'MongoDB', 'AWS', 'Google Cloud', 'Azure'],
+      title: 'Security & DevOps',
+      description: 'Security practices, monitoring, and operational excellence',
+      skills: ['Zscaler', 'Networking', 'DNS', 'VPN', 'OpenVPN', 'Microsoft Entra', 'AD/AAD', 'Grafana', 'Prometheus', 'Git', 'VS Code'],
       color: 'from-orange-500 to-red-500',
     },
   ];
@@ -95,7 +95,7 @@ export default function Home() {
     <div className="w-full">
       {/* Hero Section with animated background */}
       <motion.section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-white via-emerald-50 to-teal-50 dark:from-slate-900 dark:via-emerald-900/20 dark:to-slate-900"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -254,6 +254,49 @@ export default function Home() {
         variants={sectionVariants}
         viewport={{ once: true, margin: '-100px' }}
       >
+        {/* Certifications Subsection */}
+        <motion.div
+          className="mb-20"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <motion.h3
+            className="text-3xl md:text-4xl font-bold mb-8 text-slate-900 dark:text-white text-center"
+            variants={itemVariants}
+          >
+            Certifications & Credentials
+          </motion.h3>
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {[
+              { title: 'AWS Certified', subtitle: 'Associate', color: 'from-yellow-500 to-orange-500' },
+              { title: 'Azure Certified', subtitle: 'AZ-900, Administrator AZ-104', color: 'from-blue-500 to-cyan-500' },
+              { title: 'GCP Certified', subtitle: 'Associate, DevOps Professional', color: 'from-red-500 to-pink-500' },
+              { title: 'GitHub', subtitle: 'Foundations', color: 'from-gray-600 to-gray-800' },
+            ].map((cert, idx) => (
+              <motion.div
+                key={cert.title}
+                className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500 text-center py-6"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05, y: -5 }}
+              >
+                <div className={`inline-flex p-3 rounded-lg bg-gradient-to-r ${cert.color} text-white mb-3`}>
+                  <span className="text-2xl font-bold">✓</span>
+                </div>
+                <h4 className="font-bold text-slate-900 dark:text-white mb-1">{cert.title}</h4>
+                <p className="text-xs text-slate-600 dark:text-slate-400">{cert.subtitle}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+
         <motion.div
           className="mb-16 text-center"
           variants={containerVariants}
@@ -313,6 +356,116 @@ export default function Home() {
               </motion.div>
             );
           })}
+        </motion.div>
+      </motion.section>
+
+      {/* Complete DevSecOps Stack Section */}
+      <motion.section
+        className="container-max section-padding-tight"
+        initial="hidden"
+        whileInView="visible"
+        variants={sectionVariants}
+        viewport={{ once: true, margin: '-100px' }}
+      >
+        <motion.div
+          className="mb-16 text-center"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <motion.h2
+            className="text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-white"
+            variants={itemVariants}
+          >
+            Complete DevSecOps Stack
+          </motion.h2>
+          <motion.p
+            className="text-lg text-slate-600 dark:text-slate-300"
+            variants={itemVariants}
+          >
+            Integrated technologies and tools for secure, scalable deployments
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {/* Stack Component 1: CI/CD Pipeline */}
+          <motion.div
+            className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500 overflow-hidden"
+            variants={itemVariants}
+            whileHover={{ y: -5 }}
+          >
+            <div className="w-full h-48 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 dark:from-blue-600/40 dark:to-cyan-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-blue-500/30 dark:border-blue-500/50">
+              <div className="text-6xl">🔄</div>
+            </div>
+            <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">CI/CD Pipeline</h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-4">Automated build, test, and deployment workflows with GitHub Actions, GitLab CI, Azure DevOps and Jenkins for continuous integration.</p>
+            <div className="flex flex-wrap gap-2">
+              {['GitHub Actions', 'Jenkins', 'GitLab CI', 'Docker'].map(tech => (
+                <span key={tech} className="badge">{tech}</span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Stack Component 2: Container Orchestration */}
+          <motion.div
+            className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500 overflow-hidden"
+            variants={itemVariants}
+            whileHover={{ y: -5 }}
+          >
+            <div className="w-full h-48 bg-gradient-to-br from-purple-500/20 to-pink-500/20 dark:from-purple-600/40 dark:to-pink-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-purple-500/30 dark:border-purple-500/50">
+              <div className="text-6xl">🐳</div>
+            </div>
+            <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">Container Orchestration</h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-4">Kubernetes and Docker for container management, scaling, and orchestration in production environments.</p>
+            <div className="flex flex-wrap gap-2">
+              {['Kubernetes', 'Docker', 'Container Registry', 'Helm'].map(tech => (
+                <span key={tech} className="badge">{tech}</span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Stack Component 3: Infrastructure as Code */}
+          <motion.div
+            className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500 overflow-hidden"
+            variants={itemVariants}
+            whileHover={{ y: -5 }}
+          >
+            <div className="w-full h-48 bg-gradient-to-br from-green-500/20 to-emerald-500/20 dark:from-green-600/40 dark:to-emerald-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-green-500/30 dark:border-green-500/50">
+              <div className="text-6xl">🏗️</div>
+            </div>
+            <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">Infrastructure as Code</h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-4">Terraform and Ansible for declarative infrastructure management, ensuring consistency and reproducibility.</p>
+            <div className="flex flex-wrap gap-2">
+              {['Terraform', 'Ansible', 'CloudFormation', 'Pulumi'].map(tech => (
+                <span key={tech} className="badge">{tech}</span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Stack Component 4: Security & Monitoring */}
+          <motion.div
+            className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500 overflow-hidden"
+            variants={itemVariants}
+            whileHover={{ y: -5 }}
+          >
+            <div className="w-full h-48 bg-gradient-to-br from-red-500/20 to-orange-500/20 dark:from-red-600/40 dark:to-orange-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-red-500/30 dark:border-red-500/50">
+              <div className="text-6xl">🔒</div>
+            </div>
+            <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">Security & Monitoring</h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-4">Comprehensive security scanning, threat detection, and real-time monitoring with Grafana and Prometheus.</p>
+            <div className="flex flex-wrap gap-2">
+              {['Grafana', 'Prometheus', 'Zscaler', 'Security Scanning'].map(tech => (
+                <span key={tech} className="badge">{tech}</span>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
       </motion.section>
 

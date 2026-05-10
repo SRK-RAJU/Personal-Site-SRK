@@ -150,10 +150,10 @@ export default function Blog() {
                           </div>
                         )}
 
-                        {post.views_count !== undefined && (
+                        {post.view_count !== undefined && (
                           <div className="flex items-center gap-1.5">
                             <FaEye className="text-purple-500" />
-                            <span>{post.views_count}</span>
+                            <span>{post.view_count}</span>
                           </div>
                         )}
 

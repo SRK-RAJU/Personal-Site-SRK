@@ -78,7 +78,7 @@ export default function NewPostPage() {
         tags: formData.tags.split(',').map(tag => tag.trim()),
         published: false, // Default to draft
         published_at: new Date().toISOString(),
-        views_count: 0,
+        view_count: 0,
         author_name: 'SRK', // Or get from user context
         created_at: new Date().toISOString(),
       };

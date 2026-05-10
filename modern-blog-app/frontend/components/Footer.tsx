@@ -107,7 +107,7 @@ export default function Footer() {
               <h3 className="text-2xl font-bold gradient-text mt-3">Raju Tech</h3>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Full-stack development, cloud architecture, and modern web solutions. Building secure applications.
+              Cloud & DevOps specialist. Full-stack development, security engineering, and modern infrastructure solutions. Building secure, scalable applications.
             </p>
             <motion.div
               className="flex gap-3"
@@ -283,7 +283,11 @@ export default function Footer() {
           viewport={{ once: true }}
         >
           <p>
-            &copy; {currentYear} Raju SRK — This is my personal blog. All content reflects my own interests and experiences. Unauthorized copying is prohibited.
+            © {currentYear} Raju{' '}
+            <Link href="/" className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-bold transition-colors">
+              [rjexa.com]
+            </Link>
+            {' '} — This is my personal blog. All content reflects my own interests and experiences. Unauthorized copying is prohibited.
           </p>
         </motion.div>
 
@@ -297,7 +301,9 @@ export default function Footer() {
           <p className="flex items-center gap-1">
             Made with{' '}
             <span className="text-red-600 dark:text-red-400 animate-pulse">❤️</span> by
-            <span className="font-semibold text-emerald-600 dark:text-emerald-400">Raju SRK</span>
+            <Link href="/" className="font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
+              Raju [rjexa.com]
+            </Link>
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
             <VisitorCounter />
@@ -308,11 +314,13 @@ export default function Footer() {
 
           <p className="flex flex-wrap items-center gap-2 justify-center">
             Powered by
-            <span className="font-semibold text-slate-900 dark:text-white">Raju</span>
+            <Link href="/" className="font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+              Raju [rjexa.com]
+            </Link>
             <span>•</span>
-            {/* <span className="font-semibold text-slate-900 dark:text-white">Supabase</span>
+            <span className="font-semibold text-slate-900 dark:text-white">Supabase</span>
             <span>•</span>
-            <span className="font-semibold text-slate-900 dark:text-white">Vercel</span> */}
+            <span className="font-semibold text-slate-900 dark:text-white">Vercel</span>
           </p>
 
           <p className="flex items-center gap-1">

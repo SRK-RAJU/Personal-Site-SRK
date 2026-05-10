@@ -64,15 +64,21 @@ export default async function Portfolio() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project: any) => (
             <div key={project.id} className="card">
-              {project.image_url && (
+              {project.image && (
                 <div
-                  className="w-full h-40 bg-gradient-to-br from-blue-400 to-purple-400 rounded-lg mb-4"
+                  className="w-full h-48 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-lg mb-4 overflow-hidden border-2 border-emerald-500/30 hover:border-emerald-500/60 transition-all"
                   style={{
-                    backgroundImage: `url(${project.image_url})`,
+                    backgroundImage: `url(${project.image})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                   }}
-                />
+                >
+                  {!project.image && (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-300 to-slate-400 dark:from-slate-700 dark:to-slate-800">
+                      <span className="text-gray-600 dark:text-gray-300">No image available</span>
+                    </div>
+                  )}
+                </div>
               )}
 
               <h2 className="text-2xl font-bold mb-2">{project.title}</h2>
@@ -102,23 +108,23 @@ export default async function Portfolio() {
 
               {/* Links */}
               <div className="flex gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-                {project.github_url && (
+                {project.github && (
                   <a
-                    href={project.github_url}
-                    target="https://github.com/SRK-RAJU"
+                    href={project.github}
+                    target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors"
-                    title="GitHub"
+                    className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:scale-105"
+                    title="GitHub Repository"
                   >
                     <FaGithub /> Code
                   </a>
                 )}
-                {project.live_url && (
+                {project.link && (
                   <a
-                    href={project.live_url}
-                    target="https://rjexa.com"
+                    href={project.link}
+                    target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors"
+                    className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:scale-105 ml-auto"
                     title="Live Demo"
                   >
                     <FaExternalLinkAlt /> Live
