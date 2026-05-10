@@ -61,14 +61,14 @@ export async function GET(request: NextRequest) {
     const order = searchParams.get('order') || 'published_at';
     const ascending = searchParams.get('ascending') === 'true';
 
-    let query = supabase.from('posts').select('id, title, slug, excerpt, content, category, featured_image_url, published, published_at, author, read_time_minutes, created_at, updated_at');
+    let query = supabase.from('posts').select('id, title, slug, excerpt, content, category, featured_image_url, published, published_at, author, read_time_minutes, view_count, created_at, updated_at');
 
     if (published === 'true') {
       query = query.eq('published', true);
     }
 
     const { data, error } = await query
-      .order('published_at', { ascending: false })
+      .order(order, { ascending })
       .limit(parseInt(limit));
 
     // If there's an error, log it but return fallback posts instead of 500
