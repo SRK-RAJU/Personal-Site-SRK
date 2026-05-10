@@ -296,15 +296,63 @@ export default function About() {
             </div>
           </div>
 
-          {/* Complete Tech Stack Image */}
-          <div className="bg-slate-900 dark:bg-slate-950 rounded-2xl p-8 border border-slate-700 overflow-hidden">
-            <Image
-              src="/images/tech-stack.svg"
-              alt="Complete Tech Stack - Cloud, DevOps, Security, Development"
-              width={800}
-              height={600}
-              className="w-full h-auto"
-            />
+          {/* Complete Tech Stack Visualization */}
+          <div className="bg-gradient-to-br from-slate-900 to-slate-950 dark:from-slate-950 dark:to-slate-900 rounded-2xl p-8 border border-slate-700 overflow-hidden">
+            <div className="w-full h-auto min-h-96 flex items-center justify-center">
+              {/* Fallback Grid instead of SVG - More visible and reliable */}
+              <div className="w-full grid grid-cols-3 gap-4">
+                {/* Row 1: Cloud Services */}
+                <div className="p-4 bg-gradient-to-br from-blue-600/20 to-blue-700/30 rounded-lg border border-blue-500/40 text-center">
+                  <div className="text-3xl mb-2">☁️</div>
+                  <p className="text-sm font-bold text-white">AWS</p>
+                  <p className="text-xs text-slate-300">EC2, S3, Lambda</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-blue-500/20 to-cyan-600/30 rounded-lg border border-cyan-500/40 text-center">
+                  <div className="text-3xl mb-2">☁️</div>
+                  <p className="text-sm font-bold text-white">Azure</p>
+                  <p className="text-xs text-slate-300">App Service, AKS</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-red-500/20 to-orange-600/30 rounded-lg border border-red-500/40 text-center">
+                  <div className="text-3xl mb-2">☁️</div>
+                  <p className="text-sm font-bold text-white">GCP</p>
+                  <p className="text-xs text-slate-300">Compute, Cloud Run</p>
+                </div>
+
+                {/* Row 2: DevOps Tools */}
+                <div className="p-4 bg-gradient-to-br from-purple-600/20 to-purple-700/30 rounded-lg border border-purple-500/40 text-center">
+                  <div className="text-3xl mb-2">🐳</div>
+                  <p className="text-sm font-bold text-white">Docker</p>
+                  <p className="text-xs text-slate-300">Containerization</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-orange-600/20 to-orange-700/30 rounded-lg border border-orange-500/40 text-center">
+                  <div className="text-3xl mb-2">⚙️</div>
+                  <p className="text-sm font-bold text-white">Kubernetes</p>
+                  <p className="text-xs text-slate-300">Orchestration</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-yellow-600/20 to-yellow-700/30 rounded-lg border border-yellow-500/40 text-center">
+                  <div className="text-3xl mb-2">📦</div>
+                  <p className="text-sm font-bold text-white">Terraform</p>
+                  <p className="text-xs text-slate-300">IaC</p>
+                </div>
+
+                {/* Row 3: Security & Monitoring */}
+                <div className="p-4 bg-gradient-to-br from-red-600/20 to-red-700/30 rounded-lg border border-red-500/40 text-center">
+                  <div className="text-3xl mb-2">🔒</div>
+                  <p className="text-sm font-bold text-white">Zscaler</p>
+                  <p className="text-xs text-slate-300">Security</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-green-600/20 to-green-700/30 rounded-lg border border-green-500/40 text-center">
+                  <div className="text-3xl mb-2">📊</div>
+                  <p className="text-sm font-bold text-white">Grafana</p>
+                  <p className="text-xs text-slate-300">Monitoring</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-pink-600/20 to-pink-700/30 rounded-lg border border-pink-500/40 text-center">
+                  <div className="text-3xl mb-2">💻</div>
+                  <p className="text-sm font-bold text-white">Next.js</p>
+                  <p className="text-xs text-slate-300">Full-Stack</p>
+                </div>
+              </div>
+            </div>
           </div>
         </motion.section>
 

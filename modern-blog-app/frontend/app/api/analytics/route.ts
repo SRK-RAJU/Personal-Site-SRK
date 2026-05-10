@@ -157,95 +157,118 @@ export async function POST(request: NextRequest) {
     if (action === 'track-page-view') {
       const { page_name = 'homepage', user_ip, user_agent } = data;
 
-      // Get or create page analytics record
-      const { data: existing } = await supabase
-        .from('page_analytics')
-        .select('id, view_count')
-        .eq('page', page_name)
-        .single();
-
-      if (existing) {
-        // Update existing record
-        await supabase
+      try {
+        // Use atomic increment with upsert for thread safety
+        const { data: existing, error: selectError } = await supabase
           .from('page_analytics')
-          .update({
-            view_count: existing.view_count + 1,
-            last_viewed: new Date(),
-          })
-          .eq('id', existing.id);
-      } else {
-        // Create new record
-        await supabase.from('page_analytics').insert([
-          {
+          .select('view_count')
+          .eq('page', page_name)
+          .maybeSingle();
+
+        if (selectError && selectError.code !== 'PGRST116') {
+          console.warn('Select error:', selectError);
+          return NextResponse.json({ error: 'Failed to fetch current count' }, { status: 500 });
+        }
+
+        const currentCount = existing?.view_count || 0;
+        const newCount = currentCount + 1;
+
+        // Upsert with the new count
+        const { error: upsertError } = await supabase
+          .from('page_analytics')
+          .upsert({
             page: page_name,
-            view_count: 1,
-            last_viewed: new Date(),
-          },
-        ]);
+            view_count: newCount,
+            last_viewed: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'page'
+          });
+
+        if (upsertError) {
+          console.warn('Upsert error:', upsertError);
+          return NextResponse.json({ error: 'Failed to update view count' }, { status: 500 });
+        }
+
+        // Also update total_visits in website_stats
+        try {
+          const { data: statsData, error: statsSelectError } = await supabase
+            .from('website_stats')
+            .select('total_visits')
+            .maybeSingle();
+
+          if (statsSelectError && statsSelectError.code !== 'PGRST116') {
+            console.warn('Stats select error:', statsSelectError);
+          }
+
+          const currentVisits = statsData?.total_visits || 0;
+          const newVisits = currentVisits + 1;
+
+          const { error: statsUpsertError } = await supabase
+            .from('website_stats')
+            .upsert({
+              id: 1, // Assuming single row
+              total_visits: newVisits,
+              updated_at: new Date().toISOString()
+            }, {
+              onConflict: 'id'
+            });
+
+          if (statsUpsertError) {
+            console.warn('Stats upsert error:', statsUpsertError);
+          }
+        } catch (statsErr) {
+          console.warn('Stats update failed:', statsErr);
+          // Don't fail the whole request for stats update failure
+        }
+
+        return NextResponse.json({
+          success: true,
+          total_views: newCount,
+          message: 'Page view tracked successfully'
+        });
+
+      } catch (err) {
+        console.error('Track page view exception:', err);
+        return NextResponse.json(
+          { error: 'Failed to track page view' },
+          { status: 500 }
+        );
       }
-
-      // Also update website_stats total_visits
-      const { data: stats } = await supabase
-        .from('website_stats')
-        .select('id, total_visits')
-        .single();
-
-      if (stats) {
-        await supabase
-          .from('website_stats')
-          .update({ total_visits: (stats.total_visits || 0) + 1 })
-          .eq('id', stats.id);
-      } else {
-        await supabase.from('website_stats').insert([
-          {
-            articles: 0,
-            monthly_views: 0,
-            topics: 0,
-            projects: 0,
-            total_visits: 1,
-          },
-        ]);
-      }
-
-      return NextResponse.json({ success: true });
     }
 
     if (action === 'update-stats') {
       const { articles, monthly_views, topics, projects } = data;
 
-      const { data: stats } = await supabase
-        .from('website_stats')
-        .select('id')
-        .single();
-
-      if (stats) {
-        await supabase
+      try {
+        const { error } = await supabase
           .from('website_stats')
-          .update({
+          .upsert({
+            id: 1,
             articles,
             monthly_views,
             topics,
             projects,
-          })
-          .eq('id', stats.id);
-      } else {
-        await supabase.from('website_stats').insert([
-          {
-            articles,
-            monthly_views,
-            topics,
-            projects,
-            total_visits: 0,
-          },
-        ]);
-      }
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'id'
+          });
 
-      return NextResponse.json({ success: true });
+        if (error) {
+          console.warn('Update stats error:', error);
+          return NextResponse.json({ error: 'Failed to update stats' }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true });
+      } catch (err) {
+        console.error('Update stats exception:', err);
+        return NextResponse.json({ error: 'Failed to update stats' }, { status: 500 });
+      }
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error) {
-    console.error('Analytics error:', error);
+    console.error('POST Analytics error:', error);
     return NextResponse.json({ error: 'Failed to process analytics' }, { status: 500 });
   }
 }
