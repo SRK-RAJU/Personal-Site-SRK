@@ -27,10 +27,19 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
 
     // Attempt to increment view count, but don't fail the request if it errors
     try {
-      await supabase
+      // First check if view_count column exists
+      const { data: checkData } = await supabase
         .from('posts')
-        .update({ view_count: (data.view_count || 0) + 1 })
-        .eq('id', data.id);
+        .select('view_count')
+        .eq('id', data.id)
+        .single();
+
+      if (checkData && typeof checkData.view_count === 'number') {
+        await supabase
+          .from('posts')
+          .update({ view_count: (checkData.view_count || 0) + 1 })
+          .eq('id', data.id);
+      }
     } catch (viewCountErr) {
       // Log but don't fail - view count tracking is not critical
       console.error('Failed to update view count:', viewCountErr);

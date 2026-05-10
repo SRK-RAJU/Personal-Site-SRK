@@ -95,27 +95,38 @@ export default function Home() {
     <div className="w-full">
       {/* Hero Section with animated background */}
       <motion.section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-50 via-emerald-50/50 to-teal-50/30 dark:from-slate-950 dark:via-emerald-950/20 dark:to-slate-950"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-50 via-emerald-50/30 to-teal-50/50 dark:from-slate-950 dark:via-emerald-950/10 dark:to-slate-950"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
-        {/* Animated background elements */}
+        {/* Enhanced animated background elements */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <motion.div
-            className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-full blur-3xl"
+            className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-500/30 to-teal-500/30 rounded-full blur-3xl"
             animate={{ y: [0, -30, 0], x: [0, 30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
-            className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl"
+            className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-blue-500/30 to-cyan-500/30 rounded-full blur-3xl"
             animate={{ y: [0, 30, 0], x: [0, -30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
           />
           <motion.div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-emerald-400/10 to-emerald-600/10 rounded-full blur-3xl"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-emerald-400/20 to-emerald-600/20 rounded-full blur-3xl"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          {/* Additional floating elements */}
+          <motion.div
+            className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-2xl"
+            animate={{ y: [0, -20, 0], opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+          />
+          <motion.div
+            className="absolute bottom-20 left-20 w-24 h-24 bg-gradient-to-tr from-orange-500/20 to-yellow-500/20 rounded-full blur-2xl"
+            animate={{ y: [0, 20, 0], opacity: [0.3, 0.8, 0.3] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
           />
         </div>
 
@@ -160,26 +171,29 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <motion.div
-              className="flex gap-3 justify-center flex-wrap mb-12"
+              className="flex gap-4 justify-center flex-wrap mb-12"
               variants={itemVariants}
             >
               <Link
                 href="/blog"
-                className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-105"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-105 transform duration-200"
               >
+                <FaCode className="text-lg" />
                 Explore Articles
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="/portfolio"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl border-2 border-emerald-600 dark:border-emerald-500 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 font-bold transition-all"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border-2 border-emerald-600 dark:border-emerald-500 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 font-bold transition-all hover:scale-105 transform duration-200"
               >
+                <FaRocket className="text-lg" />
                 View Projects
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/20 font-bold transition-all"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/20 font-bold transition-all hover:scale-105 transform duration-200"
               >
+                <FaUsers className="text-lg" />
                 Get in Touch
               </Link>
             </motion.div>
@@ -199,20 +213,22 @@ export default function Home() {
                 return (
                   <motion.div
                     key={stat.label}
-                    className="card-glass text-center py-6 sm:py-8"
+                    className="card-glass text-center py-6 sm:py-8 hover:bg-gradient-to-br hover:from-emerald-50/50 hover:to-teal-50/50 dark:hover:from-emerald-900/20 dark:hover:to-teal-900/20 transition-all duration-300 border border-transparent hover:border-emerald-200 dark:hover:border-emerald-800"
                     variants={itemVariants}
                     whileHover={{ scale: 1.05, y: -5 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
-                    <Icon className="text-2xl sm:text-3xl text-emerald-500 mx-auto mb-3" />
+                    <Icon className="text-2xl sm:text-3xl text-emerald-500 mx-auto mb-3 group-hover:text-emerald-600 transition-colors" />
                     <motion.p 
                       className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white"
                       key={stat.value}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
                     >
                       {formatValue(stat.value)}
                     </motion.p>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">{stat.label}</p>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 font-medium">{stat.label}</p>
                   </motion.div>
                 );
               })}
