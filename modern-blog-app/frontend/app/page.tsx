@@ -151,7 +151,7 @@ export default function Home() {
 
             {/* Description */}
             <motion.p
-              className="text-lg sm:text-xl text-slate-800 dark:text-slate-100 mb-12 leading-relaxed max-w-3xl mx-auto font-semibold"
+              className="text-lg sm:text-xl text-slate-700 dark:text-slate-200 mb-12 leading-relaxed max-w-3xl mx-auto font-semibold"
               variants={itemVariants}
             >
               Dive deep into cloud technologies, security practices, DevOps workflows, and cutting-edge software development. 
@@ -276,10 +276,10 @@ export default function Home() {
             viewport={{ once: true }}
           >
             {[
-              { title: 'AWS Certified', subtitle: 'Associate', color: 'from-yellow-500 to-orange-500' },
-              { title: 'Azure Certified', subtitle: 'AZ-900, Administrator AZ-104', color: 'from-blue-500 to-cyan-500' },
-              { title: 'GCP Certified', subtitle: 'Associate, DevOps Professional', color: 'from-red-500 to-pink-500' },
-              { title: 'GitHub', subtitle: 'Foundations', color: 'from-gray-600 to-gray-800' },
+              { title: 'AWS Certified', subtitle: 'Solutions Architect', color: 'from-yellow-500 to-orange-500' },
+              { title: 'Azure Certified', subtitle: 'AZ-900, AZ-104', color: 'from-blue-500 to-cyan-500' },
+              { title: 'GCP Certified', subtitle: 'Associate Cloud Engineer & DevOps Engineer', color: 'from-red-500 to-pink-500' },
+              { title: 'GitHub', subtitle: 'Foundations Certified', color: 'from-gray-600 to-gray-800' },
             ].map((cert, idx) => (
               <motion.div
                 key={cert.title}

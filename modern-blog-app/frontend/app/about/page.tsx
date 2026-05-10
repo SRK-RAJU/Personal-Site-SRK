@@ -160,16 +160,24 @@ export default function About() {
         {/* Certifications */}
         <motion.section variants={itemVariants} className="mb-12">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <FaAward className="text-yellow-600" /> Certifications
+            <FaAward className="text-yellow-600" /> Certifications & Credentials
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 border-l-4 border-blue-600 bg-slate-50 dark:bg-slate-800/30">
+            <div className="p-4 border-l-4 border-yellow-600 bg-slate-50 dark:bg-slate-800/30">
               <h3 className="font-semibold dark:text-white">AWS Certified</h3>
-              <p className="text-sm text-slate-500">Solutions Architect & DevOps Professional</p>
+              <p className="text-sm text-slate-500">Solutions Architect</p>
             </div>
-            <div className="p-4 border-l-4 border-blue-400 bg-slate-50 dark:bg-slate-800/30">
+            <div className="p-4 border-l-4 border-blue-500 bg-slate-50 dark:bg-slate-800/30">
               <h3 className="font-semibold dark:text-white">Azure Certified</h3>
-              <p className="text-sm text-slate-500">Solutions Architect & DevOps Engineer</p>
+              <p className="text-sm text-slate-500">AZ-900, AZ-104</p>
+            </div>
+            <div className="p-4 border-l-4 border-red-600 bg-slate-50 dark:bg-slate-800/30">
+              <h3 className="font-semibold dark:text-white">GCP Certified</h3>
+              <p className="text-sm text-slate-500">Associate Cloud Engineer & DevOps Professional</p>
+            </div>
+            <div className="p-4 border-l-4 border-gray-700 bg-slate-50 dark:bg-slate-800/30">
+              <h3 className="font-semibold dark:text-white">GitHub Foundations</h3>
+              <p className="text-sm text-slate-500">GitHub Certified Foundations</p>
             </div>
           </div>
         </motion.section>
