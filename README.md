@@ -258,4 +258,4 @@ Check the docs folder for detailed guides, or open an issue on GitHub.
 
 **Ready to launch?** Start with the Quick Start above, or read the detailed guides in the `docs/` folder. Your site will be live in 5 minutes! 🚀
 
-**This project is maintained by Raju SRK @ rjexa inc. Visit [rjexa.com](https://rjexa.com) for more DevSecOps insights and cloud engineering content!** 
+**This project is a personal tech blog and portfolio maintained by Raju SRK. A showcase of DevOps, cloud engineering, and full-stack development insights!** 

@@ -20,7 +20,7 @@ interface Project {
 const FALLBACK_PROJECTS: Project[] = [
   {
     id: 1,
-    title: 'Personal Blog Platform (rjexa.com)',
+    title: 'Personal Tech Blog Platform',
     description: 'Modern full-stack blog platform with real-time analytics, content management, and advanced security. Features SEO optimization, responsive design, and secure authentication.',
     technologies: ['Next.js 13+', 'React', 'TypeScript', 'Tailwind CSS', 'Supabase', 'PostgreSQL', 'Cloudflare', 'Vercel'],
     link: 'https://rjexa.com',

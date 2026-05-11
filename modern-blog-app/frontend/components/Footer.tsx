@@ -204,7 +204,7 @@ export default function Footer() {
                   Copyright Protection
                 </p>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                  © {currentYear} rjexa inc. All rights reserved.
+                  © {currentYear} Raju SRK. All rights reserved.
                 </p>
               </div>
             </div>
@@ -214,7 +214,7 @@ export default function Footer() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                © {currentYear - (new Date().getFullYear() - 2024)} - {currentYear} rjexa inc.
+                © {currentYear - (new Date().getFullYear() - 2024)} - {currentYear} Raju SRK Personal Tech Blog.
               </motion.div>
             )}
           </motion.div>
