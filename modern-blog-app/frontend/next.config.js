@@ -4,13 +4,24 @@ const nextConfig = {
   swcMinify: true,
   images: {
     remotePatterns: [
+      // Supabase storage
       {
         protocol: 'https',
-        hostname: '**',
+        hostname: '*.supabase.co',
       },
+      // Local development
       {
         protocol: 'http',
         hostname: 'localhost',
+      },
+      // Production domain
+      {
+        protocol: 'https',
+        hostname: 'rjexa.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.rjexa.com',
       },
     ],
   },

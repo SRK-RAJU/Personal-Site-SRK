@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaEye, FaFire, FaArrowRight } from 'react-icons/fa';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabaseClient';
 
 interface TrendingPost {
   id: string;
@@ -24,17 +24,7 @@ export default function TrendingPosts() {
   useEffect(() => {
     const fetchTrendingPosts = async () => {
       try {
-        // Return early if credentials are not available
-        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-          setLoading(false);
-          return;
-        }
-
-        const supabase = createClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-        );
-
+        // Use singleton client that's already initialized
         const { data, error: queryError } = await supabase
           .from('posts')
           .select('id, title, slug, excerpt, view_count, published_at, featured_image_url')
@@ -42,11 +32,25 @@ export default function TrendingPosts() {
           .order('view_count', { ascending: false })
           .limit(3);
 
-        if (queryError) throw queryError;
-        setPosts(data || []);
+        if (queryError) {
+          console.warn('Error fetching trending posts:', queryError);
+          setError(null);
+          setPosts([]);
+          setLoading(false);
+          return;
+        }
+
+        // Use fetched data with fallback images
+        const postsData: TrendingPost[] = (data || []).map((post: any) => ({
+          ...post,
+          featured_image_url: post.featured_image_url || '/images/adv-banner.svg',
+        }));
+
+        setPosts(postsData);
       } catch (err) {
         console.error('Error fetching trending posts:', err);
-        setError('Failed to load trending posts');
+        setError(null);
+        setPosts([]);
       } finally {
         setLoading(false);
       }

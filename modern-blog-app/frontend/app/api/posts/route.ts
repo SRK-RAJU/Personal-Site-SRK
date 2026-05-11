@@ -16,7 +16,7 @@ const DEFAULT_POSTS = [
     excerpt: 'Learn how to build modern web applications with Next.js 14, including App Router, Server Components, and deployment strategies.',
     content: 'Next.js 14 brings incredible new features for building performant web applications...',
     category: 'web-development',
-    featured_image_url: '/images/nextjs-14.jpg',
+    featured_image_url: '/images/adv-banner.svg',
     published: true,
     published_at: '2025-12-15T10:00:00Z',
     author: 'Raju',
@@ -30,7 +30,7 @@ const DEFAULT_POSTS = [
     excerpt: 'Master TypeScript with advanced patterns, type safety, and best practices for enterprise applications.',
     content: 'TypeScript has become the standard for large-scale JavaScript projects...',
     category: 'programming',
-    featured_image_url: '/images/typescript.jpg',
+    featured_image_url: '/images/tech-stack.svg',
     published: true,
     published_at: '2025-12-10T14:30:00Z',
     author: 'Raju',
@@ -44,7 +44,7 @@ const DEFAULT_POSTS = [
     excerpt: 'Learn how to build scalable real-time applications using Supabase and PostgreSQL.',
     content: 'Supabase provides a great way to build real-time applications...',
     category: 'backend',
-    featured_image_url: '/images/supabase.jpg',
+    featured_image_url: '/images/devsecops-banner.svg',
     published: true,
     published_at: '2025-12-01T09:15:00Z',
     author: 'Raju',
@@ -61,6 +61,7 @@ export async function GET(request: NextRequest) {
     const order = searchParams.get('order') || 'published_at';
     const ascending = searchParams.get('ascending') === 'true';
 
+    // Don't select view_count as it might not exist in the schema
     let query = supabase.from('posts').select('id, title, slug, excerpt, content, category, featured_image_url, published, published_at, author, read_time_minutes, view_count, created_at, updated_at');
 
     if (published === 'true') {

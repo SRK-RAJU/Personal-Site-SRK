@@ -57,7 +57,7 @@ export default function About() {
             Full-Stack Developer, DevOps, Security & Cloud Engineer
           </h2>
           <p className="text-lg text-cyan-600 dark:text-cyan-400 font-semibold mb-4">
-            @ rjexa inc
+            Personal Tech Blog & Developer Portfolio
           </p>
           <p className="text-lg text-slate-600 dark:text-slate-400">
             Building modern web applications and cloud solutions with a focus on performance and security.

@@ -19,7 +19,7 @@ export default function Privacy() {
   };
 
   const sections = [
-    { title: '1. Introduction', content: `Your privacy matters. By using rjexa.com, you agree to this policy.` },
+    { title: '1. Introduction', content: `Your privacy matters. By using this personal tech blog, you agree to this policy.` },
     { title: '2. Information We Collect', content: `We collect details you provide (like name, email) and basic usage data (like IP, pages visited).` },
     { title: '3. Use of Information', content: `We use your data to reply, improve our site, and keep it secure.` },
     { title: '4. Data Security', content: `We store data securely, but no online service is 100% safe. but even protection from Cloudflare` },

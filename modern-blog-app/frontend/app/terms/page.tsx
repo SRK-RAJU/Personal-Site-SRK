@@ -19,7 +19,7 @@ export default function Terms() {
   };
 
   const sections = [
-    { title: '1. Agreement', content: `By using rjexa.com, you accept these terms.` },
+    { title: '1. Agreement', content: `By using this personal tech blog, you accept these terms.` },
     { title: '2. Use', content: `Content is for personal use only — don’t copy, sell, or misuse.` },
     { title: '3. Disclaimer', content: `We provide content “as is” without guarantees.` },
     { title: '4. Limitations', content: `We’re not responsible for damages from using our site.` },
