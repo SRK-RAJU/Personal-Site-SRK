@@ -359,15 +359,15 @@ export default function About() {
         
         {/* Final Note Section */}
         <motion.section variants={itemVariants} className="mb-12 p-8 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white">Our Commitment</h2>
+          <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white">My Commitment</h2>
           <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-            At <strong>rjexa inc</strong>, we design and deliver sites from scratch, based on client requirements. 
-            All code is maintained carefully, and we continuously update to improve security, user experience, and performance. 
-            If anything feels misconfigured, we sincerely apologize and work to correct it quickly.
+            This personal tech blog is where I share knowledge and insights. 
+            All code is maintained carefully, and I continuously update to improve clarity, accuracy, and relevance. 
+            If anything feels misconfigured or outdated, I appreciate feedback and work to correct it quickly.
           </p>
           <p className="text-slate-700 dark:text-slate-300 leading-relaxed mt-4">
-            Our vision is client satisfaction and User Satisfaction — to grow business, attract projects, and through hard work. 
-            We learn, adapt, and deliver with confidence, ensuring every project reflects our dedication and values.
+            My vision is to help developers and engineers grow through shared knowledge and best practices. Through consistent learning and sharing, 
+            I aim to build a community focused on innovation, security, and operational excellence.
           </p>
         </motion.section>
 

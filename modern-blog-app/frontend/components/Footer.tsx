@@ -285,7 +285,7 @@ export default function Footer() {
           <p>
             © {currentYear} Raju{' '}
             <Link href="/" className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-bold transition-colors">
-              [rjexa.com]
+              [Tech Blog]
             </Link>
             {' '} — This is my personal blog. All content reflects my own interests and experiences. Unauthorized copying is prohibited.
           </p>
@@ -302,7 +302,7 @@ export default function Footer() {
             Made with{' '}
             <span className="text-red-600 dark:text-red-400 animate-pulse">❤️</span> by
             <Link href="/" className="font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
-              Raju [rjexa.com]
+              Raju
             </Link>
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
@@ -315,7 +315,7 @@ export default function Footer() {
           <p className="flex flex-wrap items-center gap-2 justify-center">
             Powered by
             <Link href="/" className="font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-              Raju [rjexa.com]
+              Raju
             </Link>
             {/* <span>•</span>
             <span className="font-semibold text-slate-900 dark:text-white">Supabase</span>

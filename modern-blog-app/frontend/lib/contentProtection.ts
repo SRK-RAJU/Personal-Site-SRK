@@ -122,7 +122,7 @@
 //   document.addEventListener('copy', (e) => {
 //     const selection = window.getSelection();
 //     const selectedText = selection ? selection.toString() : '';
-//     const textToCopy = `${selectedText}\n\n© ${new Date().getFullYear()} rjexa inc. All rights reserved.`;
+//     const textToCopy = `${selectedText}\n\n© ${new Date().getFullYear()} Raju SRK. All rights reserved.`;
 //     e.clipboardData?.setData('text/plain', textToCopy);
 //     e.preventDefault();
 //   });

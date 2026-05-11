@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Contact - rjexa inc',
-  description: 'Get in touch with rjexa for DevSecOps consulting, cloud architecture, or technical discussions. Reach out to Raju SRK.[https://rjexa.com/contact]',
+  title: 'Contact - Raju SRK',
+  description: 'Get in touch with Raju for DevSecOps consulting, cloud architecture, or technical discussions. Reach out to discuss your projects and ideas.',
 };
 
 export default function ContactLayout({
