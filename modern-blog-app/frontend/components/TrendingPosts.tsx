@@ -111,6 +111,11 @@ export default function TrendingPosts() {
                     alt={post.title}
                     fill
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    unoptimized={post.featured_image_url.endsWith('.svg')}
+                    onError={(e) => {
+                      // Silently handle image errors
+                      console.warn(`Failed to load image: ${post.featured_image_url}`);
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
                 </div>
