@@ -100,7 +100,6 @@ export default function LazySupabaseImage({
           width={width}
           height={height}
           className={className}
-          onError={() => setError(true)}
         />
       ) : (
         <div className={`bg-slate-200 dark:bg-slate-700 ${className}`} />

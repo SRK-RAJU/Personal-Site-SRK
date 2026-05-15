@@ -290,9 +290,6 @@ export default async function BlogPostPage({
                 height={400}
                 className="w-full h-96 object-cover"
                 priority
-                onError={(e) => {
-                  console.warn(`Failed to load image: ${post.featured_image_url}`);
-                }}
               />
             </div>
           </div>

@@ -13,6 +13,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://rjexa.com'),
   title: process.env.NEXT_PUBLIC_SITE_NAME || 'Raju Tech - Full-Stack Developer, Security, DevOps & Cloud Engineer',
   description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Full-stack development, cloud architecture, modern web solutions. Expert in React, Next.js, Node.js, Terraform, Ansible, Python, Docker, Kubernetes, AWS, and Azure DevOps.',
   authors: [{ name: process.env.NEXT_PUBLIC_AUTHOR || 'Raju' }],
