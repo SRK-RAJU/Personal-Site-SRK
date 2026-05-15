@@ -76,6 +76,11 @@ export default function TrendingPosts() {
     return null;
   }
 
+  // Helper function to determine if image should not be optimized
+  const isLocalImage = (url: string) => {
+    return url.startsWith('/') && !url.includes('http');
+  };
+
   return (
     <section className="py-12">
       <div className="container-max">
@@ -111,7 +116,7 @@ export default function TrendingPosts() {
                     alt={post.title}
                     fill
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    unoptimized={post.featured_image_url.endsWith('.svg')}
+                    unoptimized={isLocalImage(post.featured_image_url)}
                     onError={(e) => {
                       // Silently handle image errors
                       console.warn(`Failed to load image: ${post.featured_image_url}`);
