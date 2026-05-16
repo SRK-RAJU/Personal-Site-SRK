@@ -78,10 +78,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 border-t border-violet-500/20 dark:border-violet-500/30">
+    <footer className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/85 to-slate-900/95 dark:from-slate-950/95 dark:via-slate-900/85 dark:to-slate-950/95 border-t border-violet-500/20 dark:border-violet-500/30">
       {/* Decorative elements */}
       <motion.div
-        className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-full blur-3xl -z-10"
+        className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-violet-500/12 to-purple-500/12 rounded-full blur-3xl -z-10"
         animate={{ y: [0, -30, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -109,9 +109,9 @@ export default function Footer() {
                   <h3 className="text-3xl font-black text-slate-900 dark:text-white">rj</h3>
                 </div>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-3 font-semibold group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">Raju Tech</p>
+              <p className="text-sm text-slate-300 dark:text-slate-200 mt-3 font-semibold group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">Raju Tech</p>
             </Link>
-            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-sm text-slate-300 dark:text-slate-200 leading-relaxed">
               Cloud & DevOps specialist. Full-stack development, security engineering, and modern infrastructure solutions. Building secure, scalable applications.
             </p>
             <motion.div
@@ -130,7 +130,7 @@ export default function Footer() {
                     title={social.label}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`w-10 h-10 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 ${social.color} transition-all duration-200 hover:scale-110`}
+                    className={`w-10 h-10 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 ${social.color} transition-all duration-200 hover:scale-110`}
                     variants={itemVariants}
                     whileHover={{ y: -5 }}
                     initial={{ opacity: 0, scale: 0 }}
@@ -163,7 +163,7 @@ export default function Footer() {
                       href={link.href}
                       target={link.href.startsWith('http') ? '_blank' : undefined}
                       rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className="text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors text-sm font-medium inline-flex items-center gap-2"
+                      className="text-slate-300 dark:text-slate-200 hover:text-violet-500 dark:hover:text-violet-300 transition-colors text-sm font-medium inline-flex items-center gap-2"
                     >
                       {link.label}
                       {link.href.startsWith('http') && <FaArrowRight className="text-xs opacity-0 group-hover:opacity-100" />}

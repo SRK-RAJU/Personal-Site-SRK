@@ -94,12 +94,12 @@ function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           priority={index === 0}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent group-hover:from-slate-950/95 transition-all duration-300"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/35 to-transparent group-hover:from-slate-950/90 transition-all duration-300"></div>
       </div>
 
       {/* Content */}
       <div className="p-6 flex flex-col flex-1">
-        <h3 className="font-bold text-lg text-white group-hover:bg-gradient-to-r group-hover:from-violet-300 group-hover:via-purple-300 group-hover:to-pink-300 group-hover:bg-clip-text group-hover:text-transparent transition-all line-clamp-2 mb-3 flex-1">
+        <h3 className="font-bold text-lg text-white transition-colors line-clamp-2 mb-3 flex-1 group-hover:text-violet-100">
           {post.title}
         </h3>
 
@@ -108,7 +108,7 @@ function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
         {/* Stats and date */}
         <div className="flex items-center justify-between mb-4 pt-4 border-t border-white/10">
           <div className="flex items-center gap-2 text-sm">
-            <FaEye className={`text-lg bg-gradient-to-r ${gradient} bg-clip-text text-transparent`} />
+            <FaEye className="text-white" />
             <span className="font-bold text-white">{post.view_count.toLocaleString()}</span>
             <span className="text-gray-400">views</span>
           </div>
@@ -118,9 +118,9 @@ function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
         </div>
 
         {/* CTA */}
-        <div className={`flex items-center gap-2 bg-gradient-to-r ${gradient} bg-clip-text text-transparent font-bold group-hover:gap-3 transition-all text-sm`}>
+        <div className="mt-auto inline-flex items-center gap-2 px-4 py-3 rounded-full bg-white/10 text-white font-bold transition-all duration-300 group-hover:bg-white/20 text-sm">
           Read Article
-          <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform" />
+          <FaArrowRight className="text-sm transition-transform group-hover:translate-x-1" />
         </div>
       </div>
     </Link>
