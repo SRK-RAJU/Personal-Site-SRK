@@ -120,7 +120,7 @@ export default function Header() {
               >
                 <Link
                   href={item.href}
-                  className="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-violet-100 dark:hover:bg-violet-900/30 hover:text-violet-700 dark:hover:text-violet-400 transition-all duration-200 flex items-center gap-2 font-medium"
+                  className="px-4 py-2 rounded-full bg-slate-100/90 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:text-violet-700 dark:hover:text-violet-100 transition-all duration-200 flex items-center gap-2 font-semibold ring-1 ring-slate-200 dark:ring-slate-700"
                 >
                   <Icon className="text-sm" />
                   {item.label}
@@ -277,7 +277,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-violet-100 dark:hover:bg-violet-900/30 hover:text-violet-700 dark:hover:text-violet-400 transition-all font-medium"
+                  className="flex items-center gap-3 px-4 py-3 rounded-full bg-slate-100/90 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:text-violet-700 dark:hover:text-violet-100 transition-all font-semibold"
                 >
                   <Icon className="text-lg" />
                   {item.label}
