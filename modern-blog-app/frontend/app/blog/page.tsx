@@ -40,10 +40,10 @@ export default function Blog() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 text-slate-900 dark:text-white">
               <span className="gradient-text">Latest</span> Articles
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto">
+            <p className="text-slate-900 dark:text-slate-200 text-base sm:text-lg max-w-2xl mx-auto font-semibold">
               Insights, tutorials, and thoughts on web development, cloud architecture, DevOps, and modern technology practices.
             </p>
           </motion.div>

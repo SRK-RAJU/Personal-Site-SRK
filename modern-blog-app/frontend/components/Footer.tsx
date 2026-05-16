@@ -111,7 +111,7 @@ export default function Footer() {
               </div>
               <p className="text-sm text-slate-800 dark:text-slate-200 mt-3 font-semibold group-hover:text-violet-700 dark:group-hover:text-violet-400 transition-colors">Raju Tech</p>
             </Link>
-            <p className="text-sm text-slate-300 dark:text-slate-200 leading-relaxed">
+            <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-semibold">
               Cloud & DevOps specialist. Full-stack development, security engineering, and modern infrastructure solutions. Building secure, scalable applications.
             </p>
             <motion.div

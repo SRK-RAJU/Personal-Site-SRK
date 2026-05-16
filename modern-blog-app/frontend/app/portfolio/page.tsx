@@ -91,10 +91,10 @@ export default function Portfolio() {
 
       {/* Heading */}
       <div className="mb-12">
-        <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+        <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-slate-900 dark:text-white">
           My Projects
         </h1>
-        <p className="text-xl text-slate-600 dark:text-slate-400">
+        <p className="text-xl text-slate-900 dark:text-slate-200 font-semibold">
           Selected projects showcasing my skills in full-stack development and cloud engineering. All projects are actively maintained and regularly updated. Check them out and share your feedback!
         </p>
       </div>

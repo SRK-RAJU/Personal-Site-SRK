@@ -204,10 +204,10 @@ export default function TrendingPosts() {
             <FaFire className="text-white text-3xl relative z-10" />
           </div>
           <div>
-            <h2 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-violet-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
+            <h2 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white">
               Trending Now
             </h2>
-            <p className="text-sm md:text-base text-gray-300 mt-1">
+            <p className="text-sm md:text-base text-slate-700 dark:text-slate-300 mt-1 font-semibold">
               Most viewed articles this week
             </p>
           </div>
