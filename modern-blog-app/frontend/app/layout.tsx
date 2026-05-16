@@ -15,15 +15,15 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://rjexa.com'),
   title: process.env.NEXT_PUBLIC_SITE_NAME || 'Raju Tech - Full-Stack Developer, Security, DevOps & Cloud Engineer',
-  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Full-stack development, cloud architecture, modern web solutions. Expert in React, Next.js, Node.js, Terraform, Ansible, Python, Docker, Kubernetes, AWS, and Azure DevOps.',
+  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal tech blog and portfolio exploring cloud engineering, security, and modern web development. Insights on React, Next.js, Node.js, Terraform, Ansible, Python, Docker, Kubernetes, AWS, and Azure DevOps.',
   authors: [{ name: process.env.NEXT_PUBLIC_AUTHOR || 'Raju' }],
-  keywords: ['web development', 'full-stack', 'react', 'next.js', 'cloud', 'aws', 'azure', 'node.js', 'javascript', 'typescript', 'devops', 'security', 'terraform', 'ansible', 'docker', 'kubernetes', 'python', 'monitoring', 'operations', 'zscaler', 'cloudflare', 'supabase', 'PostgreSQL'],
+  keywords: ['personal blog', 'tech portfolio', 'cloud engineering', 'full-stack', 'react', 'next.js', 'node.js', 'typescript', 'devops', 'security', 'terraform', 'ansible', 'docker', 'kubernetes', 'aws', 'azure', 'python', 'monitoring', 'cloudflare', 'supabase', 'postgresql'],
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: process.env.NEXT_PUBLIC_SITE_URL || 'https://rjexa.com',
     siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Raju Tech',
-    description: 'Professional web development and cloud engineering services by Raju'
+    description: 'Personal tech blog and portfolio for cloud engineering, DevOps, and modern web development.'
   },
   twitter: {
     card: 'summary_large_image',

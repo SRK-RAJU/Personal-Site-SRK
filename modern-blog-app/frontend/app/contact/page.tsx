@@ -159,7 +159,7 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
-                  placeholder="DevOps consulting project"
+                  placeholder="Technical discussion, feedback, or question"
                 />
               </div>
 
@@ -176,7 +176,7 @@ export default function Contact() {
                   required
                   rows={6}
                   className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
-                  placeholder="Tell me about your project or inquiry..."
+                  placeholder="Tell me about your question, idea, or feedback..."
                 />
               </div>
 
@@ -256,9 +256,9 @@ export default function Contact() {
               <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white">Quick Facts</h3>
               <ul className="space-y-2 text-sm text-slate-800 dark:text-slate-200">
                 <li>✓ Response time: 24-48 hours</li>
-                <li>✓ Available for consulting</li>
-                <li>✓ Open to freelance projects</li>
-                <li>✓ DevOps expertise</li>
+                <li>✓ Open to technical discussions</li>
+                <li>✓ Happy to connect on open-source ideas</li>
+                <li>✓ Cloud, DevOps & security topics</li>
                 <li>✓ AWS certified</li>
                 <li>✓ Based in India (IST)</li>
               </ul>
@@ -266,27 +266,27 @@ export default function Contact() {
           </motion.div>
         </div>
 
-        {/* Additional Services */}
+        {/* Personal Topics */}
         <motion.section variants={itemVariants} className="mt-12 pt-12 border-t border-slate-200 dark:border-slate-700">
-          <h2 className="text-2xl font-bold mb-6">What I Can Help With</h2>
+          <h2 className="text-2xl font-bold mb-6">Topics I Explore</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               'Infrastructure as Code (IaC)',
-              'CI/CD Pipeline Setup',
-              'Kubernetes Deployment',
-              'Cloud Architecture Review',
+              'CI/CD Pipeline Design',
+              'Kubernetes & Containerization',
+              'Cloud Architecture Patterns',
               'Performance Optimization',
               'Monitoring & Observability',
-              'Security Hardening',
+              'Security Best Practices',
               'Cost Optimization',
-              'DevOps Consulting',
-              'Automation Scripting',
-              'Operations Support',
-              'Testing',
-              'Cloud Migration',
-            ].map((service, idx) => (
+              'Automation Workflows',
+              'Developer Tooling',
+              'Open-source collaboration',
+              'Technical writing',
+              'Cloud migration learnings',
+            ].map((topic, idx) => (
               <div key={idx} className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                <p className="text-slate-900 dark:text-white font-medium">• {service}</p>
+                <p className="text-slate-900 dark:text-white font-medium">• {topic}</p>
               </div>
             ))}
           </div>

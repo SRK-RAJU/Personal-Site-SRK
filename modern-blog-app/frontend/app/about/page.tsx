@@ -84,9 +84,7 @@ export default function About() {
             </p>
             {/* Personal Note */}
             <p className="italic text-slate-800 dark:text-slate-200">
-              These sites are designed and built by me based on client requirements and my learning journey. I often work on these projects during weekends and holidays 
-              out of genuine interest in supporting clients and continuously improving my skills. My goal is to build impactful solutions, improve my expertise, 
-              and deliver high-quality applications. If you find any issues or have suggestions, please reach out!
+              These projects are personal learning experiments and independent demos created during my free time. I build them to explore new technologies, sharpen my skills, and share practical insights from my development journey. If you find any issues or have suggestions, please reach out!
             </p>
           </div>
         </motion.section>
@@ -189,8 +187,7 @@ export default function About() {
         >
           <h2 className="text-3xl font-bold mb-4">Let's Connect</h2>
           <p className="mb-8 text-blue-100 max-w-2xl">
-            Feel free to reach out if you want to discuss web development, collaborate on a project, or 
-            just chat about tech. I'm always open to technical discussions and new opportunities.
+            Feel free to reach out if you want to discuss web development, share ideas, or just chat about tech. I'm always open to technical conversations and learning opportunities.
           </p>
           <div className="flex flex-wrap justify-center sm:justify-start gap-4">
             <Link 
