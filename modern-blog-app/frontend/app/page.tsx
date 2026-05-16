@@ -95,37 +95,37 @@ export default function Home() {
     <div className="w-full">
       {/* Hero Section with animated background */}
       <motion.section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-50 via-emerald-50/30 to-teal-50/50 dark:from-slate-950 dark:via-emerald-950/10 dark:to-slate-950"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-50 via-emerald-50/50 to-cyan-50/50 dark:from-slate-950 dark:via-emerald-950/20 dark:to-slate-950"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
-        {/* Enhanced animated background elements */}
+        {/* Enhanced animated background elements with more vibrant colors */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <motion.div
-            className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-500/30 to-teal-500/30 rounded-full blur-3xl"
+            className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-400/40 to-teal-500/40 rounded-full blur-3xl"
             animate={{ y: [0, -30, 0], x: [0, 30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
-            className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-blue-500/30 to-cyan-500/30 rounded-full blur-3xl"
+            className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-cyan-400/40 to-blue-500/40 rounded-full blur-3xl"
             animate={{ y: [0, 30, 0], x: [0, -30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
           />
           <motion.div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-emerald-400/20 to-emerald-600/20 rounded-full blur-3xl"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-emerald-300/30 to-emerald-500/30 rounded-full blur-3xl"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           />
-          {/* Additional floating elements */}
+          {/* Additional floating elements with vibrant colors */}
           <motion.div
-            className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-2xl"
-            animate={{ y: [0, -20, 0], opacity: [0.5, 1, 0.5] }}
+            className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-purple-400/40 to-pink-500/40 rounded-full blur-2xl"
+            animate={{ y: [0, -20, 0], opacity: [0.6, 1, 0.6] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
           />
           <motion.div
-            className="absolute bottom-20 left-20 w-24 h-24 bg-gradient-to-tr from-orange-500/20 to-yellow-500/20 rounded-full blur-2xl"
-            animate={{ y: [0, 20, 0], opacity: [0.3, 0.8, 0.3] }}
+            className="absolute bottom-20 left-20 w-24 h-24 bg-gradient-to-tr from-orange-400/40 to-yellow-400/40 rounded-full blur-2xl"
+            animate={{ y: [0, 20, 0], opacity: [0.4, 0.9, 0.4] }}
             transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
           />
         </div>
@@ -152,7 +152,7 @@ export default function Home() {
               className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-6 tracking-tight"
               variants={itemVariants}
             >
-              <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 bg-clip-text text-transparent">
                 Architecting the Future
               </span>
               <span className="block text-slate-900 dark:text-white mt-4 text-5xl sm:text-6xl font-bold">
@@ -213,14 +213,14 @@ export default function Home() {
                 return (
                   <motion.div
                     key={stat.label}
-                    className="card-glass text-center py-6 sm:py-8 hover:bg-gradient-to-br hover:from-emerald-50/50 hover:to-teal-50/50 dark:hover:from-emerald-900/20 dark:hover:to-teal-900/20 transition-all duration-300 border border-transparent hover:border-emerald-200 dark:hover:border-emerald-800"
+                    className="card-glass text-center py-6 sm:py-8 bg-white dark:bg-slate-800 hover:bg-gradient-to-br hover:from-emerald-50 hover:to-cyan-50 dark:hover:from-emerald-900/30 dark:hover:to-cyan-900/30 transition-all duration-300 border-2 border-slate-100 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 shadow-md hover:shadow-xl"
                     variants={itemVariants}
-                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileHover={{ scale: 1.08, y: -8 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
-                    <Icon className="text-2xl sm:text-3xl text-emerald-500 mx-auto mb-3 group-hover:text-emerald-600 transition-colors" />
+                    <Icon className="text-3xl sm:text-4xl text-emerald-500 dark:text-emerald-400 mx-auto mb-3 group-hover:text-emerald-600 transition-colors" />
                     <motion.p 
-                      className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white"
+                      className="text-3xl sm:text-4xl font-bold text-emerald-600 dark:text-emerald-400"
                       key={stat.value}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -228,7 +228,7 @@ export default function Home() {
                     >
                       {formatValue(stat.value)}
                     </motion.p>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 font-medium">{stat.label}</p>
+                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-2 font-semibold">{stat.label}</p>
                   </motion.div>
                 );
               })}
@@ -594,7 +594,7 @@ export default function Home() {
         viewport={{ once: true, margin: '-100px' }}
       >
         <motion.div
-          className="relative bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-700 dark:via-teal-700 dark:to-cyan-700 rounded-2xl p-12 md:p-20 text-center shadow-2xl overflow-hidden"
+          className="relative bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 dark:from-emerald-600 dark:via-teal-600 dark:to-cyan-700 rounded-2xl p-12 md:p-20 text-center shadow-2xl overflow-hidden"
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
@@ -602,7 +602,7 @@ export default function Home() {
         >
           {/* Animated background */}
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-transparent"
+            className="absolute inset-0 bg-gradient-to-r from-emerald-400/30 to-transparent"
             animate={{ x: [0, 100, 0] }}
             transition={{ duration: 8, repeat: Infinity }}
           />
@@ -621,7 +621,7 @@ export default function Home() {
               Ready to Build Something Extraordinary?
             </motion.h2>
             <motion.p
-              className="text-lg text-emerald-50 mb-8 max-w-2xl mx-auto"
+              className="text-lg text-emerald-100 mb-8 max-w-2xl mx-auto font-semibold"
               variants={itemVariants}
             >
               Whether you have a project in mind, want to collaborate, or just want to chat about cloud and DevOps, 
@@ -630,7 +630,7 @@ export default function Home() {
             <motion.div variants={itemVariants}>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-emerald-600 hover:bg-emerald-50 font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-105"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-emerald-600 hover:bg-emerald-50 font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-110 transform duration-200"
               >
                 Start a Conversation
                 <FaArrowRight />

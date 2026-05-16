@@ -2,6 +2,7 @@
 
 import { FaGithub, FaExternalLinkAlt, FaArrowLeft } from 'react-icons/fa';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -120,19 +121,19 @@ export default function Portfolio() {
               transition={{ duration: 0.3, delay: idx * 0.1 }}
             >
               {project.image && (
-                <div
-                  className="w-full h-48 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-lg mb-4 overflow-hidden border-2 border-emerald-500/30 hover:border-emerald-500/60 transition-all"
-                  style={{
-                    backgroundImage: `url(${project.image})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                >
-                  {!project.image && (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-300 to-slate-400 dark:from-slate-700 dark:to-slate-800">
-                      <span className="text-gray-600 dark:text-gray-300">No image available</span>
-                    </div>
-                  )}
+                <div className="w-full h-48 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-lg mb-4 overflow-hidden border-2 border-emerald-500/30 hover:border-emerald-500/60 transition-all relative">
+                  <Image
+                    src={project.image}
+                    alt={project.title}
+                    fill
+                    unoptimized
+                    onError={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      img.style.display = 'none';
+                    }}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
                 </div>
               )}
 

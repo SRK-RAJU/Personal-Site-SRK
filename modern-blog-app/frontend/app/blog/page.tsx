@@ -32,7 +32,7 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen w-full">
-      <section className="section-padding bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 dark:from-cyan-500/10 dark:via-transparent dark:to-blue-500/10 border-b border-cyan-500/20">
+      <section className="section-padding bg-gradient-to-br from-cyan-50/80 via-blue-50/50 to-cyan-50/80 dark:from-cyan-950/30 dark:via-blue-950/20 dark:to-cyan-950/30 border-b border-cyan-300/50 dark:border-cyan-700/50">
         <div className="container-max">
           <motion.div
             className="text-center max-w-3xl mx-auto"
@@ -84,12 +84,18 @@ export default function Blog() {
                   <Link href={`/blog/${post.slug}`} className="group block h-full">
                     <div className="card-glass card-gradient h-full flex flex-col hover:border-cyan-500/50 transition-all duration-300 overflow-hidden">
                       {post.featured_image_url && (
-                        <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-cyan-500/10 to-blue-500/10 mb-4 sm:mb-6">
+                        <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-cyan-500/20 to-blue-500/20 mb-4 sm:mb-6 rounded-lg border border-cyan-200 dark:border-cyan-800">
                           <Image
                             src={post.featured_image_url}
                             alt={post.title}
                             fill
+                            unoptimized
+                            onError={(e) => {
+                              const img = e.target as HTMLImageElement;
+                              img.style.display = 'none';
+                            }}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                         </div>
