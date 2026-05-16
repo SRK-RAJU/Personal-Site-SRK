@@ -106,7 +106,7 @@ export default function Footer() {
               <div className="relative inline-block">
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-100 to-blue-100 rounded-lg blur opacity-70 group-hover:opacity-100 transition duration-300" />
                 <div className="relative px-4 py-3 bg-white dark:bg-slate-950 rounded-lg shadow-md shadow-violet-200/30">
-                  <h3 className="text-3xl font-black text-slate-900 dark:text-white">rj</h3>
+                  <h3 className="text-3xl font-serif text-slate-900 dark:text-white">Rj</h3>
                 </div>
               </div>
               <p className="text-sm text-slate-900 dark:text-slate-100 mt-3 font-semibold group-hover:text-violet-700 dark:group-hover:text-violet-400 transition-colors">Raju Tech</p>
