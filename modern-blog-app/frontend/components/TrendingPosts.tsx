@@ -72,7 +72,7 @@ function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group relative overflow-hidden rounded-2xl border border-white/10 hover:border-white/40 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/50 h-full flex flex-col bg-white/5 backdrop-blur-xl hover:bg-white/10"
+      className="group relative overflow-hidden rounded-2xl border border-slate-700/40 hover:border-violet-400/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/30 h-full flex flex-col bg-slate-950/95 backdrop-blur-xl hover:bg-slate-900/95"
     >
       {/* Rank Badge with gradient */}
       <div className={`absolute top-4 left-4 z-20 inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br ${gradient} text-white font-bold text-lg shadow-lg`}>
@@ -103,22 +103,24 @@ function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
           {post.title}
         </h3>
 
-        <p className="text-sm text-gray-300 line-clamp-2 mb-4 flex-1">{post.excerpt}</p>
+        <p className="text-sm text-slate-300 line-clamp-2 mb-4 flex-1">
+          {post.excerpt}
+        </p>
 
         {/* Stats and date */}
         <div className="flex items-center justify-between mb-4 pt-4 border-t border-white/10">
           <div className="flex items-center gap-2 text-sm">
-            <FaEye className="text-white" />
+            <FaEye className="text-violet-300" />
             <span className="font-bold text-white">{post.view_count.toLocaleString()}</span>
-            <span className="text-gray-400">views</span>
+            <span className="text-slate-400">views</span>
           </div>
-          <time className="text-xs text-gray-400">
+          <time className="text-xs text-slate-400">
             {new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
           </time>
         </div>
 
         {/* CTA */}
-        <div className="mt-auto inline-flex items-center gap-2 px-4 py-3 rounded-full bg-white/10 text-white font-bold transition-all duration-300 group-hover:bg-white/20 text-sm">
+        <div className="mt-auto inline-flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-violet-600 to-pink-600 text-white font-bold transition-all duration-300 hover:scale-[1.02] text-sm">
           Read Article
           <FaArrowRight className="text-sm transition-transform group-hover:translate-x-1" />
         </div>
