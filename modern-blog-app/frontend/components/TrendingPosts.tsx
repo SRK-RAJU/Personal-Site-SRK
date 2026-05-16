@@ -43,14 +43,17 @@ const FALLBACK_POSTS: TrendingPost[] = [
     excerpt: 'Learn how to build scalable real-time applications.',
     view_count: 75,
     published_at: '2025-12-01T09:15:00Z',
-    featured_image_url: '/images/devsecops-banner.svg',
+    featured_image_url: '/images/adv-banner.svg',
   },
 ];
 
 function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
   const [imgSrc, setImgSrc] = useState<string>(
-    post.featured_image_url || '/images/adv-banner.svg'
+    post.featured_image_url && post.featured_image_url.trim() 
+      ? (post.featured_image_url.startsWith('/') ? post.featured_image_url : '/' + post.featured_image_url)
+      : '/images/adv-banner.svg'
   );
+  const [imageError, setImageError] = useState(false);
 
   // ensure leading slash for public images
   useEffect(() => {
@@ -59,49 +62,65 @@ function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
     }
   }, [imgSrc]);
 
+  const gradients = [
+    'from-cyan-500 via-purple-500 to-pink-500',
+    'from-purple-500 via-pink-500 to-orange-500',
+    'from-orange-500 via-red-500 to-pink-500'
+  ];
+  const gradient = gradients[index] || gradients[0];
+
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 hover:border-orange-500 dark:hover:border-orange-500 transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/20 h-full flex flex-col bg-white dark:bg-slate-800"
+      className="group relative overflow-hidden rounded-2xl border border-white/10 hover:border-white/40 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/50 h-full flex flex-col bg-white/5 backdrop-blur-xl hover:bg-white/10"
     >
-      <div className="absolute top-4 left-4 z-20 inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 via-red-500 to-rose-600 text-white font-bold text-sm shadow-lg shadow-orange-500/50">
+      {/* Rank Badge with gradient */}
+      <div className={`absolute top-4 left-4 z-20 inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br ${gradient} text-white font-bold text-lg shadow-lg`}>
         #{index + 1}
       </div>
 
-      <div className="relative h-40 md:h-48 overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800">
+      {/* Image container */}
+      <div className="relative h-48 md:h-56 overflow-hidden bg-gradient-to-br from-white/10 to-white/5">
         <Image
-          src={imgSrc}
+          src={!imageError && imgSrc ? imgSrc : '/images/adv-banner.svg'}
           alt={post.title}
           fill
           unoptimized
-          onError={() => setImgSrc('/images/adv-banner.svg')}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
+          onError={() => {
+            setImageError(true);
+            setImgSrc('/images/adv-banner.svg');
+          }}
+          className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-500 ease-out"
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          priority={index === 0}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent group-hover:from-slate-950/80 transition-all duration-300"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent group-hover:from-slate-950/95 transition-all duration-300"></div>
       </div>
 
-      <div className="p-4 md:p-5 flex flex-col flex-1">
-        <h3 className="font-bold text-sm md:text-base text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors line-clamp-2 mb-3 flex-1">
+      {/* Content */}
+      <div className="p-6 flex flex-col flex-1">
+        <h3 className="font-bold text-lg text-white group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:via-purple-300 group-hover:to-pink-300 group-hover:bg-clip-text group-hover:text-transparent transition-all line-clamp-2 mb-3 flex-1">
           {post.title}
         </h3>
 
-        <p className="text-xs md:text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3 flex-1">{post.excerpt}</p>
+        <p className="text-sm text-gray-300 line-clamp-2 mb-4 flex-1">{post.excerpt}</p>
 
-        <div className="flex items-center justify-between mb-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-          <div className="flex items-center gap-1.5 text-xs md:text-sm">
-            <FaEye className="text-orange-600 dark:text-orange-400 text-xs md:text-sm" />
-            <span className="font-semibold text-slate-900 dark:text-white">{post.view_count.toLocaleString()}</span>
-            <span className="text-slate-600 dark:text-slate-400">views</span>
+        {/* Stats and date */}
+        <div className="flex items-center justify-between mb-4 pt-4 border-t border-white/10">
+          <div className="flex items-center gap-2 text-sm">
+            <FaEye className={`text-lg bg-gradient-to-r ${gradient} bg-clip-text text-transparent`} />
+            <span className="font-bold text-white">{post.view_count.toLocaleString()}</span>
+            <span className="text-gray-400">views</span>
           </div>
-          <time className="text-xs text-slate-500 dark:text-slate-500">
+          <time className="text-xs text-gray-400">
             {new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
           </time>
         </div>
 
-        <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400 font-semibold group-hover:gap-3 transition-all text-xs md:text-sm">
+        {/* CTA */}
+        <div className={`flex items-center gap-2 bg-gradient-to-r ${gradient} bg-clip-text text-transparent font-bold group-hover:gap-3 transition-all text-sm`}>
           Read Article
-          <FaArrowRight className="text-xs group-hover:translate-x-1 transition-transform" />
+          <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
     </Link>
@@ -178,23 +197,24 @@ export default function TrendingPosts() {
   return (
     <section className="py-12 lg:py-16">
       <div className="container-max">
-        {/* Header with Icon */}
-        <div className="flex items-center gap-3 mb-8 md:mb-12">
-          <div className="inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-orange-400 via-red-500 to-rose-600 shadow-lg shadow-orange-500/30">
-            <FaFire className="text-white text-xl md:text-2xl" />
+        {/* Header with Icon - Modern Design */}
+        <div className="flex items-center gap-4 mb-12">
+          <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500 shadow-2xl overflow-hidden group">
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-50 transition-opacity bg-white" />
+            <FaFire className="text-white text-3xl relative z-10" />
           </div>
           <div>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-600 via-red-600 to-rose-600 dark:from-orange-400 dark:via-red-400 dark:to-rose-400 bg-clip-text text-transparent">
+            <h2 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
               Trending Now
             </h2>
-            <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-1">
+            <p className="text-sm md:text-base text-gray-300 mt-1">
               Most viewed articles this week
             </p>
           </div>
         </div>
 
         {/* Trending Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 lg:gap-7 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-8">
           {posts.map((post, index) => (
             <TrendingCard key={post.id} post={post} index={index} />
           ))}

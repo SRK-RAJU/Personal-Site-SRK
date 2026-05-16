@@ -9,7 +9,7 @@ interface StatsCardProps {
   value: string | number;
   change?: number;
   trend?: 'up' | 'down';
-  color?: 'emerald' | 'blue' | 'orange' | 'purple';
+  color?: 'cyan' | 'blue' | 'orange' | 'purple';
   gradient?: string;
 }
 
@@ -19,11 +19,11 @@ export default function StatsCard({
   value,
   change,
   trend = 'up',
-  color = 'emerald',
-  gradient = 'from-emerald-600 to-teal-600',
+  color = 'cyan',
+  gradient = 'from-cyan-600 to-blue-600',
 }: StatsCardProps) {
   const colorClasses = {
-    emerald: 'from-emerald-500 to-teal-500',
+    cyan: 'from-cyan-500 to-blue-500',
     blue: 'from-blue-500 to-cyan-500',
     orange: 'from-orange-500 to-red-500',
     purple: 'from-purple-500 to-pink-500',
@@ -35,24 +35,24 @@ export default function StatsCard({
 
   return (
     <motion.div
-      className="card-glass border-2 border-transparent hover:border-emerald-500/50 dark:hover:border-emerald-500/30"
+      className="card-glass border-2 border-transparent hover:border-cyan-500/50 dark:hover:border-cyan-500/40 shadow-lg hover:shadow-2xl hover:shadow-cyan-500/20"
       whileHover={{ scale: 1.05, y: -5 }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
       {/* Icon container */}
-      <div className={`inline-flex p-3 rounded-lg bg-gradient-to-br ${bgGradient} text-white mb-4 glow-emerald`}>
+      <div className={`inline-flex p-3 rounded-lg bg-gradient-to-br ${bgGradient} text-white mb-4 glow-cyan shadow-lg`}>
         <div className="text-2xl">{icon}</div>
       </div>
 
       {/* Label */}
-      <p className="text-sm text-slate-600 dark:text-slate-400 font-medium mb-1">
+      <p className="text-sm text-slate-600 dark:text-slate-300 font-medium mb-1">
         {label}
       </p>
 
       {/* Value */}
-      <p className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-2">
+      <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-2 bg-gradient-to-r from-cyan-300 to-purple-300 dark:from-cyan-200 dark:to-purple-200 bg-clip-text hover:text-transparent transition-all">
         {typeof value === 'number' ? value.toLocaleString() : value}
       </p>
 

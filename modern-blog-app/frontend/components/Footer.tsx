@@ -78,12 +78,17 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-gradient-to-br from-slate-50 via-white to-emerald-50/50 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/30 border-t border-slate-200 dark:border-slate-800">
+    <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 border-t border-cyan-500/20 dark:border-cyan-500/30">
       {/* Decorative elements */}
       <motion.div
-        className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-emerald-400/10 to-teal-400/10 rounded-full blur-3xl -z-10"
+        className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-full blur-3xl -z-10"
         animate={{ y: [0, -30, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-pink-500/10 to-orange-500/10 rounded-full blur-3xl -z-10"
+        animate={{ x: [0, -30, 0] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
       />
 
       <div className="container-max py-16">

@@ -8,7 +8,7 @@
   }
 
   body {
-    @apply bg-white text-slate-900 dark:bg-gradient-to-br dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 dark:text-slate-100;
+    @apply bg-white text-slate-900 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-100;
     transition: background-color 0.3s ease, color 0.3s ease;
     background-attachment: fixed;
   }
@@ -23,7 +23,7 @@
   }
 
   .bg-gradient-futuristic {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #0f3460 50%, #16213e 75%, #0f172a 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #1e3a5f 50%, #172554 75%, #0f172a 100%);
     background-size: 400% 400%;
     animation: gradient-shift 15s ease infinite;
   }
@@ -79,11 +79,15 @@
   }
 
   .btn-primary {
-    @apply btn bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 text-white hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95;
+    @apply btn bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 text-white hover:from-cyan-400 hover:via-blue-400 hover:to-purple-400 shadow-lg hover:shadow-2xl hover:shadow-cyan-500/50 hover:scale-105 active:scale-95 font-bold;
   }
 
   .btn-primary-vibrant {
-    @apply btn bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white hover:from-pink-600 hover:via-purple-600 hover:to-indigo-700 shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95;
+    @apply btn bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white hover:from-pink-400 hover:via-purple-400 hover:to-indigo-500 shadow-xl hover:shadow-2xl hover:shadow-pink-500/50 hover:scale-105 active:scale-95 font-bold;
+  }
+
+  .btn-accent {
+    @apply btn bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white hover:from-orange-400 hover:via-red-400 hover:to-pink-400 shadow-lg hover:shadow-2xl hover:shadow-orange-500/50 hover:scale-105 active:scale-95 font-bold;
   }
 
   .btn-secondary {
@@ -96,6 +100,19 @@
 
   .btn-outline-vibrant {
     @apply btn border-2 border-purple-500 text-purple-600 dark:border-purple-400 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 active:scale-95;
+  }
+
+  /* Enhanced gradient text */
+  .gradient-text-vibrant {
+    @apply bg-gradient-to-r from-cyan-300 via-purple-300 via-pink-300 to-orange-300 bg-clip-text text-transparent;
+  }
+
+  .gradient-text-primary {
+    @apply bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent;
+  }
+
+  .gradient-text-accent {
+    @apply bg-gradient-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent;
   }
 
   .card {

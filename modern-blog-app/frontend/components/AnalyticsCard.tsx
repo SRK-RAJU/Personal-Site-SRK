@@ -29,7 +29,7 @@ export default function AnalyticsCard({
 
   return (
     <motion.div
-      className="card-glass card-gradient cursor-pointer h-full"
+      className="card-glass card-gradient cursor-pointer h-full border-cyan-500/30 hover:border-cyan-400/60 hover:shadow-cyan-500/20 shadow-lg hover:shadow-2xl"
       whileHover={{ scale: 1.05, y: -5 }}
       onClick={onClick}
       initial={{ opacity: 0, y: 20 }}
@@ -38,10 +38,10 @@ export default function AnalyticsCard({
     >
       <div className="flex items-start justify-between mb-4">
         <div>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium mb-1">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 font-medium mb-1 group-hover:text-white transition-colors">
             {title}
           </p>
-          <p className="text-2xl sm:text-3xl font-bold gradient-text">{value}</p>
+          <p className="text-2xl sm:text-3xl font-bold gradient-text-vibrant">{value}</p>
           {subtitle && (
             <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">{subtitle}</p>
           )}

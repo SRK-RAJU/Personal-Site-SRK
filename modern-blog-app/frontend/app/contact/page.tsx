@@ -80,7 +80,7 @@ export default function Contact() {
         <motion.div variants={itemVariants} className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold transition-colors"
+            className="inline-flex items-center gap-2 text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 font-semibold transition-colors"
           >
             <FaArrowLeft className="text-sm" />
             Back to Home

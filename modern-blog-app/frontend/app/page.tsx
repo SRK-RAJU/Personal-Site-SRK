@@ -73,7 +73,7 @@ export default function Home() {
       title: 'Cloud & Infrastructure',
       description: 'Cloud platforms, containerization, and infrastructure as code',
       skills: ['AWS (EC2, S3, RDS, Lambda)', 'Azure (VMs, App Service, DevOps)', 'Google Cloud Platform', 'Terraform', 'Kubernetes', 'Docker', 'Ansible', 'CI/CD (Jenkins, GitHub Actions, GitLab CI, Azure DevOps)', 'Git & Version Control', 'Infrastructure as Code', 'Linux/Unix Administration', 'Networking (TCP/IP, HTTP/HTTPS)'],
-      color: 'from-emerald-500 to-teal-500',
+      color: 'from-cyan-500 to-purple-500',
     },
     {
       icon: FaCode,
@@ -95,7 +95,7 @@ export default function Home() {
     <div className="w-full">
       {/* Hero Section with animated background */}
       <motion.section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-50 via-emerald-50/50 to-cyan-50/50 dark:from-slate-950 dark:via-emerald-950/20 dark:to-slate-950"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-50 via-cyan-50/50 to-purple-50/50 dark:from-slate-950 dark:via-cyan-950/20 dark:to-slate-950"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -103,7 +103,7 @@ export default function Home() {
         {/* Enhanced animated background elements with more vibrant colors */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <motion.div
-            className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-400/40 to-teal-500/40 rounded-full blur-3xl"
+            className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-cyan-400/40 to-purple-500/40 rounded-full blur-3xl"
             animate={{ y: [0, -30, 0], x: [0, 30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -113,7 +113,7 @@ export default function Home() {
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
           />
           <motion.div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-emerald-300/30 to-emerald-500/30 rounded-full blur-3xl"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-cyan-300/30 to-purple-500/30 rounded-full blur-3xl"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           />
