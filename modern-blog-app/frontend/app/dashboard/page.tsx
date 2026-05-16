@@ -78,7 +78,7 @@ export default function DashboardHome() {
       label: 'Total Users',
       value: stats.totalUsers,
       icon: <FaUsers className="text-3xl" />,
-      color: 'bg-green-500',
+      color: 'bg-violet-500',
     },
     {
       label: 'Total Views',
@@ -158,9 +158,9 @@ export default function DashboardHome() {
 
           <a
             href="/dashboard/users"
-            className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg hover:shadow-md transition-shadow"
+            className="p-4 bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-700 rounded-lg hover:shadow-md transition-shadow"
           >
-            <h3 className="font-semibold text-green-900 dark:text-green-300 mb-2">
+            <h3 className="font-semibold text-violet-900 dark:text-violet-300 mb-2">
               Manage Users
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">

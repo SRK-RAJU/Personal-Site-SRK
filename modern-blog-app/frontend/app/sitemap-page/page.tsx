@@ -40,7 +40,7 @@ export default function SitemapPage() {
         <motion.div variants={itemVariants} className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold transition-colors"
+            className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
           >
             <FaArrowLeft className="text-sm" />
             Back to Home
@@ -49,7 +49,7 @@ export default function SitemapPage() {
 
         {/* Header */}
         <motion.div variants={itemVariants} className="mb-12">
-          <h1 className="text-5xl sm:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-600">
+          <h1 className="text-5xl sm:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-pink-600">
             Site Map
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400">
@@ -71,11 +71,11 @@ export default function SitemapPage() {
             return (
               <motion.div
                 key={idx}
-                className="card-glass p-6 border border-emerald-200 dark:border-emerald-800/50"
+                className="card-glass p-6 border border-violet-200 dark:border-violet-800/50"
                 variants={itemVariants}
               >
                 <div className="flex items-center gap-3 mb-2">
-                  <Icon className="text-emerald-600 dark:text-emerald-400 text-xl" />
+                  <Icon className="text-violet-600 dark:text-violet-400 text-xl" />
                   <p className="text-sm font-semibold text-slate-600 dark:text-slate-400">{stat.label}</p>
                 </div>
                 <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
@@ -94,7 +94,7 @@ export default function SitemapPage() {
             const priorityColors = {
               'High': 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300',
               'Medium': 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300',
-              'Low': 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300',
+              'Low': 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300',
             };
 
             return (
@@ -104,22 +104,22 @@ export default function SitemapPage() {
               >
                 <Link href={link.href}>
                   <motion.div
-                    className="card-hover border-2 border-emerald-200 dark:border-emerald-800/50 hover:border-emerald-500 dark:hover:border-emerald-500 p-6 h-full cursor-pointer group"
+                    className="card-hover border-2 border-violet-200 dark:border-violet-800/50 hover:border-violet-500 dark:hover:border-violet-500 p-6 h-full cursor-pointer group"
                     whileHover={{ y: -5 }}
                   >
                     <div className="flex items-start justify-between mb-4">
-                      <Icon className="text-3xl text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform" />
+                      <Icon className="text-3xl text-violet-600 dark:text-violet-400 group-hover:scale-110 transition-transform" />
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${priorityColors[link.priority as keyof typeof priorityColors]}`}>
                         {link.priority}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
                       {link.label}
                     </h3>
                     <p className="text-slate-600 dark:text-slate-400 text-sm">
                       {link.description}
                     </p>
-                    <div className="mt-4 text-emerald-600 dark:text-emerald-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-4 text-violet-600 dark:text-violet-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
                       Visit page →
                     </div>
                   </motion.div>

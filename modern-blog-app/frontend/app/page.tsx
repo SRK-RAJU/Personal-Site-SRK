@@ -73,14 +73,14 @@ export default function Home() {
       title: 'Cloud & Infrastructure',
       description: 'Cloud platforms, containerization, and infrastructure as code',
       skills: ['AWS (EC2, S3, RDS, Lambda)', 'Azure (VMs, App Service, DevOps)', 'Google Cloud Platform', 'Terraform', 'Kubernetes', 'Docker', 'Ansible', 'CI/CD (Jenkins, GitHub Actions, GitLab CI, Azure DevOps)', 'Git & Version Control', 'Infrastructure as Code', 'Linux/Unix Administration', 'Networking (TCP/IP, HTTP/HTTPS)'],
-      color: 'from-cyan-500 to-purple-500',
+      color: 'from-violet-500 to-purple-500',
     },
     {
       icon: FaCode,
       title: 'Full-Stack Development',
       description: 'Modern web development with focus on scalability and performance',
       skills: ['React', 'Next.js 13+', 'Node.js & Express.js', 'TypeScript', 'PostgreSQL', 'MongoDB', 'Supabase', 'REST APIs', 'GraphQL', 'Tailwind CSS', 'Python', 'JavaScript/ES6+', 'Web Design (Responsive)', 'Vercel Deployment'],
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-blue-500 to-violet-500',
     },
     {
       icon: FaDatabase,
@@ -95,7 +95,7 @@ export default function Home() {
     <div className="w-full">
       {/* Hero Section with animated background */}
       <motion.section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-50 via-cyan-50/50 to-purple-50/50 dark:from-slate-950 dark:via-cyan-950/20 dark:to-slate-950"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-50 via-violet-50/50 to-purple-50/50 dark:from-slate-950 dark:via-violet-950/20 dark:to-slate-950"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -103,17 +103,17 @@ export default function Home() {
         {/* Enhanced animated background elements with more vibrant colors */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <motion.div
-            className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-cyan-400/40 to-purple-500/40 rounded-full blur-3xl"
+            className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-violet-400/40 to-purple-500/40 rounded-full blur-3xl"
             animate={{ y: [0, -30, 0], x: [0, 30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
-            className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-cyan-400/40 to-blue-500/40 rounded-full blur-3xl"
+            className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-violet-400/40 to-blue-500/40 rounded-full blur-3xl"
             animate={{ y: [0, 30, 0], x: [0, -30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
           />
           <motion.div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-cyan-300/30 to-purple-500/30 rounded-full blur-3xl"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-violet-300/30 to-purple-500/30 rounded-full blur-3xl"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -139,11 +139,11 @@ export default function Home() {
           >
             {/* Badge */}
             <motion.div
-              className="mb-8 inline-block px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/30 to-teal-500/30 border border-emerald-400/50 dark:border-emerald-500/50 backdrop-blur-sm hover:border-emerald-400 transition-colors"
+              className="mb-8 inline-block px-4 py-2 rounded-full bg-gradient-to-r from-violet-500/30 to-pink-500/30 border border-violet-400/50 dark:border-violet-500/50 backdrop-blur-sm hover:border-violet-400 transition-colors"
               variants={itemVariants}
             >
-              <p className="text-sm font-semibold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent flex items-center gap-2">
-                <FaStar className="text-emerald-400" /> Welcome to the Next-Gen Tech Universe
+              <p className="text-sm font-semibold bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2">
+                <FaStar className="text-violet-400" /> Welcome to the Next-Gen Tech Universe
               </p>
             </motion.div>
 
@@ -152,7 +152,7 @@ export default function Home() {
               className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-6 tracking-tight"
               variants={itemVariants}
             >
-              <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-violet-500 via-pink-500 to-violet-600 bg-clip-text text-transparent">
                 Architecting the Future
               </span>
               <span className="block text-slate-900 dark:text-white mt-4 text-5xl sm:text-6xl font-bold">
@@ -176,7 +176,7 @@ export default function Home() {
             >
               <Link
                 href="/blog"
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-105 transform duration-200"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-105 transform duration-200"
               >
                 <FaCode className="text-lg" />
                 Explore Articles
@@ -184,7 +184,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/portfolio"
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border-2 border-emerald-600 dark:border-emerald-500 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 font-bold transition-all hover:scale-105 transform duration-200"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border-2 border-violet-600 dark:border-violet-500 text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 font-bold transition-all hover:scale-105 transform duration-200"
               >
                 <FaRocket className="text-lg" />
                 View Projects
@@ -213,14 +213,14 @@ export default function Home() {
                 return (
                   <motion.div
                     key={stat.label}
-                    className="card-glass text-center py-6 sm:py-8 bg-white dark:bg-slate-800 hover:bg-gradient-to-br hover:from-emerald-50 hover:to-cyan-50 dark:hover:from-emerald-900/30 dark:hover:to-cyan-900/30 transition-all duration-300 border-2 border-slate-100 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 shadow-md hover:shadow-xl"
+                    className="card-glass text-center py-6 sm:py-8 bg-white dark:bg-slate-800 hover:bg-gradient-to-br hover:from-violet-50 hover:to-violet-50 dark:hover:from-violet-900/30 dark:hover:to-violet-900/30 transition-all duration-300 border-2 border-slate-100 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500 shadow-md hover:shadow-xl"
                     variants={itemVariants}
                     whileHover={{ scale: 1.08, y: -8 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
-                    <Icon className="text-3xl sm:text-4xl text-emerald-500 dark:text-emerald-400 mx-auto mb-3 group-hover:text-emerald-600 transition-colors" />
+                    <Icon className="text-3xl sm:text-4xl text-violet-500 dark:text-violet-400 mx-auto mb-3 group-hover:text-violet-600 transition-colors" />
                     <motion.p 
-                      className="text-3xl sm:text-4xl font-bold text-emerald-600 dark:text-emerald-400"
+                      className="text-3xl sm:text-4xl font-bold text-violet-600 dark:text-violet-400"
                       key={stat.value}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -239,7 +239,7 @@ export default function Home() {
 
       {/* Trending Posts */}
       <motion.section
-        className="bg-gradient-to-b from-slate-50 via-emerald-50/50 to-slate-50 dark:from-slate-900 dark:via-emerald-900/10 dark:to-slate-900 border-y border-slate-200 dark:border-slate-800 section-padding-tight"
+        className="bg-gradient-to-b from-slate-50 via-violet-50/50 to-slate-50 dark:from-slate-900 dark:via-violet-900/10 dark:to-slate-900 border-y border-slate-200 dark:border-slate-800 section-padding-tight"
         initial="hidden"
         whileInView="visible"
         variants={sectionVariants}
@@ -293,13 +293,13 @@ export default function Home() {
           >
             {[
               { title: 'AWS Certified', subtitle: 'Solutions Architect', color: 'from-yellow-500 to-orange-500' },
-              { title: 'Azure Certified', subtitle: 'AZ-900, AZ-104', color: 'from-blue-500 to-cyan-500' },
+              { title: 'Azure Certified', subtitle: 'AZ-900, AZ-104', color: 'from-blue-500 to-violet-500' },
               { title: 'GCP Certified', subtitle: 'Associate Cloud Engineer & DevOps Engineer', color: 'from-red-500 to-pink-500' },
               { title: 'GitHub', subtitle: 'Foundations Certified', color: 'from-gray-600 to-gray-800' },
             ].map((cert, idx) => (
               <motion.div
                 key={cert.title}
-                className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500 text-center py-6"
+                className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 text-center py-6"
                 variants={itemVariants}
                 whileHover={{ scale: 1.05, y: -5 }}
               >
@@ -346,7 +346,7 @@ export default function Home() {
             return (
               <motion.div
                 key={category.title}
-                className="group card-hover border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500"
+                className="group card-hover border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500"
                 variants={itemVariants}
                 whileHover={{ y: -5 }}
               >
@@ -413,11 +413,11 @@ export default function Home() {
         >
           {/* Stack Component 1: CI/CD Pipeline */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500 overflow-hidden"
+            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 overflow-hidden"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
-            <div className="w-full h-48 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 dark:from-blue-600/40 dark:to-cyan-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-blue-500/30 dark:border-blue-500/50">
+            <div className="w-full h-48 bg-gradient-to-br from-blue-500/20 to-violet-500/20 dark:from-blue-600/40 dark:to-violet-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-blue-500/30 dark:border-blue-500/50">
               <div className="text-6xl">🔄</div>
             </div>
             <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">CI/CD Pipeline</h3>
@@ -431,7 +431,7 @@ export default function Home() {
 
           {/* Stack Component 2: Container Orchestration */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500 overflow-hidden"
+            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 overflow-hidden"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
@@ -449,11 +449,11 @@ export default function Home() {
 
           {/* Stack Component 3: Infrastructure as Code */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500 overflow-hidden"
+            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 overflow-hidden"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
-            <div className="w-full h-48 bg-gradient-to-br from-green-500/20 to-emerald-500/20 dark:from-green-600/40 dark:to-emerald-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-green-500/30 dark:border-green-500/50">
+            <div className="w-full h-48 bg-gradient-to-br from-violet-500/20 to-violet-500/20 dark:from-violet-600/40 dark:to-violet-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-violet-500/30 dark:border-violet-500/50">
               <div className="text-6xl">🏗️</div>
             </div>
             <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">Infrastructure as Code</h3>
@@ -467,7 +467,7 @@ export default function Home() {
 
           {/* Stack Component 4: Security & Monitoring */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500 overflow-hidden"
+            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 overflow-hidden"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
@@ -493,7 +493,7 @@ export default function Home() {
         variants={sectionVariants}
         viewport={{ once: true, margin: '-100px' }}
       >
-        <div className="bg-gradient-to-r from-emerald-50/50 to-teal-50/50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl p-8 md:p-16 border border-emerald-200 dark:border-emerald-800/50 backdrop-blur-sm">
+        <div className="bg-gradient-to-r from-violet-50/50 to-pink-50/50 dark:from-violet-900/20 dark:to-pink-900/20 rounded-2xl p-8 md:p-16 border border-violet-200 dark:border-violet-800/50 backdrop-blur-sm">
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -508,7 +508,7 @@ export default function Home() {
             </motion.h2>
             <div className="space-y-4 text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
               <motion.p variants={itemVariants}>
-                Hi! I'm <span className="font-bold gradient-text">Raju SRK</span>, a <span className="font-bold text-cyan-400">DevSecOps specialist and cloud engineer</span> passionate about building scalable, secure, and efficient systems. With expertise spanning cloud architecture, 
+                Hi! I'm <span className="font-bold gradient-text">Raju SRK</span>, a <span className="font-bold text-violet-400">DevSecOps specialist and cloud engineer</span> passionate about building scalable, secure, and efficient systems. With expertise spanning cloud architecture, 
                 containerization, infrastructure automation, security practices, and modern web development, I help teams and fellow developers transform ideas into secure reality.
               </motion.p>
               <motion.p variants={itemVariants}>
@@ -594,7 +594,7 @@ export default function Home() {
         viewport={{ once: true, margin: '-100px' }}
       >
         <motion.div
-          className="relative bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 dark:from-emerald-600 dark:via-teal-600 dark:to-cyan-700 rounded-2xl p-12 md:p-20 text-center shadow-2xl overflow-hidden"
+          className="relative bg-gradient-to-r from-violet-500 via-pink-500 to-violet-600 dark:from-violet-600 dark:via-pink-600 dark:to-violet-700 rounded-2xl p-12 md:p-20 text-center shadow-2xl overflow-hidden"
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
@@ -602,7 +602,7 @@ export default function Home() {
         >
           {/* Animated background */}
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-emerald-400/30 to-transparent"
+            className="absolute inset-0 bg-gradient-to-r from-violet-400/30 to-transparent"
             animate={{ x: [0, 100, 0] }}
             transition={{ duration: 8, repeat: Infinity }}
           />
@@ -621,7 +621,7 @@ export default function Home() {
               Ready to Build Something Extraordinary?
             </motion.h2>
             <motion.p
-              className="text-lg text-emerald-100 mb-8 max-w-2xl mx-auto font-semibold"
+              className="text-lg text-violet-100 mb-8 max-w-2xl mx-auto font-semibold"
               variants={itemVariants}
             >
               Whether you have a project in mind, want to collaborate, or just want to chat about cloud and DevOps, 
@@ -630,7 +630,7 @@ export default function Home() {
             <motion.div variants={itemVariants}>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-emerald-600 hover:bg-emerald-50 font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-110 transform duration-200"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-violet-600 hover:bg-violet-50 font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-110 transform duration-200"
               >
                 Start a Conversation
                 <FaArrowRight />

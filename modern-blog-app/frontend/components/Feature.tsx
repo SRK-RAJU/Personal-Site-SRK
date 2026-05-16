@@ -17,7 +17,7 @@ export default function Feature({
   title,
   description,
   details = [],
-  gradient = 'from-cyan-500 to-blue-500',
+  gradient = 'from-violet-500 to-blue-500',
   delay = 0,
 }: FeatureProps) {
   return (
@@ -29,13 +29,13 @@ export default function Feature({
       transition={{ delay }}
     >
       {/* Background gradient on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-blue-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-300" />
 
       {/* Card */}
-      <div className="relative p-6 sm:p-8 card-glass border-2 border-transparent group-hover:border-cyan-500/50 dark:group-hover:border-cyan-500/30 transition-all duration-300 h-full">
+      <div className="relative p-6 sm:p-8 card-glass border-2 border-transparent group-hover:border-violet-500/50 dark:group-hover:border-violet-500/30 transition-all duration-300 h-full">
         {/* Icon */}
         <motion.div
-          className={`inline-flex p-4 rounded-xl bg-gradient-to-br ${gradient} text-white mb-4 sm:mb-6 glow-cyan`}
+          className={`inline-flex p-4 rounded-xl bg-gradient-to-br ${gradient} text-white mb-4 sm:mb-6 glow-violet`}
           whileHover={{ scale: 1.1, rotate: 5 }}
           transition={{ type: 'spring', stiffness: 400 }}
         >
@@ -64,7 +64,7 @@ export default function Feature({
                 viewport={{ once: true }}
                 transition={{ delay: delay + idx * 0.05 }}
               >
-                <span className="text-cyan-500 font-bold mt-0.5">✦</span>
+                <span className="text-violet-500 font-bold mt-0.5">✦</span>
                 <span>{detail}</span>
               </motion.li>
             ))}

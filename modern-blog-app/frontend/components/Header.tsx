@@ -67,7 +67,7 @@ export default function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-lg shadow-cyan-500/30 border-b border-cyan-100 dark:border-cyan-900/20'
+          ? 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-lg shadow-violet-500/30 border-b border-violet-100 dark:border-violet-900/20'
           : 'bg-white/50 dark:bg-slate-950/50 backdrop-blur-md border-b border-transparent'
       }`}
     >
@@ -120,7 +120,7 @@ export default function Header() {
               >
                 <Link
                   href={item.href}
-                  className="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-700 dark:hover:text-emerald-400 transition-all duration-200 flex items-center gap-2 font-medium"
+                  className="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-violet-100 dark:hover:bg-violet-900/30 hover:text-violet-700 dark:hover:text-violet-400 transition-all duration-200 flex items-center gap-2 font-medium"
                 >
                   <Icon className="text-sm" />
                   {item.label}
@@ -147,7 +147,7 @@ export default function Header() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   autoFocus
-                  className="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-emerald-300 dark:border-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                  className="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-violet-300 dark:border-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm"
                 />
                 <button
                   type="button"
@@ -179,20 +179,20 @@ export default function Header() {
 
           {/* Auth Section */}
           {loading ? (
-            <div className="w-8 h-8 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-2 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
           ) : user ? (
             <>
               {(userRole === 'admin' || userRole === 'author') && (
                 <Link
                   href="/dashboard"
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors font-semibold text-sm"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 hover:bg-violet-200 dark:hover:bg-violet-900/50 transition-colors font-semibold text-sm"
                 >
                   <FaTachometerAlt className="text-sm" />
                   Dashboard
                 </Link>
               )}
-              <div className="flex items-center gap-2 px-3 py-2 bg-emerald-100 dark:bg-emerald-900/20 rounded-lg">
-                <FaUser className="text-sm text-emerald-600 dark:text-emerald-400" />
+              <div className="flex items-center gap-2 px-3 py-2 bg-violet-100 dark:bg-violet-900/20 rounded-lg">
+                <FaUser className="text-sm text-violet-600 dark:text-violet-400" />
                 <span className="text-sm text-slate-700 dark:text-slate-300 font-medium max-w-[100px] truncate">
                   {user.email?.split('@')[0]}
                 </span>
@@ -209,13 +209,13 @@ export default function Header() {
             <>
               <Link
                 href="/auth/login"
-                className="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-all font-semibold text-sm"
+                className="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-all font-semibold text-sm"
               >
                 Sign In
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-3 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold transition-all shadow-lg hover:shadow-xl text-sm"
+                className="px-3 py-2 rounded-lg bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white font-semibold transition-all shadow-lg hover:shadow-xl text-sm"
               >
                 Sign Up
               </Link>
@@ -238,7 +238,7 @@ export default function Header() {
           </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="p-2 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/30 text-slate-700 dark:text-slate-300 transition-colors"
+            className="p-2 rounded-lg hover:bg-violet-100 dark:hover:bg-violet-900/30 text-slate-700 dark:text-slate-300 transition-colors"
             aria-label="Toggle menu"
           >
             {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
@@ -277,7 +277,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-700 dark:hover:text-emerald-400 transition-all font-medium"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-violet-100 dark:hover:bg-violet-900/30 hover:text-violet-700 dark:hover:text-violet-400 transition-all font-medium"
                 >
                   <Icon className="text-lg" />
                   {item.label}
@@ -296,16 +296,16 @@ export default function Header() {
                   <Link
                     href="/dashboard"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-semibold"
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 font-semibold"
                   >
                     <FaTachometerAlt className="text-lg" />
                     Dashboard
                   </Link>
                 )}
-                <div className="px-4 py-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                <div className="px-4 py-3 bg-violet-50 dark:bg-violet-900/20 rounded-lg">
                   <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Logged in as:</p>
                   <p className="font-semibold text-slate-900 dark:text-white break-all">{user.email}</p>
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400 capitalize">{userRole}</p>
+                  <p className="text-xs text-violet-600 dark:text-violet-400 capitalize">{userRole}</p>
                 </div>
                 <button
                   onClick={handleSignOut}
@@ -320,7 +320,7 @@ export default function Header() {
                 <Link
                   href="/auth/login"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 font-semibold transition-colors"
+                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-violet-100 dark:hover:bg-violet-900/30 font-semibold transition-colors"
                 >
                   <FaSignInAlt />
                   Sign In
@@ -328,7 +328,7 @@ export default function Header() {
                 <Link
                   href="/auth/signup"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold transition-all"
+                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white font-semibold transition-all"
                 >
                   <FaUser />
                   Sign Up

@@ -48,12 +48,12 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/20 flex items-center justify-center p-4 pt-24">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-violet-950/20 flex items-center justify-center p-4 pt-24">
       <div className="w-full max-w-md">
         {/* Back Button */}
         <Link
           href="/auth/login"
-          className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 mb-8 font-semibold transition-colors"
+          className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 mb-8 font-semibold transition-colors"
         >
           <FaArrowLeft className="text-sm" />
           Back to Login
@@ -61,8 +61,8 @@ export default function ForgotPasswordPage() {
 
         {/* Card */}
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 mb-6 mx-auto">
-            <FaEnvelope className="text-emerald-600 dark:text-emerald-400 text-xl" />
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-900/30 mb-6 mx-auto">
+            <FaEnvelope className="text-violet-600 dark:text-violet-400 text-xl" />
           </div>
 
           <h1 className="text-3xl font-bold text-center mb-2 text-slate-900 dark:text-white">
@@ -75,13 +75,13 @@ export default function ForgotPasswordPage() {
 
           {/* Success Message */}
           {submitted && (
-            <div className="mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg flex items-start gap-3">
-              <FaCheckCircle className="text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
+            <div className="mb-6 p-4 bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 rounded-lg flex items-start gap-3">
+              <FaCheckCircle className="text-violet-600 dark:text-violet-400 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="font-semibold text-emerald-900 dark:text-emerald-300">
+                <p className="font-semibold text-violet-900 dark:text-violet-300">
                   Check your email
                 </p>
-                <p className="text-sm text-emerald-800 dark:text-emerald-200">
+                <p className="text-sm text-violet-800 dark:text-violet-200">
                   We've sent a password reset link to {email}
                 </p>
               </div>
@@ -109,7 +109,7 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
                   disabled={loading}
                 />
               </div>
@@ -117,7 +117,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading || !email.trim()}
-                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:from-slate-400 disabled:to-slate-400 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 disabled:from-slate-400 disabled:to-slate-400 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -134,7 +134,7 @@ export default function ForgotPasswordPage() {
                   Remember your password?{' '}
                   <Link
                     href="/auth/login"
-                    className="font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                    className="font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors"
                   >
                     Sign in
                   </Link>
@@ -150,14 +150,14 @@ export default function ForgotPasswordPage() {
                 Didn't receive the email? Check your spam folder or{' '}
                 <button
                   onClick={handleSubmit}
-                  className="font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                  className="font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors"
                 >
                   try again
                 </button>
               </p>
               <Link
                 href="/auth/login"
-                className="inline-block text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold transition-colors"
+                className="inline-block text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
               >
                 Back to Login
               </Link>

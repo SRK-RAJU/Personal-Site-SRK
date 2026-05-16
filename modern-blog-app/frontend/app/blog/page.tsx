@@ -32,7 +32,7 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen w-full">
-      <section className="section-padding bg-gradient-to-br from-cyan-50/80 via-blue-50/50 to-cyan-50/80 dark:from-cyan-950/30 dark:via-blue-950/20 dark:to-cyan-950/30 border-b border-cyan-300/50 dark:border-cyan-700/50">
+      <section className="section-padding bg-gradient-to-br from-violet-50/80 via-blue-50/50 to-violet-50/80 dark:from-violet-950/30 dark:via-blue-950/20 dark:to-violet-950/30 border-b border-violet-300/50 dark:border-violet-700/50">
         <div className="container-max">
           <motion.div
             className="text-center max-w-3xl mx-auto"
@@ -54,7 +54,7 @@ export default function Blog() {
         <div className="container-max">
           {loading ? (
             <div className="text-center py-16 sm:py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-cyan-500 border-t-transparent mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-violet-500 border-t-transparent mx-auto"></div>
               <p className="mt-4 text-slate-600 dark:text-slate-400">Loading articles...</p>
             </div>
           ) : posts.length > 0 ? (
@@ -82,9 +82,9 @@ export default function Blog() {
                   transition={{ duration: 0.3, delay: idx * 0.1 }}
                 >
                   <Link href={`/blog/${post.slug}`} className="group block h-full">
-                    <div className="card-glass card-gradient h-full flex flex-col hover:border-cyan-500/50 transition-all duration-300 overflow-hidden">
+                    <div className="card-glass card-gradient h-full flex flex-col hover:border-violet-500/50 transition-all duration-300 overflow-hidden">
                       {post.featured_image_url && (
-                        <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-cyan-500/20 to-blue-500/20 mb-4 sm:mb-6 rounded-lg border border-cyan-200 dark:border-cyan-800">
+                        <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-violet-500/20 to-blue-500/20 mb-4 sm:mb-6 rounded-lg border border-violet-200 dark:border-violet-800">
                           <Image
                             src={post.featured_image_url}
                             alt={post.title}
@@ -107,7 +107,7 @@ export default function Blog() {
                         </div>
                       )}
 
-                      <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 line-clamp-2 group-hover:text-cyan-500 transition-colors">
+                      <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 line-clamp-2 group-hover:text-violet-500 transition-colors">
                         {post.title}
                       </h3>
 
@@ -118,7 +118,7 @@ export default function Blog() {
                       <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                         {post.published_at && (
                           <div className="flex items-center gap-1.5">
-                            <FaCalendar className="text-cyan-500" />
+                            <FaCalendar className="text-violet-500" />
                             <span>{new Date(post.published_at).toLocaleDateString()}</span>
                           </div>
                         )}
@@ -137,7 +137,7 @@ export default function Blog() {
                           </div>
                         )}
 
-                        <FaArrowRight className="ml-auto text-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <FaArrowRight className="ml-auto text-violet-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     </div>
                   </Link>

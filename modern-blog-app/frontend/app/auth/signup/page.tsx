@@ -140,7 +140,7 @@ export default function SignupPage() {
 
           {/* Success Message */}
           {success && (
-            <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-700 text-green-700 dark:text-green-200 rounded-lg text-sm">
+            <div className="mb-6 p-4 bg-violet-100 dark:bg-violet-900/20 border border-violet-300 dark:border-violet-700 text-violet-700 dark:text-violet-200 rounded-lg text-sm">
               {success}
             </div>
           )}
@@ -209,7 +209,7 @@ export default function SignupPage() {
                   <p
                     className={
                       password.length >= 8
-                        ? 'text-green-600 dark:text-green-400'
+                        ? 'text-violet-600 dark:text-violet-400'
                         : 'text-red-600 dark:text-red-400'
                     }
                   >
@@ -223,7 +223,7 @@ export default function SignupPage() {
                   <p
                     className={
                       /[A-Z]/.test(password)
-                        ? 'text-green-600 dark:text-green-400'
+                        ? 'text-violet-600 dark:text-violet-400'
                         : 'text-red-600 dark:text-red-400'
                     }
                   >
@@ -237,7 +237,7 @@ export default function SignupPage() {
                   <p
                     className={
                       /[a-z]/.test(password)
-                        ? 'text-green-600 dark:text-green-400'
+                        ? 'text-violet-600 dark:text-violet-400'
                         : 'text-red-600 dark:text-red-400'
                     }
                   >
@@ -251,7 +251,7 @@ export default function SignupPage() {
                   <p
                     className={
                       /[0-9]/.test(password)
-                        ? 'text-green-600 dark:text-green-400'
+                        ? 'text-violet-600 dark:text-violet-400'
                         : 'text-red-600 dark:text-red-400'
                     }
                   >
@@ -265,7 +265,7 @@ export default function SignupPage() {
                   <p
                     className={
                       /[!@#$%^&*]/.test(password)
-                        ? 'text-green-600 dark:text-green-400'
+                        ? 'text-violet-600 dark:text-violet-400'
                         : 'text-red-600 dark:text-red-400'
                     }
                   >

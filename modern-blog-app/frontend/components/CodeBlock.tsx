@@ -31,13 +31,13 @@ export default function CodeBlock({
 
   return (
     <motion.div
-      className="card-glass border border-cyan-500/30 overflow-hidden"
+      className="card-glass border border-violet-500/30 overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border-b border-cyan-500/20">
+      <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-gradient-to-r from-violet-500/10 to-blue-500/10 border-b border-violet-500/20">
         <div>
           <p className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300">
             {title}
@@ -47,11 +47,11 @@ export default function CodeBlock({
         <motion.button
           onClick={handleCopy}
           whileTap={{ scale: 0.95 }}
-          className="p-2 rounded-lg hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 transition-colors"
+          className="p-2 rounded-lg hover:bg-violet-500/20 text-violet-600 dark:text-violet-400 transition-colors"
           title="Copy code"
         >
           {copied ? (
-            <FaCheck className="text-sm text-green-600" />
+            <FaCheck className="text-sm text-violet-600" />
           ) : (
             <FaCopy className="text-sm" />
           )}

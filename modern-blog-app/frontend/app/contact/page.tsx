@@ -80,7 +80,7 @@ export default function Contact() {
         <motion.div variants={itemVariants} className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 font-semibold transition-colors"
+            className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
           >
             <FaArrowLeft className="text-sm" />
             Back to Home
@@ -100,7 +100,7 @@ export default function Contact() {
           <motion.div variants={itemVariants} className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="space-y-6">
               {submitted && (
-                <div className="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-800 dark:text-green-200 p-4 rounded-lg flex items-center gap-2">
+                <div className="bg-violet-100 dark:bg-violet-900 border border-violet-400 dark:border-violet-700 text-violet-800 dark:text-violet-200 p-4 rounded-lg flex items-center gap-2">
                   <span className="text-xl">✓</span>
                   <span>Thanks for your message! I'll get back to you shortly.</span>
                 </div>

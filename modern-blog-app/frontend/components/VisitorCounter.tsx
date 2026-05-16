@@ -45,7 +45,7 @@ export default function VisitorCounter() {
 
   return (
     <motion.div
-      className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-emerald-500/10 to-teal-500/10 dark:from-emerald-600/20 dark:to-teal-600/20 border border-emerald-500/30 dark:border-emerald-500/40 backdrop-blur-sm"
+      className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-violet-500/10 to-pink-500/10 dark:from-violet-600/20 dark:to-pink-600/20 border border-violet-500/30 dark:border-violet-500/40 backdrop-blur-sm"
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
@@ -54,9 +54,9 @@ export default function VisitorCounter() {
         animate={{ scale: [1, 1.2, 1] }}
         transition={{ duration: 2, repeat: Infinity }}
       >
-        <FaEye className="text-emerald-600 dark:text-emerald-400 text-sm" />
+        <FaEye className="text-violet-600 dark:text-violet-400 text-sm" />
       </motion.div>
-      <span className="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-300 min-w-[80px]">
+      <span className="text-xs sm:text-sm font-semibold text-violet-700 dark:text-violet-300 min-w-[80px]">
         {loading ? (
           <span>Loading...</span>
         ) : (

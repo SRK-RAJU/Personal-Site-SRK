@@ -22,14 +22,14 @@ export default function AnalyticsCard({
   icon,
   trend,
   trendLabel,
-  gradient = 'from-cyan-500 to-blue-500',
+  gradient = 'from-violet-500 to-blue-500',
   onClick,
 }: AnalyticsCardProps) {
   const isPositiveTrend = trend && trend > 0;
 
   return (
     <motion.div
-      className="card-glass card-gradient cursor-pointer h-full border-cyan-500/30 hover:border-cyan-400/60 hover:shadow-cyan-500/20 shadow-lg hover:shadow-2xl"
+      className="card-glass card-gradient cursor-pointer h-full border-violet-500/30 hover:border-violet-400/60 hover:shadow-violet-500/20 shadow-lg hover:shadow-2xl"
       whileHover={{ scale: 1.05, y: -5 }}
       onClick={onClick}
       initial={{ opacity: 0, y: 20 }}
@@ -47,7 +47,7 @@ export default function AnalyticsCard({
           )}
         </div>
         {icon && (
-          <div className={`p-3 rounded-lg bg-gradient-to-br ${gradient} text-white glow-cyan`}>
+          <div className={`p-3 rounded-lg bg-gradient-to-br ${gradient} text-white glow-violet`}>
             <div className="text-lg sm:text-2xl">{icon}</div>
           </div>
         )}
@@ -58,7 +58,7 @@ export default function AnalyticsCard({
           <div
             className={`flex items-center gap-1 text-xs sm:text-sm font-semibold ${
               isPositiveTrend
-                ? 'text-green-600 dark:text-green-400'
+                ? 'text-violet-600 dark:text-violet-400'
                 : 'text-red-600 dark:text-red-400'
             }`}
           >

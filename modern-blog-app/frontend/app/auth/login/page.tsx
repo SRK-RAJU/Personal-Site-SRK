@@ -106,7 +106,7 @@ export default function LoginPage() {
 
           {/* Success Message */}
           {success && (
-            <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-700 text-green-700 dark:text-green-200 rounded-lg text-sm">
+            <div className="mb-6 p-4 bg-violet-100 dark:bg-violet-900/20 border border-violet-300 dark:border-violet-700 text-violet-700 dark:text-violet-200 rounded-lg text-sm">
               {success}
             </div>
           )}

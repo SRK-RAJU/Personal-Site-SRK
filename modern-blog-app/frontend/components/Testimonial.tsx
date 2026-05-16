@@ -57,7 +57,7 @@ export default function Testimonial({
             alt={author}
             width={40}
             height={40}
-            className="rounded-full object-cover border-2 border-cyan-500"
+            className="rounded-full object-cover border-2 border-violet-500"
           />
         )}
         <div className="flex-1">

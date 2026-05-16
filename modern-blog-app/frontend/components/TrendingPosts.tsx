@@ -63,7 +63,7 @@ function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
   }, [imgSrc]);
 
   const gradients = [
-    'from-cyan-500 via-purple-500 to-pink-500',
+    'from-violet-500 via-purple-500 to-pink-500',
     'from-purple-500 via-pink-500 to-orange-500',
     'from-orange-500 via-red-500 to-pink-500'
   ];
@@ -99,7 +99,7 @@ function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
 
       {/* Content */}
       <div className="p-6 flex flex-col flex-1">
-        <h3 className="font-bold text-lg text-white group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:via-purple-300 group-hover:to-pink-300 group-hover:bg-clip-text group-hover:text-transparent transition-all line-clamp-2 mb-3 flex-1">
+        <h3 className="font-bold text-lg text-white group-hover:bg-gradient-to-r group-hover:from-violet-300 group-hover:via-purple-300 group-hover:to-pink-300 group-hover:bg-clip-text group-hover:text-transparent transition-all line-clamp-2 mb-3 flex-1">
           {post.title}
         </h3>
 
@@ -199,12 +199,12 @@ export default function TrendingPosts() {
       <div className="container-max">
         {/* Header with Icon - Modern Design */}
         <div className="flex items-center gap-4 mb-12">
-          <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500 shadow-2xl overflow-hidden group">
+          <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500 shadow-2xl overflow-hidden group">
             <div className="absolute inset-0 opacity-0 group-hover:opacity-50 transition-opacity bg-white" />
             <FaFire className="text-white text-3xl relative z-10" />
           </div>
           <div>
-            <h2 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
+            <h2 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-violet-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
               Trending Now
             </h2>
             <p className="text-sm md:text-base text-gray-300 mt-1">

@@ -20,7 +20,7 @@ export default function RealtimeActivity() {
   const { stats } = useWebsiteStats();
   const [metrics, setMetrics] = useState<ActivityMetric[]>([
     { label: 'Articles', value: 0, icon: FaFileAlt, bgColor: 'bg-blue-50 dark:bg-blue-950/30', textColor: 'text-blue-600 dark:text-blue-400', borderColor: 'border-blue-200 dark:border-blue-800', trend: 0 },
-    { label: 'Total Visits', value: 0, icon: FaEye, bgColor: 'bg-emerald-50 dark:bg-emerald-950/30', textColor: 'text-emerald-600 dark:text-emerald-400', borderColor: 'border-emerald-200 dark:border-emerald-800', trend: 0 },
+    { label: 'Total Visits', value: 0, icon: FaEye, bgColor: 'bg-violet-50 dark:bg-violet-950/30', textColor: 'text-violet-600 dark:text-violet-400', borderColor: 'border-violet-200 dark:border-violet-800', trend: 0 },
     { label: 'Projects', value: 3, icon: FaRocket, bgColor: 'bg-orange-50 dark:bg-orange-950/30', textColor: 'text-orange-600 dark:text-orange-400', borderColor: 'border-orange-200 dark:border-orange-800', trend: 0 },
     { label: 'Monthly Views', value: 0, icon: FaFire, bgColor: 'bg-rose-50 dark:bg-rose-950/30', textColor: 'text-rose-600 dark:text-rose-400', borderColor: 'border-rose-200 dark:border-rose-800', trend: 0 },
   ]);
@@ -42,9 +42,9 @@ export default function RealtimeActivity() {
         label: 'Total Visits',
         value: totalViews || stats.total_visits || 0,
         icon: FaEye,
-        bgColor: 'bg-emerald-50 dark:bg-emerald-950/30',
-        textColor: 'text-emerald-600 dark:text-emerald-400',
-        borderColor: 'border-emerald-200 dark:border-emerald-800',
+        bgColor: 'bg-violet-50 dark:bg-violet-950/30',
+        textColor: 'text-violet-600 dark:text-violet-400',
+        borderColor: 'border-violet-200 dark:border-violet-800',
         trend: 5,
       },
       {
@@ -94,7 +94,7 @@ export default function RealtimeActivity() {
                 <motion.span
                   className={`text-xs font-bold px-2 py-1 rounded-full ${
                     isTrendPositive
-                      ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300'
+                      ? 'bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300'
                       : 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300'
                   }`}
                 >

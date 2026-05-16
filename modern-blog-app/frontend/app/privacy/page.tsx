@@ -43,7 +43,7 @@ export default function Privacy() {
         <motion.div variants={itemVariants} className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold transition-colors"
+            className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
           >
             <FaArrowLeft className="text-sm" />
             Back to Home

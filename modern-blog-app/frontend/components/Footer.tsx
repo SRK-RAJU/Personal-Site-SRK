@@ -78,10 +78,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 border-t border-cyan-500/20 dark:border-cyan-500/30">
+    <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 border-t border-violet-500/20 dark:border-violet-500/30">
       {/* Decorative elements */}
       <motion.div
-        className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-full blur-3xl -z-10"
+        className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-full blur-3xl -z-10"
         animate={{ y: [0, -30, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -109,7 +109,7 @@ export default function Footer() {
                   <h3 className="text-3xl font-black text-slate-900 dark:text-white">rj</h3>
                 </div>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-3 font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Raju Tech</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-3 font-semibold group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">Raju Tech</p>
             </Link>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               Cloud & DevOps specialist. Full-stack development, security engineering, and modern infrastructure solutions. Building secure, scalable applications.
@@ -150,7 +150,7 @@ export default function Footer() {
             <motion.div key={section.title} variants={itemVariants}>
               <h4 className="font-bold text-slate-900 dark:text-white mb-4 text-lg flex items-center gap-2">
                 {section.title}
-                <FaArrowRight className="text-emerald-600 dark:text-emerald-400 text-sm" />
+                <FaArrowRight className="text-violet-600 dark:text-violet-400 text-sm" />
               </h4>
               <ul className="space-y-3">
                 {section.links.map((link) => (
@@ -163,7 +163,7 @@ export default function Footer() {
                       href={link.href}
                       target={link.href.startsWith('http') ? '_blank' : undefined}
                       rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors text-sm font-medium inline-flex items-center gap-2"
+                      className="text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors text-sm font-medium inline-flex items-center gap-2"
                     >
                       {link.label}
                       {link.href.startsWith('http') && <FaArrowRight className="text-xs opacity-0 group-hover:opacity-100" />}
@@ -194,14 +194,14 @@ export default function Footer() {
         >
           {/* Copyright */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500 group cursor-help"
+            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 group cursor-help"
             variants={itemVariants}
             onMouseEnter={() => setCopyrightTooltip(true)}
             onMouseLeave={() => setCopyrightTooltip(false)}
             whileHover={{ y: -5 }}
           >
             <div className="flex items-start gap-3">
-              <div className="text-2xl text-emerald-600 dark:text-emerald-400">
+              <div className="text-2xl text-violet-600 dark:text-violet-400">
                 <FaCopyright />
               </div>
               <div className="flex-1">
@@ -226,12 +226,12 @@ export default function Footer() {
 
           {/* Content Protection */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500"
+            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
             <div className="flex items-start gap-3">
-              <div className="text-2xl text-emerald-600 dark:text-emerald-400">
+              <div className="text-2xl text-violet-600 dark:text-violet-400">
                 <FaShieldAlt />
               </div>
               <div>
@@ -247,12 +247,12 @@ export default function Footer() {
 
           {/* Privacy Notice */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-500"
+            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
             <div className="flex items-start gap-3">
-              <div className="text-2xl text-emerald-600 dark:text-emerald-400">
+              <div className="text-2xl text-violet-600 dark:text-violet-400">
                 <FaLock />
               </div>
               <div>
@@ -269,14 +269,14 @@ export default function Footer() {
 
         {/* Disclaimer */}
         <motion.div
-          className="bg-gradient-to-r from-emerald-50/50 to-teal-50/50 dark:from-emerald-900/10 dark:to-teal-900/10 border border-emerald-200/50 dark:border-emerald-800/30 rounded-xl p-6 mb-8"
+          className="bg-gradient-to-r from-violet-50/50 to-pink-50/50 dark:from-violet-900/10 dark:to-pink-900/10 border border-violet-200/50 dark:border-violet-800/30 rounded-xl p-6 mb-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
           <p className="text-sm text-slate-700 dark:text-slate-300 text-center">
-            <span className="font-bold text-emerald-700 dark:text-emerald-400">📢 Disclaimer:</span> All content is for educational purposes. Always verify with official documentation and test in a safe environment before production use.
+            <span className="font-bold text-violet-700 dark:text-violet-400">📢 Disclaimer:</span> All content is for educational purposes. Always verify with official documentation and test in a safe environment before production use.
           </p>
         </motion.div>
 
@@ -289,7 +289,7 @@ export default function Footer() {
         >
           <p>
             © {currentYear} Raju{' '}
-            <Link href="/" className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-bold transition-colors">
+            <Link href="/" className="text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-bold transition-colors">
               [Tech Blog]
             </Link>
             {' '} — This is my personal blog. All content reflects my own interests and experiences. Unauthorized copying is prohibited.
@@ -306,7 +306,7 @@ export default function Footer() {
           <p className="flex items-center gap-1">
             Made with{' '}
             <span className="text-red-600 dark:text-red-400 animate-pulse">❤️</span> by
-            <Link href="/" className="font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
+            <Link href="/" className="font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors">
               Raju
             </Link>
           </p>
@@ -319,7 +319,7 @@ export default function Footer() {
 
           <p className="flex flex-wrap items-center gap-2 justify-center">
             Powered by
-            <Link href="/" className="font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+            <Link href="/" className="font-semibold text-slate-900 dark:text-white hover:text-violet-600 dark:hover:text-violet-400 transition-colors">
               Raju
             </Link>
             {/* <span>•</span>

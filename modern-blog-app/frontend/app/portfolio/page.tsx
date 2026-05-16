@@ -83,7 +83,7 @@ export default function Portfolio() {
       {/* Back Button */}
       <Link
         href="/"
-        className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 mb-8 font-semibold transition-colors"
+        className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 mb-8 font-semibold transition-colors"
       >
         <FaArrowLeft className="text-sm" />
         Back to Home
@@ -102,7 +102,7 @@ export default function Portfolio() {
       {/* Projects Grid */}
       {loading ? (
         <div className="text-center py-16">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-violet-500 border-t-transparent mx-auto"></div>
           <p className="mt-4 text-slate-600 dark:text-slate-400">Loading projects...</p>
         </div>
       ) : projects.length > 0 ? (
@@ -121,7 +121,7 @@ export default function Portfolio() {
               transition={{ duration: 0.3, delay: idx * 0.1 }}
             >
               {project.image && (
-                <div className="w-full h-48 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-lg mb-4 overflow-hidden border-2 border-emerald-500/30 hover:border-emerald-500/60 transition-all relative">
+                <div className="w-full h-48 bg-gradient-to-br from-violet-500/20 to-pink-500/20 rounded-lg mb-4 overflow-hidden border-2 border-violet-500/30 hover:border-violet-500/60 transition-all relative">
                   <Image
                     src={project.image}
                     alt={project.title}
@@ -169,7 +169,7 @@ export default function Portfolio() {
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors flex-1"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white transition-colors flex-1"
                   >
                     <FaExternalLinkAlt className="text-sm" />
                     View Live

@@ -223,13 +223,13 @@ export default async function BlogPostPage({
   return (
     <article className="w-full">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-50 via-cyan-50/30 to-blue-50/30 dark:from-slate-950 dark:via-cyan-950/10 dark:to-blue-950/10 py-12 border-b border-cyan-500/20">
+      <section className="bg-gradient-to-br from-slate-50 via-violet-50/30 to-blue-50/30 dark:from-slate-950 dark:via-violet-950/10 dark:to-blue-950/10 py-12 border-b border-violet-500/20">
         <div className="container-max">
           <div className="max-w-3xl mx-auto">
             {/* Back Button */}
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 mb-6 font-semibold transition-colors"
+              className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 mb-6 font-semibold transition-colors"
             >
               <FaArrowLeft className="text-sm" />
               Back to Articles
@@ -238,7 +238,7 @@ export default async function BlogPostPage({
             {/* Category Badge */}
             {post.category && (
               <div className="mb-4">
-                <span className="inline-block px-3 py-1 bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 rounded-full text-sm font-semibold">
+                <span className="inline-block px-3 py-1 bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-500/30 rounded-full text-sm font-semibold">
                   {post.category}
                 </span>
               </div>
@@ -253,12 +253,12 @@ export default async function BlogPostPage({
             <div className="flex flex-wrap gap-6 mt-8 text-slate-600 dark:text-slate-400 text-sm sm:text-base">
               {post.author_name && (
                 <div className="flex items-center gap-2">
-                  <FaUser className="text-cyan-500" />
+                  <FaUser className="text-violet-500" />
                   <span className="font-semibold">{post.author_name}</span>
                 </div>
               )}
               <div className="flex items-center gap-2">
-                <FaCalendar className="text-cyan-500" />
+                <FaCalendar className="text-violet-500" />
                 <span>
                   {new Date(post.published_at).toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -302,7 +302,7 @@ export default async function BlogPostPage({
           <div className="max-w-3xl mx-auto">
             {/* Excerpt */}
             {post.excerpt && (
-              <div className="mb-8 p-6 bg-cyan-500/10 dark:bg-cyan-500/5 border-l-4 border-cyan-500 rounded">
+              <div className="mb-8 p-6 bg-violet-500/10 dark:bg-violet-500/5 border-l-4 border-violet-500 rounded">
                 <p className="text-lg text-slate-700 dark:text-slate-300 font-semibold italic">
                   {post.excerpt}
                 </p>
@@ -327,7 +327,7 @@ export default async function BlogPostPage({
                     <Link
                       key={tag}
                       href={`/blog?tag=${encodeURIComponent(tag)}`}
-                      className="px-4 py-2 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 rounded-full text-sm font-semibold hover:bg-cyan-200 dark:hover:bg-cyan-900/50 transition-colors"
+                      className="px-4 py-2 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 rounded-full text-sm font-semibold hover:bg-violet-200 dark:hover:bg-violet-900/50 transition-colors"
                     >
                       #{tag}
                     </Link>
@@ -337,14 +337,14 @@ export default async function BlogPostPage({
             )}
 
             {/* Call to Action */}
-            <div className="mt-12 p-8 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 dark:from-cyan-500/5 dark:to-blue-500/5 border border-cyan-500/30 rounded-xl">
+            <div className="mt-12 p-8 bg-gradient-to-r from-violet-500/10 to-blue-500/10 dark:from-violet-500/5 dark:to-blue-500/5 border border-violet-500/30 rounded-xl">
               <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
                 Want More Tech Insights?
               </h3>
               <p className="text-slate-700 dark:text-slate-300 mb-6">
                 Subscribe to my blog for the latest updates on web development, cloud architecture, and DevOps practices.
               </p>
-              <button className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all hover:shadow-lg">
+              <button className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all hover:shadow-lg">
                 Subscribe Now
               </button>
             </div>
@@ -356,7 +356,7 @@ export default async function BlogPostPage({
               </h3>
               <Link
                 href="/blog"
-                className="inline-flex items-center gap-2 text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 font-semibold transition-colors"
+                className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
               >
                 View All Articles →
               </Link>

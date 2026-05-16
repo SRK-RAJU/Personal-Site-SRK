@@ -41,7 +41,7 @@ export default function About() {
         <motion.div variants={itemVariants} className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 font-semibold transition-colors"
+            className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
           >
             <FaArrowLeft className="text-sm" />
             Back to Home
@@ -56,7 +56,7 @@ export default function About() {
           <h2 className="text-2xl text-slate-700 dark:text-slate-300 font-semibold mb-2">
             Full-Stack Developer, DevOps, Security & Cloud Engineer
           </h2>
-          <p className="text-lg text-cyan-600 dark:text-cyan-400 font-semibold mb-4">
+          <p className="text-lg text-violet-600 dark:text-violet-400 font-semibold mb-4">
             Personal Tech Blog & Developer Portfolio
           </p>
           <p className="text-lg text-slate-600 dark:text-slate-400">
@@ -99,7 +99,7 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* Cloud & DevOps */}
-            <div className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-sm border border-blue-200 dark:border-blue-700/30">
+            <div className="p-6 bg-gradient-to-br from-blue-50 to-violet-50 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-sm border border-blue-200 dark:border-blue-700/30">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
                 <FaCloud className="text-blue-500" /> Cloud & Infrastructure
               </h3>
@@ -307,7 +307,7 @@ export default function About() {
                   <p className="text-sm font-bold text-white">AWS</p>
                   <p className="text-xs text-slate-300">EC2, S3, Lambda</p>
                 </div>
-                <div className="p-4 bg-gradient-to-br from-blue-500/20 to-cyan-600/30 rounded-lg border border-cyan-500/40 text-center">
+                <div className="p-4 bg-gradient-to-br from-blue-500/20 to-violet-600/30 rounded-lg border border-violet-500/40 text-center">
                   <div className="text-3xl mb-2">☁️</div>
                   <p className="text-sm font-bold text-white">Azure</p>
                   <p className="text-xs text-slate-300">App Service, AKS</p>
@@ -341,7 +341,7 @@ export default function About() {
                   <p className="text-sm font-bold text-white">Zscaler</p>
                   <p className="text-xs text-slate-300">Security</p>
                 </div>
-                <div className="p-4 bg-gradient-to-br from-green-600/20 to-green-700/30 rounded-lg border border-green-500/40 text-center">
+                <div className="p-4 bg-gradient-to-br from-violet-600/20 to-violet-700/30 rounded-lg border border-violet-500/40 text-center">
                   <div className="text-3xl mb-2">📊</div>
                   <p className="text-sm font-bold text-white">Grafana</p>
                   <p className="text-xs text-slate-300">Monitoring</p>

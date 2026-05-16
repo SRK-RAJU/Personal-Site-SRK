@@ -52,13 +52,13 @@ export default function BlogCard({
       className="group h-full"
     >
       <Link href={`/blog/${slug}`}>
-        <div className={`h-full bg-gradient-to-br from-white/5 to-white/0 dark:from-slate-800/20 dark:to-slate-900/10 rounded-xl border border-cyan-500/20 dark:border-cyan-500/30 overflow-hidden hover:border-cyan-400/50 dark:hover:border-cyan-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/30 flex flex-col backdrop-blur-sm ${
-          featured ? 'ring-2 ring-cyan-500/50 dark:ring-cyan-400/50' : ''
+        <div className={`h-full bg-gradient-to-br from-white/5 to-white/0 dark:from-slate-800/20 dark:to-slate-900/10 rounded-xl border border-violet-500/20 dark:border-violet-500/30 overflow-hidden hover:border-violet-400/50 dark:hover:border-violet-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/30 flex flex-col backdrop-blur-sm ${
+          featured ? 'ring-2 ring-violet-500/50 dark:ring-violet-400/50' : ''
         }`}>
           {/* Featured badge */}
           {featured && (
             <div className="absolute top-4 left-4 z-10">
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 text-white text-xs font-bold shadow-lg">
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 text-white text-xs font-bold shadow-lg">
                 ⭐ Featured
               </span>
             </div>
@@ -81,14 +81,14 @@ export default function BlogCard({
           <div className="p-6 flex-1 flex flex-col">
             {/* Category badge */}
             <div className="mb-3">
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 dark:text-cyan-200 text-xs font-semibold border border-cyan-500/30 dark:border-cyan-400/30">
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-violet-500/20 to-purple-500/20 text-violet-300 dark:text-violet-200 text-xs font-semibold border border-violet-500/30 dark:border-violet-400/30">
                 <FaTag className="text-xs" />
                 {category}
               </span>
             </div>
 
             {/* Title */}
-            <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2 line-clamp-2 group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:to-purple-300 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2 line-clamp-2 group-hover:bg-gradient-to-r group-hover:from-violet-300 group-hover:to-purple-300 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
               {title}
             </h3>
 
@@ -98,9 +98,9 @@ export default function BlogCard({
             </p>
 
             {/* Meta info */}
-            <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-cyan-500/20 dark:border-cyan-500/30 text-sm text-slate-600 dark:text-slate-300 group-hover:text-cyan-300 dark:group-hover:text-cyan-200 transition-colors">
+            <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-violet-500/20 dark:border-violet-500/30 text-sm text-slate-600 dark:text-slate-300 group-hover:text-violet-300 dark:group-hover:text-violet-200 transition-colors">
               <div className="flex items-center gap-1">
-                <FaCalendar className="text-emerald-600 dark:text-emerald-400" />
+                <FaCalendar className="text-violet-600 dark:text-violet-400" />
                 <span>{formattedDate}</span>
               </div>
               <div className="flex items-center gap-1">
@@ -131,7 +131,7 @@ export default function BlogCard({
 
             {/* Read more button */}
             <motion.div
-              className="mt-4 inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-semibold text-sm group-hover:gap-3 transition-all"
+              className="mt-4 inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 font-semibold text-sm group-hover:gap-3 transition-all"
               whileHover={{ x: 5 }}
             >
               Read Article

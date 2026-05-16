@@ -213,7 +213,7 @@ export default function PostsPage() {
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         post.published
-                          ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200'
+                          ? 'bg-violet-100 dark:bg-violet-900/20 text-violet-800 dark:text-violet-200'
                           : 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200'
                       }`}
                     >
