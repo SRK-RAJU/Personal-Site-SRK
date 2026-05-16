@@ -116,7 +116,7 @@ export default function SignupPage() {
         {/* Back Button */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-slate-200 hover:text-white mb-8 transition-colors"
         >
           <FaArrowLeft className="text-sm" />
           Back to Site
@@ -127,7 +127,7 @@ export default function SignupPage() {
           <h1 className="text-3xl font-bold mb-2 text-slate-900 dark:text-white">
             Create Account
           </h1>
-          <p className="text-slate-600 dark:text-slate-400 mb-8">
+          <p className="text-slate-800 dark:text-slate-200 mb-8">
             Join our community of tech enthusiasts
           </p>
 
@@ -149,7 +149,7 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Full Name */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2">
                 Full Name
               </label>
               <input
@@ -165,7 +165,7 @@ export default function SignupPage() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2">
                 Email Address
               </label>
               <input
@@ -181,7 +181,7 @@ export default function SignupPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -197,7 +197,7 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  className="absolute right-3 top-2.5 text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -282,7 +282,7 @@ export default function SignupPage() {
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2">
                 Confirm Password
               </label>
               <input
@@ -312,7 +312,7 @@ export default function SignupPage() {
           </form>
 
           {/* Login Link */}
-          <p className="mt-6 text-center text-slate-600 dark:text-slate-400">
+          <p className="mt-6 text-center text-slate-800 dark:text-slate-200">
             Already have an account?{' '}
             <Link
               href="/auth/login"

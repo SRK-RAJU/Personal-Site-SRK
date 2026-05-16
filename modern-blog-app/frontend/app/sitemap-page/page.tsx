@@ -52,7 +52,7 @@ export default function SitemapPage() {
           <h1 className="text-5xl sm:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-pink-600">
             Site Map
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
+          <p className="text-lg text-slate-800 dark:text-slate-200">
             Explore all pages and resources available on Raju Tech. Find everything you need with ease.
           </p>
         </motion.div>
@@ -76,7 +76,7 @@ export default function SitemapPage() {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <Icon className="text-violet-600 dark:text-violet-400 text-xl" />
-                  <p className="text-sm font-semibold text-slate-600 dark:text-slate-400">{stat.label}</p>
+                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{stat.label}</p>
                 </div>
                 <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
               </motion.div>
@@ -116,7 +116,7 @@ export default function SitemapPage() {
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
                       {link.label}
                     </h3>
-                    <p className="text-slate-600 dark:text-slate-400 text-sm">
+                    <p className="text-slate-800 dark:text-slate-200 text-sm">
                       {link.description}
                     </p>
                     <div className="mt-4 text-violet-600 dark:text-violet-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
@@ -131,7 +131,7 @@ export default function SitemapPage() {
 
         {/* XML Sitemap Link */}
         <motion.div variants={itemVariants} className="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700/50 rounded-xl">
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">For search engines:</p>
+          <p className="text-sm text-slate-800 dark:text-slate-200 mb-2">For search engines:</p>
           <a
             href="/sitemap.xml"
             target="_blank"

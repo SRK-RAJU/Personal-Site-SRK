@@ -48,7 +48,7 @@ export default function Feature({
         </h3>
 
         {/* Description */}
-        <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base mb-4 sm:mb-6 leading-relaxed">
+        <p className="text-slate-800 dark:text-slate-200 text-sm sm:text-base mb-4 sm:mb-6 leading-relaxed">
           {description}
         </p>
 
@@ -58,7 +58,7 @@ export default function Feature({
             {details.map((detail, idx) => (
               <motion.li
                 key={idx}
-                className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300"
+                className="flex items-start gap-2 text-sm text-slate-800 dark:text-slate-200"
                 initial={{ opacity: 0, x: -10 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}

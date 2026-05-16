@@ -162,7 +162,7 @@ export default function Home() {
 
             {/* Description */}
             <motion.p
-              className="text-lg sm:text-xl text-slate-700 dark:text-slate-200 mb-12 leading-relaxed max-w-3xl mx-auto font-semibold"
+              className="text-lg sm:text-xl text-slate-800 dark:text-slate-100 mb-12 leading-relaxed max-w-3xl mx-auto font-semibold"
               variants={itemVariants}
             >
               Dive deep into cloud technologies, security practices, DevOps workflows, and cutting-edge software development. 
@@ -191,7 +191,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/contact"
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/20 font-bold transition-all hover:scale-105 transform duration-200"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900/20 font-bold transition-all hover:scale-105 transform duration-200"
               >
                 <FaUsers className="text-lg" />
                 Get in Touch
@@ -228,7 +228,7 @@ export default function Home() {
                     >
                       {formatValue(stat.value)}
                     </motion.p>
-                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-2 font-semibold">{stat.label}</p>
+                    <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 mt-2 font-semibold">{stat.label}</p>
                   </motion.div>
                 );
               })}
@@ -307,7 +307,7 @@ export default function Home() {
                   <span className="text-2xl font-bold">✓</span>
                 </div>
                 <h4 className="font-bold text-slate-900 dark:text-white mb-1">{cert.title}</h4>
-                <p className="text-xs text-slate-600 dark:text-slate-400">{cert.subtitle}</p>
+                <p className="text-xs text-slate-800 dark:text-slate-200">{cert.subtitle}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -327,7 +327,7 @@ export default function Home() {
             Skills & Expertise
           </motion.h2>
           <motion.p
-            className="text-lg text-slate-600 dark:text-slate-300"
+            className="text-lg text-slate-800 dark:text-slate-100"
             variants={itemVariants}
           >
             Comprehensive technical knowledge across multiple domains
@@ -356,7 +356,7 @@ export default function Home() {
                 <h3 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">
                   {category.title}
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-4">
+                <p className="text-slate-800 dark:text-slate-200 mb-4">
                   {category.description}
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -397,7 +397,7 @@ export default function Home() {
             Complete DevSecOps Stack
           </motion.h2>
           <motion.p
-            className="text-lg text-slate-600 dark:text-slate-300"
+            className="text-lg text-slate-800 dark:text-slate-100"
             variants={itemVariants}
           >
             Integrated technologies and tools for secure, scalable deployments
@@ -421,7 +421,7 @@ export default function Home() {
               <div className="text-6xl">🔄</div>
             </div>
             <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">CI/CD Pipeline</h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-4">Automated build, test, and deployment workflows with GitHub Actions, GitLab CI, Azure DevOps and Jenkins for continuous integration.</p>
+            <p className="text-slate-800 dark:text-slate-200 mb-4">Automated build, test, and deployment workflows with GitHub Actions, GitLab CI, Azure DevOps and Jenkins for continuous integration.</p>
             <div className="flex flex-wrap gap-2">
               {['GitHub Actions', 'Jenkins', 'GitLab CI', 'Docker'].map(tech => (
                 <span key={tech} className="badge">{tech}</span>
@@ -439,7 +439,7 @@ export default function Home() {
               <div className="text-6xl">🐳</div>
             </div>
             <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">Container Orchestration</h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-4">Kubernetes and Docker for container management, scaling, and orchestration in production environments.</p>
+            <p className="text-slate-800 dark:text-slate-200 mb-4">Kubernetes and Docker for container management, scaling, and orchestration in production environments.</p>
             <div className="flex flex-wrap gap-2">
               {['Kubernetes', 'Docker', 'Container Registry', 'Helm'].map(tech => (
                 <span key={tech} className="badge">{tech}</span>
@@ -457,7 +457,7 @@ export default function Home() {
               <div className="text-6xl">🏗️</div>
             </div>
             <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">Infrastructure as Code</h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-4">Terraform and Ansible for declarative infrastructure management, ensuring consistency and reproducibility.</p>
+            <p className="text-slate-800 dark:text-slate-200 mb-4">Terraform and Ansible for declarative infrastructure management, ensuring consistency and reproducibility.</p>
             <div className="flex flex-wrap gap-2">
               {['Terraform', 'Ansible', 'CloudFormation', 'Pulumi'].map(tech => (
                 <span key={tech} className="badge">{tech}</span>
@@ -475,7 +475,7 @@ export default function Home() {
               <div className="text-6xl">🔒</div>
             </div>
             <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">Security & Monitoring</h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-4">Comprehensive security scanning, threat detection, and real-time monitoring with Grafana and Prometheus.</p>
+            <p className="text-slate-800 dark:text-slate-200 mb-4">Comprehensive security scanning, threat detection, and real-time monitoring with Grafana and Prometheus.</p>
             <div className="flex flex-wrap gap-2">
               {['Grafana', 'Prometheus', 'Zscaler', 'Security Scanning'].map(tech => (
                 <span key={tech} className="badge">{tech}</span>
@@ -506,7 +506,7 @@ export default function Home() {
             >
               About Me
             </motion.h2>
-            <div className="space-y-4 text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
+            <div className="space-y-4 text-lg text-slate-800 dark:text-slate-200 leading-relaxed">
               <motion.p variants={itemVariants}>
                 Hi! I'm <span className="font-bold gradient-text">Raju SRK</span>, a <span className="font-bold text-violet-400">DevSecOps specialist and cloud engineer</span> passionate about building scalable, secure, and efficient systems. With expertise spanning cloud architecture, 
                 containerization, infrastructure automation, security practices, and modern web development, I help teams and fellow developers transform ideas into secure reality.
@@ -547,7 +547,7 @@ export default function Home() {
             Connect & Follow
           </motion.h2>
           <motion.p
-            className="text-lg text-slate-600 dark:text-slate-400"
+            className="text-lg text-slate-800 dark:text-slate-200"
             variants={itemVariants}
           >
             Join me on various platforms for updates and networking
@@ -562,7 +562,7 @@ export default function Home() {
           viewport={{ once: true }}
         >
           {[
-            { href: 'https://github.com/SRK-RAJU', icon: FaGithub, label: 'GitHub', color: 'hover:text-slate-800 dark:hover:text-white' },
+            { href: 'https://github.com/SRK-RAJU', icon: FaGithub, label: 'GitHub', color: 'hover:text-slate-900 dark:hover:text-white' },
             { href: 'https://www.linkedin.com/in/srajukumargoud', icon: FaLinkedin, label: 'LinkedIn', color: 'hover:text-blue-500' },
             { href: 'https://twitter.com', icon: FaTwitter, label: 'Twitter', color: 'hover:text-blue-400' },
           ].map((social) => {
@@ -573,7 +573,7 @@ export default function Home() {
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`group inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 ${social.color} text-slate-700 dark:text-slate-300 transition-all font-semibold`}
+                className={`group inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 ${social.color} text-slate-800 dark:text-slate-200 transition-all font-semibold`}
                 variants={itemVariants}
                 whileHover={{ scale: 1.05, y: -5 }}
               >

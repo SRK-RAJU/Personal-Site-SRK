@@ -111,7 +111,7 @@ export default function NewPostPage() {
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <Link href="/dashboard/posts" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
-          <FaArrowLeft className="text-xl text-slate-600 dark:text-slate-400" />
+          <FaArrowLeft className="text-xl text-slate-800 dark:text-slate-200" />
         </Link>
         <h1 className="text-4xl font-bold text-slate-900 dark:text-white">Create New Post</h1>
       </div>
@@ -212,7 +212,7 @@ export default function NewPostPage() {
             rows={2}
             className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
           />
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-800 dark:text-slate-100 mt-1">
             If empty, the first 160 characters of content will be used.
           </p>
         </div>
@@ -231,7 +231,7 @@ export default function NewPostPage() {
             placeholder="e.g., https://example.com/image.jpg"
             className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-800 dark:text-slate-100 mt-1">
             💡 TIP: Leave empty to save Supabase storage quota. Text-only posts work great!
           </p>
         </div>
@@ -251,7 +251,7 @@ export default function NewPostPage() {
             className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm resize-none"
             required
           />
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-800 dark:text-slate-100 mt-1">
             Write your post in Markdown format. You can include code blocks with triple backticks.
           </p>
         </div>

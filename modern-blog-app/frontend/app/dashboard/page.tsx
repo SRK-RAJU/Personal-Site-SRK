@@ -93,7 +93,7 @@ export default function DashboardHome() {
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => router.push('/')}
-          className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+          className="text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors"
         >
           <FaArrowLeft size={24} />
         </button>
@@ -111,7 +111,7 @@ export default function DashboardHome() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-600 dark:text-slate-400 text-sm font-semibold">
+                <p className="text-slate-800 dark:text-slate-200 text-sm font-semibold">
                   {card.label}
                 </p>
                 <p className="text-3xl font-bold text-slate-900 dark:text-white mt-2">
@@ -139,7 +139,7 @@ export default function DashboardHome() {
             <h3 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">
               Create New Post
             </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-slate-800 dark:text-slate-200">
               Write and publish a new blog post
             </p>
           </a>
@@ -151,7 +151,7 @@ export default function DashboardHome() {
             <h3 className="font-semibold text-purple-900 dark:text-purple-300 mb-2">
               Upload Images
             </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-slate-800 dark:text-slate-200">
               Manage blog post images and featured images
             </p>
           </a>
@@ -163,7 +163,7 @@ export default function DashboardHome() {
             <h3 className="font-semibold text-violet-900 dark:text-violet-300 mb-2">
               Manage Users
             </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-slate-800 dark:text-slate-200">
               View and manage registered users (admin only)
             </p>
           </a>
@@ -175,7 +175,7 @@ export default function DashboardHome() {
         <h3 className="font-semibold text-lg mb-4 text-slate-900 dark:text-white">
           📋 Quick Tips
         </h3>
-        <ul className="space-y-3 text-slate-700 dark:text-slate-300">
+        <ul className="space-y-3 text-slate-800 dark:text-slate-200">
           <li>✓ Always save drafts before publishing</li>
           <li>✓ Use descriptive post titles and slugs for better SEO</li>
           <li>✓ Optimize images before uploading (recommended: max 2MB per image)</li>

@@ -103,7 +103,7 @@ function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
           {post.title}
         </h3>
 
-        <p className="text-sm text-slate-300 line-clamp-2 mb-4 flex-1">
+        <p className="text-sm text-slate-100 line-clamp-2 mb-4 flex-1">
           {post.excerpt}
         </p>
 
@@ -112,9 +112,9 @@ function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
           <div className="flex items-center gap-2 text-sm">
             <FaEye className="text-violet-300" />
             <span className="font-bold text-white">{post.view_count.toLocaleString()}</span>
-            <span className="text-slate-400">views</span>
+            <span className="text-slate-200">views</span>
           </div>
-          <time className="text-xs text-slate-400">
+          <time className="text-xs text-slate-200">
             {new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
           </time>
         </div>
@@ -209,7 +209,7 @@ export default function TrendingPosts() {
             <h2 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white">
               Trending Now
             </h2>
-            <p className="text-sm md:text-base text-slate-700 dark:text-slate-300 mt-1 font-semibold">
+            <p className="text-sm md:text-base text-slate-800 dark:text-slate-200 mt-1 font-semibold">
               Most viewed articles this week
             </p>
           </div>

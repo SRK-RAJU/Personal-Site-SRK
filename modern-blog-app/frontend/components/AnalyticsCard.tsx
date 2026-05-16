@@ -38,12 +38,12 @@ export default function AnalyticsCard({
     >
       <div className="flex items-start justify-between mb-4">
         <div>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 font-medium mb-1 group-hover:text-white transition-colors">
+          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 font-medium mb-1 group-hover:text-white transition-colors">
             {title}
           </p>
           <p className="text-2xl sm:text-3xl font-bold gradient-text-vibrant">{value}</p>
           {subtitle && (
-            <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">{subtitle}</p>
+            <p className="text-xs text-slate-700 dark:text-slate-200 mt-1">{subtitle}</p>
           )}
         </div>
         {icon && (
@@ -66,7 +66,7 @@ export default function AnalyticsCard({
             {Math.abs(trend)}%
           </div>
           {trendLabel && (
-            <span className="text-xs text-slate-500 dark:text-slate-500">
+            <span className="text-xs text-slate-800 dark:text-slate-200">
               {trendLabel}
             </span>
           )}

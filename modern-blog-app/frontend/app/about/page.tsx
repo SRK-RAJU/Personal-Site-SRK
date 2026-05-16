@@ -53,13 +53,13 @@ export default function About() {
           <h1 className="text-5xl sm:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
             Raju
           </h1>
-          <h2 className="text-2xl text-slate-700 dark:text-slate-300 font-semibold mb-2">
+          <h2 className="text-2xl text-slate-800 dark:text-slate-200 font-semibold mb-2">
             Full-Stack Developer, DevOps, Security & Cloud Engineer
           </h2>
           <p className="text-lg text-violet-600 dark:text-violet-400 font-semibold mb-4">
             Personal Tech Blog & Developer Portfolio
           </p>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
+          <p className="text-lg text-slate-800 dark:text-slate-200">
             Building modern web applications and cloud solutions with a focus on performance and security.
           </p>
         </motion.div>
@@ -69,7 +69,7 @@ export default function About() {
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
             <FaRocket className="text-blue-600" /> My Story
           </h2>
-          <div className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
+          <div className="space-y-4 text-slate-800 dark:text-slate-200 leading-relaxed">
             <p className="text-lg">
               Hi! I'm <strong>Raju</strong>, a full-stack developer, security, DevOps and cloud engineer passionate about building efficient, scalable web applications. 
               I specialize in React, Next.js, Node.js, k8, Terraform, Docker, Ansible and cloud technologies like AWS and Azure.
@@ -83,7 +83,7 @@ export default function About() {
               Each project taught me valuable lessons about full-stack development, DevOps practices, and user experience design.
             </p>
             {/* Personal Note */}
-            <p className="italic text-slate-600 dark:text-slate-400">
+            <p className="italic text-slate-800 dark:text-slate-200">
               These sites are designed and built by me based on client requirements and my learning journey. I often work on these projects during weekends and holidays 
               out of genuine interest in supporting clients and continuously improving my skills. My goal is to build impactful solutions, improve my expertise, 
               and deliver high-quality applications. If you find any issues or have suggestions, please reach out!
@@ -103,7 +103,7 @@ export default function About() {
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
                 <FaCloud className="text-blue-500" /> Cloud & Infrastructure
               </h3>
-              <ul className="grid grid-cols-1 gap-2 text-slate-700 dark:text-slate-300 text-sm">
+              <ul className="grid grid-cols-1 gap-2 text-slate-800 dark:text-slate-200 text-sm">
                 <li>• AWS (EC2, S3, RDS, Lambda, Route53)</li>
                 <li>• Azure (VMs, App Service, DevOps, AKS)</li>
                 <li>• Google Cloud Platform (GCP)</li>
@@ -122,7 +122,7 @@ export default function About() {
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
                 <FaCode className="text-purple-500" /> Full-Stack Development
               </h3>
-              <ul className="grid grid-cols-1 gap-2 text-slate-700 dark:text-slate-300 text-sm">
+              <ul className="grid grid-cols-1 gap-2 text-slate-800 dark:text-slate-200 text-sm">
                 <li>• React & Next.js 13+ Frontend</li>
                 <li>• Node.js & Express.js Backend</li>
                 <li>• TypeScript (Frontend & Backend)</li>
@@ -141,7 +141,7 @@ export default function About() {
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
                 <FaDatabase className="text-red-500" /> Security & DevOps
               </h3>
-              <ul className="grid grid-cols-1 gap-2 text-slate-700 dark:text-slate-300 text-sm">
+              <ul className="grid grid-cols-1 gap-2 text-slate-800 dark:text-slate-200 text-sm">
                 <li>• Zscaler Zero Trust Security</li>
                 <li>• Cloudflare CDN & Security</li>
                 <li>• Networking (DNS, SMTP, HTTP/HTTPS)</li>
@@ -165,19 +165,19 @@ export default function About() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="p-4 border-l-4 border-yellow-600 bg-slate-50 dark:bg-slate-800/30">
               <h3 className="font-semibold dark:text-white">AWS Certified</h3>
-              <p className="text-sm text-slate-500">Solutions Architect</p>
+              <p className="text-sm text-slate-800 dark:text-slate-200">Solutions Architect</p>
             </div>
             <div className="p-4 border-l-4 border-blue-500 bg-slate-50 dark:bg-slate-800/30">
               <h3 className="font-semibold dark:text-white">Azure Certified</h3>
-              <p className="text-sm text-slate-500">AZ-900, AZ-104</p>
+              <p className="text-sm text-slate-800 dark:text-slate-200">AZ-900, AZ-104</p>
             </div>
             <div className="p-4 border-l-4 border-red-600 bg-slate-50 dark:bg-slate-800/30">
               <h3 className="font-semibold dark:text-white">GCP Certified</h3>
-              <p className="text-sm text-slate-500">Associate Cloud Engineer & DevOps Professional</p>
+              <p className="text-sm text-slate-800 dark:text-slate-200">Associate Cloud Engineer & DevOps Professional</p>
             </div>
             <div className="p-4 border-l-4 border-gray-700 bg-slate-50 dark:bg-slate-800/30">
               <h3 className="font-semibold dark:text-white">GitHub Foundations</h3>
-              <p className="text-sm text-slate-500">GitHub Certified Foundations</p>
+              <p className="text-sm text-slate-800 dark:text-slate-200">GitHub Certified Foundations</p>
             </div>
           </div>
         </motion.section>
@@ -305,51 +305,51 @@ export default function About() {
                 <div className="p-4 bg-gradient-to-br from-blue-600/20 to-blue-700/30 rounded-lg border border-blue-500/40 text-center">
                   <div className="text-3xl mb-2">☁️</div>
                   <p className="text-sm font-bold text-white">AWS</p>
-                  <p className="text-xs text-slate-300">EC2, S3, Lambda</p>
+                  <p className="text-xs text-slate-100">EC2, S3, Lambda</p>
                 </div>
                 <div className="p-4 bg-gradient-to-br from-blue-500/20 to-violet-600/30 rounded-lg border border-violet-500/40 text-center">
                   <div className="text-3xl mb-2">☁️</div>
                   <p className="text-sm font-bold text-white">Azure</p>
-                  <p className="text-xs text-slate-300">App Service, AKS</p>
+                  <p className="text-xs text-slate-100">App Service, AKS</p>
                 </div>
                 <div className="p-4 bg-gradient-to-br from-red-500/20 to-orange-600/30 rounded-lg border border-red-500/40 text-center">
                   <div className="text-3xl mb-2">☁️</div>
                   <p className="text-sm font-bold text-white">GCP</p>
-                  <p className="text-xs text-slate-300">Compute, Cloud Run</p>
+                  <p className="text-xs text-slate-100">Compute, Cloud Run</p>
                 </div>
 
                 {/* Row 2: DevOps Tools */}
                 <div className="p-4 bg-gradient-to-br from-purple-600/20 to-purple-700/30 rounded-lg border border-purple-500/40 text-center">
                   <div className="text-3xl mb-2">🐳</div>
                   <p className="text-sm font-bold text-white">Docker</p>
-                  <p className="text-xs text-slate-300">Containerization</p>
+                  <p className="text-xs text-slate-100">Containerization</p>
                 </div>
                 <div className="p-4 bg-gradient-to-br from-orange-600/20 to-orange-700/30 rounded-lg border border-orange-500/40 text-center">
                   <div className="text-3xl mb-2">⚙️</div>
                   <p className="text-sm font-bold text-white">Kubernetes</p>
-                  <p className="text-xs text-slate-300">Orchestration</p>
+                  <p className="text-xs text-slate-100">Orchestration</p>
                 </div>
                 <div className="p-4 bg-gradient-to-br from-yellow-600/20 to-yellow-700/30 rounded-lg border border-yellow-500/40 text-center">
                   <div className="text-3xl mb-2">📦</div>
                   <p className="text-sm font-bold text-white">Terraform</p>
-                  <p className="text-xs text-slate-300">IaC</p>
+                  <p className="text-xs text-slate-100">IaC</p>
                 </div>
 
                 {/* Row 3: Security & Monitoring */}
                 <div className="p-4 bg-gradient-to-br from-red-600/20 to-red-700/30 rounded-lg border border-red-500/40 text-center">
                   <div className="text-3xl mb-2">🔒</div>
                   <p className="text-sm font-bold text-white">Zscaler</p>
-                  <p className="text-xs text-slate-300">Security</p>
+                  <p className="text-xs text-slate-100">Security</p>
                 </div>
                 <div className="p-4 bg-gradient-to-br from-violet-600/20 to-violet-700/30 rounded-lg border border-violet-500/40 text-center">
                   <div className="text-3xl mb-2">📊</div>
                   <p className="text-sm font-bold text-white">Grafana</p>
-                  <p className="text-xs text-slate-300">Monitoring</p>
+                  <p className="text-xs text-slate-100">Monitoring</p>
                 </div>
                 <div className="p-4 bg-gradient-to-br from-pink-600/20 to-pink-700/30 rounded-lg border border-pink-500/40 text-center">
                   <div className="text-3xl mb-2">💻</div>
                   <p className="text-sm font-bold text-white">Next.js</p>
-                  <p className="text-xs text-slate-300">Full-Stack</p>
+                  <p className="text-xs text-slate-100">Full-Stack</p>
                 </div>
               </div>
             </div>
@@ -360,12 +360,12 @@ export default function About() {
         {/* Final Note Section */}
         <motion.section variants={itemVariants} className="mb-12 p-8 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
           <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white">My Commitment</h2>
-          <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+          <p className="text-slate-800 dark:text-slate-200 leading-relaxed">
             This personal tech blog is where I share knowledge and insights. 
             All code is maintained carefully, and I continuously update to improve clarity, accuracy, and relevance. 
             If anything feels misconfigured or outdated, I appreciate feedback and work to correct it quickly.
           </p>
-          <p className="text-slate-700 dark:text-slate-300 leading-relaxed mt-4">
+          <p className="text-slate-800 dark:text-slate-200 leading-relaxed mt-4">
             My vision is to help developers and engineers grow through shared knowledge and best practices. Through consistent learning and sharing, 
             I aim to build a community focused on innovation, security, and operational excellence.
           </p>

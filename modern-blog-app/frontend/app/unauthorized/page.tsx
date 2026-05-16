@@ -12,7 +12,7 @@ export default function UnauthorizedPage() {
             Access Denied
           </h1>
 
-          <p className="text-slate-600 dark:text-slate-400 mb-8">
+          <p className="text-slate-800 dark:text-slate-200 mb-8">
             You do not have permission to access this page. Admin access required.
           </p>
 
@@ -32,7 +32,7 @@ export default function UnauthorizedPage() {
           </div>
         </div>
 
-        <div className="mt-8 p-6 bg-slate-700/50 rounded-lg text-slate-300 text-sm">
+        <div className="mt-8 p-6 bg-slate-800/70 rounded-lg text-slate-100 text-sm">
           <p className="font-semibold mb-2">Need Admin Access?</p>
           <p>
             Contact your site administrator to request higher privileges.

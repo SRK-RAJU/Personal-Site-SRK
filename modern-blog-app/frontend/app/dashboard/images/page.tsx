@@ -179,7 +179,7 @@ export default function ImagesPage() {
       <div className="flex items-center gap-4 mb-2">
         <button
           onClick={() => router.back()}
-          className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+          className="text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors"
         >
           <FaArrowLeft size={24} />
         </button>
@@ -187,7 +187,7 @@ export default function ImagesPage() {
           Image Manager
         </h1>
       </div>
-      <p className="text-slate-600 dark:text-slate-400 mb-8">
+      <p className="text-slate-800 dark:text-slate-200 mb-8">
         Upload and manage your blog featured images with automatic compression
       </p>
 
@@ -199,7 +199,7 @@ export default function ImagesPage() {
           <h2 className="text-xl font-semibold mb-2 text-slate-900 dark:text-white">
             Drag and drop images here
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 mb-6">
+          <p className="text-slate-800 dark:text-slate-200 mb-6">
             Images are automatically compressed before upload (Max 5MB, supports JPEG, PNG, WebP, GIF)
           </p>
 
@@ -235,7 +235,7 @@ export default function ImagesPage() {
                   style={{ width: `${uploadProgress}%` }}
                 />
               </div>
-              <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 font-semibold">
+              <p className="mt-2 text-sm text-slate-800 dark:text-slate-200 font-semibold">
                 {Math.round(uploadProgress)}% Complete
               </p>
             </div>
@@ -262,9 +262,9 @@ export default function ImagesPage() {
         </h2>
 
         {loading ? (
-          <p className="text-slate-600 dark:text-slate-400">Loading images...</p>
+          <p className="text-slate-800 dark:text-slate-200">Loading images...</p>
         ) : images.length === 0 ? (
-          <p className="text-slate-600 dark:text-slate-400 text-center py-8">
+          <p className="text-slate-800 dark:text-slate-200 text-center py-8">
             No images uploaded yet. Start by uploading your first image!
           </p>
         ) : (
@@ -286,10 +286,10 @@ export default function ImagesPage() {
 
                 {/* Image Info */}
                 <div className="p-4">
-                  <p className="text-sm text-slate-600 dark:text-slate-400 truncate font-medium">
+                  <p className="text-sm text-slate-800 dark:text-slate-200 truncate font-medium">
                     {image.name}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                  <p className="text-xs text-slate-700 dark:text-slate-200 mt-1">
                     📦 {formatFileSize(image.size)}
                   </p>
 

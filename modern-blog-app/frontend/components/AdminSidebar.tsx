@@ -101,9 +101,9 @@ export function AdminSidebar() {
         {/* User Section */}
         <div className="p-6 border-t border-slate-700 space-y-4">
           <div className="text-sm">
-            <p className="text-slate-400">Logged in as:</p>
+            <p className="text-slate-200">Logged in as:</p>
             <p className="font-semibold">{user?.email}</p>
-            <p className="text-blue-400 capitalize text-xs">{userRole}</p>
+            <p className="text-blue-300 capitalize text-xs">{userRole}</p>
           </div>
 
           <button

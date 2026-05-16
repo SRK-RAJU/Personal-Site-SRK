@@ -110,7 +110,7 @@ export default function PostsPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors"
           >
             <FaArrowLeft /> Back
           </button>
@@ -131,7 +131,7 @@ export default function PostsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search */}
           <div className="relative">
-            <FaSearch className="absolute left-3 top-3 text-slate-400" />
+            <FaSearch className="absolute left-3 top-3 text-slate-700" />
             <input
               type="text"
               placeholder="Search posts by title or slug..."
@@ -158,11 +158,11 @@ export default function PostsPage() {
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
-            <p className="text-slate-600 dark:text-slate-400">Loading posts...</p>
+            <p className="text-slate-800 dark:text-slate-200">Loading posts...</p>
           </div>
         ) : posts.length === 0 ? (
           <div className="p-8 text-center">
-            <p className="text-slate-600 dark:text-slate-400 mb-4">
+            <p className="text-slate-800 dark:text-slate-200 mb-4">
               No posts found
             </p>
             <Link
@@ -204,7 +204,7 @@ export default function PostsPage() {
                       <p className="font-semibold text-slate-900 dark:text-white">
                         {post.title}
                       </p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                      <p className="text-sm text-slate-800 dark:text-slate-200">
                         /{post.slug}
                       </p>
                     </div>
@@ -220,13 +220,13 @@ export default function PostsPage() {
                       {post.published ? 'Published' : 'Draft'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300">
+                  <td className="px-6 py-4 text-slate-800 dark:text-slate-200">
                     <div className="flex items-center gap-2">
                       <FaEye className="text-sm" />
                       {post.view_count || 0}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">
+                  <td className="px-6 py-4 text-slate-800 dark:text-slate-200 text-sm">
                     {new Date(post.published_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">

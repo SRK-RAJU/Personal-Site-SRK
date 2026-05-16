@@ -90,7 +90,7 @@ export default function Contact() {
         {/* Header */}
         <motion.div variants={itemVariants} className="mb-12">
           <h1 className="text-5xl sm:text-6xl font-bold mb-4">Get In Touch</h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
+          <p className="text-lg text-slate-800 dark:text-slate-200">
             Have a project, question, or just want to discuss Anything? I'd love to hear from you.
           </p>
         </motion.div>
@@ -217,7 +217,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="font-semibold text-slate-900 dark:text-white">Location</p>
-                  <p className="text-slate-600 dark:text-slate-400">Hyderabad, India</p>
+                  <p className="text-slate-800 dark:text-slate-200">Hyderabad, India</p>
                 </div>
               </div>
 
@@ -254,7 +254,7 @@ export default function Contact() {
             {/* FAQ Box */}
             <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
               <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white">Quick Facts</h3>
-              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <ul className="space-y-2 text-sm text-slate-800 dark:text-slate-200">
                 <li>✓ Response time: 24-48 hours</li>
                 <li>✓ Available for consulting</li>
                 <li>✓ Open to freelance projects</li>

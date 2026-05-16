@@ -12,7 +12,7 @@ export default function NotFound() {
           </h2>
         </div>
 
-        <p className="text-xl text-slate-600 dark:text-slate-400 mb-8">
+        <p className="text-xl text-slate-800 dark:text-slate-200 mb-8">
           Sorry, the page you're looking for doesn't exist or has been moved.
           Let's get you back on track.
         </p>
@@ -27,7 +27,7 @@ export default function NotFound() {
         </div>
 
         <div className="mt-16 p-8 bg-slate-100 dark:bg-slate-800 rounded-lg">
-          <p className="text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-slate-800 dark:text-slate-200">
             Need help? You can always reach out through the{' '}
             <Link href="/contact" className="text-blue-600 hover:underline">
               contact page

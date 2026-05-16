@@ -94,7 +94,7 @@ export default function Portfolio() {
         <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-slate-900 dark:text-white">
           My Projects
         </h1>
-        <p className="text-xl text-slate-900 dark:text-slate-200 font-semibold">
+        <p className="text-xl text-slate-900 dark:text-slate-100 font-semibold">
           Selected projects showcasing my skills in full-stack development and cloud engineering. All projects are actively maintained and regularly updated. Check them out and share your feedback!
         </p>
       </div>
@@ -103,7 +103,7 @@ export default function Portfolio() {
       {loading ? (
         <div className="text-center py-16">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-violet-500 border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-slate-600 dark:text-slate-400">Loading projects...</p>
+          <p className="mt-4 text-slate-800 dark:text-slate-200">Loading projects...</p>
         </div>
       ) : projects.length > 0 ? (
         <motion.div 
@@ -139,21 +139,21 @@ export default function Portfolio() {
 
               <h2 className="text-2xl font-bold mb-2">{project.title}</h2>
 
-              <p className="text-slate-600 dark:text-slate-400 mb-4">
+              <p className="text-slate-800 dark:text-slate-200 mb-4">
                 {project.description}
               </p>
 
               {/* Technologies */}
               {project.technologies?.length > 0 && (
                 <div className="mb-4">
-                  <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-2">
+                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
                     Tech Stack
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {project.technologies.map((tech: string) => (
                       <span
                         key={tech}
-                        className="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-3 py-1 rounded-full text-sm"
+                        className="bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-3 py-1 rounded-full text-sm"
                       >
                         {tech}
                       </span>
@@ -192,7 +192,7 @@ export default function Portfolio() {
         </motion.div>
       ) : (
         <div className="text-center py-16">
-          <p className="text-slate-600 dark:text-slate-400">No projects available yet.</p>
+          <p className="text-slate-800 dark:text-slate-200">No projects available yet.</p>
         </div>
       )}
     </div>

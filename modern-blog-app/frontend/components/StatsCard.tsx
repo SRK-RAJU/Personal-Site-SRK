@@ -47,7 +47,7 @@ export default function StatsCard({
       </div>
 
       {/* Label */}
-      <p className="text-sm text-slate-600 dark:text-slate-300 font-medium mb-1">
+      <p className="text-sm text-slate-800 dark:text-slate-100 font-medium mb-1">
         {label}
       </p>
 

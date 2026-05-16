@@ -69,7 +69,7 @@ export default function ForgotPasswordPage() {
             Reset Password
           </h1>
           
-          <p className="text-center text-slate-600 dark:text-slate-400 mb-8">
+          <p className="text-center text-slate-800 dark:text-slate-200 mb-8">
             Enter your email address and we'll send you a link to reset your password.
           </p>
 
@@ -100,7 +100,7 @@ export default function ForgotPasswordPage() {
           {!submitted && (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                <label htmlFor="email" className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
                   Email Address
                 </label>
                 <input
@@ -130,7 +130,7 @@ export default function ForgotPasswordPage() {
               </button>
 
               <div className="text-center">
-                <p className="text-sm text-slate-600 dark:text-slate-400">
+                <p className="text-sm text-slate-800 dark:text-slate-200">
                   Remember your password?{' '}
                   <Link
                     href="/auth/login"
@@ -146,7 +146,7 @@ export default function ForgotPasswordPage() {
           {/* Additional Info */}
           {submitted && (
             <div className="space-y-4 text-center">
-              <p className="text-sm text-slate-600 dark:text-slate-400">
+              <p className="text-sm text-slate-800 dark:text-slate-200">
                 Didn't receive the email? Check your spam folder or{' '}
                 <button
                   onClick={handleSubmit}

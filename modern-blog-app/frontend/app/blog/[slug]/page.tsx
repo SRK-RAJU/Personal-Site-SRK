@@ -250,7 +250,7 @@ export default async function BlogPostPage({
             </h1>
 
             {/* Meta Info */}
-            <div className="flex flex-wrap gap-6 mt-8 text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+            <div className="flex flex-wrap gap-6 mt-8 text-slate-800 dark:text-slate-200 text-sm sm:text-base">
               {post.author_name && (
                 <div className="flex items-center gap-2">
                   <FaUser className="text-violet-500" />
@@ -303,7 +303,7 @@ export default async function BlogPostPage({
             {/* Excerpt */}
             {post.excerpt && (
               <div className="mb-8 p-6 bg-violet-500/10 dark:bg-violet-500/5 border-l-4 border-violet-500 rounded">
-                <p className="text-lg text-slate-700 dark:text-slate-300 font-semibold italic">
+                <p className="text-lg text-slate-800 dark:text-slate-200 font-semibold italic">
                   {post.excerpt}
                 </p>
               </div>
@@ -312,7 +312,7 @@ export default async function BlogPostPage({
             {/* Main Content */}
             <div className="prose dark:prose-invert max-w-none mb-12">
               <div
-                className="text-lg leading-relaxed text-slate-700 dark:text-slate-300 space-y-6"
+                className="text-lg leading-relaxed text-slate-800 dark:text-slate-200 space-y-6"
                 dangerouslySetInnerHTML={{
                   __html: post.content || '',
                 }}
@@ -341,7 +341,7 @@ export default async function BlogPostPage({
               <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
                 Want More Tech Insights?
               </h3>
-              <p className="text-slate-700 dark:text-slate-300 mb-6">
+              <p className="text-slate-800 dark:text-slate-200 mb-6">
                 Subscribe to my blog for the latest updates on web development, cloud architecture, and DevOps practices.
               </p>
               <button className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all hover:shadow-lg">

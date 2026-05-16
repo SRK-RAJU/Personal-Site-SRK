@@ -43,7 +43,7 @@ export default function Blog() {
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 text-slate-900 dark:text-white">
               <span className="gradient-text">Latest</span> Articles
             </h1>
-            <p className="text-slate-900 dark:text-slate-200 text-base sm:text-lg max-w-2xl mx-auto font-semibold">
+            <p className="text-slate-900 dark:text-slate-100 text-base sm:text-lg max-w-2xl mx-auto font-semibold">
               Insights, tutorials, and thoughts on web development, cloud architecture, DevOps, and modern technology practices.
             </p>
           </motion.div>
@@ -55,7 +55,7 @@ export default function Blog() {
           {loading ? (
             <div className="text-center py-16 sm:py-20">
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-violet-500 border-t-transparent mx-auto"></div>
-              <p className="mt-4 text-slate-600 dark:text-slate-400">Loading articles...</p>
+              <p className="mt-4 text-slate-800 dark:text-slate-200">Loading articles...</p>
             </div>
           ) : posts.length > 0 ? (
             <motion.div
@@ -111,11 +111,11 @@ export default function Blog() {
                         {post.title}
                       </h3>
 
-                      <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-3 flex-1">
+                      <p className="text-slate-800 dark:text-slate-200 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-3 flex-1">
                         {post.excerpt || post.content?.slice(0, 150)}
                       </p>
 
-                      <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                      <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-800 dark:text-slate-200">
                         {post.published_at && (
                           <div className="flex items-center gap-1.5">
                             <FaCalendar className="text-violet-500" />
@@ -152,7 +152,7 @@ export default function Blog() {
             >
               <div className="text-6xl mb-4">📝</div>
               <h3 className="text-2xl sm:text-3xl font-bold mb-2">No Articles Yet</h3>
-              <p className="text-slate-600 dark:text-slate-400 mb-6">
+              <p className="text-slate-800 dark:text-slate-200 mb-6">
                 Check back soon for interesting content!
               </p>
               <Link href="/" className="btn-primary inline-flex">

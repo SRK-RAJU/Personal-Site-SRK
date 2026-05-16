@@ -97,7 +97,7 @@ export default function Header() {
             </div>
             <div className="hidden sm:block">
               <p className="text-lg font-bold gradient-text">RJ</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 -mt-1">Modern Tech Blog</p>
+              <p className="text-xs text-slate-800 dark:text-slate-200 -mt-1">Modern Tech Blog</p>
             </div>
           </Link>
         </motion.div>
@@ -160,7 +160,7 @@ export default function Header() {
             ) : (
               <button
                 onClick={() => setSearchOpen(true)}
-                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
+                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 transition-colors"
                 title="Search"
               >
                 <FaSearch className="text-sm" />
@@ -171,7 +171,7 @@ export default function Header() {
           {/* Theme Toggle */}
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
+            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 transition-colors"
             title="Toggle theme"
           >
             {theme === 'dark' ? <FaSun className="text-sm" /> : <FaMoon className="text-sm" />}
@@ -193,7 +193,7 @@ export default function Header() {
               )}
               <div className="flex items-center gap-2 px-3 py-2 bg-violet-100 dark:bg-violet-900/20 rounded-lg">
                 <FaUser className="text-sm text-violet-600 dark:text-violet-400" />
-                <span className="text-sm text-slate-700 dark:text-slate-300 font-medium max-w-[100px] truncate">
+                <span className="text-sm text-slate-800 dark:text-slate-200 font-medium max-w-[100px] truncate">
                   {user.email?.split('@')[0]}
                 </span>
               </div>
@@ -209,7 +209,7 @@ export default function Header() {
             <>
               <Link
                 href="/auth/login"
-                className="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-all font-semibold text-sm"
+                className="px-3 py-2 rounded-lg text-slate-800 dark:text-slate-200 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-all font-semibold text-sm"
               >
                 Sign In
               </Link>
@@ -232,13 +232,13 @@ export default function Header() {
         >
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
+            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 transition-colors"
           >
             {theme === 'dark' ? <FaSun size={18} /> : <FaMoon size={18} />}
           </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="p-2 rounded-lg hover:bg-violet-100 dark:hover:bg-violet-900/30 text-slate-700 dark:text-slate-300 transition-colors"
+            className="p-2 rounded-lg hover:bg-violet-100 dark:hover:bg-violet-900/30 text-slate-800 dark:text-slate-200 transition-colors"
             aria-label="Toggle menu"
           >
             {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
@@ -258,7 +258,7 @@ export default function Header() {
             {/* Search */}
             <form onSubmit={handleSearch} className="mb-4">
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800">
-                <FaSearch className="text-sm text-slate-600 dark:text-slate-400" />
+                <FaSearch className="text-sm text-slate-800 dark:text-slate-200" />
                 <input
                   type="text"
                   placeholder="Search posts..."
@@ -289,7 +289,7 @@ export default function Header() {
 
             {/* Mobile Auth */}
             {loading ? (
-              <p className="text-center text-slate-600 dark:text-slate-400 py-3">Loading...</p>
+              <p className="text-center text-slate-800 dark:text-slate-200 py-3">Loading...</p>
             ) : user ? (
               <>
                 {(userRole === 'admin' || userRole === 'author') && (
@@ -303,7 +303,7 @@ export default function Header() {
                   </Link>
                 )}
                 <div className="px-4 py-3 bg-violet-50 dark:bg-violet-900/20 rounded-lg">
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Logged in as:</p>
+                  <p className="text-xs text-slate-800 dark:text-slate-200 mb-1">Logged in as:</p>
                   <p className="font-semibold text-slate-900 dark:text-white break-all">{user.email}</p>
                   <p className="text-xs text-violet-600 dark:text-violet-400 capitalize">{userRole}</p>
                 </div>
@@ -320,7 +320,7 @@ export default function Header() {
                 <Link
                   href="/auth/login"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-violet-100 dark:hover:bg-violet-900/30 font-semibold transition-colors"
+                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-slate-800 dark:text-slate-200 hover:bg-violet-100 dark:hover:bg-violet-900/30 font-semibold transition-colors"
                 >
                   <FaSignInAlt />
                   Sign In

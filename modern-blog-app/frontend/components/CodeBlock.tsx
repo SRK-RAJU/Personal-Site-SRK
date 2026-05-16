@@ -39,10 +39,10 @@ export default function CodeBlock({
       {/* Header */}
       <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-gradient-to-r from-violet-500/10 to-blue-500/10 border-b border-violet-500/20">
         <div>
-          <p className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300">
+          <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
             {title}
           </p>
-          <p className="text-xs text-slate-600 dark:text-slate-400">{language}</p>
+          <p className="text-xs text-slate-800 dark:text-slate-200">{language}</p>
         </div>
         <motion.button
           onClick={handleCopy}

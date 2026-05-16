@@ -53,7 +53,7 @@ export default function Terms() {
         {/* Header */}
         <motion.div variants={itemVariants} className="mb-12">
           <h1 className="text-5xl sm:text-6xl font-bold mb-4">Terms of Service</h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
+          <p className="text-lg text-slate-800 dark:text-slate-200">
             Last Updated: {new Date().toLocaleDateString()}
           </p>
         </motion.div>
@@ -68,7 +68,7 @@ export default function Terms() {
               <h2 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
                 {section.title}
               </h2>
-              <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
+              <div className="prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
                 {section.content}
               </div>
             </div>
@@ -80,7 +80,7 @@ export default function Terms() {
           variants={itemVariants}
           className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700 text-center"
         >
-          <p className="text-slate-600 dark:text-slate-400 mb-4">
+          <p className="text-slate-800 dark:text-slate-200 mb-4">
             Questions about our terms? Let us know.
           </p>
           <Link

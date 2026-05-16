@@ -17,7 +17,7 @@ export default function Error({
           </h2>
         </div>
 
-        <p className="text-lg text-slate-600 dark:text-slate-400 mb-4">
+        <p className="text-lg text-slate-800 dark:text-slate-200 mb-4">
           We encountered an unexpected error. Please try again.
         </p>
 
@@ -25,7 +25,7 @@ export default function Error({
           <summary className="cursor-pointer font-semibold text-red-800 dark:text-red-200">
             Error details
           </summary>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 font-mono break-words">
+          <p className="text-sm text-slate-800 dark:text-slate-200 mt-4 font-mono break-words">
             {error.message}
           </p>
         </details>

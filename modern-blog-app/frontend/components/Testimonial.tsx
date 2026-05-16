@@ -45,7 +45,7 @@ export default function Testimonial({
       </div>
 
       {/* Text */}
-      <p className="text-slate-700 dark:text-slate-300 mb-6 flex-1 text-sm leading-relaxed italic">
+      <p className="text-slate-800 dark:text-slate-200 mb-6 flex-1 text-sm leading-relaxed italic">
         "{text}"
       </p>
 
@@ -62,7 +62,7 @@ export default function Testimonial({
         )}
         <div className="flex-1">
           <p className="font-bold text-slate-900 dark:text-white text-sm">{author}</p>
-          <p className="text-xs text-slate-600 dark:text-slate-400">
+          <p className="text-xs text-slate-800 dark:text-slate-200">
             {role}
             {company && ` @ ${company}`}
           </p>

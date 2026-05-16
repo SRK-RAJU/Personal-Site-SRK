@@ -109,7 +109,7 @@ export default function Footer() {
                   <h3 className="text-3xl font-black text-slate-900 dark:text-white">rj</h3>
                 </div>
               </div>
-              <p className="text-sm text-slate-800 dark:text-slate-200 mt-3 font-semibold group-hover:text-violet-700 dark:group-hover:text-violet-400 transition-colors">Raju Tech</p>
+              <p className="text-sm text-slate-900 dark:text-slate-100 mt-3 font-semibold group-hover:text-violet-700 dark:group-hover:text-violet-400 transition-colors">Raju Tech</p>
             </Link>
             <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-semibold">
               Cloud & DevOps specialist. Full-stack development, security engineering, and modern infrastructure solutions. Building secure, scalable applications.
@@ -130,7 +130,7 @@ export default function Footer() {
                     title={social.label}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`w-10 h-10 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 ${social.color} transition-all duration-200 hover:scale-110`}
+                    className={`w-10 h-10 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 ${social.color} transition-all duration-200 hover:scale-110`}
                     variants={itemVariants}
                     whileHover={{ y: -5 }}
                     initial={{ opacity: 0, scale: 0 }}
@@ -163,7 +163,7 @@ export default function Footer() {
                       href={link.href}
                       target={link.href.startsWith('http') ? '_blank' : undefined}
                       rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className="text-slate-700 dark:text-slate-200 hover:text-violet-600 dark:hover:text-violet-300 transition-colors text-sm font-medium inline-flex items-center gap-2"
+                      className="text-slate-800 dark:text-slate-100 hover:text-violet-600 dark:hover:text-violet-300 transition-colors text-sm font-medium inline-flex items-center gap-2"
                     >
                       {link.label}
                       {link.href.startsWith('http') && <FaArrowRight className="text-xs opacity-0 group-hover:opacity-100" />}
@@ -208,7 +208,7 @@ export default function Footer() {
                 <p className="text-sm font-bold text-slate-900 dark:text-white">
                   Copyright Protection
                 </p>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-xs text-slate-800 dark:text-slate-200 mt-1">
                   © {currentYear} Raju SRK. All rights reserved.
                 </p>
               </div>
@@ -238,7 +238,7 @@ export default function Footer() {
                 <p className="text-sm font-bold text-slate-900 dark:text-white">
                   Content Protection
                 </p>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-xs text-slate-800 dark:text-slate-200 mt-1">
                   Advanced security prevents unauthorized copying.
                 </p>
               </div>
@@ -259,7 +259,7 @@ export default function Footer() {
                 <p className="text-sm font-bold text-slate-900 dark:text-white">
                   Privacy & Security
                 </p>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-xs text-slate-800 dark:text-slate-200 mt-1">
                   Encrypted data with no third-party tracking.
                 </p>
               </div>
@@ -275,14 +275,14 @@ export default function Footer() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <p className="text-sm text-slate-700 dark:text-slate-300 text-center">
+          <p className="text-sm text-slate-800 dark:text-slate-200 text-center">
             <span className="font-bold text-violet-700 dark:text-violet-400">📢 Disclaimer:</span> All content is for educational purposes. Always verify with official documentation and test in a safe environment before production use.
           </p>
         </motion.div>
 
         {/* Copyright Note */}
         <motion.div
-          className="text-center text-xs text-slate-500 dark:text-slate-500 mb-4"
+          className="text-center text-xs text-slate-800 dark:text-slate-200 mb-4"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -298,7 +298,7 @@ export default function Footer() {
 
         {/* Bottom Section */}
         <motion.div
-          className="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-600 dark:text-slate-400"
+          className="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-800 dark:text-slate-200"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -312,7 +312,7 @@ export default function Footer() {
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
             <VisitorCounter />
-            <span className="text-xs text-slate-500 dark:text-slate-400">
+            <span className="text-xs text-slate-800 dark:text-slate-100">
               Tracks total visits in real time via analytics.
             </span>
           </div>
