@@ -97,7 +97,7 @@ export default function Header() {
             </div>
             <div className="hidden sm:block">
               <p className="text-lg font-bold gradient-text">RJ</p>
-              <p className="text-xs text-slate-800 dark:text-slate-200 -mt-1">Modern Tech Blog</p>
+              <p className="text-xs text-slate-800 dark:text-slate-200 -mt-1">Modern Personal Tech Blog</p>
             </div>
           </Link>
         </motion.div>
