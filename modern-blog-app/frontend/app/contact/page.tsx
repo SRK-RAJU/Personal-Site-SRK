@@ -20,12 +20,12 @@ export default function Contact() {
 
   const [captchaQuestion, setCaptchaQuestion] = useState(() => {
     const item = questions[Math.floor(Math.random() * questions.length)];
-    return item.question;
+    return item.question.trim();
   });
 
   const chooseCaptchaQuestion = () => {
     const item = questions[Math.floor(Math.random() * questions.length)];
-    setCaptchaQuestion(item.question);
+    setCaptchaQuestion(item.question.trim());
     setFormData((prev) => ({ ...prev, captchaAnswer: '' }));
   };
 
@@ -225,8 +225,8 @@ export default function Contact() {
               <div>
                 <div className="flex items-center justify-between gap-4 mb-2">
                   <label htmlFor="captchaAnswer" className="block font-semibold text-slate-900 dark:text-white">
-                    <span>{captchaQuestion}</span>
-                    <span aria-hidden="true" className="text-red-500 ml-1">*</span>
+                    <span>{captchaQuestion}</span>{' '}
+                    <span aria-hidden="true" className="text-red-500">*</span>
                   </label>
                   <button
                     type="button"
