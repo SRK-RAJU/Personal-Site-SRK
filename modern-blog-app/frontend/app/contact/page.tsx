@@ -225,7 +225,8 @@ export default function Contact() {
               <div>
                 <div className="flex items-center justify-between gap-4 mb-2">
                   <label htmlFor="captchaAnswer" className="block font-semibold text-slate-900 dark:text-white">
-                    {captchaQuestion} *
+                    <span>{captchaQuestion}</span>
+                    <span aria-hidden="true" className="text-red-500 ml-1">*</span>
                   </label>
                   <button
                     type="button"
