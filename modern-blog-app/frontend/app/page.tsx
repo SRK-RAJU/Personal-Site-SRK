@@ -143,7 +143,7 @@ export default function Home() {
               variants={itemVariants}
             >
               <p className="text-sm font-semibold bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2">
-                <FaStar className="text-violet-400" /> Welcome to the Next-Gen Tech Universe
+                <FaStar className="text-violet-400" /> Welcome to My Tech Blog! <FaStar className="text-pink-400" />
               </p>
             </motion.div>
 
@@ -165,8 +165,8 @@ export default function Home() {
               className="text-lg sm:text-xl text-slate-800 dark:text-slate-100 mb-12 leading-relaxed max-w-3xl mx-auto font-semibold"
               variants={itemVariants}
             >
-              Dive deep into cloud technologies, security practices, DevOps workflows, and cutting-edge software development. 
-              Explore real-world solutions to modern challenges with practical examples and in-depth analysis.
+              I share real-world insights, cloud lessons, DevOps, and security practices.
+              This site is built to help you learn faster and see what practical engineering looks like in action.
             </motion.p>
 
             {/* CTA Buttons */}

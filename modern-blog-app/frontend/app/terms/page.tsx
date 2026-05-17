@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 
-const lastUpdated = 'May 16, 2026';
+const lastUpdated = 'May 17, 2026';
 
 export default function Terms() {
   const containerVariants = {
@@ -22,48 +22,28 @@ export default function Terms() {
 
   const sections = [
     {
-      title: '1. Agreement',
-      content: `By using this personal portfolio site, you agree to these terms. This website is operated for personal branding, project showcase, and technology blog purposes only.`,
+      title: 'Welcome',
+      content: `This is a personal portfolio and blog. It exists to show my journey, experience, and technical learning.`,
     },
     {
-      title: '2. Personal Branding Only',
-      content: `This site is a personal branding and information platform.`,
+      title: 'How to use the site',
+      content: `You may use the site for browsing, learning, and contacting me. Please do not disrupt the site or use it in any harmful way.`,
     },
     {
-      title: '3. Acceptable Use',
-      content: `You may use this site for lawful, personal, and informational purposes. You may not disrupt, reverse engineer, scrape, or misuse the site, and you may not submit harmful or abusive content through contact forms or other features.`,
+      title: 'Contact messages',
+      content: `When you send a message, I use it only to reply and manage communication. I do not send marketing from the contact form.`,
     },
     {
-      title: '4. Contact Messages',
-      content: `When you submit a contact message, we may use that information only to respond and manage communications. We do not use contact submissions for unsolicited marketing.`,
+      title: 'Content and links',
+      content: `Content is shared for learning and personal reference. I cannot guarantee it is always correct. External links are provided for convenience only.`,
     },
     {
-      title: '5. Intellectual Property',
-      content: `All content, design, and code on this site are the property of the site owner unless otherwise noted. You may view and share links to the site, but you may not copy or reproduce content without permission.`,
+      title: 'Updates',
+      content: `I may update the site and these terms from time to time. Continued use after changes means you accept them.`,
     },
     {
-      title: '6. Disclaimers',
-      content: `Content is provided “as is” for educational and informational purposes only. We make no warranties about accuracy, completeness, or suitability. Visitors should verify any information independently before relying on it.`,
-    },
-    {
-      title: '7. Limitation of Liability',
-      content: `To the maximum extent permitted by law, the site owner is not responsible for direct, indirect, incidental, or consequential losses resulting from the use of this site.`,
-    },
-    {
-      title: '8. External Links',
-      content: `The site may include links to third-party websites. These links are provided for convenience and do not constitute an endorsement. Use external sites at your own risk.`,
-    },
-    {
-      title: '9. Changes',
-      content: `These terms may be updated at any time. Continued use of the site after changes indicates acceptance of the updated terms.`,
-    },
-    {
-      title: '10. Governing Law',
-      content: `These terms are governed by applicable law in India. If a court finds any provision invalid, the remaining provisions will continue to apply.`,
-    },
-    {
-      title: '11. Contact',
-      content: `For questions about these terms, email contact@rjexa.com.`,
+      title: 'Questions',
+      content: `If you have questions, email contact@rjexa.com.`,
     },
   ];
 

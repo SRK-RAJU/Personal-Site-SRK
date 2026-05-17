@@ -46,6 +46,9 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Raju Tech Blog" />
       </head>
       <body className="flex flex-col min-h-screen bg-gradient-to-br from-white via-violet-50 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-300">
+        <a href="#main-content" className="skip-link focus-visible:outline-none">
+          Skip to main content
+        </a>
         <ContentProtectionWrapper>
           <AuthProvider>
             <Toaster
@@ -57,7 +60,7 @@ export default function RootLayout({
               }}
             />
             <Header />
-            <main className="flex-1 w-full pt-16 sm:pt-20">
+            <main id="main-content" className="flex-1 w-full pt-16 sm:pt-20">
               {children}
             </main>
             <Footer />

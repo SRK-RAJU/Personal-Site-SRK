@@ -3,15 +3,39 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaEnvelope, FaLinkedin, FaGithub, FaPhone, FaMapMarkerAlt, FaPaperPlane, FaArrowLeft } from 'react-icons/fa';
-import { supabase } from '@/lib/supabaseClient';
+import { FaEnvelope, FaLinkedin, FaGithub, FaMapMarkerAlt, FaPaperPlane, FaArrowLeft } from 'react-icons/fa';
 
 export default function Contact() {
+  const questions = [
+    { question: 'What is 7 + 2?' },
+    { question: 'What is 5 + 4?' },
+    { question: 'What is 3 + 6?' },
+    { question: 'What is 8 + 1?' },
+    { question: 'What is 4 + 5?' },
+    { question: 'What is 6 - 2?' },
+    { question: 'What is 4 - 1?' },
+    { question: 'What is 3 * 2?' },
+    { question: 'What is 2 × 4?' },
+  ];
+
+  const [captchaQuestion, setCaptchaQuestion] = useState(() => {
+    const item = questions[Math.floor(Math.random() * questions.length)];
+    return item.question;
+  });
+
+  const chooseCaptchaQuestion = () => {
+    const item = questions[Math.floor(Math.random() * questions.length)];
+    setCaptchaQuestion(item.question);
+    setFormData((prev) => ({ ...prev, captchaAnswer: '' }));
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     subject: '',
     message: '',
+    website: '',
+    captchaAnswer: '',
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -37,12 +61,12 @@ export default function Contact() {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, captchaQuestion }),
       });
 
       if (response.ok) {
         setSubmitted(true);
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setFormData({ name: '', email: '', subject: '', message: '', website: '', captchaAnswer: '' });
         setTimeout(() => setSubmitted(false), 5000);
       } else {
         setError('Failed to send message. Please try again.');
@@ -100,17 +124,34 @@ export default function Contact() {
           <motion.div variants={itemVariants} className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="space-y-6">
               {submitted && (
-                <div className="bg-violet-100 dark:bg-violet-900 border border-violet-400 dark:border-violet-700 text-violet-800 dark:text-violet-200 p-4 rounded-lg flex items-center gap-2">
+                <div role="status" aria-live="polite" className="bg-violet-100 dark:bg-violet-900 border border-violet-400 dark:border-violet-700 text-violet-800 dark:text-violet-200 p-4 rounded-lg flex items-center gap-2">
                   <span className="text-xl">✓</span>
                   <span>Thanks for your message! I'll get back to you shortly.</span>
                 </div>
               )}
 
               {error && (
-                <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-800 dark:text-red-200 p-4 rounded-lg">
+                <div role="status" aria-live="polite" className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-800 dark:text-red-200 p-4 rounded-lg">
                   {error}
                 </div>
               )}
+
+              <input
+                type="hidden"
+                id="website"
+                name="website"
+                value={formData.website}
+                onChange={handleChange}
+                autoComplete="off"
+                aria-hidden="true"
+                style={{ display: 'none' }}
+              />
+              <input
+                type="hidden"
+                id="captchaQuestion"
+                name="captchaQuestion"
+                value={captchaQuestion}
+              />
 
               {/* Name */}
               <div>
@@ -177,6 +218,33 @@ export default function Contact() {
                   rows={6}
                   className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
                   placeholder="Tell me about your question, idea, or feedback..."
+                />
+              </div>
+
+              {/* Human verification */}
+              <div>
+                <div className="flex items-center justify-between gap-4 mb-2">
+                  <label htmlFor="captchaAnswer" className="block font-semibold text-slate-900 dark:text-white">
+                    {captchaQuestion} *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={chooseCaptchaQuestion}
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                  >
+                    Try another one
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  id="captchaAnswer"
+                  name="captchaAnswer"
+                  value={formData.captchaAnswer}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  placeholder="Enter the answer"
+                  aria-label="Human verification answer"
                 />
               </div>
 

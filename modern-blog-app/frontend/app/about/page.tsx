@@ -71,20 +71,16 @@ export default function About() {
           </h2>
           <div className="space-y-4 text-slate-800 dark:text-slate-200 leading-relaxed">
             <p className="text-lg">
-              Hi! I'm <strong>Raju</strong>, a full-stack developer, security, DevOps and cloud engineer passionate about building efficient, scalable web applications. 
-              I specialize in React, Next.js, Node.js, k8, Terraform, Docker, Ansible and cloud technologies like AWS and Azure.
+              Hi! I'm <strong>Raju</strong>. I build practical web apps, cloud systems, and secure DevOps solutions that help people get work done.
             </p>
             <p>
-              I started my journey with curiosity and a strong desire to build things. Over the years, I've developed expertise in frontend development, 
-              backend systems, and cloud infrastructure. I focus on writing clean, maintainable code and creating user-friendly applications.
+              I started out helping local businesses create simple tools that actually worked. Since then, I’ve grown into cloud, automation, and security work while keeping projects easy to use.
             </p>
             <p>
-              I've built several projects including this personal portfolio, a local e-commerce store for a kirana shop, and a facilities management system. 
-              Each project taught me valuable lessons about full-stack development, DevOps practices, and user experience design.
+              My work includes a portfolio site, a kirana shop e-commerce platform, and a facilities management system. Each project helped me learn better ways to build, deploy, and keep systems stable.
             </p>
-            {/* Personal Note */}
             <p className="italic text-slate-800 dark:text-slate-200">
-              These projects are personal learning experiments and independent demos created during my free time. I build them to explore new technologies, sharpen my skills, and share practical insights from my development journey. If you find any issues or have suggestions, please reach out!
+              This page shares what I build and why I build it. If you have a project idea or need a technical conversation, I’d love to hear from you.
             </p>
           </div>
         </motion.section>

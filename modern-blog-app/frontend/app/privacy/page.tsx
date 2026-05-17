@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 
-const lastUpdated = 'May 16, 2026';
+const lastUpdated = 'May 17, 2026';
 
 export default function Privacy() {
   const containerVariants = {
@@ -22,44 +22,28 @@ export default function Privacy() {
 
   const sections = [
     {
-      title: '1. Introduction',
-      content: `This website is a personal branding portfolio and technology blog operated by Raju SRK. It is intended to showcase experience, projects, and technical insights.`,
+      title: 'About this site',
+      content: `This website is my personal portfolio and technology blog. It is built to share my journey, learning, and technical ideas in a clear way.`,
     },
     {
-      title: '2. Information We Collect',
-      content: `We do not collect personal information unless you voluntarily provide it. If you use the contact form, we collect your name, email address, subject, and message so we can respond. We may also record basic anonymous usage data, such as page views and browser metadata, to help improve the site experience.`,
+      title: 'What I collect',
+      content: `I only collect information you choose to share. If you use the contact form, I receive your name, email, subject, and message. I may also collect anonymous site usage data to improve performance and stability.`,
     },
     {
-      title: '3. How We Use Information',
-      content: `We use contact form information to reply to your message and improve our site. We use anonymous usage data to monitor site performance and maintain a secure, stable experience. We do not sell or share personal data for marketing or advertising purposes.`,
+      title: 'Why I use it',
+      content: `Contact form details are used only to reply to your message. Anonymous usage data helps improve the site experience and keep the site secure. I do not sell or use your data for advertising.`,
     },
     {
-      title: '4. Cookies and Tracking',
-      content: `This site does not use advertising trackers. Browser cookies or local storage may be used only for essential site functionality and session behavior when logging in or using site features. You may manage cookies through your browser settings.`,
+      title: 'Third-party services',
+      content: `This site runs on platforms like Vercel and Supabase. These providers have their own privacy policies. This site does not use advertising trackers or third-party marketing tools.`,
     },
     {
-      title: '5. Third-Party Services',
-      content: `This site relies on third-party services such as Supabase and Vercel to host and process data. These providers have their own privacy policies, and we recommend reviewing them independently. We do not use analytics services for advertising.`,
+      title: 'Your choices',
+      content: `If you want your information removed or corrected, email contact@rjexa.com. I will respond to reasonable requests as quickly as possible.`,
     },
     {
-      title: '6. Data Retention',
-      content: `Contact form messages are retained only as long as necessary to respond and maintain the site. Contact details are not used for unsolicited communications. If you request data deletion, we will handle it promptly upon receipt of a valid request.`,
-    },
-    {
-      title: '7. Your Rights',
-      content: `If you have questions about the information you provide, you may request access, correction, or deletion by emailing contact@rjexa.com. We will respond as quickly as possible to reasonable requests.`,
-    },
-    {
-      title: '8. Children’s Privacy',
-      content: `This site is not directed at children under 13. We do not knowingly collect information from minors. If you believe a child has provided information, please contact us and we will remove it.`,
-    },
-    {
-      title: '9. Personal Branding Statement',
-      content: `This website is a personal portfolio and blog. Content is shared for learning and branding purposes.`,
-    },
-    {
-      title: '10. Contact',
-      content: `For privacy questions or requests, email contact@rjexa.com.`,
+      title: 'Children',
+      content: `This site is not intended for children under 13. I do not knowingly collect information from minors.`,
     },
   ];
 

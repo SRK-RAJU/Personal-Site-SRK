@@ -81,17 +81,31 @@ const DEFAULT_POSTS = [
   },
 ];
 
-// Initialize Supabase client with service role key for server-side operations
+// Detect placeholder environment values and avoid creating a live Supabase client when not configured
+function isSupabasePlaceholder(value?: string) {
+  return !value || /your_project_id|YOUR_PROJECT_ID|YOUR_ANON_KEY_HERE|YOUR_SERVICE_ROLE_KEY_HERE|yourdomain\.com/i.test(value);
+}
+
 function getSupabaseServer() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-  );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey || isSupabasePlaceholder(supabaseUrl) || isSupabasePlaceholder(supabaseKey)) {
+    return null;
+  }
+
+  return createClient(supabaseUrl, supabaseKey);
 }
 
 export async function generateStaticParams() {
   try {
     const supabase = getSupabaseServer();
+    if (!supabase) {
+      return DEFAULT_POSTS.map((post) => ({
+        slug: post.slug,
+      }));
+    }
+
     const { data: posts, error } = await supabase
       .from('posts')
       .select('slug')
@@ -99,13 +113,11 @@ export async function generateStaticParams() {
 
     if (error) {
       console.error('Error fetching posts for static generation:', error);
-      // Return default posts slugs as fallback
       return DEFAULT_POSTS.map((post) => ({
         slug: post.slug,
       }));
     }
 
-    // If no posts from DB, use default posts
     if (!posts || posts.length === 0) {
       return DEFAULT_POSTS.map((post) => ({
         slug: post.slug,
@@ -117,7 +129,6 @@ export async function generateStaticParams() {
     }));
   } catch (err) {
     console.error('Error in generateStaticParams:', err);
-    // Return default posts slugs as fallback
     return DEFAULT_POSTS.map((post) => ({
       slug: post.slug,
     }));
@@ -127,16 +138,17 @@ export async function generateStaticParams() {
 async function getPost(slug: string) {
   try {
     const supabase = getSupabaseServer();
+    if (supabase) {
+      const { data: post, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('slug', slug)
+        .eq('published', true)
+        .single();
 
-    const { data: post, error } = await supabase
-      .from('posts')
-      .select('*')
-      .eq('slug', slug)
-      .eq('published', true)
-      .single();
-
-    if (!error && post) {
-      return post;
+      if (!error && post) {
+        return post;
+      }
     }
   } catch (err) {
     console.warn('Error fetching post from database:', err);
@@ -148,33 +160,27 @@ async function getPost(slug: string) {
 }
 
 async function incrementViews(postId: string) {
+  const supabase = getSupabaseServer();
+  if (!supabase) {
+    return;
+  }
+
   try {
-    const supabase = getSupabaseServer();
+    const { data } = await supabase
+      .from('posts')
+      .select('id')
+      .eq('id', postId)
+      .single();
 
-    // The view_count column may not exist, so we'll silently fail
-    // This is to avoid errors while still attempting to track views
-    try {
-      const { data } = await supabase
-        .from('posts')
-        .select('id')
-        .eq('id', postId)
-        .single();
-
-      if (data) {
-        // Attempt to update view_count if it exists
-        try {
-          await supabase.rpc('increment_views', { post_id: postId });
-        } catch (_rpcError) {
-          // If RPC doesn't exist, that's fine - silently ignore
-        }
+    if (data) {
+      try {
+        await supabase.rpc('increment_views', { post_id: postId });
+      } catch (_rpcError) {
+        // If RPC doesn't exist, ignore.
       }
-    } catch (err) {
-      // Silently ignore errors
-      console.warn('Could not increment views (column may not exist)');
     }
   } catch (err) {
-    // Silently ignore any errors
-    console.warn('Error in incrementViews:', err);
+    console.warn('Could not increment views or update post metadata:', err);
   }
 }
 

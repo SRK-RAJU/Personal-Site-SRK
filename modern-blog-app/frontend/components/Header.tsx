@@ -71,7 +71,7 @@ export default function Header() {
           : 'bg-white/50 dark:bg-slate-950/50 backdrop-blur-md border-b border-transparent'
       }`}
     >
-      <nav className="container-max flex items-center justify-between h-20">
+      <nav aria-label="Primary navigation" className="container-max flex items-center justify-between h-20">
         {/* Logo with animation */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -144,6 +144,7 @@ export default function Header() {
                 <input
                   type="text"
                   placeholder="Search posts..."
+                  aria-label="Search blog posts"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   autoFocus
@@ -153,6 +154,7 @@ export default function Header() {
                   type="button"
                   onClick={() => {setSearchOpen(false); setSearchQuery('');}}
                   className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                  aria-label="Close search"
                 >
                   <FaTimes className="text-sm" />
                 </button>
@@ -162,6 +164,7 @@ export default function Header() {
                 onClick={() => setSearchOpen(true)}
                 className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 transition-colors"
                 title="Search"
+                aria-label="Open search"
               >
                 <FaSearch className="text-sm" />
               </button>
@@ -173,6 +176,7 @@ export default function Header() {
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 transition-colors"
             title="Toggle theme"
+            aria-label="Toggle theme"
           >
             {theme === 'dark' ? <FaSun className="text-sm" /> : <FaMoon className="text-sm" />}
           </button>
@@ -233,6 +237,7 @@ export default function Header() {
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 transition-colors"
+            aria-label="Toggle theme"
           >
             {theme === 'dark' ? <FaSun size={18} /> : <FaMoon size={18} />}
           </button>

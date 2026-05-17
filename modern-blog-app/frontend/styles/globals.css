@@ -13,6 +13,46 @@
     background-attachment: fixed;
   }
 
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    z-index: 60;
+    padding: 0.5rem 1rem;
+    background: rgba(15, 23, 42, 0.95);
+    color: white;
+    border-radius: 9999px;
+    transform: translateY(-120%);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0;
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    opacity: 1;
+    outline: 2px solid #8b5cf6;
+    outline-offset: 3px;
+  }
+
+  :focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   /* Gradient backgrounds */
   .bg-gradient-dark {
     @apply bg-gradient-to-br from-slate-900 via-blue-900 to-black;
@@ -62,7 +102,7 @@
   }
 
   .section-gap-loose {
-    @apply gap-8 sm:gap-10 md:gap-14 lg:gap-18;
+    @apply gap-8 sm:gap-10 md:gap-14 lg:gap-20;
   }
 
   /* Consistent section vertical spacing */
@@ -71,7 +111,7 @@
   }
 
   .section-space-tight {
-    @apply mb-8 sm:mb-10 md:mb-14 lg:mb-18;
+    @apply mb-8 sm:mb-10 md:mb-14 lg:mb-20;
   }
 
   .btn {
