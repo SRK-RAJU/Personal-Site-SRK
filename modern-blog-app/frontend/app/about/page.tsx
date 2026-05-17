@@ -74,13 +74,13 @@ export default function About() {
               Hi! I'm <strong>Raju</strong>. I build practical web apps, cloud systems, and secure DevOps solutions that help people get work done.
             </p>
             <p>
-              I started out helping local businesses create simple tools that actually worked. Since then, I’ve grown into cloud, automation, and security work while keeping projects easy to use.
+              I started out real-world problems, focusing on performance, optimization, security and scalability to create simple tools that actually worked. Since then, I’ve grown into cloud, automation, and security work while keeping them easy to use.
             </p>
             <p>
-              My work includes a portfolio site, a kirana shop e-commerce platform, and a facilities management system. Each project helped me learn better ways to build, deploy, and keep systems stable.
+              My work includes a portfolio site and several other projects. Each project helped me learn better ways to build, deploy, and keep systems stable.
             </p>
             <p className="italic text-slate-800 dark:text-slate-200">
-              This page shares what I build and why I build it. If you have a project idea or need a technical conversation, I’d love to hear from you.
+              This page shares what I learned and what I build and why I build it. If you have a project idea or need a technical conversation, I’d love to hear from you.
             </p>
           </div>
         </motion.section>
