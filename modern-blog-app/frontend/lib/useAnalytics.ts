@@ -40,7 +40,7 @@ export function useWebsiteStats() {
         });
         setError(null);
       } catch (err) {
-        console.warn('Stats fetch warning (using defaults):', err);
+        // Using default stats
         // Use sensible defaults on error
         setError('Using default values');
       } finally {
@@ -78,7 +78,7 @@ export function usePageViews() {
             user_ip: 'unknown',
             user_agent: navigator.userAgent,
           },
-        }).catch(err => console.warn('Tracking error (silent):', err));
+        }).catch(err => { /* silent tracking error */ });
 
         // Get total views with timeout
         try {
@@ -87,7 +87,7 @@ export function usePageViews() {
           });
           setTotalViews(response.data.total_views || 0);
         } catch (err) {
-          console.warn('Could not fetch page views:', err);
+          // Could not fetch page views
           setTotalViews(0); // Default to 0
         }
       } finally {

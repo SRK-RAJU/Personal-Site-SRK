@@ -100,13 +100,10 @@ export async function processImage(file: File): Promise<{
   const i = Math.floor(Math.log(file.size) / Math.log(1024));
   const originalSizeStr = Math.round((file.size / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i];
 
-  console.log(`Original image size: ${originalSizeStr}`);
-
   // Compress
   const compressed = await compressImage(file, 0.75, 1920, 1440);
 
   const savings = calculateCompressionSavings(file.size, compressed.size);
-  console.log(`Compressed size: ${formatFileSize(compressed.size)} (saved ${savings})`);
 
   return {
     blob: compressed,

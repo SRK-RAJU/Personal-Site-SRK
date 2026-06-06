@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 );
+
+// Input validation schema
+const ContactFormSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters').max(100),
+  email: z.string().email('Invalid email format'),
+  subject: z.string().min(3, 'Subject must be at least 3 characters').max(200),
+  message: z.string().min(10, 'Message must be at least 10 characters').max(5000),
+  website: z.string().optional().default(''), // honeypot
+  captchaQuestion: z.string(),
+  captchaAnswer: z.string(),
+});
 
 const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 10 * 60 * 1000; // 10 minutes
@@ -34,31 +46,26 @@ export async function POST(request: NextRequest) {
   }
   try {
     const body = await request.json();
-    const { name, email, subject, message, website, captchaQuestion, captchaAnswer } = body;
 
-    // Validate honeypot first
+    // Validate input with Zod
+    let validatedData;
+    try {
+      validatedData = ContactFormSchema.parse(body);
+    } catch (validationError) {
+      return NextResponse.json(
+        { error: 'Invalid input data' },
+        { status: 400 }
+      );
+    }
+
+    const { name, email, subject, message, website, captchaQuestion, captchaAnswer } = validatedData;
+
+    // Validate honeypot
     if (website) {
-      console.warn('Spam blocked by honeypot:', { ip: clientIp, website });
+      // Silently reject spam attempts
       return NextResponse.json(
         { message: 'Thank you for your message! I will get back to you soon!' },
         { status: 200 }
-      );
-    }
-
-    // Validate inputs
-    if (!name || !email || !subject || !message || !captchaAnswer || !captchaQuestion) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
       );
     }
 
@@ -103,14 +110,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log the contact message
-    console.log('New contact message:', {
-      name,
-      email,
-      subject,
-      message,
-      timestamp: new Date().toISOString(),
-    });
+    // Contact message received - no logging of sensitive data
 
     // Try to save to Supabase if configured
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)) {
@@ -120,11 +120,10 @@ export async function POST(request: NextRequest) {
           .insert([{ name, email, subject, message, created_at: new Date().toISOString() }]);
         
         if (error && error.code !== 'PGRST116') {
-          console.warn('Supabase insert warning:', error);
-          // Still return success even if table doesn't exist yet
+          // Silently handle database errors
         }
       } catch (dbErr) {
-        console.warn('Database save attempt:', dbErr);
+        // Silently handle database save errors
         // Don't fail the request if database is not ready
       }
     }
@@ -134,7 +133,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Contact form error:', error);
+    // Silently handle unexpected errors
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

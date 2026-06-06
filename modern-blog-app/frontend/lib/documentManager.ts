@@ -34,13 +34,13 @@ export async function getDocumentMetadata(
       .single()
 
     if (error) {
-      console.error('[Documents] Error fetching metadata:', error)
+      // Error fetching metadata
       return null
     }
 
     return data
   } catch (error) {
-    console.error('[Documents] Exception:', error)
+    // Exception in getDocumentMetadata
     return null
   }
 }
@@ -62,13 +62,13 @@ export async function listDocuments(
     const { data, error } = await query
 
     if (error) {
-      console.error('[Documents] Error listing:', error)
+      // Error listing documents
       return []
     }
 
     return data || []
   } catch (error) {
-    console.error('[Documents] Exception:', error)
+    // Exception in listDocuments
     return []
   }
 }
@@ -103,28 +103,20 @@ export async function getDocumentUrl(
         warning = `📥 Downloading from original site: ${metadata.title} (${metadata.size}MB)`
       }
 
-      // Log that user is accessing document (not downloading from Supabase)
-      if (isNearLimit) {
-        console.warn(
-          `[Bandwidth] Limiting PDF downloads - using original URL instead of Supabase (${bandwidthStats.percentageUsed.toFixed(1)}% used)`
-        )
-      }
-
       return {
         url: metadata.sourceUrl,
         warning,
       }
     }
 
-    // Strategy 2: Serve from Supabase (only if bandwidth is available)
-    if (strategy === 'supabase' && !isNearLimit) {
-      // Get signed URL from Supabase storage
-      const { data, error } = supabase.storage
+    // Strategy 2: Use Supabase storage
+    try {
+      const { data } = supabase.storage
         .from('documents')
         .getPublicUrl(documentId)
 
-      if (error) {
-        console.error('[Documents] Error getting Supabase URL:', error)
+      const url = data?.publicUrl
+      if (!url) {
         // Fallback to original
         return {
           url: metadata.sourceUrl,
@@ -132,24 +124,19 @@ export async function getDocumentUrl(
         }
       }
 
-      // Log bandwidth usage when user actually downloads
-      // (They might not click the link)
-      console.info(
-        `[Documents] Download ready: ${metadata.title} (${metadata.size}MB) - User will trigger bandwidth usage when they click`
-      )
-
+      // Return Supabase URL with bandwidth warning
       return {
         url: data.publicUrl,
         warning: `⚠️ This will use ${metadata.size}MB of your bandwidth`,
       }
-    }
-
-    return {
-      url: metadata.sourceUrl,
-      warning: 'Using original source (bandwidth protection)',
+    } catch (err) {
+      // Fallback to original on any error
+      return {
+        url: metadata.sourceUrl,
+        warning: 'Falling back to original URL',
+      }
     }
   } catch (error) {
-    console.error('[Documents] Exception getting URL:', error)
     return { url: null, warning: 'Error getting document URL' }
   }
 }
@@ -187,15 +174,17 @@ export async function trackDocumentDownload(
 
   // Optional: Log to Supabase for analytics
   try {
-    await supabase.from('document_downloads').insert({
-      document_id: documentId,
-      file_size_mb: fileSizeInMB,
-      downloaded_at: new Date().toISOString(),
-      user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
-    })
+    await supabase.from('document_downloads').insert([
+      {
+        document_id: documentId,
+        file_size_mb: fileSizeInMB,
+        downloaded_at: new Date().toISOString(),
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+      },
+    ] as never)
   } catch (error) {
     // Non-critical, just for analytics
-    console.warn('[Documents] Could not log download:', error)
+    // Could not log download
   }
 }
 

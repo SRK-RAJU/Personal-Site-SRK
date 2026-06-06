@@ -42,7 +42,7 @@ export default function Contact() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -51,20 +51,26 @@ export default function Contact() {
     setError('');
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      // Submit to Supabase just like existing code does
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, captchaQuestion }),
       });
 
-      if (response.ok) {
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || 'Failed to send message. Please try again.');
+        return;
+      }
+
+      const result = await response.json();
+      if (result.message) {
         setSubmitted(true);
         setFormData({ name: '', email: '', subject: '', message: '', website: '', captchaAnswer: '' });
         setTimeout(() => setSubmitted(false), 5000);
@@ -72,7 +78,6 @@ export default function Contact() {
         setError('Failed to send message. Please try again.');
       }
     } catch (err) {
-      console.error('Error sending message:', err);
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);

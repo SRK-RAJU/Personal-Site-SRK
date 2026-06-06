@@ -29,17 +29,16 @@ export default function PostsPage() {
     try {
       setLoading(true);
       
-      // Use API endpoint instead of direct Supabase call
       const url = new URL('/api/posts', window.location.origin);
+      const response = await fetch(url.toString());
       
-      const { data, error } = await fetch(url.toString()).then(r => r.json());
-
-      if (error) {
-        console.error('Error fetching posts:', error);
-        return;
+      if (!response.ok) {
+        throw new Error('Failed to fetch posts');
       }
+      
+      const result = await response.json();
+      const data = result.data || [];
 
-      // Filter locally
       let filtered = data || [];
       
       if (filterStatus === 'published') {
@@ -48,7 +47,6 @@ export default function PostsPage() {
         filtered = filtered.filter((p: Post) => p.published === false);
       }
 
-      // Search locally
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         filtered = filtered.filter((p: Post) =>
@@ -57,7 +55,6 @@ export default function PostsPage() {
         );
       }
 
-      // Sort by published_at
       filtered.sort((a: Post, b: Post) => {
         const dateA = new Date(a.published_at).getTime();
         const dateB = new Date(b.published_at).getTime();
@@ -66,7 +63,8 @@ export default function PostsPage() {
 
       setPosts(filtered);
     } catch (err) {
-      console.error('Error fetchPosts:', err);
+      // Silent error handling
+      setPosts([]);
     } finally {
       setLoading(false);
     }

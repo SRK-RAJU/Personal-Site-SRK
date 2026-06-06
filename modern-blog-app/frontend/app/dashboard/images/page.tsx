@@ -35,12 +35,16 @@ export default function ImagesPage() {
   const fetchImages = async () => {
     try {
       setLoading(true);
+      if (!supabase) {
+        setError('Supabase is not configured');
+        return;
+      }
+
       const { data, error } = await supabase.storage
         .from('blog-images')
         .list();
 
       if (error) {
-        console.error('Error fetching images:', error);
         return;
       }
 

@@ -10,7 +10,33 @@ const supabaseServiceRole = createClient(
 // Fallback to anon key if service role is not available
 const supabase = supabaseServiceRole;
 
+// Rate limiting
+const rateLimitMap = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes
+const RATE_LIMIT_MAX = 50; // max requests per window
+
+function getClientIp(request: NextRequest) {
+  const forwardedIp = request.headers.get('x-forwarded-for');
+  if (forwardedIp) {
+    return forwardedIp.split(',')[0].trim();
+  }
+  return request.headers.get('x-real-ip') || 'unknown';
+}
+
+function isRateLimited(ip: string) {
+  const now = Date.now();
+  const timestamps = rateLimitMap.get(ip) || [];
+  const recent = timestamps.filter((ts) => now - ts < RATE_LIMIT_WINDOW);
+  recent.push(now);
+  rateLimitMap.set(ip, recent);
+  return recent.length > RATE_LIMIT_MAX;
+}
+
 export async function GET(request: NextRequest) {
+  const clientIp = getClientIp(request);
+  if (isRateLimited(clientIp)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action');
@@ -26,7 +52,6 @@ export async function GET(request: NextRequest) {
 
         // Handle errors gracefully
         if (error) {
-          console.warn('Analytics page-views warning:', error);
           // Return success with fallback
           return NextResponse.json({
             total_views: 0,
@@ -39,7 +64,6 @@ export async function GET(request: NextRequest) {
           timestamp: new Date().toISOString(),
         });
       } catch (err) {
-        console.error('Page-views exception:', err);
         return NextResponse.json(
           { total_views: 0 },
           { status: 200 } // Return 200 with fallback data
@@ -56,7 +80,6 @@ export async function GET(request: NextRequest) {
           .single();
 
         if (statsError && statsError.code !== 'PGRST116') {
-          console.warn('Stats fetch warning:', statsError);
           // Don't throw - use fallback values
         }
 
@@ -75,7 +98,7 @@ export async function GET(request: NextRequest) {
             .select('id', { count: 'exact', head: true });
           if (typeof articleCount === 'number') fallbackStats.articles = articleCount;
         } catch (err) {
-          console.warn('Could not fetch posts count:', err);
+          // Silent failure - use fallback
         }
 
         try {
@@ -86,7 +109,7 @@ export async function GET(request: NextRequest) {
             .single();
           if (pageData?.view_count != null) fallbackStats.monthly_views = pageData.view_count;
         } catch (err) {
-          console.warn('Could not fetch page analytics:', err);
+          // Silent failure - use fallback
         }
 
         try {
@@ -95,7 +118,7 @@ export async function GET(request: NextRequest) {
             .select('id', { count: 'exact', head: true });
           if (typeof projectsCount === 'number') fallbackStats.projects = projectsCount;
         } catch (err) {
-          console.warn('Could not fetch projects count:', err);
+          // Silent failure - use fallback
         }
 
         try {
@@ -104,7 +127,7 @@ export async function GET(request: NextRequest) {
             .select('id', { count: 'exact', head: true });
           if (typeof topicsCount === 'number') fallbackStats.topics = topicsCount;
         } catch (err) {
-          console.warn('Could not fetch topics count:', err);
+          // Silent failure - use fallback
         }
 
         try {
@@ -114,7 +137,7 @@ export async function GET(request: NextRequest) {
             .single();
           if (totalVisitsData?.total_visits != null) fallbackStats.total_visits = totalVisitsData.total_visits;
         } catch (err) {
-          console.warn('Could not fetch total visits:', err);
+          // Silent failure - use fallback
         }
 
         return NextResponse.json({
@@ -126,7 +149,6 @@ export async function GET(request: NextRequest) {
           timestamp: new Date().toISOString(),
         });
       } catch (err) {
-        console.error('Stats action exception:', err);
         // Return safe fallback values even on complete failure
         return NextResponse.json(
           {
@@ -144,7 +166,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error) {
-    console.error('GET Analytics error:', error);
     return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
   }
 }
@@ -200,7 +221,7 @@ export async function POST(request: NextRequest) {
                 updated_at: new Date().toISOString()
               });
           } catch (statsErr) {
-            console.warn('Stats update skipped:', statsErr);
+            // Stats update skipped - continue anyway
           }
 
           return NextResponse.json({
@@ -209,13 +230,11 @@ export async function POST(request: NextRequest) {
             message: 'Page view tracked'
           });
         } catch (err) {
-          console.warn('Analytics tracking error:', err);
           // Still return success to not block the page
           return NextResponse.json({ success: true, total_views: 1 });
         }
 
       } catch (err) {
-        console.error('Track page view exception:', err);
         // Don't fail - return success anyway
         return NextResponse.json({ success: true, total_views: 1 });
       }
@@ -239,20 +258,17 @@ export async function POST(request: NextRequest) {
           });
 
         if (error) {
-          console.warn('Update stats error:', error);
           return NextResponse.json({ error: 'Failed to update stats' }, { status: 500 });
         }
 
         return NextResponse.json({ success: true });
       } catch (err) {
-        console.error('Update stats exception:', err);
         return NextResponse.json({ error: 'Failed to update stats' }, { status: 500 });
       }
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error) {
-    console.error('POST Analytics error:', error);
     return NextResponse.json({ error: 'Failed to process analytics' }, { status: 500 });
   }
 }

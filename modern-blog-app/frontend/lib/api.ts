@@ -1,5 +1,43 @@
 import axios from 'axios';
 
+interface Post {
+  id?: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category?: string;
+  published?: boolean;
+  published_at?: string;
+  author?: string;
+  read_time_minutes?: number;
+  view_count?: number;
+}
+
+interface Project {
+  id?: string;
+  title: string;
+  description: string;
+  technologies: string[];
+  link?: string;
+  github?: string;
+  image?: string;
+}
+
+interface Comment {
+  id?: string;
+  post_id: string;
+  author: string;
+  content: string;
+  created_at?: string;
+}
+
+interface User {
+  id?: string;
+  email: string;
+  name?: string;
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
@@ -23,9 +61,9 @@ export const postsAPI = {
     api.get(`/posts?page=${page}&limit=${limit}`),
   getBySlug: (slug: string) =>
     api.get(`/posts/${slug}`),
-  create: (data: any) =>
+  create: (data: Post) =>
     api.post('/posts', data),
-  update: (id: string, data: any) =>
+  update: (id: string, data: Post) =>
     api.patch(`/posts/${id}`, data),
   delete: (id: string) =>
     api.delete(`/posts/${id}`),
@@ -37,9 +75,9 @@ export const projectsAPI = {
     api.get('/projects'),
   getById: (id: string) =>
     api.get(`/projects/${id}`),
-  create: (data: any) =>
+  create: (data: Project) =>
     api.post('/projects', data),
-  update: (id: string, data: any) =>
+  update: (id: string, data: Project) =>
     api.patch(`/projects/${id}`, data),
   delete: (id: string) =>
     api.delete(`/projects/${id}`),

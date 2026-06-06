@@ -47,10 +47,10 @@ export async function getStorageUrl(
     }
 
     // Get signed URL or public URL from Supabase
-    const { data, error } = supabase.storage.from(bucket).getPublicUrl(path)
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path)
 
-    if (error) {
-      console.error(`[Supabase Storage] Error getting URL for ${path}:`, error)
+    if (!data || !data.publicUrl) {
+      // Error getting URL for file
       return null
     }
 
@@ -66,7 +66,7 @@ export async function getStorageUrl(
 
     return url
   } catch (error) {
-    console.error('[Supabase Storage] Exception:', error)
+    // Exception in getFileUrl
     return null
   }
 }
@@ -80,13 +80,13 @@ export async function listBucketFiles(bucket: string, folder: string = '') {
     const { data, error } = await supabase.storage.from(bucket).list(folder)
 
     if (error) {
-      console.error(`[Supabase Storage] Error listing files in ${folder}:`, error)
+      // Error listing files
       return []
     }
 
     return data || []
   } catch (error) {
-    console.error('[Supabase Storage] Exception listing files:', error)
+    // Exception listing files
     return []
   }
 }

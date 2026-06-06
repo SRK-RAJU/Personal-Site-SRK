@@ -23,7 +23,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
       return NextResponse.json({ success: true });
     } catch (err) {
-      console.error('Posts DELETE error:', err);
+      // Delete operation failed
       return NextResponse.json(
         { error: 'Failed to delete post' },
         { status: 500 }
@@ -50,7 +50,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
       return NextResponse.json({ data });
     } catch (err) {
-      console.error('Posts PATCH error:', err);
+      // Patch operation failed
       return NextResponse.json(
         { error: 'Failed to update post' },
         { status: 500 }

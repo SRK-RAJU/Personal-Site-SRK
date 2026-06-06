@@ -18,7 +18,6 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
       .single();
 
     if (error || !data) {
-      console.error('Post not found:', error);
       return NextResponse.json(
         { error: 'Post not found' },
         { status: 404 }
@@ -41,13 +40,11 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
           .eq('id', data.id);
       }
     } catch (viewCountErr) {
-      // Log but don't fail - view count tracking is not critical
-      console.error('Failed to update view count:', viewCountErr);
+      // View count tracking is not critical
     }
 
     return NextResponse.json({ data });
   } catch (err) {
-    console.error('Exception in post API:', err);
     return NextResponse.json(
       { error: 'Failed to fetch post' },
       { status: 400 }

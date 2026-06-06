@@ -51,7 +51,6 @@ export async function verifyAdminAuth(request: NextRequest): Promise<{ isValid: 
 
     return { isValid: true, userId: user.id };
   } catch (err) {
-    console.error('Auth verification error:', err);
     return { isValid: false, error: 'Authentication verification failed' };
   }
 }

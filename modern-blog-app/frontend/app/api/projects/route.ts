@@ -1,10 +1,45 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
+
+// Input validation schema
+const ProjectSchema = z.object({
+  title: z.string().min(3, 'Title must be at least 3 characters').max(200),
+  description: z.string().min(10, 'Description must be at least 10 characters').max(2000),
+  technologies: z.array(z.string()).min(1, 'At least one technology is required'),
+  link: z.string().url().optional(),
+  github: z.string().url().optional(),
+  image: z.string().optional(),
+});
+
+// Rate limiting
+const rateLimitMap = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes
+const RATE_LIMIT_MAX_READ = 100; // max read requests per window
+const RATE_LIMIT_MAX_WRITE = 20; // max write requests per window
+
+function getClientIp(request: NextRequest) {
+  const forwardedIp = request.headers.get('x-forwarded-for');
+  if (forwardedIp) {
+    return forwardedIp.split(',')[0].trim();
+  }
+  return request.headers.get('x-real-ip') || 'unknown';
+}
+
+function isRateLimited(ip: string, isWrite: boolean = false) {
+  const now = Date.now();
+  const timestamps = rateLimitMap.get(ip) || [];
+  const recent = timestamps.filter((ts) => now - ts < RATE_LIMIT_WINDOW);
+  recent.push(now);
+  rateLimitMap.set(ip, recent);
+  const limit = isWrite ? RATE_LIMIT_MAX_WRITE : RATE_LIMIT_MAX_READ;
+  return recent.length > limit;
+}
 
 // Default fallback projects
 const DEFAULT_PROJECTS = [
@@ -38,6 +73,11 @@ const DEFAULT_PROJECTS = [
 ];
 
 export async function GET(request: NextRequest) {
+  const clientIp = getClientIp(request);
+  if (isRateLimited(clientIp)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
@@ -50,7 +90,6 @@ export async function GET(request: NextRequest) {
 
     // If there's an error or no data, return fallback projects
     if (error) {
-      console.error('Projects API query error:', error.message);
       return NextResponse.json({ data: DEFAULT_PROJECTS });
     }
 
@@ -61,23 +100,37 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ data });
   } catch (err) {
-    console.error('Projects API exception:', err);
     // Return fallback data instead of error
     return NextResponse.json({ data: DEFAULT_PROJECTS });
   }
 }
 
 export async function POST(request: NextRequest) {
+  const clientIp = getClientIp(request);
+  if (isRateLimited(clientIp, true)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
 
+    // Validate input with Zod
+    let validatedData;
+    try {
+      validatedData = ProjectSchema.parse(body);
+    } catch (validationError) {
+      return NextResponse.json(
+        { error: 'Invalid input data' },
+        { status: 400 }
+      );
+    }
+
     const { data, error } = await supabase
       .from('projects')
-      .insert([body])
+      .insert([validatedData])
       .select();
 
     if (error) {
-      console.error('Projects POST error:', error.message);
       return NextResponse.json(
         { error: error.message },
         { status: 400 }
@@ -86,7 +139,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ data });
   } catch (err) {
-    console.error('Projects POST exception:', err);
     return NextResponse.json(
       { error: 'Failed to create project' },
       { status: 400 }

@@ -1,11 +1,51 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Use service role key for all operations to bypass RLS
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
+
+// Input validation schema
+const PostSchema = z.object({
+  title: z.string().min(3, 'Title must be at least 3 characters').max(200),
+  slug: z.string().min(3, 'Slug must be at least 3 characters').max(200),
+  excerpt: z.string().min(10).max(500).optional(),
+  content: z.string().min(10),
+  category: z.string().optional(),
+  featured_image_url: z.string().url().optional(),
+  published: z.boolean().optional(),
+  published_at: z.string().datetime().optional(),
+  author: z.string().optional(),
+  read_time_minutes: z.number().int().positive().optional(),
+  view_count: z.number().int().nonnegative().optional(),
+});
+
+// Rate limiting
+const rateLimitMap = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes
+const RATE_LIMIT_MAX_READ = 100; // max read requests per window
+const RATE_LIMIT_MAX_WRITE = 20; // max write requests per window
+
+function getClientIp(request: NextRequest) {
+  const forwardedIp = request.headers.get('x-forwarded-for');
+  if (forwardedIp) {
+    return forwardedIp.split(',')[0].trim();
+  }
+  return request.headers.get('x-real-ip') || 'unknown';
+}
+
+function isRateLimited(ip: string, isWrite: boolean = false) {
+  const now = Date.now();
+  const timestamps = rateLimitMap.get(ip) || [];
+  const recent = timestamps.filter((ts) => now - ts < RATE_LIMIT_WINDOW);
+  recent.push(now);
+  rateLimitMap.set(ip, recent);
+  const limit = isWrite ? RATE_LIMIT_MAX_WRITE : RATE_LIMIT_MAX_READ;
+  return recent.length > limit;
+}
 
 // Default fallback posts
 const DEFAULT_POSTS = [
@@ -82,6 +122,11 @@ const DEFAULT_POSTS = [
 ];
 
 export async function GET(request: NextRequest) {
+  const clientIp = getClientIp(request);
+  if (isRateLimited(clientIp)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const published = searchParams.get('published');
@@ -100,9 +145,8 @@ export async function GET(request: NextRequest) {
       .order(order, { ascending })
       .limit(parseInt(limit));
 
-    // If there's an error, log it but return fallback posts instead of 500
+    // If there's an error, return fallback posts instead of 500
     if (error) {
-      console.error('Posts API query error:', error.message);
       return NextResponse.json({ data: DEFAULT_POSTS });
     }
 
@@ -113,23 +157,37 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ data });
   } catch (err) {
-    console.error('Exception in posts API:', err);
     // Return fallback data instead of 500 error
     return NextResponse.json({ data: DEFAULT_POSTS });
   }
 }
 
 export async function POST(request: NextRequest) {
+  const clientIp = getClientIp(request);
+  if (isRateLimited(clientIp, true)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
+
+    // Validate input with Zod
+    let validatedData;
+    try {
+      validatedData = PostSchema.parse(body);
+    } catch (validationError) {
+      return NextResponse.json(
+        { error: 'Invalid input data' },
+        { status: 400 }
+      );
+    }
     
     const { data, error } = await supabase
       .from('posts')
-      .insert([body])
+      .insert([validatedData])
       .select();
 
     if (error) {
-      console.error('API Error creating post:', error.message);
       return NextResponse.json(
         { error: error.message },
         { status: 400 }
@@ -138,7 +196,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ data });
   } catch (err) {
-    console.error('Exception in posts API POST:', err);
     return NextResponse.json(
       { error: 'Failed to create post' },
       { status: 400 }

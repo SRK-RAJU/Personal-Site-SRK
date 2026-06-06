@@ -79,15 +79,6 @@ export function disableDeveloperTools() {
     if (window.outerHeight - window.innerHeight > threshold) {
       if (!devtools.open) {
         devtools.open = true;
-        console.clear();
-        console.log(
-          '%cStop! This is a browser feature intended for developers.',
-          'color: red; font-size: 16px; font-weight: bold;'
-        );
-        console.log(
-          '%cUsing this console may expose sensitive information.',
-          'color: #ff0000; font-size: 14px;'
-        );
         // Optionally redirect or show warning
       }
     } else {
@@ -144,8 +135,7 @@ export function addSecurityHeaders() {
 }
 
 export function enableContentSecurityPolicy() {
-  // CSP should be set via headers, but this is a fallback notice
-  console.log('Content Security Policy enabled');
+  // CSP should be set via headers
 }
 
 /**
@@ -163,7 +153,6 @@ export function protectReferrer() {
  */
 export function disablePrinting() {
   window.addEventListener('beforeprint', (e) => {
-    console.warn('Printing has been disabled for this page');
     const printStyleSheet = document.createElement('link');
     printStyleSheet.rel = 'stylesheet';
     printStyleSheet.href = 'data:text/css,body { display: none; }';

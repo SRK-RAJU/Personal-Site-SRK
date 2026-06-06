@@ -48,9 +48,7 @@ export function logBandwidthUsage(fileSizeInMB: number, filename: string): void 
   // Warn if approaching limit
   if (bandwidthUsage.totalForMonth > 1800) {
     // 90% of 2000 MB
-    console.warn(
-      `[Bandwidth Alert] Approaching free tier limit: ${bandwidthUsage.totalForMonth.toFixed(2)}MB / 2000MB`
-    );
+    // Approaching free tier limit
   }
 }
 
@@ -147,7 +145,6 @@ export function resetBandwidthTracking(): void {
     trackingStartDate: new Date(),
     downloads: [],
   };
-  console.info('Bandwidth tracking reset');
 }
 
 /**

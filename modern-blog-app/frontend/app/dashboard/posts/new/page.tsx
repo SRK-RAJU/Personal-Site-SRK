@@ -69,7 +69,7 @@ export default function NewPostPage() {
       }
 
       // Create post object with optional featured_image
-      const postData: any = {
+      const postData: Record<string, unknown> = {
         title: formData.title.trim(),
         slug: formData.slug.trim(),
         excerpt: formData.excerpt.trim() || formData.content.substring(0, 160),
@@ -90,7 +90,7 @@ export default function NewPostPage() {
 
       const { data, error: insertError } = await supabase
         .from('posts')
-        .insert([postData])
+        .insert([postData as never])
         .select();
 
       if (insertError) throw insertError;

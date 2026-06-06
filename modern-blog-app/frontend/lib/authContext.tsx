@@ -9,10 +9,10 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   userRole: 'admin' | 'author' | 'user' | null;
-  signUp: (email: string, password: string, metadata?: any) => Promise<any>;
-  signIn: (email: string, password: string) => Promise<any>;
-  signOut: () => Promise<any>;
-  resetPassword: (email: string) => Promise<any>;
+  signUp: (email: string, password: string, metadata?: Record<string, unknown>) => Promise<unknown>;
+  signIn: (email: string, password: string) => Promise<unknown>;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<unknown>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -61,18 +61,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .single();
 
       if (error) {
-        console.error('Error fetching user role:', error);
         setUserRole('user');
       } else {
-        setUserRole(data?.role ?? 'user');
+        setUserRole((data as any)?.role ?? 'user');
       }
     } catch (err) {
-      console.error('Error in fetchUserRole:', err);
       setUserRole('user');
     }
   };
 
-  const signUp = async (email: string, password: string, metadata?: any) => {
+  const signUp: AuthContextType['signUp'] = async (email, password, metadata) => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -91,16 +89,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             role: 'user',
             created_at: new Date(),
           },
-        ]);
+        ] as never);
       }
 
-      return data;
+      return data as unknown;
     } catch (err) {
       throw err;
     }
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn: AuthContextType['signIn'] = async (email, password) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -108,13 +106,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) throw error;
-      return data;
+      return data as unknown;
     } catch (err) {
       throw err;
     }
   };
 
-  const signOut = async () => {
+  const signOut: AuthContextType['signOut'] = async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
@@ -123,14 +121,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const resetPassword = async (email: string) => {
+  const resetPassword: AuthContextType['resetPassword'] = async (email) => {
     try {
       const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/reset-password`,
       });
 
       if (error) throw error;
-      return data;
+      return data as unknown;
     } catch (err) {
       throw err;
     }
