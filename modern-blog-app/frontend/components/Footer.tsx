@@ -3,9 +3,6 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
-  FaGithub,
-  FaLinkedin,
-  FaTwitter,
   FaEnvelope,
   FaCopyright,
   FaShieldAlt,
@@ -41,20 +38,15 @@ export default function Footer() {
       ],
     },
     {
-      title: 'Connect',
+      title: 'Get in Touch',
       links: [
-        { label: 'GitHub', href: 'https://github.com/SRK-RAJU' },
-        { label: 'LinkedIn', href: 'https://www.linkedin.com/in/srajukumargoud/' },
-        { label: 'Twitter', href: 'https://twitter.com/srajukumargoud' },
         { label: 'Email', href: 'mailto:contact@rjexa.com' },
+        { label: 'Contact Form', href: '/contact' },
       ],
     },
   ];
 
   const socialLinks = [
-    { icon: FaGithub, href: 'https://github.com/SRK-RAJU', label: 'GitHub', color: 'hover:text-slate-900 dark:hover:text-white' },
-    { icon: FaLinkedin, href: 'https://www.linkedin.com/in/srajukumargoud/', label: 'LinkedIn', color: 'hover:text-blue-600' },
-    { icon: FaTwitter, href: 'https://twitter.com/srajukumargoud', label: 'Twitter', color: 'hover:text-blue-400' },
     { icon: FaEnvelope, href: 'mailto:contact@rjexa.com', label: 'Email', color: 'hover:text-red-600' },
   ];
 

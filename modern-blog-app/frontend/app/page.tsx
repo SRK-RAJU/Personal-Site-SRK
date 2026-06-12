@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaGithub, FaLinkedin, FaTwitter, FaCode, FaServer, FaDatabase, FaClock, FaEye, FaFire, FaRocket, FaStar, FaUsers } from 'react-icons/fa';
+import { FaArrowRight, FaCode, FaServer, FaDatabase, FaClock, FaEye, FaFire, FaRocket, FaStar, FaUsers } from 'react-icons/fa';
 import TrendingPosts from '@/components/TrendingPosts';
 import RealtimeActivity from '@/components/RealtimeActivity';
+import AIBlogPostsList from '@/components/AIBlogPostsList';
 import { useWebsiteStats } from '@/lib/useAnalytics';
 import { useEffect, useState } from 'react';
 
@@ -156,7 +157,7 @@ export default function Home() {
                 Architecting the Future
               </span>
               <span className="block text-slate-900 dark:text-white mt-4 text-5xl sm:text-6xl font-bold">
-                of Cloud & DevOps
+                of AI, Cloud, DevOps, Security & Automations
               </span>
             </motion.h1>
 
@@ -165,8 +166,9 @@ export default function Home() {
               className="text-lg sm:text-xl text-slate-800 dark:text-slate-100 mb-12 leading-relaxed max-w-3xl mx-auto font-semibold"
               variants={itemVariants}
             >
-              I share real-world insights, cloud lessons, DevOps, and security practices.
-              This site is built to help you learn faster and see what practical engineering looks like in action.
+              Real-world insights on AI/Automation, Cloud Computing, DevOps, Cybersecurity, and Enterprise IT Solutions. 
+              AI-powered, weekly-updated content covering 50+ enterprise tools and frameworks. 
+              Learn practical engineering techniques from production environments.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -248,6 +250,17 @@ export default function Home() {
         <div className="container-max">
           <TrendingPosts />
         </div>
+      </motion.section>
+
+      {/* AI-Generated Weekly Insights */}
+      <motion.section
+        className="bg-gradient-to-b from-slate-950 via-purple-950/30 to-slate-950 border-y border-purple-900/50 dark:border-purple-800/50"
+        initial="hidden"
+        whileInView="visible"
+        variants={sectionVariants}
+        viewport={{ once: true, margin: '-100px' }}
+      >
+        <AIBlogPostsList />
       </motion.section>
 
       {/* Real-time Activity Panel */}

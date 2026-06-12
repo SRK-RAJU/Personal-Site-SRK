@@ -1,0 +1,27 @@
+{
+  "buildCommand": "cd modern-blog-app/frontend && npm run build",
+  "installCommand": "cd modern-blog-app/frontend && npm install --legacy-peer-deps",
+  "outputDirectory": "modern-blog-app/frontend/.next",
+  "framework": "nextjs",
+  "nodejs": "24.x",
+  "env": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "GOOGLE_GENERATIVE_AI_API_KEY",
+    "TAVILY_API_KEY",
+    "CRON_SECRET"
+  ],
+  "functions": {
+    "modern-blog-app/frontend/app/api/**/*.ts": {
+      "maxDuration": 300,
+      "memory": 3008
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/ai-agent/generate-post",
+      "schedule": "0 3 * * 1"
+    }
+  ]
+}
