@@ -3,14 +3,6 @@
   "installCommand": "cd modern-blog-app/frontend && npm install --legacy-peer-deps",
   "outputDirectory": "modern-blog-app/frontend/.next",
   "framework": "nextjs",
-  "env": [
-    "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY",
-    "GOOGLE_GENERATIVE_AI_API_KEY",
-    "TAVILY_API_KEY",
-    "CRON_SECRET"
-  ],
   "functions": {
     "modern-blog-app/frontend/app/api/**/*.ts": {
       "maxDuration": 300,
