@@ -29,9 +29,8 @@
     "zod": "^3.23.8",
     "@hookform/resolvers": "^3.3.4",
     "ai": "^3.1.0",
-    "@ai-sdk/groq": "^0.0.8",
-    "@ai-sdk/google": "^0.29.2",
-    "tavily-js": "^0.3.0",
+"@ai-sdk/google": "latest",
+    "tavily-js": "latest",
     "react-markdown": "^9.0.0"
   },
   "devDependencies": {
