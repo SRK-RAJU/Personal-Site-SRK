@@ -32,7 +32,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // CONFIGURATION & INITIALIZATION
 // ============================================================================
 
-const tvly = new tavily({
+const tvly = tavily({
   apiKey: process.env.TAVILY_API_KEY || '',
 });
 
