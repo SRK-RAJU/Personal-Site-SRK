@@ -240,11 +240,11 @@ async function generateBlogPost(
     }
 
     const { text: generatedMarkdown } = await generateText({
-      model: google('gemini-2.5-flash'),
+      model: google('gemini-3.5-flash'), 
       system: systemPrompt,
       prompt: `Based on the following recent updates, write a comprehensive technical blog post:\n\n${context}`,
       temperature: 0.7,
-      maxTokens: 3000,
+      maxCompletionTokens: 3000, //  This is the correct SDK v6 naming
     });
 
     // Parse the generated markdown
@@ -297,7 +297,7 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
       tags: post.tools_covered,
       tools_covered: post.tools_covered,
       cves_mentioned: post.cves_mentioned,
-      ai_model: 'google-gemini-2.5-flash',
+      ai_model: 'google-gemini-3.5-flash',
       status: 'published',
       published_at: new Date().toISOString(),
     });
