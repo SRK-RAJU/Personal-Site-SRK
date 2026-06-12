@@ -30,7 +30,7 @@
     "@hookform/resolvers": "^3.3.4",
     "ai": "^3.1.0",
     "@ai-sdk/google": "latest",
-    "tavily-js": "^0.3.0",
+    "@tavily/core": "^0.7.3",
     "react-markdown": "^9.0.0"
   },
   "devDependencies": {
