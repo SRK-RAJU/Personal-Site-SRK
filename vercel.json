@@ -3,7 +3,6 @@
   "installCommand": "cd modern-blog-app/frontend && npm install --legacy-peer-deps",
   "outputDirectory": "modern-blog-app/frontend/.next",
   "framework": "nextjs",
-  "nodejs": "24.x",
   "env": [
     "NEXT_PUBLIC_SUPABASE_URL",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY",
