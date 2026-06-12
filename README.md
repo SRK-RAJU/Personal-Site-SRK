@@ -365,4 +365,5 @@ Check the docs folder for detailed guides, or open an issue on GitHub.
 
 **This project is a personal tech blog and portfolio maintained by Raju SRK. A showcase of DevOps, cloud engineering, and full-stack development insights!** 
 
-**Author**: Raju SRK - [rjexa.com](https://rjexa.com)
+**Author**: Raju SRK - [rjexa.com](https://rjexa.com) 
+**If any issues or suggestions, please open an issue or contact me directly!**
