@@ -23,7 +23,7 @@
 
 import { generateText } from 'ai';
 import { google } from '@ai-sdk/google';
-import { TavilyClient } from 'tavily-js';
+import { tavily } from '@tavily/core';
 import { createClient } from '@supabase/supabase-js';
 import { slugify } from '@/lib/ai-utils';
 import { NextRequest, NextResponse } from 'next/server';
@@ -32,7 +32,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // CONFIGURATION & INITIALIZATION
 // ============================================================================
 
-const tavilyClient = new TavilyClient({
+const tvly = new tavily({
   apiKey: process.env.TAVILY_API_KEY || '',
 });
 
@@ -150,7 +150,7 @@ async function searchToolUpdates(
   try {
     const query = `${toolName} updates releases security CVE 2024 2025 latest news`;
     
-    const response = await tavilyClient.search(query, {
+    const response = await tvly.search(query, {
       days: 7, // Last 7 days only
       max_results: 5,
       include_answer: true,
