@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaEnvelope, FaLinkedin, FaGithub, FaMapMarkerAlt, FaPaperPlane, FaArrowLeft } from 'react-icons/fa';
+import { FaEnvelope, FaMapMarkerAlt, FaPaperPlane, FaArrowLeft } from 'react-icons/fa';
 
 export default function Contact() {
   const questions = [
@@ -292,35 +292,6 @@ export default function Contact() {
                 <div>
                   <p className="font-semibold text-slate-900 dark:text-white">Location</p>
                   <p className="text-slate-800 dark:text-slate-200">Hyderabad, India</p>
-                </div>
-              </div>
-
-              {/* Social Links */}
-              <div className="mt-8 pt-6 border-t border-blue-200 dark:border-slate-700">
-                <p className="font-semibold text-slate-900 dark:text-white mb-4">Connect With Me</p>
-                <div className="flex gap-4">
-                  <a 
-                    href="https://github.com/SRK-RAJU" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-3 rounded-lg hover:scale-110 transition"
-                  >
-                    <FaGithub size={20} />
-                  </a>
-                  <a 
-                    href="https://www.linkedin.com/in/srajukumargoud/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="bg-blue-700 text-white p-3 rounded-lg hover:scale-110 transition"
-                  >
-                    <FaLinkedin size={20} />
-                  </a>
-                  <a 
-                    href="mailto:contact@rjexa.com"
-                    className="bg-red-600 text-white p-3 rounded-lg hover:scale-110 transition"
-                  >
-                    <FaEnvelope size={20} />
-                  </a>
                 </div>
               </div>
             </div>

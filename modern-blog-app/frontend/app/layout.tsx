@@ -25,10 +25,6 @@ export const metadata: Metadata = {
     siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Raju Tech',
     description: 'Personal tech blog and portfolio for cloud engineering, DevOps, and modern web development.'
   },
-  twitter: {
-    card: 'summary_large_image',
-    creator: '@srajukumargoud',
-  },
 };
 
 export default function RootLayout({

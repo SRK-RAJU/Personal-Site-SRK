@@ -538,66 +538,6 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Social Links */}
-      <motion.section
-        className="container-max section-padding-tight"
-        initial="hidden"
-        whileInView="visible"
-        variants={sectionVariants}
-        viewport={{ once: true, margin: '-100px' }}
-      >
-        <motion.div
-          className="text-center mb-12"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.h2
-            className="text-4xl font-bold mb-4 text-slate-900 dark:text-white"
-            variants={itemVariants}
-          >
-            Connect & Follow
-          </motion.h2>
-          <motion.p
-            className="text-lg text-slate-800 dark:text-slate-200"
-            variants={itemVariants}
-          >
-            Join me on various platforms for updates and networking
-          </motion.p>
-        </motion.div>
-
-        <motion.div
-          className="flex justify-center gap-4 flex-wrap"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          {[
-            { href: 'https://github.com/SRK-RAJU', icon: FaGithub, label: 'GitHub', color: 'hover:text-slate-900 dark:hover:text-white' },
-            { href: 'https://www.linkedin.com/in/srajukumargoud', icon: FaLinkedin, label: 'LinkedIn', color: 'hover:text-blue-500' },
-            { href: 'https://twitter.com', icon: FaTwitter, label: 'Twitter', color: 'hover:text-blue-400' },
-          ].map((social) => {
-            const Icon = social.icon;
-            return (
-              <motion.a
-                key={social.label}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 ${social.color} text-slate-800 dark:text-slate-200 transition-all font-semibold`}
-                variants={itemVariants}
-                whileHover={{ scale: 1.05, y: -5 }}
-              >
-                <Icon className="text-xl group-hover:scale-125 transition-transform" />
-                {social.label}
-              </motion.a>
-            );
-          })}
-        </motion.div>
-      </motion.section>
-
       {/* CTA Section */}
       <motion.section
         className="container-max section-padding-tight"

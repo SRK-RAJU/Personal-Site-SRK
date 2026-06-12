@@ -4,8 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
-  FaGithub, 
-  FaLinkedin, 
   FaAward, 
   FaCloud, 
   FaTools, 
@@ -192,14 +190,6 @@ export default function About() {
             >
               Send an Email
             </Link>
-            <div className="flex gap-4">
-              <a href="https://github.com" target="_blank" className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
-                <FaGithub size={24} />
-              </a>
-              <a href="https://linkedin.com" target="_blank" className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
-                <FaLinkedin size={24} />
-              </a>
-            </div>
           </div>
         </motion.section>
 
