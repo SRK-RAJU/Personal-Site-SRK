@@ -244,7 +244,7 @@ async function generateBlogPost(
       system: systemPrompt,
       prompt: `Based on the following recent updates, write a comprehensive technical blog post:\n\n${context}`,
       temperature: 0.7,
-      maxCompletionTokens: 3000, //  This is the correct SDK v6 naming
+    //   maxCompletionTokens: 3000, //  This is the correct SDK v6 naming
     });
 
     // Parse the generated markdown
