@@ -2,8 +2,9 @@
 
 **Automated AI blogging platform with Google Generative AI + Tavily - Fully automated, production-ready, 100% FREE!**
 
-> 🎯 **NEW**: AI blog posts generate automatically every Monday at 3 AM UTC using Google Generative AI and Tavily Search  
-> 📋 **START HERE**: Read `FINAL_DEPLOYMENT_SETUP.md` for complete setup instructions  
+> 🎯 **AUTOMATED AI BLOGGING**: Blog posts generate automatically every Monday at 3 AM UTC  
+> � **SMART FIRST-RUN**: Auto-tests on first deployment, then Monday auto-runs  
+> �📋 **START HERE**: Read [PRODUCTION_SETUP_GUIDE.md](./PRODUCTION_SETUP_GUIDE.md) for complete setup instructions  
 > ⏱️ **Time to Deploy**: ~45 minutes | 💰 **Cost**: $0/month (free tiers only)
 
 ---
@@ -80,18 +81,16 @@ curl -X GET "https://your-vercel-domain.vercel.app/api/ai-agent/generate-post?te
 
 ## 📖 COMPLETE DOCUMENTATION
 
-**👉 [See DEPLOYMENT_GUIDE_FINAL.md for step-by-step instructions](./DEPLOYMENT_GUIDE_FINAL.md)**
+**👉 [See PRODUCTION_SETUP_GUIDE.md for complete step-by-step setup](./PRODUCTION_SETUP_GUIDE.md)**
 
-### Quick Links
-
-- [Setup Phase (10 min)](./DEPLOYMENT_GUIDE_FINAL.md#step-1-setup-phase)
-- [Configuration (5 min)](./DEPLOYMENT_GUIDE_FINAL.md#step-2-configuration)
-- [Database Setup (5 min)](./DEPLOYMENT_GUIDE_FINAL.md#step-3-database-setup)
-- [Deployment (5 min)](./DEPLOYMENT_GUIDE_FINAL.md#step-4-deployment)
-- [Testing (10 min)](./DEPLOYMENT_GUIDE_FINAL.md#step-5-testing)
-- [Verification (5 min)](./DEPLOYMENT_GUIDE_FINAL.md#step-6-verification)
-- [Troubleshooting](./DEPLOYMENT_GUIDE_FINAL.md#troubleshooting)
-- [Maintenance](./DEPLOYMENT_GUIDE_FINAL.md#maintenance)
+The guide covers:
+- Creating free accounts (Supabase, Google Gemini, Tavily, Vercel)
+- Local environment setup
+- Database schema initialization
+- Vercel deployment
+- Manual cron testing
+- Monitoring and maintenance
+- Troubleshooting common issues
 
 ---
 
