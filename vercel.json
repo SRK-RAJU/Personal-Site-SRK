@@ -5,8 +5,8 @@
   "framework": "nextjs",
   "functions": {
     "app/api/**/*.ts": {
-      "maxDuration": 300,
-      "memory": 2048
+      "maxDuration": 60,
+      "memory": 1024
     }
   },
   "crons": [
@@ -16,7 +16,7 @@
     },
     {
       "path": "/api/ai-agent/check-deployment",
-      "schedule": "0 * * * *" 
+      "schedule": "0 0 * * *"
     }
   ]
 }
