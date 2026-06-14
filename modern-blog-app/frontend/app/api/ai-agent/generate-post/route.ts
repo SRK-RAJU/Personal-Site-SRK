@@ -45,6 +45,35 @@ const CRON_SECRET = process.env.CRON_SECRET || '';
 const TOOLS_COVERAGE_QUERY_LIMIT = 10;
 
 // ============================================================================
+// ENVIRONMENT VALIDATION
+// ============================================================================
+
+/**
+ * Validate all required environment variables are set
+ */
+function validateEnvironment(): { valid: boolean; missing: string[] } {
+  const missing = [];
+  
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    missing.push('NEXT_PUBLIC_SUPABASE_URL');
+  }
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    missing.push('SUPABASE_SERVICE_ROLE_KEY');
+  }
+  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    missing.push('GOOGLE_GENERATIVE_AI_API_KEY');
+  }
+  if (!process.env.TAVILY_API_KEY) {
+    missing.push('TAVILY_API_KEY');
+  }
+  
+  return {
+    valid: missing.length === 0,
+    missing,
+  };
+}
+
+// ============================================================================
 // TYPE DEFINITIONS
 // ============================================================================
 
@@ -148,8 +177,15 @@ async function searchToolUpdates(
   excludedTopics: ExcludedTopic[]
 ): Promise<SearchResult[]> {
   try {
+    // Check if Tavily API key is set
+    if (!process.env.TAVILY_API_KEY) {
+      console.error(`[TAVILY-SEARCH] ❌ TAVILY_API_KEY not set for tool: ${toolName}`);
+      return [];
+    }
+
     const query = `${toolName} updates releases security CVE 2024 2025 latest news`;
     
+    console.log(`[TAVILY-SEARCH] Searching for ${toolName}...`);
     const response = await tvly.search(query, {
       days: 7, // Last 7 days only
       max_results: 5,
@@ -173,8 +209,11 @@ async function searchToolUpdates(
         published_date: result.published_date,
       }));
 
+    console.log(`[TAVILY-SEARCH] Found ${filteredResults.length} results for ${toolName}`);
     return filteredResults;
   } catch (err) {
+    const error = err instanceof Error ? err.message : 'Unknown error';
+    console.error(`[TAVILY-SEARCH] Error searching ${toolName}:`, error);
     return [];
   }
 }
@@ -229,6 +268,12 @@ async function generateBlogPost(
   excludedTopics: ExcludedTopic[]
 ): Promise<GeneratedPost | null> {
   try {
+    // Check if Gemini API key is set
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      console.error('[GEMINI-GENERATE] ❌ GOOGLE_GENERATIVE_AI_API_KEY not set');
+      return null;
+    }
+
     const systemPrompt = createSystemPrompt(excludedTopics, toolNames);
 
     let context = 'RECENT UPDATES AND RESEARCH:\n\n';
@@ -239,17 +284,20 @@ async function generateBlogPost(
       });
     }
 
+    console.log('[GEMINI-GENERATE] Calling Google Gemini API...');
     const { text: generatedMarkdown } = await generateText({
       model: google('gemini-3.5-flash'), 
       system: systemPrompt,
       prompt: `Based on the following recent updates, write a comprehensive technical blog post:\n\n${context}`,
       temperature: 0.7,
-    //   maxCompletionTokens: 3000, //  This is the correct SDK v6 naming
     });
+
+    console.log('[GEMINI-GENERATE] ✅ Generation successful');
 
     // Parse the generated markdown
     const title = extractTitle(generatedMarkdown);
     if (!title) {
+      console.error('[GEMINI-GENERATE] ❌ Failed to extract title from generated content');
       return null;
     }
 
@@ -271,6 +319,8 @@ async function generateBlogPost(
       cves_mentioned: cveMatches.length,
     };
   } catch (err) {
+    const error = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[GEMINI-GENERATE] ❌ Error:', error);
     return null;
   }
 }
@@ -364,6 +414,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const startTime = Date.now();
 
   try {
+    // ✅ VALIDATE ENVIRONMENT VARIABLES FIRST
+    const envCheck = validateEnvironment();
+    if (!envCheck.valid) {
+      console.error('[AI-BLOG] Missing environment variables:', envCheck.missing);
+      const duration = Math.round((Date.now() - startTime) / 1000);
+      
+      return NextResponse.json(
+        {
+          error: 'Configuration Error',
+          message: `Missing required environment variables: ${envCheck.missing.join(', ')}`,
+          details: 'Please add these to Vercel dashboard → Environment Variables',
+          missing_vars: envCheck.missing,
+          duration_seconds: duration,
+        },
+        { status: 503 }
+      );
+    }
+
     // Security: Verify Cron Secret OR allow first-run auto-generation OR allow from app
     const authHeader = request.headers.get('authorization') || '';
     const isFirstRunGeneration = await isFirstRun();
@@ -386,13 +454,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Get configuration
+    console.log('[AI-BLOG] ⏭️ Getting tools list...');
     const toolsList = await getToolsForGeneration();
+    console.log('[AI-BLOG] ✅ Tools to cover:', toolsList);
+
+    console.log('[AI-BLOG] ⏭️ Getting excluded topics...');
     const excludedTopics = await getExcludedTopics();
+    console.log('[AI-BLOG] ✅ Excluded topics:', excludedTopics.length);
     
     // Log execution type
     const executionType = isFirstRunGeneration ? 'FIRST_RUN_AUTO' : 'SCHEDULED_CRON';
+    console.log(`[AI-BLOG] 🚀 Execution type: ${executionType}`);
 
     // Search for updates
+    console.log('[AI-BLOG] ⏭️ Searching for tool updates...');
     const searchResults = new Map<string, SearchResult[]>();
     for (const tool of toolsList) {
       const results = await searchToolUpdates(tool, excludedTopics);
@@ -400,8 +475,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         searchResults.set(tool, results);
       }
     }
+    console.log(`[AI-BLOG] ✅ Found ${searchResults.size} tools with updates`);
 
     // Generate blog post
+    console.log('[AI-BLOG] ⏭️ Generating blog post with AI...');
     const post = await generateBlogPost(toolsList, searchResults, excludedTopics);
 
     if (!post) {
@@ -414,13 +491,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       };
       await logGeneration(runId, log);
 
+      console.error('[AI-BLOG] ❌ Post generation failed');
       return NextResponse.json(
         { error: 'Failed to generate post' },
         { status: 500 }
       );
     }
 
+    console.log(`[AI-BLOG] ✅ Post generated: "${post.title}"`);
+
     // Save to database
+    console.log('[AI-BLOG] ⏭️ Saving to Supabase...');
     const saved = await savePostToSupabase(post);
 
     if (!saved) {
@@ -433,6 +514,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       };
       await logGeneration(runId, log);
 
+      console.error('[AI-BLOG] ⚠️ Post generated but save failed');
       return NextResponse.json(
         {
           warning: 'Post generated but failed to save',
@@ -451,6 +533,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       posts_published: 1,
     };
     await logGeneration(runId, log);
+
+    console.log(`[AI-BLOG] ✅ SUCCESS! Post saved in ${duration}s`);
 
     return NextResponse.json(
       {

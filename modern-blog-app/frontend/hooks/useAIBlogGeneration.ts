@@ -1,12 +1,11 @@
 /**
  * ============================================================================
- * AI BLOG GENERATION HOOK - Direct Integration into React App
+ * AI BLOG GENERATION HOOK - FIXED & DEBUGGING ENABLED
  * ============================================================================
  * Purpose:
  * - Automatically generates AI blog posts on first deployment
- * - Runs directly in React app (no Vercel cron needed)
- * - Can be manually triggered from UI
- * - Generates every Monday at 3 AM if running continuously
+ * - Checks CORRECT database table (ai_generated_posts)
+ * - Includes detailed debugging and error logging
  * 
  * Tech: NextJS + Supabase + Google Gemini + Tavily
  * Cost: $0/month (100% free tier)
@@ -14,7 +13,6 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
-import { createClient } from '@supabase/supabase-js';
 
 // Types
 interface AIGenerationState {
@@ -44,31 +42,26 @@ export function useAIBlogGeneration(autoTrigger: boolean = true) {
 
   /**
    * Check if auto-generation should run
-   * - True if: (1) First deployment (no posts exist) OR (2) Monday 3 AM
+   * - True if: (1) First deployment (no AI posts exist) OR (2) Monday 3 AM
    */
   const shouldGeneratePost = useCallback(async (): Promise<boolean> => {
     try {
-      // Check if any posts exist
-      const response = await fetch('/api/posts?limit=1');
-      const { data } = await response.json();
+      console.log('[useAIBlogGeneration] Checking if generation needed...');
 
-      // First deployment - no posts exist
-      if (!data || data.length === 0) {
-        console.log('✅ First deployment detected - will auto-generate post');
-        return true;
+      // ✅ FIXED: Check ai_generated_posts table (not default posts table)
+      const response = await fetch('/api/ai-agent/check-generation-status', {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        console.warn('[useAIBlogGeneration] Check status failed:', response.status);
+        return false;
       }
 
-      // Check if it's Monday 3 AM UTC
-      const now = new Date();
-      const isMonday = now.getUTCDay() === 1;
-      const is3AM = now.getUTCHours() === 3;
+      const { shouldGenerate, reason } = await response.json();
+      console.log('[useAIBlogGeneration] Generation check:', { shouldGenerate, reason });
 
-      if (isMonday && is3AM) {
-        console.log('⏰ Monday 3 AM detected - will auto-generate post');
-        return true;
-      }
-
-      return false;
+      return shouldGenerate;
     } catch (err) {
       console.error('[useAIBlogGeneration] Error checking if generation needed:', err);
       return false;
@@ -108,6 +101,23 @@ export function useAIBlogGeneration(autoTrigger: boolean = true) {
           post: result.post,
         });
         console.log('[useAIBlogGeneration] ✅ Success:', result);
+      } else if (response.status === 503) {
+        // Configuration error - missing environment variables
+        setState({
+          isGenerating: false,
+          isCompleted: false,
+          isError: true,
+          message: `❌ ${result.message}\nMissing: ${result.missing_vars?.join(', ')}`,
+        });
+        console.error('[useAIBlogGeneration] Configuration error:', result);
+      } else if (response.status === 401) {
+        setState({
+          isGenerating: false,
+          isCompleted: false,
+          isError: true,
+          message: `❌ Unauthorized - Check API keys in Vercel environment variables`,
+        });
+        console.error('[useAIBlogGeneration] Authorization failed:', result);
       } else {
         setState({
           isGenerating: false,

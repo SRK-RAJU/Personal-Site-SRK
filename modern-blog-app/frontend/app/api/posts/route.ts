@@ -133,29 +133,64 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit') || '100';
     const order = searchParams.get('order') || 'published_at';
     const ascending = searchParams.get('ascending') === 'true';
+    const includeAI = searchParams.get('includeAI') !== 'false'; // Include AI posts by default
 
-    // Don't select view_count as it might not exist in the schema
+    // Query regular posts
     let query = supabase.from('posts').select('id, title, slug, excerpt, content, category, featured_image_url, published, published_at, author, read_time_minutes, view_count, created_at, updated_at');
 
     if (published === 'true') {
       query = query.eq('published', true);
     }
 
-    const { data, error } = await query
+    const { data: regularPosts, error: regularError } = await query
       .order(order, { ascending })
       .limit(parseInt(limit));
 
-    // If there's an error, return fallback posts instead of 500
-    if (error) {
-      return NextResponse.json({ data: DEFAULT_POSTS });
+    // Query AI-generated posts if requested
+    let aiPosts = [];
+    if (includeAI) {
+      try {
+        const { data: aiData, error: aiError } = await supabase
+          .from('ai_generated_posts')
+          .select('id, title, slug, excerpt, content, category, featured_image_url, published_at, created_at, updated_at')
+          .order(order, { ascending })
+          .limit(parseInt(limit));
+
+        if (!aiError && aiData) {
+          // Transform AI posts to match regular post schema
+          aiPosts = aiData.map((post: any) => ({
+            ...post,
+            published: true,
+            author: 'AI Agent',
+            read_time_minutes: Math.ceil((post.content?.length || 0) / 200), // Estimate reading time
+            view_count: 0,
+          }));
+        }
+      } catch (err) {
+        console.warn('[POSTS-API] Error querying AI posts:', err);
+      }
     }
 
-    // If no data, return fallback posts
-    if (!data || data.length === 0) {
-      return NextResponse.json({ data: DEFAULT_POSTS });
+    // Merge and sort posts
+    const allPosts = [...(regularPosts || []), ...aiPosts];
+    const sortedPosts = allPosts.sort((a: any, b: any) => {
+      const aTime = new Date(a.published_at).getTime();
+      const bTime = new Date(b.published_at).getTime();
+      return ascending ? aTime - bTime : bTime - aTime;
+    });
+
+    // If no error on regular posts, return merged data
+    if (!regularError) {
+      return NextResponse.json({ data: sortedPosts.slice(0, parseInt(limit)) });
     }
 
-    return NextResponse.json({ data });
+    // If there's an error on regular posts, try AI posts only
+    if (aiPosts.length > 0) {
+      return NextResponse.json({ data: aiPosts.slice(0, parseInt(limit)) });
+    }
+
+    // If no data from either table, return fallback posts
+    return NextResponse.json({ data: DEFAULT_POSTS });
   } catch (err) {
     // Return fallback data instead of 500 error
     return NextResponse.json({ data: DEFAULT_POSTS });
