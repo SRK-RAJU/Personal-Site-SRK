@@ -17,8 +17,5 @@
       "path": "/api/ai-agent/check-deployment",
       "schedule": "*/5 * * * *"
     }
-  ],
-  "env": {
-    "CRON_ENABLED": "true"
-  }
+  ]
 }
