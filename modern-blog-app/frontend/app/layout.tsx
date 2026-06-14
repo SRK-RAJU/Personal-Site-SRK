@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ContentProtectionWrapper from '../components/ContentProtectionWrapper';
+import { AIBlogGenerator } from '../components/AIBlogGenerator';
 import { AuthProvider } from '../lib/authContext';
 import { Toaster } from 'react-hot-toast';
 
@@ -60,6 +61,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+            <AIBlogGenerator autoTrigger={true} />
           </AuthProvider>
         </ContentProtectionWrapper>
       </body>

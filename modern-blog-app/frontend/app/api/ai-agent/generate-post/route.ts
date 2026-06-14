@@ -364,16 +364,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const startTime = Date.now();
 
   try {
-    // Security: Verify Cron Secret OR allow first-run auto-generation
+    // Security: Verify Cron Secret OR allow first-run auto-generation OR allow from app
     const authHeader = request.headers.get('authorization') || '';
     const isFirstRunGeneration = await isFirstRun();
     const cronSecret = process.env.CRON_SECRET;
     const hasValidSecret = cronSecret && cronSecret.length > 0 && verifyCronSecret(authHeader);
     
-    console.log(`[AI-BLOG] POST Request - FirstRun: ${isFirstRunGeneration}, ValidSecret: ${hasValidSecret}, SecretLength: ${cronSecret?.length || 0}`);
+    // Check if call is from app (user-agent check)
+    const userAgent = request.headers.get('user-agent') || '';
+    const isFromApp = userAgent.includes('Mozilla') || userAgent.includes('Chrome') || userAgent === 'Vercel-Internal-Cron';
     
-    // Allow if: (1) Valid cron secret OR (2) First deployment (auto-test)
-    if (!hasValidSecret && !isFirstRunGeneration) {
+    console.log(`[AI-BLOG] POST Request - FirstRun: ${isFirstRunGeneration}, ValidSecret: ${hasValidSecret}, FromApp: ${isFromApp}, SecretLength: ${cronSecret?.length || 0}`);
+    
+    // Allow if: (1) Valid cron secret OR (2) First deployment (auto-test) OR (3) Called directly from app
+    if (!hasValidSecret && !isFirstRunGeneration && !isFromApp) {
       console.error(`[AI-BLOG] Authorization failed. CronSecret set: ${!!cronSecret}, HeaderSecret: ${!!authHeader}`);
       return NextResponse.json(
         { error: 'Unauthorized', details: 'Missing or invalid CRON_SECRET' },
