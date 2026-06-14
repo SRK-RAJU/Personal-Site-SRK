@@ -338,7 +338,15 @@ function extractTitle(markdown: string): string | null {
  */
 async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
   try {
-    const { error } = await supabase.from('ai_generated_posts').insert({
+    console.log('[SUPABASE-SAVE] Attempting to save post:', {
+      title: post.title,
+      slug: post.slug,
+      contentLength: post.content.length,
+      tools: post.tools_covered.length,
+      cves: post.cves_mentioned,
+    });
+
+    const { data, error } = await supabase.from('ai_generated_posts').insert({
       title: post.title,
       slug: post.slug,
       content: post.content,
@@ -353,11 +361,36 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
     });
 
     if (error) {
+      console.error('[SUPABASE-SAVE] ❌ Insert error:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+      });
+      
+      // Provide actionable error messages
+      if (error.code === 'PGRST116') {
+        console.error('[SUPABASE-SAVE] 🔧 FIX: Table "ai_generated_posts" does not exist. Run SQL schema setup.');
+      }
+      if (error.code === '42P01') {
+        console.error('[SUPABASE-SAVE] 🔧 FIX: Table "ai_generated_posts" does not exist. Run SQL schema setup.');
+      }
+      if (error.code === '42501') {
+        console.error('[SUPABASE-SAVE] 🔧 FIX: Row Level Security (RLS) policy blocking insert. Disable RLS or create policy.');
+      }
+      if (error.message?.includes('relation "ai_generated_posts" does not exist')) {
+        console.error('[SUPABASE-SAVE] 🔧 FIX: Table does not exist. Check Supabase database.');
+      }
+      
       return false;
     }
 
+    console.log('[SUPABASE-SAVE] ✅ Post saved successfully');
     return true;
   } catch (err) {
+    const error = err instanceof Error ? err.message : String(err);
+    console.error('[SUPABASE-SAVE] ❌ Exception:', error);
+    console.error('[SUPABASE-SAVE] 🔧 Full error:', err);
     return false;
   }
 }
@@ -390,7 +423,9 @@ async function logGeneration(
   log: GenerationLog
 ): Promise<void> {
   try {
-    await supabase.from('ai_generation_logs').insert({
+    console.log('[LOG-GENERATION] Logging generation status:', log.status);
+    
+    const { error } = await supabase.from('ai_generation_logs').insert({
       run_id: runId,
       scheduled_time: new Date().toISOString(),
       execution_start: new Date().toISOString(),
@@ -400,8 +435,18 @@ async function logGeneration(
       posts_published: log.posts_published,
       error_message: log.error_message,
     });
+
+    if (error) {
+      console.warn('[LOG-GENERATION] ⚠️ Failed to log generation (non-critical):', {
+        code: error.code,
+        message: error.message,
+      });
+    } else {
+      console.log('[LOG-GENERATION] ✅ Generation logged successfully');
+    }
   } catch (err) {
     // Silent fail - logging handled by Vercel
+    console.warn('[LOG-GENERATION] ⚠️ Exception logging generation:', err);
   }
 }
 
@@ -515,10 +560,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       await logGeneration(runId, log);
 
       console.error('[AI-BLOG] ⚠️ Post generated but save failed');
+      console.error('[AI-BLOG] 🔧 SETUP: Run SUPABASE_SETUP.sql in Supabase SQL Editor');
+      console.error('[AI-BLOG] 🔧 CHECK: Verify ai_generated_posts table exists');
+      console.error('[AI-BLOG] 🔧 CHECK: Check Supabase RLS policies (should be disabled for testing)');
+      
       return NextResponse.json(
         {
-          warning: 'Post generated but failed to save',
-          post: { title: post.title, slug: post.slug },
+          warning: 'Post generated but failed to save to database',
+          error: 'Failed to save post to Supabase',
+          solution: 'Run SUPABASE_SETUP.sql in Supabase Dashboard → SQL Editor',
+          post: { 
+            title: post.title, 
+            slug: post.slug,
+            contentLength: post.content.length,
+            tools: post.tools_covered,
+          },
+          debug: 'Check console logs for detailed Supabase error (look for [SUPABASE-SAVE] messages)',
         },
         { status: 200 }
       );
