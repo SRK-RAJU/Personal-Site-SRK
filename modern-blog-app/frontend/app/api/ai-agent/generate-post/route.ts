@@ -38,11 +38,23 @@ const tvly = tavily({
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+    global: {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      },
+    },
+  }
 );
 
 const CRON_SECRET = process.env.CRON_SECRET || '';
-const TOOLS_COVERAGE_QUERY_LIMIT = 10;
+const TOOLS_COVERAGE_QUERY_LIMIT = 100; // Load ALL 50+ tools from database
+// Note: Generate ONE comprehensive post per week covering ALL tools with summaries
 
 // ============================================================================
 // ENVIRONMENT VALIDATION
@@ -127,24 +139,58 @@ function generateRunId(): string {
 }
 
 /**
- * Get list of tools to cover this week (round-robin through tools_coverage_metadata)
+ * Get ALL 50+ tools from database for comprehensive weekly coverage
+ * Returns tools organized by category for structured reporting
  */
-async function getToolsForGeneration(): Promise<string[]> {
+async function getToolsForGeneration(): Promise<{name: string, category: string}[]> {
   try {
-    const { data, error } = await supabase
-      .from('tools_coverage_metadata')
-      .select('tool_name, priority')
-      .eq('is_active', true)
-      .order('priority', { ascending: false })
-      .limit(TOOLS_COVERAGE_QUERY_LIMIT);
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (error) {
-      return ['Kubernetes', 'Docker', 'AWS', 'Terraform', 'GitHub Actions'];
+    if (!supabaseUrl || !serviceRoleKey) {
+      return [
+        {name: 'Kubernetes', category: 'Container/Orchestration'},
+        {name: 'Docker', category: 'Container/Orchestration'},
+        {name: 'AWS', category: 'Cloud Platform'},
+        {name: 'Terraform', category: 'Infrastructure as Code'},
+        {name: 'GitHub Actions', category: 'CI/CD Pipeline'},
+      ];
     }
 
-    return (data || []).map((t: any) => t.tool_name);
+    // Load ALL active tools (50+) from database - ordered by category then priority
+    const response = await fetch(
+      `${supabaseUrl}/rest/v1/tools_coverage_metadata?is_active=eq.true&order=category.asc,priority.desc&limit=${TOOLS_COVERAGE_QUERY_LIMIT}&select=tool_name,category,priority`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${serviceRoleKey}`,
+          'Accept': 'application/json',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.warn('[AI-BLOG] Failed to fetch tools, using fallback');
+      return [
+        {name: 'Kubernetes', category: 'Container/Orchestration'},
+        {name: 'Docker', category: 'Container/Orchestration'},
+        {name: 'AWS', category: 'Cloud Platform'},
+        {name: 'Terraform', category: 'Infrastructure as Code'},
+        {name: 'GitHub Actions', category: 'CI/CD Pipeline'},
+      ];
+    }
+
+    const allTools = await response.json();
+    if (!allTools || allTools.length === 0) {
+      return [];
+    }
+
+    console.log(`[AI-BLOG] ✅ Loaded ${allTools.length} tools from database for comprehensive coverage`);
+    return allTools.map((t: any) => ({name: t.tool_name, category: t.category}));
   } catch (err) {
-    return ['Kubernetes', 'Docker', 'AWS', 'Terraform', 'GitHub Actions'];
+    console.error('[AI-BLOG] Error loading tools:', err);
+    return [];
   }
 }
 
@@ -153,16 +199,31 @@ async function getToolsForGeneration(): Promise<string[]> {
  */
 async function getExcludedTopics(): Promise<ExcludedTopic[]> {
   try {
-    const { data, error } = await supabase
-      .from('ai_excluded_topics')
-      .select('tool_name, feature_or_fix, cve_id')
-      .gt('excluded_until', new Date().toISOString())
-      .limit(100);
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (error) {
+    if (!supabaseUrl || !serviceRoleKey) {
       return [];
     }
 
+    const now = new Date().toISOString();
+    const response = await fetch(
+      `${supabaseUrl}/rest/v1/ai_excluded_topics?excluded_until=gt.${encodeURIComponent(now)}&limit=100&select=tool_name,feature_or_fix,cve_id`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${serviceRoleKey}`,
+          'Accept': 'application/json',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
     return (data || []) as ExcludedTopic[];
   } catch (err) {
     return [];
@@ -219,51 +280,72 @@ async function searchToolUpdates(
 }
 
 /**
- * Create system prompt for AI with anti-duplication context
+ * Create system prompt for AI - structured for tool-wise comprehensive coverage
  */
 function createSystemPrompt(
   excludedTopics: ExcludedTopic[],
-  toolsList: string[]
+  toolsWithCategories: {name: string, category: string}[]
 ): string {
   const excludedTopicsText = excludedTopics
     .map((t) => `- ${t.tool_name}: ${t.feature_or_fix}`)
     .join('\n');
 
+  // Group tools by category for the prompt
+  const toolsByCategory = toolsWithCategories.reduce((acc, tool) => {
+    if (!acc[tool.category]) {
+      acc[tool.category] = [];
+    }
+    acc[tool.category].push(tool.name);
+    return acc;
+  }, {} as Record<string, string[]>);
+
+  const categoryBreakdown = Object.entries(toolsByCategory)
+    .map(([cat, tools]) => `- **${cat}**: ${tools.join(', ')}`)
+    .join('\n');
+
   return `You are an expert DevOps, Cloud, and Cybersecurity technical writer.
 
-Your task: Generate a professional, original blog post covering recent updates, security vulnerabilities (CVEs), 
-and best practices in DevOps, Cloud Computing, Cybersecurity, and AI/Automation.
+Your task: Generate ONE comprehensive, professional blog post covering ALL 50+ enterprise tools 
+with tool-wise summaries organized by category. This post covers recent updates, security vulnerabilities (CVEs), 
+and best practices across the entire DevOps/Cloud/Security/AI ecosystem.
 
 CRITICAL REQUIREMENTS:
-1. ORIGINAL WRITING: Do NOT copy-paste from sources. Rewrite everything in your own technical style.
-2. FAIR USE: Every statement must be paraphrased and attributed with inline markdown links.
-3. STRUCTURE: Use clear sections (### Heading format) for each tool/topic.
-4. FORMAT: Output MUST be valid Markdown. Include:
-   - Title (# format)
-   - Table of contents (optional)
-   - Tool sections with: Latest Release, Security Concern/CVE, Action Required
-   - Source attribution links at the end of each section
-5. LENGTH: Target 15-20 KB, approximately 3000-4000 words
-6. TONE: Professional, informative, actionable - suitable for enterprise DevOps engineers
-7. COVERAGE: Include at least 8-10 different tools/topics
+1. COMPREHENSIVE COVERAGE: Include EVERY provided tool with a structured summary
+2. ORIGINAL WRITING: Do NOT copy-paste. Rewrite everything in technical style.
+3. FAIR USE: Paraphrase all content and attribute with inline markdown links
+4. STRUCTURE: Organize by category, then tools within each category
+5. FORMAT RULES:
+   - Title (# format): "Weekly DevOps & Cloud Security Report: [Current Week]"
+   - Category headings (## format)
+   - Tool summaries (### format for each tool)
+   - Each tool summary includes:
+     * Latest Release/Update
+     * Security Concern or CVE (if applicable)
+     * Action Required for DevOps Teams
+     * Quick reference box or code example
+6. LENGTH: Target 25-30 KB, approximately 5000-6000 words (comprehensive!)
+7. DEPTH: Thorough coverage of all tools, not superficial
+8. TONE: Professional, informative, actionable - suitable for enterprise architects
+9. ACTIONABLE: Each tool section must include specific actions DevOps teams should take
 
-TOOLS TO COVER THIS WEEK: ${toolsList.join(', ')}
+TOOLS TO COVER - ORGANIZED BY CATEGORY (${toolsWithCategories.length} total tools):
+${categoryBreakdown}
 
-ANTI-DUPLICATION - DO NOT REPEAT THESE TOPICS (from last 14 days):
+ANTI-DUPLICATION - DO NOT REPEAT (from last 14 days):
 ${excludedTopicsText || 'None'}
 
-Focus on NEW updates, NEW CVEs, and NEW features that weren't covered recently.
+Focus on NEW updates, NEW CVEs, NEW features, and NEW best practices.
 
 OUTPUT FORMAT:
-Return ONLY the markdown content. No JSON, no metadata, pure markdown.
-Start with # (main title) and use ## for tool sections.`;
+Return ONLY markdown content. Structure: # Title → ## Category → ### Tool Name → Content
+No JSON, no metadata, pure markdown suitable for publishing directly.`;
 }
 
 /**
  * Generate blog post using Google Gemini + Tavily data (100% FREE)
  */
 async function generateBlogPost(
-  toolNames: string[],
+  toolsWithCategories: {name: string, category: string}[],
   searchResults: Map<string, SearchResult[]>,
   excludedTopics: ExcludedTopic[]
 ): Promise<GeneratedPost | null> {
@@ -274,7 +356,8 @@ async function generateBlogPost(
       return null;
     }
 
-    const systemPrompt = createSystemPrompt(excludedTopics, toolNames);
+    const systemPrompt = createSystemPrompt(excludedTopics, toolsWithCategories);
+    const toolNames = toolsWithCategories.map(t => t.name);
 
     let context = 'RECENT UPDATES AND RESEARCH:\n\n';
     for (const [tool, results] of searchResults) {
@@ -334,65 +417,133 @@ function extractTitle(markdown: string): string | null {
 }
 
 /**
- * Save generated post to Supabase
+ * Save generated post to Supabase using Direct Fetch API (Cloudflare bypass)
  */
 async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
-  try {
-    console.log('[SUPABASE-SAVE] Attempting to save post:', {
-      title: post.title,
-      slug: post.slug,
-      contentLength: post.content.length,
-      tools: post.tools_covered.length,
-      cves: post.cves_mentioned,
-    });
+  const maxRetries = 3;
+  let lastError: any = null;
 
-    const { data, error } = await supabase.from('ai_generated_posts').insert({
-      title: post.title,
-      slug: post.slug,
-      content: post.content,
-      excerpt: post.excerpt,
-      category: 'DevOps',
-      tags: post.tools_covered,
-      tools_covered: post.tools_covered,
-      cves_mentioned: post.cves_mentioned,
-      ai_model: 'google-gemini-3.5-flash',
-      status: 'published',
-      published_at: new Date().toISOString(),
-    });
-
-    if (error) {
-      console.error('[SUPABASE-SAVE] ❌ Insert error:', {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`[SUPABASE-SAVE] Attempt ${attempt}/${maxRetries} to save post:`, {
+        title: post.title,
+        slug: post.slug,
+        contentLength: post.content.length,
+        tools: post.tools_covered.length,
+        cves: post.cves_mentioned,
       });
-      
-      // Provide actionable error messages
-      if (error.code === 'PGRST116') {
-        console.error('[SUPABASE-SAVE] 🔧 FIX: Table "ai_generated_posts" does not exist. Run SQL schema setup.');
-      }
-      if (error.code === '42P01') {
-        console.error('[SUPABASE-SAVE] 🔧 FIX: Table "ai_generated_posts" does not exist. Run SQL schema setup.');
-      }
-      if (error.code === '42501') {
-        console.error('[SUPABASE-SAVE] 🔧 FIX: Row Level Security (RLS) policy blocking insert. Disable RLS or create policy.');
-      }
-      if (error.message?.includes('relation "ai_generated_posts" does not exist')) {
-        console.error('[SUPABASE-SAVE] 🔧 FIX: Table does not exist. Check Supabase database.');
-      }
-      
-      return false;
-    }
 
-    console.log('[SUPABASE-SAVE] ✅ Post saved successfully');
-    return true;
-  } catch (err) {
-    const error = err instanceof Error ? err.message : String(err);
-    console.error('[SUPABASE-SAVE] ❌ Exception:', error);
-    console.error('[SUPABASE-SAVE] 🔧 Full error:', err);
-    return false;
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+      if (!supabaseUrl || !serviceRoleKey) {
+        console.error('[SUPABASE-SAVE] ❌ Missing credentials: SUPABASE_URL or SERVICE_ROLE_KEY');
+        return false;
+      }
+
+      // Prepare payload
+      const payload = {
+        title: post.title,
+        slug: post.slug,
+        content: post.content,
+        excerpt: post.excerpt,
+        category: 'DevOps',
+        tags: post.tools_covered,
+        tools_covered: post.tools_covered,
+        cves_mentioned: post.cves_mentioned,
+        ai_model: 'google-gemini-3.5-flash',
+        status: 'published',
+        published_at: new Date().toISOString(),
+      };
+
+      // Use direct fetch with Cloudflare-friendly headers
+      const response = await fetch(`${supabaseUrl}/rest/v1/ai_generated_posts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${serviceRoleKey}`,
+          'Prefer': 'return=minimal',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'application/json, */*',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Sec-Fetch-Dest': 'empty',
+          'Sec-Fetch-Mode': 'cors',
+          'Sec-Fetch-Site': 'same-site',
+          'Origin': process.env.NEXT_PUBLIC_SITE_URL || 'https://localhost:3000',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const contentType = response.headers.get('content-type');
+      const responseText = await response.text();
+
+      // Check if we got Cloudflare HTML challenge instead of JSON
+      if (contentType?.includes('text/html') || responseText.includes('<!DOCTYPE html')) {
+        console.warn(`[SUPABASE-SAVE] ⚠️ Cloudflare challenge detected (attempt ${attempt}). Retrying...`);
+        lastError = new Error('Cloudflare challenge received');
+        
+        if (attempt < maxRetries) {
+          // Wait before retrying (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt - 1)));
+          continue;
+        }
+        return false;
+      }
+
+      // Parse response
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        data = responseText;
+      }
+
+      // Check HTTP status
+      if (!response.ok) {
+        console.error('[SUPABASE-SAVE] ❌ Insert error (HTTP ' + response.status + '):', {
+          status: response.status,
+          statusText: response.statusText,
+          data: data,
+        });
+
+        // Provide actionable error messages
+        if (data?.code === '42P01' || responseText.includes('does not exist')) {
+          console.error('[SUPABASE-SAVE] 🔧 FIX: Table "ai_generated_posts" does not exist. Run SQL schema setup.');
+        }
+        if (data?.code === '42501' || responseText.includes('insufficient privilege')) {
+          console.error('[SUPABASE-SAVE] 🔧 FIX: Row Level Security (RLS) blocking insert. Disable RLS.');
+        }
+
+        lastError = new Error(`HTTP ${response.status}: ${data?.message || responseText}`);
+        
+        if (attempt < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt - 1)));
+          continue;
+        }
+        return false;
+      }
+
+      console.log('[SUPABASE-SAVE] ✅ Post saved successfully (HTTP ' + response.status + ')');
+      return true;
+
+    } catch (err) {
+      lastError = err;
+      const error = err instanceof Error ? err.message : String(err);
+      console.error(`[SUPABASE-SAVE] ❌ Exception (attempt ${attempt}):`, error);
+
+      if (attempt < maxRetries) {
+        console.log(`[SUPABASE-SAVE] 🔄 Retrying in ${Math.pow(2, attempt)}s...`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt)));
+        continue;
+      }
+    }
   }
+
+  console.error('[SUPABASE-SAVE] ❌ All retries failed:', lastError);
+  return false;
 }
 
 /**
@@ -401,22 +552,44 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
  */
 async function isFirstRun(): Promise<boolean> {
   try {
-    const { data, count, error } = await supabase
-      .from('ai_generated_posts')
-      .select('id', { count: 'exact' })
-      .limit(1);
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (error) return false;
-    
-    // First run if no posts exist
-    return !count || count === 0;
+    if (!supabaseUrl || !serviceRoleKey) {
+      return false;
+    }
+
+    const response = await fetch(
+      `${supabaseUrl}/rest/v1/ai_generated_posts?select=id&limit=1`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${serviceRoleKey}`,
+          'Accept': 'application/json',
+          'Prefer': 'count=exact',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const countHeader = response.headers.get('content-range');
+    if (!countHeader) {
+      return false;
+    }
+
+    const count = parseInt(countHeader.split('/')[1], 10);
+    return count === 0;
   } catch (err) {
     return false;
   }
 }
 
 /**
- * Log generation execution
+ * Log generation execution (with Cloudflare bypass)
  */
 async function logGeneration(
   runId: string,
@@ -425,7 +598,15 @@ async function logGeneration(
   try {
     console.log('[LOG-GENERATION] Logging generation status:', log.status);
     
-    const { error } = await supabase.from('ai_generation_logs').insert({
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      console.warn('[LOG-GENERATION] ⚠️ Missing credentials - skipping log');
+      return;
+    }
+
+    const payload = {
       run_id: runId,
       scheduled_time: new Date().toISOString(),
       execution_start: new Date().toISOString(),
@@ -434,18 +615,26 @@ async function logGeneration(
       posts_generated: log.posts_generated,
       posts_published: log.posts_published,
       error_message: log.error_message,
+    };
+
+    const response = await fetch(`${supabaseUrl}/rest/v1/ai_generation_logs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${serviceRoleKey}`,
+        'Prefer': 'return=minimal',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(payload),
     });
 
-    if (error) {
-      console.warn('[LOG-GENERATION] ⚠️ Failed to log generation (non-critical):', {
-        code: error.code,
-        message: error.message,
-      });
-    } else {
+    if (response.ok) {
       console.log('[LOG-GENERATION] ✅ Generation logged successfully');
+    } else {
+      console.warn('[LOG-GENERATION] ⚠️ Failed to log (HTTP ' + response.status + ')');
     }
   } catch (err) {
-    // Silent fail - logging handled by Vercel
     console.warn('[LOG-GENERATION] ⚠️ Exception logging generation:', err);
   }
 }
@@ -500,8 +689,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Get configuration
     console.log('[AI-BLOG] ⏭️ Getting tools list...');
-    const toolsList = await getToolsForGeneration();
-    console.log('[AI-BLOG] ✅ Tools to cover:', toolsList);
+    const toolsWithCategories = await getToolsForGeneration();
+    console.log(`[AI-BLOG] ✅ Loaded ${toolsWithCategories.length} tools for comprehensive coverage`);
 
     console.log('[AI-BLOG] ⏭️ Getting excluded topics...');
     const excludedTopics = await getExcludedTopics();
@@ -511,20 +700,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const executionType = isFirstRunGeneration ? 'FIRST_RUN_AUTO' : 'SCHEDULED_CRON';
     console.log(`[AI-BLOG] 🚀 Execution type: ${executionType}`);
 
-    // Search for updates
-    console.log('[AI-BLOG] ⏭️ Searching for tool updates...');
+    // Search for updates - search for each tool
+    console.log('[AI-BLOG] ⏭️ Searching for tool updates across all tools...');
     const searchResults = new Map<string, SearchResult[]>();
-    for (const tool of toolsList) {
-      const results = await searchToolUpdates(tool, excludedTopics);
+    for (const toolWithCategory of toolsWithCategories) {
+      const results = await searchToolUpdates(toolWithCategory.name, excludedTopics);
       if (results.length > 0) {
-        searchResults.set(tool, results);
+        searchResults.set(toolWithCategory.name, results);
       }
     }
-    console.log(`[AI-BLOG] ✅ Found ${searchResults.size} tools with updates`);
+    console.log(`[AI-BLOG] ✅ Found updates for ${searchResults.size}/${toolsWithCategories.length} tools`);
 
-    // Generate blog post
-    console.log('[AI-BLOG] ⏭️ Generating blog post with AI...');
-    const post = await generateBlogPost(toolsList, searchResults, excludedTopics);
+    // Generate comprehensive blog post covering ALL tools
+    console.log('[AI-BLOG] ⏭️ Generating comprehensive blog post with ALL tools...');
+    const post = await generateBlogPost(toolsWithCategories, searchResults, excludedTopics);
 
     if (!post) {
       const log: GenerationLog = {
