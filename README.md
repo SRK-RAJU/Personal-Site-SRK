@@ -13,7 +13,8 @@
 
 - ⚡ **Fast**: Next.js 14 with optimized images and code splitting
 - 🤖 **AI-Powered**: Automatic blog posts every Monday (Google Generative AI + Tavily)
-- 📚 **50+ Tools Covered**: DevOps, Cloud, Security, and AI/ML tools
+- � **Instant on Deploy**: First post generates within minutes of Vercel deployment!
+- �📚 **50+ Tools Covered**: DevOps, Cloud, Security, and AI/ML tools
 - 🎨 **Modern UI**: Futuristic design with dark mode support
 - 📱 **Responsive**: Perfect on mobile, tablet, and desktop
 - 🔐 **Secure**: Supabase Auth and Row-Level Security

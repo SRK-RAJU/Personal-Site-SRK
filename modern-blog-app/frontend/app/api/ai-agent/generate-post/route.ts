@@ -367,11 +367,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Security: Verify Cron Secret OR allow first-run auto-generation
     const authHeader = request.headers.get('authorization') || '';
     const isFirstRunGeneration = await isFirstRun();
+    const cronSecret = process.env.CRON_SECRET;
+    const hasValidSecret = cronSecret && cronSecret.length > 0 && verifyCronSecret(authHeader);
+    
+    console.log(`[AI-BLOG] POST Request - FirstRun: ${isFirstRunGeneration}, ValidSecret: ${hasValidSecret}, SecretLength: ${cronSecret?.length || 0}`);
     
     // Allow if: (1) Valid cron secret OR (2) First deployment (auto-test)
-    if (!verifyCronSecret(authHeader) && !isFirstRunGeneration) {
+    if (!hasValidSecret && !isFirstRunGeneration) {
+      console.error(`[AI-BLOG] Authorization failed. CronSecret set: ${!!cronSecret}, HeaderSecret: ${!!authHeader}`);
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized', details: 'Missing or invalid CRON_SECRET' },
         { status: 401 }
       );
     }
