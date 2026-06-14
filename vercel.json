@@ -1,6 +1,7 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
+  "outputDirectory": ".next",
   "framework": "nextjs",
   "functions": {
     "app/api/**/*.ts": {
@@ -15,7 +16,7 @@
     },
     {
       "path": "/api/ai-agent/check-deployment",
-      "schedule": "*/5 * * * *"
+      "schedule": "0 * * * *" 
     }
   ]
 }
