@@ -1,25 +1,3 @@
-/**
- * ============================================================================
- * AI BLOGGING PIPELINE - MAIN API ROUTE (PRODUCTION)
- * ============================================================================
- * File: app/api/ai-agent/generate-post/route.ts
- *
- * Purpose:
- * - Handles weekly Vercel Cron requests to generate DevOps/Security blog posts
- * - Executes every Monday at 3 AM UTC
- * - Uses Google Gemini AI for content generation (100% FREE)
- * - Uses Tavily AI API for global news/updates search (1000/month FREE)
- * - Implements anti-duplication via Supabase excluded topics
- * - Stores generated posts in Supabase with metadata
- *
- * Tech Stack:
- * - @google/generative-ai (LLM provider - FREE)
- * - tavily-js (web search client - FREE)
- * - @supabase/supabase-js (database - FREE tier)
- *
- * Monthly Cost: $0 (100% free tier services)
- * ============================================================================
- */
 import { generateText } from 'ai';
 import { google } from '@ai-sdk/google';
 import { tavily } from '@tavily/core';
@@ -35,9 +13,11 @@ const tvly = tavily({
   apiKey: process.env.TAVILY_API_KEY || '',
 });
 
-// ✅ IPPUDU IDHI NEE WORKER URL (https://api.rjexa.com) NI VADUTHUNDHI
+// 🔄 BYPASS CLOUDFLARE BOT CHALLENGES: Use direct URL for backend writes, fallback to public route
+const targetDbUrl = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  targetDbUrl,
   process.env.SUPABASE_SERVICE_ROLE_KEY || '',
   {
     auth: {
@@ -56,7 +36,9 @@ const TOOLS_COVERAGE_QUERY_LIMIT = 100;
 
 function validateEnvironment(): { valid: boolean; missing: string[] } {
   const missing = [];
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) missing.push('NEXT_PUBLIC_SUPABASE_URL');
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.DIRECT_SUPABASE_URL) {
+    missing.push('NEXT_PUBLIC_SUPABASE_URL or DIRECT_SUPABASE_URL');
+  }
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) missing.push('SUPABASE_SERVICE_ROLE_KEY');
   if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) missing.push('GOOGLE_GENERATIVE_AI_API_KEY');
   if (!process.env.TAVILY_API_KEY) missing.push('TAVILY_API_KEY');
@@ -114,7 +96,6 @@ function generateRunId(): string {
   return `ai-blog-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
-// 🛠️ GET TOOLS FUNCTION USING SDK (CLEAN & SECURE)
 async function getToolsForGeneration(): Promise<{name: string, category: string}[]> {
   try {
     const { data, error } = await supabase
@@ -136,7 +117,7 @@ async function getToolsForGeneration(): Promise<{name: string, category: string}
       ];
     }
 
-    console.log(`[AI-BLOG] ✅ Loaded ${data.length} tools via custom domain worker.`);
+    console.log(`[AI-BLOG] ✅ Loaded ${data.length} tools via direct endpoint.`);
     return data.map((t: any) => ({name: t.tool_name, category: t.category}));
   } catch (err) {
     console.error('[AI-BLOG] Error loading tools:', err);
@@ -144,7 +125,6 @@ async function getToolsForGeneration(): Promise<{name: string, category: string}
   }
 }
 
-// 🛠️ GET EXCLUDED TOPICS USING SDK
 async function getExcludedTopics(): Promise<ExcludedTopic[]> {
   try {
     const now = new Date().toISOString();
@@ -161,7 +141,6 @@ async function getExcludedTopics(): Promise<ExcludedTopic[]> {
   }
 }
 
-// 🛠️ FIX TAVILY RATE LIMITS: ADDED PACING DELAY (400ms) BETWEEN LOOPS
 async function searchToolUpdates(
   toolName: string,
   excludedTopics: ExcludedTopic[],
@@ -170,7 +149,7 @@ async function searchToolUpdates(
   try {
     if (!process.env.TAVILY_API_KEY) return [];
 
-    // 💡 100 tools cycle low rate limit lock avvakunda 400ms sleep algorithm
+    // 💡 Prevent hitting free-tier pacing blocks by delaying 400ms per loop iteration
     await new Promise(resolve => setTimeout(resolve, 400));
 
     const query = `${toolName} updates releases security CVE 2025 2026 latest news`;
@@ -256,7 +235,7 @@ async function generateBlogPost(
 
     console.log('[GEMINI-GENERATE] Calling Google Gemini API...');
     const { text: generatedMarkdown } = await generateText({
-      model: google('gemini-2.5-flash'), // Updated engine standard
+      model: google('gemini-2.5-flash'),
       system: systemPrompt,
       prompt: `Based on the following recent updates, write a comprehensive technical blog post:\n\n${context}`,
       temperature: 0.7,
@@ -288,10 +267,9 @@ function extractTitle(markdown: string): string | null {
   return match ? match[1].trim() : null;
 }
 
-// 🛠️ FIX CLOUDFLARE 403 BLOCKS ON UPLOAD: REMOVED RAW FETCH SPOOF HEADERS & USED OFFICIAL SDK
 async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
   try {
-    console.log(`[SUPABASE-SAVE] Attempting to insert massive post (${post.content.length} bytes) safely via API Worker route...`);
+    console.log(`[SUPABASE-SAVE] Saving text data payload (${post.content.length} bytes) via unblocked direct connection...`);
 
     const { error } = await supabase
       .from('ai_generated_posts')
@@ -310,14 +288,14 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
       }]);
 
     if (error) {
-      console.error('[SUPABASE-SAVE] ❌ SDK Insert Error via Worker:', error.message);
+      console.error('[SUPABASE-SAVE] ❌ SDK Direct Insert Error:', error.message);
       return false;
     }
 
-    console.log('[SUPABASE-SAVE] ✅ Post payload accepted and saved successfully!');
+    console.log('[SUPABASE-SAVE] ✅ Post saved safely directly to database!');
     return true;
   } catch (err) {
-    console.error('[SUPABASE-SAVE] ❌ Exception tracking stream payload:', err);
+    console.error('[SUPABASE-SAVE] ❌ Exception processing direct db transaction:', err);
     return false;
   }
 }
@@ -335,7 +313,6 @@ async function isFirstRun(): Promise<boolean> {
   }
 }
 
-// 🛠️ LOG GENERATION USING CLEAN EXPLICIT CLIENT RUNS
 async function logGeneration(runId: string, log: GenerationLog): Promise<void> {
   try {
     const { error } = await supabase
@@ -351,15 +328,15 @@ async function logGeneration(runId: string, log: GenerationLog): Promise<void> {
         error_message: log.error_message,
       }]);
 
-    if (error) console.warn('[LOG-GENERATION] ⚠️ Logging error:', error.message);
-    else console.log('[LOG-GENERATION] ✅ Execution states tracked inside logs.');
+    if (error) console.warn('[LOG-GENERATION] ⚠️ Logging write error:', error.message);
+    else console.log('[LOG-GENERATION] ✅ Execution metrics securely logged.');
   } catch (err) {
-    console.warn('[LOG-GENERATION] ⚠️ Tracking error exceptions:', err);
+    console.warn('[LOG-GENERATION] ⚠️ Logging write exception:', err);
   }
 }
 
 // ============================================================================
-// MAIN API HANDLER (POST)
+// MAIN API ROUTE HANDLERS
 // ============================================================================
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -398,15 +375,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const post = await generateBlogPost(toolsWithCategories, searchResults, excludedTopics);
 
     if (!post) {
-      await logGeneration(runId, { run_id: runId, status: 'failed', posts_generated: 0, posts_published: 0, error_message: 'Generation payload returned empty' });
+      await logGeneration(runId, { run_id: runId, status: 'failed', posts_generated: 0, posts_published: 0, error_message: 'Generation payload resolved empty' });
       return NextResponse.json({ error: 'Failed to generate post' }, { status: 500 });
     }
 
     const saved = await savePostToSupabase(post);
 
     if (!saved) {
-      await logGeneration(runId, { run_id: runId, status: 'partial', posts_generated: 1, posts_published: 0, error_message: 'Post generated but network proxy validation failed on saving' });
-      return NextResponse.json({ warning: 'Cloud WAF processing anomaly, verify logs', post: { title: post.title, slug: post.slug } }, { status: 200 });
+      await logGeneration(runId, { run_id: runId, status: 'partial', posts_generated: 1, posts_published: 0, error_message: 'Post generated but structural database write failed' });
+      return NextResponse.json({ warning: 'Database transaction failed, check runtime configurations', post: { title: post.title, slug: post.slug } }, { status: 200 });
     }
 
     await logGeneration(runId, { run_id: runId, status: 'success', posts_generated: 1, posts_published: 1 });
@@ -422,7 +399,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error: any) {
     const duration = Math.round((Date.now() - startTime) / 1000);
     await logGeneration(runId, { run_id: runId, status: 'failed', posts_generated: 0, posts_published: 0, error_message: error?.message });
-    return NextResponse.json({ error: 'Fatal compilation issue', message: error?.message, duration_seconds: duration }, { status: 500 });
+    return NextResponse.json({ error: 'Fatal runtime compilation issue', message: error?.message, duration_seconds: duration }, { status: 500 });
   }
 }
 
@@ -432,7 +409,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const secret = searchParams.get('secret');
 
   if (!isTest || secret !== CRON_SECRET) {
-    return NextResponse.json({ error: 'Invalid payload context structural parameters' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid runtime testing validation parameters' }, { status: 400 });
   }
   return POST(request);
 }
