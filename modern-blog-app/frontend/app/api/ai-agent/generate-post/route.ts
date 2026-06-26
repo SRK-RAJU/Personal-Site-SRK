@@ -18,6 +18,7 @@ const tvly = tavily({
   apiKey: process.env.TAVILY_API_KEY || '',
 });
 
+// Cloudflare edge WAF ని బైపాస్ చేయడానికి direct DB URL ని వాడుతుంది
 const targetDbUrl = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 
 const supabase = createClient(
@@ -243,6 +244,7 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
   try {
     console.log(`[SUPABASE-SAVE] Upserting report (${post.content.length} bytes)...`);
 
+    // Deterministic slug ఆధారంగా పాత డేటాను ఓవర్‌రైట్ చేస్తుంది (No more unique constraint crashes)
     const { error } = await supabase
       .from('ai_generated_posts')
       .upsert(
@@ -302,23 +304,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     // 🛡️ SHIELD 1: NEXT.JS COMPILATION BUILD-TIME SHIELD
-    // If Vercel tries to run code checks or compile paths while processing deployment builds, 
-    // it exits immediately without invoking database variables or executing search tokens.
     if (process.env.NEXT_PHASE === 'phase-production-build') {
       return NextResponse.json({ message: 'Shield active: build phase compile ignored.' }, { status: 200 });
+    }
+
+    // 🔒 GUARD 1: AUTHORIZATION SECURITY SHIELD
+    const authHeader = request.headers.get('authorization') || '';
+    const hasValidSecret = verifyCronSecret(authHeader);
+    const isVercelSystemRequest = request.headers.has('x-vercel-id');
+
+    // క్రోన్ సీక్రెట్ లేకపోయినా లేదా కనీసం Vercel Internal Request కాకపోయినా వెంటనే 401 తో బ్లాక్ చేస్తుంది
+    if (!hasValidSecret && !isVercelSystemRequest) {
+      return NextResponse.json({ error: 'Manual browser request patterns are completely blocked.' }, { status: 401 });
     }
 
     const envCheck = validateEnvironment();
     if (!envCheck.valid) {
       return NextResponse.json({ error: 'Configuration Error', missing_vars: envCheck.missing }, { status: 503 });
-    }
-
-    // 🔒 GUARD 1: CRON AUTHORIZATION SECRET VALIDATION
-    const authHeader = request.headers.get('authorization') || '';
-    const hasValidSecret = verifyCronSecret(authHeader);
-    
-    if (!hasValidSecret) {
-      return NextResponse.json({ error: 'Unauthorized route access attempt.' }, { status: 401 });
     }
 
     const toolsWithCategories = await getToolsForGeneration();
@@ -357,7 +359,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  // Apply Build Shield to GET method handler context as well
   if (process.env.NEXT_PHASE === 'phase-production-build') {
     return NextResponse.json({ message: 'Shield active: build phase compile ignored.' }, { status: 200 });
   }
@@ -366,6 +367,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const isTest = searchParams.get('test') === 'true';
   const secret = searchParams.get('secret');
 
+  // కచ్చితమైన సీక్రెట్ కీ తో బ్రౌజర్‌లో హిట్ చేస్తే మాత్రమే రన్ అవుతుంది
   if (!isTest || secret !== CRON_SECRET) {
     return NextResponse.json({ error: 'Invalid verification parameters.' }, { status: 400 });
   }
