@@ -6,6 +6,11 @@ import { slugify } from '@/lib/ai-utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 // ============================================================================
+// VERCEL COMPILER INSTRUCTIONS
+// ============================================================================
+export const dynamic = 'force-dynamic';
+
+// ============================================================================
 // CONFIGURATION & INITIALIZATION
 // ============================================================================
 
@@ -13,7 +18,6 @@ const tvly = tavily({
   apiKey: process.env.TAVILY_API_KEY || '',
 });
 
-// Use direct DB endpoint to bypass edge blocks entirely
 const targetDbUrl = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 
 const supabase = createClient(
@@ -105,18 +109,7 @@ async function getToolsForGeneration(): Promise<{name: string, category: string}
       .order('category', { ascending: true })
       .limit(TOOLS_COVERAGE_QUERY_LIMIT);
 
-    if (error || !data) {
-      console.warn('[AI-BLOG] Failed to fetch tools via SDK, using fallback');
-      return [
-        {name: 'Kubernetes', category: 'Container/Orchestration'},
-        {name: 'Docker', category: 'Container/Orchestration'},
-        {name: 'AWS', category: 'Cloud Platform'},
-        {name: 'Terraform', category: 'Infrastructure as Code'},
-        {name: 'GitHub Actions', category: 'CI/CD Pipeline'},
-      ];
-    }
-
-    console.log(`[AI-BLOG] ✅ Loaded ${data.length} tools via direct endpoint.`);
+    if (error || !data) return [];
     return data.map((t: any) => ({name: t.tool_name, category: t.category}));
   } catch (err) {
     return [];
@@ -139,14 +132,11 @@ async function getExcludedTopics(): Promise<ExcludedTopic[]> {
   }
 }
 
-// 🎯 CONSOLIDATED EXTRACTION ROUTINE
-// Queries the macro layer once instead of making 100 looping calls.
 async function searchEcosystemTrend(): Promise<SearchResult[]> {
   try {
     if (!process.env.TAVILY_API_KEY) return [];
-
     console.log(`[TAVILY-SEARCH] Gathering collective macro CVE vulnerabilities news...`);
-    const response = await tvly.search("DevOps Cloud Security releases vulnerabilities CVE 2026 latest news", {
+    const response = await tvly.search("DevOps Cloud Security releases vulnerabilities CVE latest news", {
       days: 7,
       max_results: 3,
       include_answer: false,
@@ -159,7 +149,6 @@ async function searchEcosystemTrend(): Promise<SearchResult[]> {
       published_date: result.published_date,
     }));
   } catch (err) {
-    console.warn(`[TAVILY-SEARCH] Search limits hit, shifting to fallback model memory tracking.`);
     return [];
   }
 }
@@ -186,15 +175,14 @@ FORMAT RULES:
 - Title (# format): "Weekly DevOps & Cloud Security Report: Comprehensive Multi-Tool Analysis"
 - Category headings (## format)
 - Tool summaries (### format for each tool)
-- Provide technical substance for every single tool listed below without omission.
 
-TOOLS TO COVER (Organize strictly under these blocks):
+TOOLS TO COVER:
 ${categoryBreakdown}
 
 ANTI-DUPLICATION:
 ${excludedTopicsText || 'None'}
 
-Return ONLY pure markdown text payload without wrapper formatting strings.`;
+Return ONLY pure markdown payload.`;
 }
 
 async function generateBlogPost(
@@ -208,12 +196,12 @@ async function generateBlogPost(
     const systemPrompt = createSystemPrompt(excludedTopics, toolsWithCategories);
     const toolNames = toolsWithCategories.map(t => t.name);
 
-    let context = 'GLOBAL TREND CVE GROUND RESEARCH UPDATES:\n\n';
+    let context = 'GLOBAL TREND CVE GROUND RESEARCH EXPANSIONS:\n\n';
     trendNews.forEach((result, idx) => {
       context += `${idx + 1}. **${result.title}**\n   - Source: ${result.url}\n   - Content: ${result.content}\n\n`;
     });
 
-    console.log('[GEMINI-GENERATE] Calling Google Gemini API to build comprehensive multi-tool overview...');
+    console.log('[GEMINI-GENERATE] Calling Google Gemini API...');
     const { text: generatedMarkdown } = await generateText({
       model: google('gemini-2.5-flash'),
       system: systemPrompt,
@@ -221,8 +209,15 @@ async function generateBlogPost(
       temperature: 0.6,
     });
 
-    const title = extractTitle(generatedMarkdown) || "Weekly DevOps & Cloud Security Report";
-    const slug = slugify(title);
+    const formattedDate = new Date().toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+
+    const title = `Weekly DevOps & Cloud Security Report: ${formattedDate}`;
+    const slug = `devops-report-${slugify(formattedDate)}`;
+    
     const excerpt = generatedMarkdown.split('\n').find((line: string) => line.length > 50 && !line.startsWith('#'))?.substring(0, 200) || 'Ecosystem analysis.';
     const cveMatches = generatedMarkdown.match(/CVE-\d{4}-\d+/g) || [];
 
@@ -235,7 +230,6 @@ async function generateBlogPost(
       cves_mentioned: cveMatches.length,
     };
   } catch (err) {
-    console.error('[GEMINI-GENERATE] ❌ Error:', err);
     return null;
   }
 }
@@ -247,44 +241,33 @@ function extractTitle(markdown: string): string | null {
 
 async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
   try {
-    console.log(`[SUPABASE-SAVE] Pushing generated content layout (${post.content.length} bytes) directly into database...`);
+    console.log(`[SUPABASE-SAVE] Upserting report (${post.content.length} bytes)...`);
 
     const { error } = await supabase
       .from('ai_generated_posts')
-      .insert([{
-        title: post.title,
-        slug: post.slug,
-        content: post.content,
-        excerpt: post.excerpt,
-        category: 'DevOps',
-        tags: post.tools_covered,
-        tools_covered: post.tools_covered,
-        cves_mentioned: post.cves_mentioned,
-        ai_model: 'google-gemini-2.5-flash',
-        status: 'published',
-        published_at: new Date().toISOString(),
-      }]);
+      .upsert(
+        [{
+          title: post.title,
+          slug: post.slug,
+          content: post.content,
+          excerpt: post.excerpt,
+          category: 'DevOps',
+          tags: post.tools_covered,
+          tools_covered: post.tools_covered,
+          cves_mentioned: post.cves_mentioned,
+          ai_model: 'google-gemini-2.5-flash',
+          status: 'published',
+          published_at: new Date().toISOString(),
+        }],
+        { onConflict: 'slug' }
+      );
 
     if (error) {
-      console.error('[SUPABASE-SAVE] ❌ Database Direct Write Error:', error.message);
+      console.error('[SUPABASE-SAVE] ❌ Database Upsert Error:', error.message);
       return false;
     }
-
-    console.log('[SUPABASE-SAVE] ✅ Post transaction safely committed!');
+    console.log('[SUPABASE-SAVE] ✅ Today\'s data safely committed/overwritten!');
     return true;
-  } catch (err) {
-    return false;
-  }
-}
-
-async function isFirstRun(): Promise<boolean> {
-  try {
-    const { count, error } = await supabase
-      .from('ai_generated_posts')
-      .select('*', { count: 'exact', head: true });
-
-    if (error || count === null) return false;
-    return count === 0;
   } catch (err) {
     return false;
   }
@@ -304,9 +287,8 @@ async function logGeneration(runId: string, log: GenerationLog): Promise<void> {
         posts_published: log.posts_published,
         error_message: log.error_message,
       }]);
-    console.log('[LOG-GENERATION] ✅ Tracking metrics logged successfully.');
   } catch (err) {
-    console.warn('[LOG-GENERATION] ⚠️ Non-blocking dashboard telemetry mismatch.');
+    console.warn('[LOG-GENERATION] ⚠️ Logging write skipped.');
   }
 }
 
@@ -319,29 +301,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const startTime = Date.now();
 
   try {
+    // 🛡️ SHIELD 1: NEXT.JS COMPILATION BUILD-TIME SHIELD
+    // If Vercel tries to run code checks or compile paths while processing deployment builds, 
+    // it exits immediately without invoking database variables or executing search tokens.
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return NextResponse.json({ message: 'Shield active: build phase compile ignored.' }, { status: 200 });
+    }
+
     const envCheck = validateEnvironment();
     if (!envCheck.valid) {
       return NextResponse.json({ error: 'Configuration Error', missing_vars: envCheck.missing }, { status: 503 });
     }
 
+    // 🔒 GUARD 1: CRON AUTHORIZATION SECRET VALIDATION
     const authHeader = request.headers.get('authorization') || '';
-    const isFirstRunGeneration = await isFirstRun();
     const hasValidSecret = verifyCronSecret(authHeader);
-    const userAgent = request.headers.get('user-agent') || '';
-    const isFromApp = userAgent.includes('Mozilla') || userAgent.includes('Chrome') || userAgent === 'Vercel-Internal-Cron';
     
-    if (!hasValidSecret && !isFirstRunGeneration && !isFromApp) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!hasValidSecret) {
+      return NextResponse.json({ error: 'Unauthorized route access attempt.' }, { status: 401 });
     }
 
-    // 1. Fetch all configured metadata tool records in a single query block
     const toolsWithCategories = await getToolsForGeneration();
     const excludedTopics = await getExcludedTopics();
-    
-    // 2. Perform a single search execution to prevent loops from timing out
     const trendNews = await searchEcosystemTrend();
 
-    // 3. Process structural transformation pipeline
     const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics);
 
     if (!post) {
@@ -349,11 +332,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Failed to generate post' }, { status: 500 });
     }
 
-    // 4. Send payload straight to database backlink channel
     const saved = await savePostToSupabase(post);
 
     if (!saved) {
-      await logGeneration(runId, { run_id: runId, status: 'partial', posts_generated: 1, posts_published: 0, error_message: 'Save transaction error' });
+      await logGeneration(runId, { run_id: runId, status: 'partial', posts_generated: 1, posts_published: 0, error_message: 'Upsert transaction error' });
       return NextResponse.json({ warning: 'Database insertion failed' }, { status: 200 });
     }
 
@@ -375,12 +357,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  // Apply Build Shield to GET method handler context as well
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    return NextResponse.json({ message: 'Shield active: build phase compile ignored.' }, { status: 200 });
+  }
+
   const searchParams = request.nextUrl.searchParams;
   const isTest = searchParams.get('test') === 'true';
   const secret = searchParams.get('secret');
 
   if (!isTest || secret !== CRON_SECRET) {
-    return NextResponse.json({ error: 'Invalid payload structural verification context parameters' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid verification parameters.' }, { status: 400 });
   }
   return POST(request);
 }
