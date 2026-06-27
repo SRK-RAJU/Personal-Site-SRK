@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { getClientIp, isTrustedAutomationRequest as isTrustedReadRequest } from '@/lib/requestAccess';
 
 function getSupabaseClient() {
   const url = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -38,14 +39,6 @@ const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes
 const RATE_LIMIT_MAX_READ = 100; // max read requests per window
 const RATE_LIMIT_MAX_WRITE = 20; // max write requests per window
-
-function getClientIp(request: NextRequest) {
-  const forwardedIp = request.headers.get('x-forwarded-for');
-  if (forwardedIp) {
-    return forwardedIp.split(',')[0].trim();
-  }
-  return request.headers.get('x-real-ip') || 'unknown';
-}
 
 function isRateLimited(ip: string, isWrite: boolean = false) {
   const now = Date.now();
@@ -132,8 +125,17 @@ const DEFAULT_POSTS = [
 ];
 
 export async function GET(request: NextRequest) {
+  if (isTrustedReadRequest(request)) {
+    // Allow internal automation and deployment checks without public-rate-limit interference.
+  } else {
+    const clientIp = getClientIp(request);
+    if (isRateLimited(clientIp)) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
+  }
+
   const clientIp = getClientIp(request);
-  if (isRateLimited(clientIp)) {
+  if (!isTrustedReadRequest(request) && isRateLimited(clientIp)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
@@ -165,11 +167,17 @@ export async function GET(request: NextRequest) {
     let aiPosts = [];
     if (includeAI) {
       try {
-        const { data: aiData, error: aiError } = await supabase
+        let aiQuery = supabase
           .from('ai_generated_posts')
-          .select('id, title, slug, excerpt, content, category, featured_image_url, published_at, created_at, updated_at')
+          .select('id, title, slug, excerpt, content, category, featured_image_url, published_at, created_at, updated_at, status, ai_model, tools_covered, cves_mentioned')
           .order(order, { ascending })
           .limit(parseInt(limit));
+
+        if (published === 'true') {
+          aiQuery = aiQuery.eq('status', 'published');
+        }
+
+        const { data: aiData, error: aiError } = await aiQuery;
 
         if (!aiError && aiData) {
           // Transform AI posts to match regular post schema
@@ -177,8 +185,13 @@ export async function GET(request: NextRequest) {
             ...post,
             published: true,
             author: 'AI Agent',
+            author_name: 'AI Agent',
             read_time_minutes: Math.ceil((post.content?.length || 0) / 200), // Estimate reading time
             view_count: 0,
+            ai_model: post.ai_model || 'google-gemini-2.5-flash',
+            tools_covered: post.tools_covered || [],
+            cves_mentioned: post.cves_mentioned || 0,
+            source_table: 'ai_generated_posts',
           }));
         }
       } catch (err) {

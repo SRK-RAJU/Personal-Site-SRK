@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
+import { getClientIp, isTrustedAutomationRequest } from '@/lib/requestAccess';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -22,14 +23,6 @@ const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 10 * 60 * 1000; // 10 minutes
 const RATE_LIMIT_MAX = 6; // max requests per window per IP
 
-function getClientIp(request: NextRequest) {
-  const forwardedIp = request.headers.get('x-forwarded-for');
-  if (forwardedIp) {
-    return forwardedIp.split(',')[0].trim();
-  }
-  return request.headers.get('x-real-ip') || 'unknown';
-}
-
 function isRateLimited(ip: string) {
   const now = Date.now();
   const timestamps = rateLimitMap.get(ip) || [];
@@ -41,7 +34,7 @@ function isRateLimited(ip: string) {
 
 export async function POST(request: NextRequest) {
   const clientIp = getClientIp(request);
-  if (isRateLimited(clientIp)) {
+  if (!isTrustedAutomationRequest(request) && isRateLimited(clientIp)) {
     return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
   }
   try {

@@ -15,7 +15,7 @@
  * ============================================================================
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import { motion } from 'framer-motion';
@@ -53,9 +53,12 @@ export default function AIBlogPostsDisplay({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  const supabase = useMemo(
+    () => createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+    ),
+    []
   );
 
   useEffect(() => {
@@ -93,7 +96,7 @@ export default function AIBlogPostsDisplay({
     };
 
     fetchAIPosts();
-  }, [limit, showFeaturedOnly]);
+  }, [limit, showFeaturedOnly, supabase]);
 
   if (loading) {
     return (

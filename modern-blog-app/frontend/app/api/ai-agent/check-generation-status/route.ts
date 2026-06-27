@@ -11,6 +11,9 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { isTrustedAutomationRequest as isTrustedStatusRequest } from '@/lib/requestAccess';
+
+export const dynamic = 'force-dynamic';
 
 function getSupabaseClient() {
   const url = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -30,6 +33,10 @@ function getSupabaseClient() {
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
+    if (!isTrustedStatusRequest(request)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     console.log('[CHECK-GENERATION-STATUS] Checking if generation needed...');
 
     const supabase = getSupabaseClient();

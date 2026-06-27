@@ -106,27 +106,30 @@ export async function generateStaticParams() {
       }));
     }
 
-    const { data: posts, error } = await supabase
-      .from('posts')
-      .select('slug')
-      .eq('published', true);
+    const [{ data: posts, error: postsError }, { data: aiPosts, error: aiPostsError }] = await Promise.all([
+      supabase.from('posts').select('slug').eq('published', true),
+      supabase.from('ai_generated_posts').select('slug').eq('status', 'published'),
+    ]);
 
-    if (error) {
-      console.error('Error fetching posts for static generation:', error);
+    if (postsError || aiPostsError) {
+      console.error('Error fetching posts for static generation:', postsError || aiPostsError);
       return DEFAULT_POSTS.map((post) => ({
         slug: post.slug,
       }));
     }
 
-    if (!posts || posts.length === 0) {
+    const allSlugs = [
+      ...(posts || []).map((post: any) => ({ slug: post.slug })),
+      ...(aiPosts || []).map((post: any) => ({ slug: post.slug })),
+    ];
+
+    if (!allSlugs.length) {
       return DEFAULT_POSTS.map((post) => ({
         slug: post.slug,
       }));
     }
 
-    return posts.map((post: any) => ({
-      slug: post.slug,
-    }));
+    return allSlugs;
   } catch (err) {
     console.error('Error in generateStaticParams:', err);
     return DEFAULT_POSTS.map((post) => ({
@@ -144,10 +147,26 @@ async function getPost(slug: string) {
         .select('*')
         .eq('slug', slug)
         .eq('published', true)
-        .single();
+        .maybeSingle();
 
       if (!error && post) {
         return post;
+      }
+
+      const { data: aiPost, error: aiError } = await supabase
+        .from('ai_generated_posts')
+        .select('*')
+        .eq('slug', slug)
+        .eq('status', 'published')
+        .maybeSingle();
+
+      if (!aiError && aiPost) {
+        return {
+          ...aiPost,
+          published: true,
+          author_name: aiPost.author_name || 'AI Agent',
+          published_at: aiPost.published_at || aiPost.created_at,
+        };
       }
     }
   } catch (err) {

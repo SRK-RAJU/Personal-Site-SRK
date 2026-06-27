@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { isTrustedAutomationRequest as isTrustedDeploymentCheck } from '@/lib/requestAccess';
+
+export const dynamic = 'force-dynamic';
+
+function getDeploymentTargetUrl(): string {
+  const preferred = process.env.DEPLOY_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || process.env.VERCEL_URL || 'rjexa.com';
+  return preferred.startsWith('http') ? preferred.replace(/\/$/, '') : `https://${preferred.replace(/\/$/, '')}`;
+}
 
 function getSupabaseClient() {
   const url = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -15,17 +23,6 @@ function getSupabaseClient() {
       autoRefreshToken: false,
     },
   });
-}
-
-function isTrustedDeploymentCheck(request: NextRequest): boolean {
-  const authHeader = request.headers.get('authorization') || '';
-  const hasValidSecret = authHeader === `Bearer ${process.env.CRON_SECRET || ''}`;
-  const isVercelSystemRequest =
-    request.headers.has('x-vercel-id') ||
-    request.headers.get('user-agent')?.includes('vercel-cron') ||
-    request.headers.get('x-vercel-cron') === '1';
-
-  return hasValidSecret || isVercelSystemRequest;
 }
 
 function getTodayDateKey(): string {
@@ -69,7 +66,7 @@ async function checkAndTriggerFirstRun(): Promise<boolean> {
       return false;
     }
 
-    const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL || process.env.NEXT_PUBLIC_SITE_URL}` : 'http://localhost:3000'}/api/ai-agent/generate-post`;
+    const apiUrl = `${getDeploymentTargetUrl()}/api/ai-agent/generate-post`;
 
     console.log(`[DEPLOYMENT-CHECK] Triggering AI generation at: ${apiUrl}`);
 
@@ -77,6 +74,7 @@ async function checkAndTriggerFirstRun(): Promise<boolean> {
       'Content-Type': 'application/json',
       'User-Agent': 'Vercel-Deploy-Check/1.0',
       'x-trigger-source': 'deployment-check',
+      'x-vercel-deployment-url': apiUrl,
     };
 
     if (process.env.CRON_SECRET) {

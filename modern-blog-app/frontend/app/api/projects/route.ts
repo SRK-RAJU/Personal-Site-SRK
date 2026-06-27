@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { getClientIp, isTrustedAutomationRequest } from '@/lib/requestAccess';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -22,14 +23,6 @@ const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes
 const RATE_LIMIT_MAX_READ = 100; // max read requests per window
 const RATE_LIMIT_MAX_WRITE = 20; // max write requests per window
-
-function getClientIp(request: NextRequest) {
-  const forwardedIp = request.headers.get('x-forwarded-for');
-  if (forwardedIp) {
-    return forwardedIp.split(',')[0].trim();
-  }
-  return request.headers.get('x-real-ip') || 'unknown';
-}
 
 function isRateLimited(ip: string, isWrite: boolean = false) {
   const now = Date.now();
@@ -74,7 +67,7 @@ const DEFAULT_PROJECTS = [
 
 export async function GET(request: NextRequest) {
   const clientIp = getClientIp(request);
-  if (isRateLimited(clientIp)) {
+  if (!isTrustedAutomationRequest(request) && isRateLimited(clientIp)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
@@ -107,7 +100,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const clientIp = getClientIp(request);
-  if (isRateLimited(clientIp, true)) {
+  if (!isTrustedAutomationRequest(request) && isRateLimited(clientIp, true)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
