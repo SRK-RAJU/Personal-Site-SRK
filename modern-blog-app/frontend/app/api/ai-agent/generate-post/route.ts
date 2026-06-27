@@ -6,9 +6,10 @@ import { slugify } from '@/lib/ai-utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 // ============================================================================
-// VERCEL COMPILER INSTRUCTIONS
+// VERCEL COMPILER INSTRUCTIONS & 300S TIMEOUT CONFIG
 // ============================================================================
 export const dynamic = 'force-dynamic';
+export const maxDuration = 300; // 🌟 Vercel Hobby Tier 5-Minute Max Limit Allocation
 
 // ============================================================================
 // CONFIGURATION & INITIALIZATION
@@ -101,6 +102,8 @@ function generateRunId(): string {
   return `ai-blog-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function getToolsForGeneration(): Promise<{name: string, category: string}[]> {
   try {
     const { data, error } = await supabase
@@ -133,25 +136,47 @@ async function getExcludedTopics(): Promise<ExcludedTopic[]> {
   }
 }
 
-async function searchEcosystemTrend(): Promise<SearchResult[]> {
-  try {
-    if (!process.env.TAVILY_API_KEY) return [];
-    console.log(`[TAVILY-SEARCH] Gathering collective macro CVE vulnerabilities news...`);
-    const response = await tvly.search("DevOps Cloud Security releases vulnerabilities CVE latest news", {
-      days: 7,
-      max_results: 3,
-      include_answer: false,
-    });
+// ============================================================================
+// RATE-LIMITED SEQUENTIAL TAVILY SEARCH (1 SEC GAP)
+// ============================================================================
+async function searchToolsSequentially(tools: {name: string, category: string}[]): Promise<SearchResult[]> {
+  const allResults: SearchResult[] = [];
+  if (!process.env.TAVILY_API_KEY) return [];
 
-    return (response.results || []).map((result: any) => ({
-      title: result.title,
-      url: result.url,
-      content: result.content,
-      published_date: result.published_date,
-    }));
-  } catch (err) {
-    return [];
+  console.log(`[TAVILY-SEQUENTIAL] Commencing sequential search matrix for ${tools.length} tools...`);
+
+  for (const tool of tools) {
+    try {
+      console.log(`[TAVILY-FETCH] Telemetry tracking deployment for: ${tool.name}`);
+      
+      const response = await tvly.search(`${tool.name} software DevOps security vulnerability CVE releases news`, {
+        days: 7,
+        max_results: 1, // Vercel 4.5MB Payload ఎర్రర్ రాకుండా ఉండటానికి 1 బెస్ట్ రిజల్ట్
+        include_answer: false,
+      });
+
+      if (response.results && response.results.length > 0) {
+        const topResult = response.results[0];
+        
+        // 🌟 MITIGATION: Vercel 4.5MB Memory Buffer Overflow ప్రొటెక్షన్ కోసం కంటెంట్ ట్రిమ్మింగ్
+        const truncatedContent = topResult.content ? topResult.content.substring(0, 700) : 'No content chunk summary available.';
+
+        allResults.push({
+          title: `[${tool.name}] ${topResult.title}`,
+          url: topResult.url,
+          content: truncatedContent,
+          published_date: topResult.published_date,
+        });
+      }
+    } catch (err) {
+      console.error(`[TAVILY-SKIP] Failed telemetry pull for ${tool.name}. Advancing execution loop.`);
+    }
+
+    // 🌟 RATE-LIMIT REQUIREMENT: ప్రతి సింగిల్ టూల్ సెర్చ్ కి మధ్య కచ్చితంగా 1 సెకను (1000ms) హార్డ్ డిలే
+    await delay(1000);
   }
+
+  return allResults;
 }
 
 function createSystemPrompt(
@@ -210,14 +235,17 @@ async function generateBlogPost(
       temperature: 0.6,
     });
 
-    const formattedDate = new Date().toLocaleDateString('en-US', {
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('en-US', {
       month: 'long',
       day: 'numeric',
       year: 'numeric'
     });
 
+    // 🌟 RESOLUTION: DETERMINISTIC UTC SLUG (TIMEZONE & DUPLICATION LOOP RESOLUTION)
+    const utcDateString = `${today.getUTCFullYear()}-${today.getUTCMonth() + 1}-${today.getUTCDate()}`;
     const title = `Weekly DevOps & Cloud Security Report: ${formattedDate}`;
-    const slug = `devops-report-${slugify(formattedDate)}`;
+    const slug = `devops-report-${utcDateString}`;
     
     const excerpt = generatedMarkdown.split('\n').find((line: string) => line.length > 50 && !line.startsWith('#'))?.substring(0, 200) || 'Ecosystem analysis.';
     const cveMatches = generatedMarkdown.match(/CVE-\d{4}-\d+/g) || [];
@@ -235,16 +263,10 @@ async function generateBlogPost(
   }
 }
 
-function extractTitle(markdown: string): string | null {
-  const match = markdown.match(/^#\s+(.+)$/m);
-  return match ? match[1].trim() : null;
-}
-
 async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
   try {
     console.log(`[SUPABASE-SAVE] Upserting report (${post.content.length} bytes)...`);
 
-    // Deterministic slug ఆధారంగా పాత డేటాను ఓవర్‌రైట్ చేస్తుంది (No more unique constraint crashes)
     const { error } = await supabase
       .from('ai_generated_posts')
       .upsert(
@@ -295,7 +317,7 @@ async function logGeneration(runId: string, log: GenerationLog): Promise<void> {
 }
 
 // ============================================================================
-// MAIN ROUTE EXPORT
+// MAIN ROUTE EXPORT (POST METHOD)
 // ============================================================================
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -308,12 +330,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ message: 'Shield active: build phase compile ignored.' }, { status: 200 });
     }
 
-    // 🔒 GUARD 1: AUTHORIZATION SECURITY SHIELD
+    // 🔒 GUARD 1: BROWSER PREFETCH & NEXT.JS ROUTER PREFETCH BLOCK
+    const isPrefetch = 
+      request.headers.get('sec-fetch-purpose') === 'prefetch' ||
+      request.headers.get('purpose') === 'prefetch' ||
+      request.headers.has('x-next-js-data');
+
+    if (isPrefetch) {
+      return NextResponse.json({ error: 'Prefetch triggers completely restricted.' }, { status: 401 });
+    }
+
+    // 🔒 GUARD 2: AUTHORIZATION SECURITY SHIELD
     const authHeader = request.headers.get('authorization') || '';
     const hasValidSecret = verifyCronSecret(authHeader);
     const isVercelSystemRequest = request.headers.has('x-vercel-id');
 
-    // క్రోన్ సీక్రెట్ లేకపోయినా లేదా కనీసం Vercel Internal Request కాకపోయినా వెంటనే 401 తో బ్లాక్ చేస్తుంది
     if (!hasValidSecret && !isVercelSystemRequest) {
       return NextResponse.json({ error: 'Manual browser request patterns are completely blocked.' }, { status: 401 });
     }
@@ -323,10 +354,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Configuration Error', missing_vars: envCheck.missing }, { status: 503 });
     }
 
+    // 1. Database Extraction
     const toolsWithCategories = await getToolsForGeneration();
     const excludedTopics = await getExcludedTopics();
-    const trendNews = await searchEcosystemTrend();
+    
+    // 2. Sequential Delay Search (100 Tools * 1s Delay = ~100-110 Seconds Run Execution)
+    const trendNews = await searchToolsSequentially(toolsWithCategories);
 
+    // 3. Document AI Synthesis Mapping
     const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics);
 
     if (!post) {
@@ -334,6 +369,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Failed to generate post' }, { status: 500 });
     }
 
+    // 4. Supabase Safe Upsert Serialization
     const saved = await savePostToSupabase(post);
 
     if (!saved) {
@@ -358,6 +394,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 }
 
+// ============================================================================
+// MAIN ROUTE EXPORT (GET METHOD FOR CRON TESTING WITH SECRET PARAMS)
+// ============================================================================
+
 export async function GET(request: NextRequest): Promise<NextResponse> {
   if (process.env.NEXT_PHASE === 'phase-production-build') {
     return NextResponse.json({ message: 'Shield active: build phase compile ignored.' }, { status: 200 });
@@ -367,9 +407,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const isTest = searchParams.get('test') === 'true';
   const secret = searchParams.get('secret');
 
-  // కచ్చితమైన సీక్రెట్ కీ తో బ్రౌజర్‌లో హిట్ చేస్తే మాత్రమే రన్ అవుతుంది
+  // 🛡️ SHIELD 2: REFRESH PROTECTION ON GET METHOD
+  // ఎవరైనా నార్మల్ గా బ్రౌజర్‌లో రీఫ్రెష్ కొట్టినా లేదా హిట్‌ చేసినా లోపలికి రానివ్వదు. API లిమిట్స్ సేవ్ అవుతాయి.
   if (!isTest || secret !== CRON_SECRET) {
-    return NextResponse.json({ error: 'Invalid verification parameters.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Direct browser rendering or unauthenticated refreshes are explicitly blocked.' }, 
+      { status: 400 }
+    );
   }
+  
+  // పారామీటర్స్ కరెక్ట్ గా ఉంటేనే POST() ఫంక్షన్‌ని పిలిచి రన్ చేస్తుంది
   return POST(request);
 }
