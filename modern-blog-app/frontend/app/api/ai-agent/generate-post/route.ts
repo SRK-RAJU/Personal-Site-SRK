@@ -2,7 +2,6 @@ import { generateText } from 'ai';
 import { google } from '@ai-sdk/google';
 import { tavily } from '@tavily/core';
 import { createClient } from '@supabase/supabase-js';
-import { slugify } from '@/lib/ai-utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 // ============================================================================
@@ -165,7 +164,8 @@ async function searchToolsSequentially(tools: {name: string, category: string}[]
           title: `[${tool.name}] ${topResult.title}`,
           url: topResult.url,
           content: truncatedContent,
-          published_date: topResult.published_date,
+          // 🌟 FIXED TYPE ERROR: Tavily SDK వాడే 'publishedDate' ని మన ఇంటర్ఫేస్ 'published_date' కి మ్యాప్ చేశాం
+          published_date: topResult.publishedDate,
         });
       }
     } catch (err) {
@@ -408,7 +408,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const secret = searchParams.get('secret');
 
   // 🛡️ SHIELD 2: REFRESH PROTECTION ON GET METHOD
-  // ఎవరైనా నార్మల్ గా బ్రౌజర్‌లో రీఫ్రెష్ కొట్టినా లేదా హిట్‌ చేసినా లోపలికి రానివ్వదు. API లిమిట్స్ సేవ్ అవుతాయి.
   if (!isTest || secret !== CRON_SECRET) {
     return NextResponse.json(
       { error: 'Direct browser rendering or unauthenticated refreshes are explicitly blocked.' }, 
