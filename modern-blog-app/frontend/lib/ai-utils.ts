@@ -343,7 +343,8 @@ export function normalizeMarkdown(markdown: string): string {
     .trim(); // Remove leading/trailing whitespace
 }
 
-export default {
+
+const aiUtils = {
   slugify,
   getCurrentIST,
   formatDate,
@@ -362,5 +363,8 @@ export default {
   extractTitle,
   extractExcerpt,
   validatePostQuality,
-  normalizeMarkdown,
+  normalizeMarkdown,  
 };
+
+export default aiUtils;
+
