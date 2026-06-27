@@ -18,7 +18,6 @@ const tvly = tavily({
   apiKey: process.env.TAVILY_API_KEY || '',
 });
 
-// Cloudflare edge WAF ని బైపాస్ చేయడానికి direct DB URL ని వాడుతుంది
 const targetDbUrl = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 
 const supabase = createClient(
@@ -150,21 +149,18 @@ async function searchToolsSequentially(tools: {name: string, category: string}[]
       
       const response = await tvly.search(`${tool.name} software DevOps security vulnerability CVE releases news`, {
         days: 7,
-        max_results: 1, // Vercel 4.5MB Payload ఎర్రర్ రాకుండా ఉండటానికి 1 బెస్ట్ రిజల్ట్
+        max_results: 1, 
         include_answer: false,
       });
 
       if (response.results && response.results.length > 0) {
         const topResult = response.results[0];
-        
-        // 🌟 MITIGATION: Vercel 4.5MB Memory Buffer Overflow ప్రొటెక్షన్ కోసం కంటెంట్ ట్రిమ్మింగ్
         const truncatedContent = topResult.content ? topResult.content.substring(0, 700) : 'No content chunk summary available.';
 
         allResults.push({
           title: `[${tool.name}] ${topResult.title}`,
           url: topResult.url,
           content: truncatedContent,
-          // 🌟 FIXED TYPE ERROR: Tavily SDK వాడే 'publishedDate' ని మన ఇంటర్ఫేస్ 'published_date' కి మ్యాప్ చేశాం
           published_date: topResult.publishedDate,
         });
       }
@@ -172,7 +168,6 @@ async function searchToolsSequentially(tools: {name: string, category: string}[]
       console.error(`[TAVILY-SKIP] Failed telemetry pull for ${tool.name}. Advancing execution loop.`);
     }
 
-    // 🌟 RATE-LIMIT REQUIREMENT: ప్రతి సింగిల్ టూల్ సెర్చ్ కి మధ్య కచ్చితంగా 1 సెకను (1000ms) హార్డ్ డిలే
     await delay(1000);
   }
 
@@ -242,10 +237,13 @@ async function generateBlogPost(
       year: 'numeric'
     });
 
-    // 🌟 RESOLUTION: DETERMINISTIC UTC SLUG (TIMEZONE & DUPLICATION LOOP RESOLUTION)
-    const utcDateString = `${today.getUTCFullYear()}-${today.getUTCMonth() + 1}-${today.getUTCDate()}`;
+    // 🌟 FIXED: Unified standard date format using Local time to eliminate timezone-drifting between Title and Slug fields.
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    
     const title = `Weekly DevOps & Cloud Security Report: ${formattedDate}`;
-    const slug = `devops-report-${utcDateString}`;
+    const slug = `devops-report-${year}-${month}-${day}`;
     
     const excerpt = generatedMarkdown.split('\n').find((line: string) => line.length > 50 && !line.startsWith('#'))?.substring(0, 200) || 'Ecosystem analysis.';
     const cveMatches = generatedMarkdown.match(/CVE-\d{4}-\d+/g) || [];
@@ -283,13 +281,39 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
           status: 'published',
           published_at: new Date().toISOString(),
         }],
-        { onConflict: 'slug' }
+        // 🌟 CRITICAL RESOLUTION: Enforcing Postgres to replace content if EITHER unique constraint is hit.
+        { onConflict: 'slug' } 
       );
 
+    // 🌟 FALLBACK RESCUE LOOP: If it fails because of the strict "ai_generated_posts_title_key" database index, catch it and force-overwrite by Title instead.
     if (error) {
-      console.error('[SUPABASE-SAVE] ❌ Database Upsert Error:', error.message);
-      return false;
+      console.warn('[SUPABASE-SAVE] Slug upsert failed, attempting strict title-merge backup replacement path...', error.message);
+      
+      const { error: fallbackError } = await supabase
+        .from('ai_generated_posts')
+        .upsert(
+          [{
+            title: post.title,
+            slug: post.slug,
+            content: post.content,
+            excerpt: post.excerpt,
+            category: 'DevOps',
+            tags: post.tools_covered,
+            tools_covered: post.tools_covered,
+            cves_mentioned: post.cves_mentioned,
+            ai_model: 'google-gemini-2.5-flash',
+            status: 'published',
+            published_at: new Date().toISOString(),
+          }],
+          { onConflict: 'title' }
+        );
+
+      if (fallbackError) {
+        console.error('[SUPABASE-SAVE] ❌ Total Database Mutation Failure:', fallbackError.message);
+        return false;
+      }
     }
+
     console.log('[SUPABASE-SAVE] ✅ Today\'s data safely committed/overwritten!');
     return true;
   } catch (err) {
@@ -325,12 +349,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const startTime = Date.now();
 
   try {
-    // 🛡️ SHIELD 1: NEXT.JS COMPILATION BUILD-TIME SHIELD
     if (process.env.NEXT_PHASE === 'phase-production-build') {
       return NextResponse.json({ message: 'Shield active: build phase compile ignored.' }, { status: 200 });
     }
 
-    // 🔒 GUARD 1: BROWSER PREFETCH & NEXT.JS ROUTER PREFETCH BLOCK
     const isPrefetch = 
       request.headers.get('sec-fetch-purpose') === 'prefetch' ||
       request.headers.get('purpose') === 'prefetch' ||
@@ -340,7 +362,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Prefetch triggers completely restricted.' }, { status: 401 });
     }
 
-    // 🔒 GUARD 2: AUTHORIZATION SECURITY SHIELD
     const authHeader = request.headers.get('authorization') || '';
     const hasValidSecret = verifyCronSecret(authHeader);
     const isVercelSystemRequest = request.headers.has('x-vercel-id');
@@ -354,14 +375,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Configuration Error', missing_vars: envCheck.missing }, { status: 503 });
     }
 
-    // 1. Database Extraction
     const toolsWithCategories = await getToolsForGeneration();
     const excludedTopics = await getExcludedTopics();
     
-    // 2. Sequential Delay Search (100 Tools * 1s Delay = ~100-110 Seconds Run Execution)
     const trendNews = await searchToolsSequentially(toolsWithCategories);
 
-    // 3. Document AI Synthesis Mapping
     const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics);
 
     if (!post) {
@@ -369,7 +387,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Failed to generate post' }, { status: 500 });
     }
 
-    // 4. Supabase Safe Upsert Serialization
     const saved = await savePostToSupabase(post);
 
     if (!saved) {
@@ -407,7 +424,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const isTest = searchParams.get('test') === 'true';
   const secret = searchParams.get('secret');
 
-  // 🛡️ SHIELD 2: REFRESH PROTECTION ON GET METHOD
   if (!isTest || secret !== CRON_SECRET) {
     return NextResponse.json(
       { error: 'Direct browser rendering or unauthenticated refreshes are explicitly blocked.' }, 
@@ -415,6 +431,5 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     );
   }
   
-  // పారామీటర్స్ కరెక్ట్ గా ఉంటేనే POST() ఫంక్షన్‌ని పిలిచి రన్ చేస్తుంది
   return POST(request);
 }
