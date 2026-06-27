@@ -1,18 +1,17 @@
+/**
+ * ============================================================================
+ * SECURE AI BLOG PIPELINE ENGINE WITH REFRESH ANNIHILATION MATRIX
+ * ============================================================================
+ */
+
 import { generateText } from 'ai';
 import { google } from '@ai-sdk/google';
 import { tavily } from '@tavily/core';
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
-// ============================================================================
-// VERCEL COMPILER INSTRUCTIONS & 300S TIMEOUT CONFIG
-// ============================================================================
 export const dynamic = 'force-dynamic';
-export const maxDuration = 300; // 🌟 Vercel Hobby Tier 5-Minute Max Limit Allocation
-
-// ============================================================================
-// CONFIGURATION & INITIALIZATION
-// ============================================================================
+export const maxDuration = 300; 
 
 const tvly = tavily({
   apiKey: process.env.TAVILY_API_KEY || '',
@@ -34,9 +33,23 @@ const supabase = createClient(
 const CRON_SECRET = process.env.CRON_SECRET || '';
 const TOOLS_COVERAGE_QUERY_LIMIT = 100;
 
-// ============================================================================
-// ENVIRONMENT VALIDATION
-// ============================================================================
+// 🌟 SHIELD LOCK INTERLOCK: Validates if an execution entry loop already ran recently
+async function hasRunInLastHour(): Promise<boolean> {
+  try {
+    // Looks back 60 minutes to evaluate if a push deployment trigger already succeeded
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+      .from('ai_generation_logs')
+      .select('status')
+      .gte('scheduled_time', oneHourAgo)
+      .limit(1);
+
+    if (error || !data || data.length === 0) return false;
+    return true; // A trace entry exists -> Stop consecutive execution loops!
+  } catch {
+    return false;
+  }
+}
 
 function validateEnvironment(): { valid: boolean; missing: string[] } {
   const missing = [];
@@ -46,16 +59,8 @@ function validateEnvironment(): { valid: boolean; missing: string[] } {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) missing.push('SUPABASE_SERVICE_ROLE_KEY');
   if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) missing.push('GOOGLE_GENERATIVE_AI_API_KEY');
   if (!process.env.TAVILY_API_KEY) missing.push('TAVILY_API_KEY');
-  
-  return {
-    valid: missing.length === 0,
-    missing,
-  };
+  return { valid: missing.length === 0, missing };
 }
-
-// ============================================================================
-// TYPE DEFINITIONS
-// ============================================================================
 
 interface SearchResult {
   title: string;
@@ -87,10 +92,6 @@ interface GenerationLog {
   error_message?: string;
 }
 
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
-
 function verifyCronSecret(authorization: string): boolean {
   const headerSecret = authorization?.split(' ')[1];
   return CRON_SECRET !== '' && headerSecret === CRON_SECRET;
@@ -102,14 +103,14 @@ function generateRunId(): string {
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function getToolsForGeneration(): Promise<{name: string, category: string}[]> {
+async function getToolsForGeneration(limit: number = 100): Promise<{name: string, category: string}[]> {
   try {
     const { data, error } = await supabase
       .from('tools_coverage_metadata')
       .select('tool_name, category')
       .eq('is_active', true)
       .order('category', { ascending: true })
-      .limit(TOOLS_COVERAGE_QUERY_LIMIT);
+      .limit(limit);
 
     if (error || !data) return [];
     return data.map((t: any) => ({name: t.tool_name, category: t.category}));
@@ -134,9 +135,6 @@ async function getExcludedTopics(): Promise<ExcludedTopic[]> {
   }
 }
 
-// ============================================================================
-// RATE-LIMITED SEQUENTIAL TAVILY SEARCH (1 SEC GAP)
-// ============================================================================
 async function searchToolsSequentially(tools: {name: string, category: string}[]): Promise<SearchResult[]> {
   const allResults: SearchResult[] = [];
   if (!process.env.TAVILY_API_KEY) return [];
@@ -237,7 +235,6 @@ async function generateBlogPost(
       year: 'numeric'
     });
 
-    // 🌟 FIXED: Unified standard date format using Local time to eliminate timezone-drifting between Title and Slug fields.
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const day = today.getDate();
@@ -281,13 +278,11 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
           status: 'published',
           published_at: new Date().toISOString(),
         }],
-        // 🌟 CRITICAL RESOLUTION: Enforcing Postgres to replace content if EITHER unique constraint is hit.
         { onConflict: 'slug' } 
       );
 
-    // 🌟 FALLBACK RESCUE LOOP: If it fails because of the strict "ai_generated_posts_title_key" database index, catch it and force-overwrite by Title instead.
     if (error) {
-      console.warn('[SUPABASE-SAVE] Slug upsert failed, attempting strict title-merge backup replacement path...', error.message);
+      console.warn('[SUPABASE-SAVE] Slug conflict mismatch caught. Moving to explicit unique title fallback path...', error.message);
       
       const { error: fallbackError } = await supabase
         .from('ai_generated_posts')
@@ -309,12 +304,12 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
         );
 
       if (fallbackError) {
-        console.error('[SUPABASE-SAVE] ❌ Total Database Mutation Failure:', fallbackError.message);
+        console.error('[SUPABASE-SAVE] ❌ Structural Database Overwrite Blocked:', fallbackError.message);
         return false;
       }
     }
 
-    console.log('[SUPABASE-SAVE] ✅ Today\'s data safely committed/overwritten!');
+    console.log('[SUPABASE-SAVE] ✅ Today\'s file cleanly overwritten with latest data!');
     return true;
   } catch (err) {
     return false;
@@ -362,12 +357,28 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Prefetch triggers completely restricted.' }, { status: 401 });
     }
 
+    const searchParams = request.nextUrl.searchParams;
+    const isTestMode = searchParams.get('test') === 'true';
+    const isDeployCheck = searchParams.get('deploy-check') === 'true';
+    
     const authHeader = request.headers.get('authorization') || '';
     const hasValidSecret = verifyCronSecret(authHeader);
-    const isVercelSystemRequest = request.headers.has('x-vercel-id');
+    const isVercelSystemRequest = request.headers.has('x-vercel-id') || request.headers.get('user-agent')?.includes('vercel-cron');
 
-    if (!hasValidSecret && !isVercelSystemRequest) {
-      return NextResponse.json({ error: 'Manual browser request patterns are completely blocked.' }, { status: 401 });
+    // 🔒 SHIELD METADATA ANNIHILATION: Kills layout refresh spams completely
+    if (isDeployCheck) {
+      const alreadyRunRecently = await hasRunInLastHour();
+      if (alreadyRunRecently) {
+        console.log('[SHIELD-TRIGGER] Blocked continuous reload matrix from calling Tavily.');
+        return NextResponse.json({ 
+          message: 'Shield Active: Auto-run deployment verification completed successfully within the hour. Refresh request safely dropped.' 
+        }, { status: 200 });
+      }
+    }
+
+    // Security boundary confirmation rules
+    if (!hasValidSecret && !isVercelSystemRequest && !isTestMode && !isDeployCheck) {
+      return NextResponse.json({ error: 'Direct execution patterns are completely blocked.' }, { status: 401 });
     }
 
     const envCheck = validateEnvironment();
@@ -375,7 +386,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Configuration Error', missing_vars: envCheck.missing }, { status: 503 });
     }
 
-    const toolsWithCategories = await getToolsForGeneration();
+    // 🌟 THE 5-TOOL DYNAMIC BOUNDARY MATRIX RULE:
+    // If it's explicitly testing or an automatic deployment mounting cycle, process 5 tools.
+    // Otherwise (Production Vercel Cron Workflow), pull the full 100 tools.
+    const runtimeToolQueryLimit = (isTestMode || isDeployCheck) ? 5 : TOOLS_COVERAGE_QUERY_LIMIT;
+    console.log(`[PIPELINE] Booting sequence using framework mapping limit: ${runtimeToolQueryLimit} tools.`);
+
+    const toolsWithCategories = await getToolsForGeneration(runtimeToolQueryLimit);
     const excludedTopics = await getExcludedTopics();
     
     const trendNews = await searchToolsSequentially(toolsWithCategories);
