@@ -1,10 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+function getSupabaseClient() {
+  const url = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+  if (!url || !key || url.includes('placeholder') || key.includes('placeholder')) {
+    return null;
+  }
+
+  return createClient(url, key, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+}
 
 function isTrustedDeploymentCheck(request: NextRequest): boolean {
   const authHeader = request.headers.get('authorization') || '';
@@ -33,6 +44,12 @@ function getTodaySlug(): string {
 async function checkAndTriggerFirstRun(): Promise<boolean> {
   try {
     console.log('[DEPLOYMENT-CHECK] Checking if generation is needed for today...');
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      console.warn('[DEPLOYMENT-CHECK] Supabase is not configured; skipping deployment trigger.');
+      return false;
+    }
 
     const todaySlug = getTodaySlug();
     const { data, error } = await supabase

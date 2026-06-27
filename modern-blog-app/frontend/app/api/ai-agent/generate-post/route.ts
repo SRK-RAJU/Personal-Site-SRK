@@ -15,20 +15,23 @@ const tvly = tavily({
   apiKey: process.env.TAVILY_API_KEY || '',
 });
 
-const targetDbUrl = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const CRON_SECRET = process.env.CRON_SECRET || '';
 
-const supabase = createClient(
-  targetDbUrl,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  {
+function getSupabaseClient() {
+  const targetDbUrl = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+  if (!targetDbUrl || !serviceRoleKey || targetDbUrl.includes('placeholder') || serviceRoleKey.includes('placeholder')) {
+    return null;
+  }
+
+  return createClient(targetDbUrl, serviceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
-    }
-  }
-);
-
-const CRON_SECRET = process.env.CRON_SECRET || '';
+    },
+  });
+}
 const TOOLS_COVERAGE_QUERY_LIMIT = 100;
 let LAST_SUCCESSFUL_RUN_DATE: string | null = null;
 const TODAY_SLUG_PREFIX = 'devops-report';
@@ -124,6 +127,11 @@ async function checkIfAlreadyGeneratedToday(): Promise<{ alreadyGenerated: boole
     return { alreadyGenerated: true, slug: todaySlug };
   }
 
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    return { alreadyGenerated: false, slug: todaySlug };
+  }
+
   try {
     const { data, error } = await supabase
       .from('ai_generated_posts')
@@ -149,6 +157,9 @@ async function checkIfAlreadyGeneratedToday(): Promise<{ alreadyGenerated: boole
 }
 
 async function getToolsForGeneration(limit: number = 100): Promise<{name: string, category: string}[]> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return [];
+
   try {
     const { data, error } = await supabase
       .from('tools_coverage_metadata')
@@ -165,6 +176,9 @@ async function getToolsForGeneration(limit: number = 100): Promise<{name: string
 }
 
 async function getExcludedTopics(): Promise<ExcludedTopic[]> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return [];
+
   try {
     const now = new Date().toISOString();
     const { data, error } = await supabase
@@ -317,6 +331,12 @@ async function generateBlogPost(
 }
 
 async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    console.warn('[SUPABASE-SAVE] Skipped because Supabase is not configured.');
+    return false;
+  }
+
   try {
     console.log(`[SUPABASE-SAVE] Upserting report (${post.content.length} bytes)...`);
 
@@ -375,6 +395,9 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
 }
 
 async function logGeneration(runId: string, log: GenerationLog): Promise<void> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return;
+
   try {
     await supabase
       .from('ai_generation_logs')

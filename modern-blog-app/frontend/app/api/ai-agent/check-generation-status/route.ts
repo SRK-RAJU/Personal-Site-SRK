@@ -12,14 +12,33 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+function getSupabaseClient() {
+  const url = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+  if (!url || !key || url.includes('placeholder') || key.includes('placeholder')) {
+    return null;
+  }
+
+  return createClient(url, key, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+}
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     console.log('[CHECK-GENERATION-STATUS] Checking if generation needed...');
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { shouldGenerate: true, reason: 'Supabase not configured - assume first run' },
+        { status: 200 }
+      );
+    }
 
     // ✅ FIXED: Check ai_generated_posts table (not posts table)
     const { count, error } = await supabase

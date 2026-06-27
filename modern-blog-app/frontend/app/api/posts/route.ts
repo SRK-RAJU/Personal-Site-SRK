@@ -2,11 +2,21 @@ import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-// Use service role key for all operations to bypass RLS
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+function getSupabaseClient() {
+  const url = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+  if (!url || !key || url.includes('placeholder') || key.includes('placeholder')) {
+    return null;
+  }
+
+  return createClient(url, key, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+}
 
 // Input validation schema
 const PostSchema = z.object({
@@ -128,6 +138,11 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return NextResponse.json({ data: DEFAULT_POSTS });
+    }
+
     const { searchParams } = new URL(request.url);
     const published = searchParams.get('published');
     const limit = searchParams.get('limit') || '100';
@@ -204,6 +219,11 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return NextResponse.json({ error: 'Supabase is not configured' }, { status: 503 });
+    }
+
     const body = await request.json();
 
     // Validate input with Zod
