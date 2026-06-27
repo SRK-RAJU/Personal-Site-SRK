@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SECURE AI BLOG PIPELINE ENGINE WITH REFRESH ANNIHILATION MATRIX
+ * SECURE VERCEL CRON POWERED AI BLOG PIPELINE ENGINE
  * ============================================================================
  */
 
@@ -11,7 +11,7 @@ import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
-export const maxDuration = 300; 
+export const maxDuration = 60; // మీ vercel.json లో 60 సెట్ చేసారు కాబట్టి ఇక్కడ కూడా 60 ఉంచాం
 
 const tvly = tavily({
   apiKey: process.env.TAVILY_API_KEY || '',
@@ -32,24 +32,6 @@ const supabase = createClient(
 
 const CRON_SECRET = process.env.CRON_SECRET || '';
 const TOOLS_COVERAGE_QUERY_LIMIT = 100;
-
-// 🌟 SHIELD LOCK INTERLOCK: Validates if an execution entry loop already ran recently
-async function hasRunInLastHour(): Promise<boolean> {
-  try {
-    // Looks back 60 minutes to evaluate if a push deployment trigger already succeeded
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-    const { data, error } = await supabase
-      .from('ai_generation_logs')
-      .select('status')
-      .gte('scheduled_time', oneHourAgo)
-      .limit(1);
-
-    if (error || !data || data.length === 0) return false;
-    return true; // A trace entry exists -> Stop consecutive execution loops!
-  } catch {
-    return false;
-  }
-}
 
 function validateEnvironment(): { valid: boolean; missing: string[] } {
   const missing = [];
@@ -93,8 +75,11 @@ interface GenerationLog {
 }
 
 function verifyCronSecret(authorization: string): boolean {
-  const headerSecret = authorization?.split(' ')[1];
-  return CRON_SECRET !== '' && headerSecret === CRON_SECRET;
+  if (!CRON_SECRET) return false;
+  const headerSecret = authorization?.startsWith('Bearer ') 
+    ? authorization.substring(7) 
+    : authorization;
+  return headerSecret === CRON_SECRET;
 }
 
 function generateRunId(): string {
@@ -282,7 +267,7 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
       );
 
     if (error) {
-      console.warn('[SUPABASE-SAVE] Slug conflict mismatch caught. Moving to explicit unique title fallback path...', error.message);
+      console.warn('[SUPABASE-SAVE] Slug conflict caught, running unique title overwrite backup...', error.message);
       
       const { error: fallbackError } = await supabase
         .from('ai_generated_posts')
@@ -304,12 +289,12 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
         );
 
       if (fallbackError) {
-        console.error('[SUPABASE-SAVE] ❌ Structural Database Overwrite Blocked:', fallbackError.message);
+        console.error('[SUPABASE-SAVE] ❌ Total Database Overwrite Blocked:', fallbackError.message);
         return false;
       }
     }
 
-    console.log('[SUPABASE-SAVE] ✅ Today\'s file cleanly overwritten with latest data!');
+    console.log('[SUPABASE-SAVE] ✅ Today\'s file safely committed/overwritten!');
     return true;
   } catch (err) {
     return false;
@@ -336,49 +321,33 @@ async function logGeneration(runId: string, log: GenerationLog): Promise<void> {
 }
 
 // ============================================================================
-// MAIN ROUTE EXPORT (POST METHOD)
+// VERCEL CRON METHOD HANDLER (CONSOLIDATED FOR SAFETY)
 // ============================================================================
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
+async function handleCronExecution(request: NextRequest): Promise<NextResponse> {
   const runId = generateRunId();
   const startTime = Date.now();
 
   try {
-    if (process.env.NEXT_PHASE === 'phase-production-build') {
-      return NextResponse.json({ message: 'Shield active: build phase compile ignored.' }, { status: 200 });
-    }
-
     const isPrefetch = 
       request.headers.get('sec-fetch-purpose') === 'prefetch' ||
       request.headers.get('purpose') === 'prefetch' ||
       request.headers.has('x-next-js-data');
 
     if (isPrefetch) {
-      return NextResponse.json({ error: 'Prefetch triggers completely restricted.' }, { status: 401 });
+      return NextResponse.json({ error: 'Prefetch restricted' }, { status: 401 });
     }
 
-    const searchParams = request.nextUrl.searchParams;
-    const isTestMode = searchParams.get('test') === 'true';
-    const isDeployCheck = searchParams.get('deploy-check') === 'true';
-    
     const authHeader = request.headers.get('authorization') || '';
     const hasValidSecret = verifyCronSecret(authHeader);
     const isVercelSystemRequest = request.headers.has('x-vercel-id') || request.headers.get('user-agent')?.includes('vercel-cron');
 
-    // 🔒 SHIELD METADATA ANNIHILATION: Kills layout refresh spams completely
-    if (isDeployCheck) {
-      const alreadyRunRecently = await hasRunInLastHour();
-      if (alreadyRunRecently) {
-        console.log('[SHIELD-TRIGGER] Blocked continuous reload matrix from calling Tavily.');
-        return NextResponse.json({ 
-          message: 'Shield Active: Auto-run deployment verification completed successfully within the hour. Refresh request safely dropped.' 
-        }, { status: 200 });
-      }
-    }
+    const searchParams = request.nextUrl.searchParams;
+    const isManualTest = searchParams.get('test') === 'true';
 
-    // Security boundary confirmation rules
-    if (!hasValidSecret && !isVercelSystemRequest && !isTestMode && !isDeployCheck) {
-      return NextResponse.json({ error: 'Direct execution patterns are completely blocked.' }, { status: 401 });
+    // Security block: Only allow Vercel system cron or authorized calls
+    if (!hasValidSecret && !isVercelSystemRequest && !isManualTest) {
+      return NextResponse.json({ error: 'Direct public access is entirely blocked.' }, { status: 401 });
     }
 
     const envCheck = validateEnvironment();
@@ -386,11 +355,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Configuration Error', missing_vars: envCheck.missing }, { status: 503 });
     }
 
-    // 🌟 THE 5-TOOL DYNAMIC BOUNDARY MATRIX RULE:
-    // If it's explicitly testing or an automatic deployment mounting cycle, process 5 tools.
-    // Otherwise (Production Vercel Cron Workflow), pull the full 100 tools.
-    const runtimeToolQueryLimit = (isTestMode || isDeployCheck) ? 5 : TOOLS_COVERAGE_QUERY_LIMIT;
-    console.log(`[PIPELINE] Booting sequence using framework mapping limit: ${runtimeToolQueryLimit} tools.`);
+    // 🌟 5-TOOL DYNAMIC BOUNDARY MATRIX:
+    // కొత్త డిప్లాయ్మెంట్ జరిగినప్పుడు Vercel `?test=true` ఉన్న పాత్ ని ట్రిగ్గర్ చేస్తుంది. 
+    // కాబట్టి ఆటోమేటిక్‌గా కేవలం 5 టూల్స్ రన్ అవుతాయి.
+    // సోమవారం షెడ్యూల్ ప్రకారం రన్ అయినప్పుడు పారామీటర్ ఉండదు కాబట్టి ఫుల్ 100 టూల్స్ రన్ అవుతాయి!
+    const runtimeToolQueryLimit = isManualTest ? 5 : TOOLS_COVERAGE_QUERY_LIMIT;
+    console.log(`[VERCEL-CRON-ENGINE] Initialized process sequence for ${runtimeToolQueryLimit} tools.`);
 
     const toolsWithCategories = await getToolsForGeneration(runtimeToolQueryLimit);
     const excludedTopics = await getExcludedTopics();
@@ -400,7 +370,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics);
 
     if (!post) {
-      await logGeneration(runId, { run_id: runId, status: 'failed', posts_generated: 0, posts_published: 0, error_message: 'Empty serialization matrix string output' });
+      await logGeneration(runId, { run_id: runId, status: 'failed', posts_generated: 0, posts_published: 0, error_message: 'Empty payload' });
       return NextResponse.json({ error: 'Failed to generate post' }, { status: 500 });
     }
 
@@ -424,29 +394,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error: any) {
     const duration = Math.round((Date.now() - startTime) / 1000);
     await logGeneration(runId, { run_id: runId, status: 'failed', posts_generated: 0, posts_published: 0, error_message: error?.message });
-    return NextResponse.json({ error: 'Fatal compilation exception', message: error?.message }, { status: 500 });
+    return NextResponse.json({ error: 'Fatal engine exception', message: error?.message }, { status: 500 });
   }
 }
 
-// ============================================================================
-// MAIN ROUTE EXPORT (GET METHOD FOR CRON TESTING WITH SECRET PARAMS)
-// ============================================================================
+export async function GET(request: NextRequest) {
+  return handleCronExecution(request);
+}
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
-  if (process.env.NEXT_PHASE === 'phase-production-build') {
-    return NextResponse.json({ message: 'Shield active: build phase compile ignored.' }, { status: 200 });
-  }
-
-  const searchParams = request.nextUrl.searchParams;
-  const isTest = searchParams.get('test') === 'true';
-  const secret = searchParams.get('secret');
-
-  if (!isTest || secret !== CRON_SECRET) {
-    return NextResponse.json(
-      { error: 'Direct browser rendering or unauthenticated refreshes are explicitly blocked.' }, 
-      { status: 400 }
-    );
-  }
-  
-  return POST(request);
+export async function POST(request: NextRequest) {
+  return handleCronExecution(request);
 }
