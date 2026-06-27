@@ -4,8 +4,6 @@
  * ============================================================================
  */
 
-import { generateText } from 'ai';
-import { google } from '@ai-sdk/google';
 import { tavily } from '@tavily/core';
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
@@ -32,6 +30,8 @@ const supabase = createClient(
 
 const CRON_SECRET = process.env.CRON_SECRET || '';
 const TOOLS_COVERAGE_QUERY_LIMIT = 100;
+let LAST_SUCCESSFUL_RUN_DATE: string | null = null;
+const TODAY_SLUG_PREFIX = 'devops-report';
 
 function validateEnvironment(): { valid: boolean; missing: string[] } {
   const missing = [];
@@ -86,7 +86,67 @@ function generateRunId(): string {
   return `ai-blog-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+function getTodayDateKey(): string {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+}
+
+function getTodaySlug(): string {
+  const today = new Date();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const year = today.getFullYear();
+  return `${TODAY_SLUG_PREFIX}-${month}-${day}-${year}`;
+}
+
+function getRuntimeToolLimit(isManualTest: boolean): number {
+  return 5;
+}
+
+function isTrustedRequest(request: NextRequest, isManualTest: boolean): boolean {
+  const authHeader = request.headers.get('authorization') || '';
+  const hasValidSecret = verifyCronSecret(authHeader);
+  const isVercelSystemRequest =
+    request.headers.has('x-vercel-id') ||
+    request.headers.get('user-agent')?.includes('vercel-cron') ||
+    request.headers.get('x-vercel-cron') === '1' ||
+    request.headers.get('x-vercel-deployment-url') !== null;
+  const isGitHubAction = request.headers.get('user-agent')?.includes('GitHub-Hookshot') || request.headers.get('x-github-event') !== null;
+
+  return hasValidSecret || isVercelSystemRequest || isGitHubAction || isManualTest;
+}
+
+async function checkIfAlreadyGeneratedToday(): Promise<{ alreadyGenerated: boolean; slug: string }> {
+  const todaySlug = getTodaySlug();
+  const todayKey = getTodayDateKey();
+
+  if (LAST_SUCCESSFUL_RUN_DATE === todayKey) {
+    return { alreadyGenerated: true, slug: todaySlug };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('ai_generated_posts')
+      .select('slug')
+      .eq('slug', todaySlug)
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      console.warn('[GENERATOR-LOCK] Database lock check warning:', error.message);
+      return { alreadyGenerated: false, slug: todaySlug };
+    }
+
+    if (data?.slug) {
+      LAST_SUCCESSFUL_RUN_DATE = todayKey;
+      return { alreadyGenerated: true, slug: todaySlug };
+    }
+
+    return { alreadyGenerated: false, slug: todaySlug };
+  } catch (err) {
+    return { alreadyGenerated: false, slug: todaySlug };
+  }
+}
 
 async function getToolsForGeneration(limit: number = 100): Promise<{name: string, category: string}[]> {
   try {
@@ -120,41 +180,27 @@ async function getExcludedTopics(): Promise<ExcludedTopic[]> {
   }
 }
 
-async function searchToolsSequentially(tools: {name: string, category: string}[]): Promise<SearchResult[]> {
-  const allResults: SearchResult[] = [];
+async function searchTrendContext(): Promise<SearchResult[]> {
   if (!process.env.TAVILY_API_KEY) return [];
 
-  console.log(`[TAVILY-SEQUENTIAL] Commencing sequential search matrix for ${tools.length} tools...`);
+  try {
+    console.log('[TAVILY-SEARCH] Running one consolidated trend search for the weekly report.');
+    const response = await tvly.search('DevOps cloud security CVE enterprise tools trends 2026', {
+      days: 7,
+      max_results: 5,
+      include_answer: false,
+    });
 
-  for (const tool of tools) {
-    try {
-      console.log(`[TAVILY-FETCH] Telemetry tracking deployment for: ${tool.name}`);
-      
-      const response = await tvly.search(`${tool.name} software DevOps security vulnerability CVE releases news`, {
-        days: 7,
-        max_results: 1, 
-        include_answer: false,
-      });
-
-      if (response.results && response.results.length > 0) {
-        const topResult = response.results[0];
-        const truncatedContent = topResult.content ? topResult.content.substring(0, 700) : 'No content chunk summary available.';
-
-        allResults.push({
-          title: `[${tool.name}] ${topResult.title}`,
-          url: topResult.url,
-          content: truncatedContent,
-          published_date: topResult.publishedDate,
-        });
-      }
-    } catch (err) {
-      console.error(`[TAVILY-SKIP] Failed telemetry pull for ${tool.name}. Advancing execution loop.`);
-    }
-
-    await delay(1000);
+    return (response.results || []).map((result: any) => ({
+      title: result.title || 'No title',
+      url: result.url || '',
+      content: result.content ? result.content.substring(0, 800) : 'No content summary available.',
+      published_date: result.publishedDate,
+    }));
+  } catch (err) {
+    console.warn('[TAVILY-SEARCH] Consolidated trend search failed, continuing with Gemini-only context.');
+    return [];
   }
-
-  return allResults;
 }
 
 function createSystemPrompt(
@@ -206,12 +252,43 @@ async function generateBlogPost(
     });
 
     console.log('[GEMINI-GENERATE] Calling Google Gemini API...');
-    const { text: generatedMarkdown } = await generateText({
-      model: google('gemini-2.5-flash'),
-      system: systemPrompt,
-      prompt: `Synthesize a comprehensive report mapping current tech shifts to these tracking vectors using the following global telemetry context:\n\n${context}`,
-      temperature: 0.6,
-    });
+    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+    if (!apiKey) return null;
+
+    const geminiResponse = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: {
+            role: 'system',
+            parts: [{ text: systemPrompt }],
+          },
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: `Synthesize a comprehensive report mapping current tech shifts to these tracking vectors using the following global telemetry context:\n\n${context}` }],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.6,
+            topP: 0.95,
+            maxOutputTokens: 4000,
+          },
+        }),
+      }
+    );
+
+    if (!geminiResponse.ok) {
+      throw new Error(`Gemini API error: ${geminiResponse.status}`);
+    }
+
+    const geminiPayload = await geminiResponse.json();
+    const generatedMarkdown = geminiPayload.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (!generatedMarkdown) {
+      throw new Error('Gemini returned an empty response');
+    }
 
     const today = new Date();
     const formattedDate = today.toLocaleDateString('en-US', {
@@ -220,12 +297,8 @@ async function generateBlogPost(
       year: 'numeric'
     });
 
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    const day = today.getDate();
-    
     const title = `Weekly DevOps & Cloud Security Report: ${formattedDate}`;
-    const slug = `devops-report-${year}-${month}-${day}`;
+    const slug = getTodaySlug();
     
     const excerpt = generatedMarkdown.split('\n').find((line: string) => line.length > 50 && !line.startsWith('#'))?.substring(0, 200) || 'Ecosystem analysis.';
     const cveMatches = generatedMarkdown.match(/CVE-\d{4}-\d+/g) || [];
@@ -329,6 +402,10 @@ async function handleCronExecution(request: NextRequest): Promise<NextResponse> 
   const startTime = Date.now();
 
   try {
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return NextResponse.json({ skipped: true, reason: 'Build phase' }, { status: 200 });
+    }
+
     const isPrefetch = 
       request.headers.get('sec-fetch-purpose') === 'prefetch' ||
       request.headers.get('purpose') === 'prefetch' ||
@@ -338,15 +415,10 @@ async function handleCronExecution(request: NextRequest): Promise<NextResponse> 
       return NextResponse.json({ error: 'Prefetch restricted' }, { status: 401 });
     }
 
-    const authHeader = request.headers.get('authorization') || '';
-    const hasValidSecret = verifyCronSecret(authHeader);
-    const isVercelSystemRequest = request.headers.has('x-vercel-id') || request.headers.get('user-agent')?.includes('vercel-cron');
-
     const searchParams = request.nextUrl.searchParams;
     const isManualTest = searchParams.get('test') === 'true';
 
-    // Security block: Only allow Vercel system cron or authorized calls
-    if (!hasValidSecret && !isVercelSystemRequest && !isManualTest) {
+    if (!isTrustedRequest(request, isManualTest)) {
       return NextResponse.json({ error: 'Direct public access is entirely blocked.' }, { status: 401 });
     }
 
@@ -355,17 +427,26 @@ async function handleCronExecution(request: NextRequest): Promise<NextResponse> 
       return NextResponse.json({ error: 'Configuration Error', missing_vars: envCheck.missing }, { status: 503 });
     }
 
-    // 🌟 5-TOOL DYNAMIC BOUNDARY MATRIX:
-    // కొత్త డిప్లాయ్మెంట్ జరిగినప్పుడు Vercel `?test=true` ఉన్న పాత్ ని ట్రిగ్గర్ చేస్తుంది. 
-    // కాబట్టి ఆటోమేటిక్‌గా కేవలం 5 టూల్స్ రన్ అవుతాయి.
-    // సోమవారం షెడ్యూల్ ప్రకారం రన్ అయినప్పుడు పారామీటర్ ఉండదు కాబట్టి ఫుల్ 100 టూల్స్ రన్ అవుతాయి!
-    const runtimeToolQueryLimit = isManualTest ? 5 : TOOLS_COVERAGE_QUERY_LIMIT;
+    const runtimeToolQueryLimit = getRuntimeToolLimit(isManualTest);
     console.log(`[VERCEL-CRON-ENGINE] Initialized process sequence for ${runtimeToolQueryLimit} tools.`);
+
+    const requestSource = request.headers.get('x-trigger-source') || searchParams.get('source') || '';
+    const isTrustedDeployTrigger =
+      requestSource === 'github-actions' ||
+      requestSource === 'vercel-deploy' ||
+      requestSource === 'deployment-check' ||
+      request.headers.get('user-agent')?.includes('GitHub-Actions-Workflow') ||
+      request.headers.get('x-vercel-cron') === '1';
+
+    const { alreadyGenerated, slug } = await checkIfAlreadyGeneratedToday();
+    if (alreadyGenerated && !isTrustedDeployTrigger) {
+      return NextResponse.json({ success: true, skipped: true, slug, reason: 'Already generated today' }, { status: 200 });
+    }
 
     const toolsWithCategories = await getToolsForGeneration(runtimeToolQueryLimit);
     const excludedTopics = await getExcludedTopics();
     
-    const trendNews = await searchToolsSequentially(toolsWithCategories);
+    const trendNews = await searchTrendContext();
 
     const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics);
 
