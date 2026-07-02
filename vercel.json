@@ -1,25 +1,25 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
-  "outputDirectory": "modern-blog-app/frontend/.next",
+  "outputDirectory": ".next",
   "framework": "nextjs",
   "functions": {
-    "modern-blog-app/frontend/app/api/**/*.ts": {
+    "/app/api/**/*.ts": {
       "maxDuration": 60,
       "memory": 1024
     }
   },
   "crons": [
     {
-      "path": "/api/ai-agent/generate-post",
+      "path": "/api/posts/ai/generate",
       "schedule": "0 3 * * 1"
     },
     {
-      "path": "/api/ai-agent/generate-post?test=true",
+      "path": "/api/posts/ai/generate?test=true",
       "schedule": "0 0 1 1 *"
     },
     {
-      "path": "/api/ai-agent/check-deployment",
+      "path": "/api/posts/ai/check-deployment",
       "schedule": "0 0 * * *"
     }
   ]
