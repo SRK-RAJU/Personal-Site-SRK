@@ -420,6 +420,25 @@ async function logGeneration(runId: string, log: GenerationLog): Promise<void> {
 // VERCEL CRON METHOD HANDLER (CONSOLIDATED FOR SAFETY)
 // ============================================================================
 
+async function hasActiveGenerationInProgress(): Promise<boolean> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return false;
+
+  try {
+    const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+      .from('ai_generation_logs')
+      .select('run_id')
+      .eq('status', 'running')
+      .gte('scheduled_time', since)
+      .limit(1);
+
+    return !error && (data?.length ?? 0) > 0;
+  } catch {
+    return false;
+  }
+}
+
 async function handleCronExecution(request: NextRequest): Promise<NextResponse> {
   const runId = generateRunId();
   const startTime = Date.now();
@@ -452,6 +471,13 @@ async function handleCronExecution(request: NextRequest): Promise<NextResponse> 
 
     const runtimeToolQueryLimit = getRuntimeToolLimit(isManualTest);
     console.log(`[VERCEL-CRON-ENGINE] Initialized process sequence for ${runtimeToolQueryLimit} tools.`);
+
+    const generationInProgress = await hasActiveGenerationInProgress();
+    if (generationInProgress) {
+      return NextResponse.json({ success: true, skipped: true, reason: 'Generation already in progress' }, { status: 200 });
+    }
+
+    await logGeneration(runId, { run_id: runId, status: 'running', posts_generated: 0, posts_published: 0 });
 
     const requestSource = request.headers.get('x-trigger-source') || searchParams.get('source') || '';
     const isTrustedDeployTrigger =

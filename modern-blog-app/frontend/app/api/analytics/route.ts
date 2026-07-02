@@ -105,15 +105,9 @@ export async function GET(request: NextRequest) {
           // Silent failure - use fallback
         }
 
-        try {
-          const { count: projectsCount } = await supabase
-            .from('projects')
-            .select('id', { count: 'exact', head: true });
-          if (typeof projectsCount === 'number') fallbackStats.projects = projectsCount;
-        } catch (err) {
-          // Silent failure - use fallback
-        }
-
+        // Projects table is no longer used by the main site analytics flow.
+        // Keep the existing fallback value if the table does not exist.
+        
         try {
           const { count: topicsCount } = await supabase
             .from('topics')
@@ -137,7 +131,6 @@ export async function GET(request: NextRequest) {
           articles: statsData?.articles ?? fallbackStats.articles,
           monthly_views: statsData?.monthly_views ?? fallbackStats.monthly_views,
           topics: statsData?.topics ?? fallbackStats.topics,
-          projects: statsData?.projects ?? fallbackStats.projects,
           total_visits: statsData?.total_visits ?? fallbackStats.total_visits,
           timestamp: new Date().toISOString(),
         });
@@ -148,7 +141,6 @@ export async function GET(request: NextRequest) {
             articles: 0,
             monthly_views: 0,
             topics: 0,
-            projects: 5,
             total_visits: 0,
             error: 'Using default values',
           },

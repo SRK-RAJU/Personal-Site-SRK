@@ -21,7 +21,6 @@ export default function RealtimeActivity() {
   const [metrics, setMetrics] = useState<ActivityMetric[]>([
     { label: 'Articles', value: 0, icon: FaFileAlt, bgColor: 'bg-blue-50 dark:bg-blue-950/30', textColor: 'text-blue-600 dark:text-blue-400', borderColor: 'border-blue-200 dark:border-blue-800', trend: 0 },
     { label: 'Total Visits', value: 0, icon: FaEye, bgColor: 'bg-violet-50 dark:bg-violet-950/30', textColor: 'text-violet-600 dark:text-violet-400', borderColor: 'border-violet-200 dark:border-violet-800', trend: 0 },
-    { label: 'Projects', value: 3, icon: FaRocket, bgColor: 'bg-orange-50 dark:bg-orange-950/30', textColor: 'text-orange-600 dark:text-orange-400', borderColor: 'border-orange-200 dark:border-orange-800', trend: 0 },
     { label: 'Monthly Views', value: 0, icon: FaFire, bgColor: 'bg-rose-50 dark:bg-rose-950/30', textColor: 'text-rose-600 dark:text-rose-400', borderColor: 'border-rose-200 dark:border-rose-800', trend: 0 },
   ]);
 
@@ -46,15 +45,6 @@ export default function RealtimeActivity() {
         textColor: 'text-violet-600 dark:text-violet-400',
         borderColor: 'border-violet-200 dark:border-violet-800',
         trend: 5,
-      },
-      {
-        label: 'Projects',
-        value: stats.projects || 3,
-        icon: FaRocket,
-        bgColor: 'bg-orange-50 dark:bg-orange-950/30',
-        textColor: 'text-orange-600 dark:text-orange-400',
-        borderColor: 'border-orange-200 dark:border-orange-800',
-        trend: 1,
       },
       {
         label: 'Monthly Views',

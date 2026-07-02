@@ -23,7 +23,7 @@ export default function Privacy() {
   const sections = [
     {
       title: 'About this site',
-      content: `This website is my personal portfolio and technology blog. It is built to share my journey, learning, and technical ideas in a clear way.`,
+      content: `This website is a personal tech blog built to share AI-generated content, cloud engineering insights, and production-ready development practices.`,
     },
     {
       title: 'What I collect',

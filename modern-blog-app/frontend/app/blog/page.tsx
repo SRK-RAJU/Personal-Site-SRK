@@ -41,10 +41,10 @@ export default function Blog() {
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 text-slate-900 dark:text-white">
-              <span className="gradient-text">Latest</span> Articles
+              <span className="gradient-text">Latest</span> Posts
             </h1>
             <p className="text-slate-900 dark:text-slate-100 text-base sm:text-lg max-w-2xl mx-auto font-semibold">
-              Insights, tutorials, and thoughts on web development, cloud architecture, DevOps, and modern technology practices.
+              Fresh AI-generated posts and weekly reports covering DevOps, cloud architecture, security, and automation.
             </p>
           </motion.div>
         </div>

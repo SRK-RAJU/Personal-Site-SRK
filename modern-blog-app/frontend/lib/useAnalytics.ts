@@ -7,7 +7,6 @@ export interface WebsiteStats {
   articles: number;
   monthly_views: number;
   topics: number;
-  projects: number;
   total_visits: number;
 }
 
@@ -16,7 +15,6 @@ export function useWebsiteStats() {
     articles: 0,
     monthly_views: 0,
     topics: 0,
-    projects: 3, // Default to 3 projects
     total_visits: 0,
   });
   const [loading, setLoading] = useState(true);
@@ -35,7 +33,6 @@ export function useWebsiteStats() {
           articles: response.data.articles ?? 0,
           monthly_views: response.data.monthly_views ?? 0,
           topics: response.data.topics ?? 0,
-          projects: response.data.projects ?? 3,
           total_visits: response.data.total_visits ?? 0,
         });
         setError(null);

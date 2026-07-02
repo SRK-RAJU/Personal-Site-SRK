@@ -66,7 +66,7 @@ async function checkAndTriggerFirstRun(): Promise<boolean> {
       return false;
     }
 
-    const apiUrl = `${getDeploymentTargetUrl()}/api/ai-agent/generate-post`;
+    const apiUrl = `${getDeploymentTargetUrl()}/api/posts/ai/generate`;
 
     console.log(`[DEPLOYMENT-CHECK] Triggering AI generation at: ${apiUrl}`);
 

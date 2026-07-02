@@ -51,8 +51,7 @@ export default function Header() {
 
   const navItems = [
     { href: '/', label: 'Home', icon: FaHome },
-    { href: '/blog', label: 'Blog', icon: FaBook },
-    { href: '/portfolio', label: 'Portfolio', icon: FaBriefcase },
+    { href: '/blog', label: 'Posts', icon: FaBook },
     { href: '/about', label: 'About', icon: FaInfoCircle },
     { href: '/contact', label: 'Contact', icon: FaEnvelope },
   ];

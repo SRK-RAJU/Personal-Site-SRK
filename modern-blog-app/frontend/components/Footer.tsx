@@ -24,7 +24,6 @@ export default function Footer() {
       links: [
         { label: 'Home', href: '/' },
         { label: 'Blog', href: '/blog' },
-        { label: 'Portfolio', href: '/portfolio' },
         { label: 'About', href: '/about' },
         { label: 'Contact', href: '/contact' },
       ],

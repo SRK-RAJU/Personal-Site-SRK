@@ -50,7 +50,6 @@ export default function Home() {
     { icon: FaClock, label: 'Articles', value: 0 },
     { icon: FaEye, label: 'Monthly Views', value: 0 },
     { icon: FaFire, label: 'Topics', value: 0 },
-    { icon: FaRocket, label: 'Projects', value: 0 },
     { icon: FaUsers, label: 'Total Visits', value: 0 },
   ]);
 
@@ -61,7 +60,6 @@ export default function Home() {
         { icon: FaClock, label: 'Articles', value: fetchedStats.articles },
         { icon: FaEye, label: 'Monthly Views', value: fetchedStats.monthly_views },
         { icon: FaFire, label: 'Topics', value: fetchedStats.topics },
-        { icon: FaRocket, label: 'Projects', value: fetchedStats.projects },
         { icon: FaUsers, label: 'Total Visits', value: fetchedStats.total_visits },
       ]);
     }, 300);
@@ -181,15 +179,8 @@ export default function Home() {
                 className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-105 transform duration-200"
               >
                 <FaCode className="text-lg" />
-                Explore Articles
+                Explore Posts
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/portfolio"
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border-2 border-violet-600 dark:border-violet-500 text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 font-bold transition-all hover:scale-105 transform duration-200"
-              >
-                <FaRocket className="text-lg" />
-                View Projects
               </Link>
               <Link
                 href="/contact"

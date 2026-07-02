@@ -14,16 +14,6 @@ interface Post {
   view_count?: number;
 }
 
-interface Project {
-  id?: string;
-  title: string;
-  description: string;
-  technologies: string[];
-  link?: string;
-  github?: string;
-  image?: string;
-}
-
 interface Comment {
   id?: string;
   post_id: string;
@@ -67,20 +57,6 @@ export const postsAPI = {
     api.patch(`/posts/${id}`, data),
   delete: (id: string) =>
     api.delete(`/posts/${id}`),
-};
-
-// Projects API
-export const projectsAPI = {
-  getAll: () =>
-    api.get('/projects'),
-  getById: (id: string) =>
-    api.get(`/projects/${id}`),
-  create: (data: Project) =>
-    api.post('/projects', data),
-  update: (id: string, data: Project) =>
-    api.patch(`/projects/${id}`, data),
-  delete: (id: string) =>
-    api.delete(`/projects/${id}`),
 };
 
 // Comments API

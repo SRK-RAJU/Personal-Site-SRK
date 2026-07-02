@@ -55,7 +55,7 @@ export default function About() {
             Full-Stack Developer, DevOps, Security & Cloud Engineer
           </h2>
           <p className="text-lg text-violet-600 dark:text-violet-400 font-semibold mb-4">
-            Personal Tech Blog & Developer Portfolio
+            Personal Tech Blog & AI Content Platform
           </p>
           <p className="text-lg text-slate-800 dark:text-slate-200">
             Building modern web applications and cloud solutions with a focus on performance and security.
@@ -75,7 +75,7 @@ export default function About() {
               I started out real-world problems, focusing on performance, optimization, security and scalability to create simple tools that actually worked. Since then, I’ve grown into cloud, automation, and security work while keeping them easy to use.
             </p>
             <p>
-              My work includes a portfolio site and several other projects. Each project helped me learn better ways to build, deploy, and keep systems stable.
+              My work now focuses on AI-generated posts, cloud engineering, and practical production-grade technology solutions.
             </p>
             <p className="italic text-slate-800 dark:text-slate-200">
               This page shares what I learned and what I build and why I build it. If you have a project idea or need a technical conversation, I’d love to hear from you.

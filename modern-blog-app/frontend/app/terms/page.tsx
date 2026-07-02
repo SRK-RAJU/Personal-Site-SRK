@@ -23,7 +23,7 @@ export default function Terms() {
   const sections = [
     {
       title: 'Welcome',
-      content: `This is a personal portfolio and blog. It exists to show my journey, experience, and technical learning.`,
+      content: `This is a personal tech blog. It exists to show my journey, experience, and technical learning.`,
     },
     {
       title: 'How to use the site',

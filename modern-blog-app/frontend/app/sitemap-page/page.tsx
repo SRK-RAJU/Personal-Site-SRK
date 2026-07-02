@@ -21,7 +21,6 @@ export default function SitemapPage() {
   const sitemapLinks = [
     { href: '/', label: 'Home', icon: FaHome, description: 'Welcome to the future of tech', priority: 'High' },
     { href: '/blog', label: 'Blog', icon: FaBook, description: 'Articles, tutorials, and insights', priority: 'High' },
-    { href: '/portfolio', label: 'Portfolio', icon: FaBriefcase, description: 'View my projects and work', priority: 'Medium' },
     { href: '/about', label: 'About', icon: FaInfoCircle, description: 'Learn more about me', priority: 'Medium' },
     { href: '/contact', label: 'Contact', icon: FaEnvelope, description: 'Get in touch', priority: 'Medium' },
     { href: '/privacy', label: 'Privacy Policy', icon: FaShieldAlt, description: 'Your privacy matters', priority: 'Low' },

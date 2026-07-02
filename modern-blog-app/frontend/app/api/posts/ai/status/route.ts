@@ -15,6 +15,36 @@ import { isTrustedAutomationRequest as isTrustedStatusRequest } from '@/lib/requ
 
 export const dynamic = 'force-dynamic';
 
+async function hasActiveGenerationInProgress(): Promise<boolean> {
+  const url = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+  if (!url || !key || url.includes('placeholder') || key.includes('placeholder')) {
+    return false;
+  }
+
+  try {
+    const supabase = createClient(url, key, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+
+    const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+      .from('ai_generation_logs')
+      .select('run_id')
+      .eq('status', 'running')
+      .gte('scheduled_time', since)
+      .limit(1);
+
+    return !error && (data?.length ?? 0) > 0;
+  } catch {
+    return false;
+  }
+}
+
 function getSupabaseClient() {
   const url = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -43,6 +73,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     if (!supabase) {
       return NextResponse.json(
         { shouldGenerate: true, reason: 'Supabase not configured - assume first run' },
+        { status: 200 }
+      );
+    }
+
+    const generationInProgress = await hasActiveGenerationInProgress();
+    if (generationInProgress) {
+      return NextResponse.json(
+        { shouldGenerate: false, reason: 'Generation already in progress' },
         { status: 200 }
       );
     }

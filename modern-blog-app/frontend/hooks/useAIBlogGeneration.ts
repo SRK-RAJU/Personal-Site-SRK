@@ -14,6 +14,37 @@
 
 import { useEffect, useState, useCallback } from 'react';
 
+const GENERATION_LOCK_KEY = 'ai-blog-generation-lock';
+
+function getTodayKey(): string {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+}
+
+function getGenerationLock(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  try {
+    const raw = window.localStorage.getItem(GENERATION_LOCK_KEY);
+    if (!raw) return false;
+
+    const parsed = JSON.parse(raw);
+    return parsed?.date === getTodayKey();
+  } catch {
+    return false;
+  }
+}
+
+function setGenerationLock(): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    window.localStorage.setItem(GENERATION_LOCK_KEY, JSON.stringify({ date: getTodayKey() }));
+  } catch {
+    // swallow localStorage issues
+  }
+}
+
 // Types
 interface AIGenerationState {
   isGenerating: boolean;
@@ -45,11 +76,16 @@ export function useAIBlogGeneration(autoTrigger: boolean = true) {
    * - True if: (1) First deployment (no AI posts exist) OR (2) Monday 3 AM
    */
   const shouldGeneratePost = useCallback(async (): Promise<boolean> => {
+    if (getGenerationLock()) {
+      console.log('[useAIBlogGeneration] Generation already attempted today; skipping duplicate trigger.');
+      return false;
+    }
+
     try {
       console.log('[useAIBlogGeneration] Checking if generation needed...');
 
       // ✅ FIXED: Check ai_generated_posts table (not default posts table)
-      const response = await fetch('/api/ai-agent/check-generation-status', {
+      const response = await fetch('/api/posts/ai/status', {
         method: 'GET',
       });
 
@@ -80,9 +116,9 @@ export function useAIBlogGeneration(autoTrigger: boolean = true) {
     });
 
     try {
-      console.log('[useAIBlogGeneration] Calling /api/ai-agent/generate-post');
+      console.log('[useAIBlogGeneration] Calling /api/posts/ai/generate');
 
-      const response = await fetch('/api/ai-agent/generate-post', {
+      const response = await fetch('/api/posts/ai/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,11 +129,12 @@ export function useAIBlogGeneration(autoTrigger: boolean = true) {
       const result = await response.json();
 
       if (response.ok && result.success) {
+        setGenerationLock();
         setState({
           isGenerating: false,
           isCompleted: true,
           isError: false,
-          message: `✅ ${result.message} Post: "${result.post.title}"`,
+          message: `✅ ${result.message || 'Post generated successfully'} Post: "${result.post?.title || 'AI post'}"`,
           post: result.post,
         });
         console.log('[useAIBlogGeneration] ✅ Success:', result);
