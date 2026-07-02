@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { FaArrowLeft, FaCalendar, FaUser } from 'react-icons/fa';
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 
 export const revalidate = 60; // Revalidate every 60 seconds
 export const dynamic = 'force-dynamic';
@@ -254,13 +255,30 @@ export default async function BlogPostPage({
             )}
 
             {/* Main Content */}
-            <div className="prose dark:prose-invert max-w-none mb-12">
-              <div
-                className="text-lg leading-relaxed text-slate-800 dark:text-slate-200 space-y-6"
-                dangerouslySetInnerHTML={{
-                  __html: post.content || '',
+            <div className="prose prose-slate dark:prose-invert max-w-none mb-12">
+              <ReactMarkdown
+                components={{
+                  h1: ({ node, ...props }) => <h1 className="text-3xl font-bold mt-8 mb-4" {...props} />,
+                  h2: ({ node, ...props }) => (
+                    <div className="mt-8 mb-4 rounded-2xl border border-violet-400/30 bg-gradient-to-r from-violet-500/10 via-white/80 to-blue-500/10 p-5 shadow-sm dark:from-violet-500/10 dark:via-slate-900/60 dark:to-blue-500/10">
+                      <h2 className="text-2xl font-semibold text-slate-900 dark:text-white" {...props} />
+                    </div>
+                  ),
+                  h3: ({ node, ...props }) => (
+                    <div className="mt-6 mb-3 rounded-xl border border-slate-200 bg-slate-50/80 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/40">
+                      <h3 className="text-xl font-semibold text-violet-700 dark:text-violet-300" {...props} />
+                    </div>
+                  ),
+                  p: ({ node, ...props }) => <p className="text-lg leading-8 text-slate-800 dark:text-slate-200 my-4" {...props} />,
+                  ul: ({ node, ...props }) => <ul className="list-disc pl-6 my-4 space-y-2" {...props} />,
+                  ol: ({ node, ...props }) => <ol className="list-decimal pl-6 my-4 space-y-2" {...props} />,
+                  li: ({ node, ...props }) => <li className="text-lg leading-8 text-slate-800 dark:text-slate-200" {...props} />,
+                  strong: ({ node, ...props }) => <strong className="font-semibold text-slate-900 dark:text-white" {...props} />,
+                  a: ({ node, ...props }) => <a className="text-violet-600 dark:text-violet-400 underline" {...props} />,
                 }}
-              />
+              >
+                {post.content || ''}
+              </ReactMarkdown>
             </div>
 
             {/* Tags */}
