@@ -29,6 +29,18 @@ export async function generateStaticParams() {
   return [];
 }
 
+const markdownComponents = {
+  h1: ({ node, ...props }: any) => <h1 className="text-3xl font-bold mt-8 mb-4" {...props} />,
+  h2: ({ node, ...props }: any) => <h2 className="text-2xl font-semibold mt-6 mb-3" {...props} />,
+  h3: ({ node, ...props }: any) => <h3 className="text-xl font-semibold mt-5 mb-2" {...props} />,
+  p: ({ node, ...props }: any) => <p className="text-lg leading-8 text-slate-800 dark:text-slate-200 my-4" {...props} />,
+  ul: ({ node, ...props }: any) => <ul className="list-disc pl-6 my-4 space-y-2" {...props} />,
+  ol: ({ node, ...props }: any) => <ol className="list-decimal pl-6 my-4 space-y-2" {...props} />,
+  li: ({ node, ...props }: any) => <li className="text-lg leading-8 text-slate-800 dark:text-slate-200" {...props} />,
+  strong: ({ node, ...props }: any) => <strong className="font-semibold text-slate-900 dark:text-white" {...props} />,
+  a: ({ node, ...props }: any) => <a className="text-violet-600 dark:text-violet-400 underline" {...props} />,
+};
+
 function buildSlugCandidates(slug: string): string[] {
   const trimmed = decodeURIComponent(slug || '').trim();
   const variants = new Set<string>();
@@ -98,6 +110,64 @@ async function getPost(slug: string) {
   return null;
 }
 
+function renderMarkdownContent(content: string) {
+  if (!content?.trim()) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-2">
+      <ReactMarkdown components={markdownComponents}>{content}</ReactMarkdown>
+    </div>
+  );
+}
+
+function parseMarkdownSections(content: string) {
+  const lines = content.split(/\r?\n/);
+  const introLines: string[] = [];
+  const sections: Array<{ title: string; body: string; level: number }> = [];
+  let currentSection: { title: string; body: string[]; level: number } | null = null;
+
+  const flushSection = () => {
+    if (!currentSection) return;
+    const bodyText = currentSection.body.join('\n').trim();
+    if (currentSection.title || bodyText) {
+      sections.push({
+        title: currentSection.title,
+        body: bodyText,
+        level: currentSection.level,
+      });
+    }
+    currentSection = null;
+  };
+
+  lines.forEach((line) => {
+    const headingMatch = line.match(/^(#{2,3})\s+(.*)$/);
+    if (headingMatch) {
+      flushSection();
+      currentSection = {
+        title: headingMatch[2].trim(),
+        body: [],
+        level: headingMatch[1].length,
+      };
+      return;
+    }
+
+    if (currentSection) {
+      currentSection.body.push(line);
+    } else {
+      introLines.push(line);
+    }
+  });
+
+  flushSection();
+
+  return {
+    introText: introLines.join('\n').trim(),
+    sections,
+  };
+}
+
 async function incrementViews(postId: string) {
   const supabase = getSupabaseServer();
   if (!supabase) {
@@ -164,6 +234,8 @@ export default async function BlogPostPage({
 
   // Increment view count (non-blocking)
   incrementViews(post.id).catch(console.error);
+
+  const { introText, sections } = parseMarkdownSections(post.content || '');
 
   return (
     <article className="w-full">
@@ -256,29 +328,29 @@ export default async function BlogPostPage({
 
             {/* Main Content */}
             <div className="prose prose-slate dark:prose-invert max-w-none mb-12">
-              <ReactMarkdown
-                components={{
-                  h1: ({ node, ...props }) => <h1 className="text-3xl font-bold mt-8 mb-4" {...props} />,
-                  h2: ({ node, ...props }) => (
-                    <div className="mt-8 mb-4 rounded-2xl border border-violet-400/30 bg-gradient-to-r from-violet-500/10 via-white/80 to-blue-500/10 p-5 shadow-sm dark:from-violet-500/10 dark:via-slate-900/60 dark:to-blue-500/10">
-                      <h2 className="text-2xl font-semibold text-slate-900 dark:text-white" {...props} />
-                    </div>
-                  ),
-                  h3: ({ node, ...props }) => (
-                    <div className="mt-6 mb-3 rounded-xl border border-slate-200 bg-slate-50/80 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/40">
-                      <h3 className="text-xl font-semibold text-violet-700 dark:text-violet-300" {...props} />
-                    </div>
-                  ),
-                  p: ({ node, ...props }) => <p className="text-lg leading-8 text-slate-800 dark:text-slate-200 my-4" {...props} />,
-                  ul: ({ node, ...props }) => <ul className="list-disc pl-6 my-4 space-y-2" {...props} />,
-                  ol: ({ node, ...props }) => <ol className="list-decimal pl-6 my-4 space-y-2" {...props} />,
-                  li: ({ node, ...props }) => <li className="text-lg leading-8 text-slate-800 dark:text-slate-200" {...props} />,
-                  strong: ({ node, ...props }) => <strong className="font-semibold text-slate-900 dark:text-white" {...props} />,
-                  a: ({ node, ...props }) => <a className="text-violet-600 dark:text-violet-400 underline" {...props} />,
-                }}
-              >
-                {post.content || ''}
-              </ReactMarkdown>
+              {introText && renderMarkdownContent(introText)}
+
+              {sections.length > 0 ? (
+                <div className="mt-6 space-y-4">
+                  {sections.map((section, index) => (
+                    <details
+                      key={`${section.title}-${index}`}
+                      open={index === 0}
+                      className="group overflow-hidden rounded-2xl border border-violet-300/40 bg-white/80 shadow-sm backdrop-blur-sm dark:border-violet-700/40 dark:bg-slate-900/60"
+                    >
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 font-semibold text-slate-900 transition hover:bg-violet-50 dark:text-white dark:hover:bg-violet-950/30">
+                        <span>{section.title}</span>
+                        <span className="text-xl text-violet-600 transition group-open:rotate-180 dark:text-violet-300">⌄</span>
+                      </summary>
+                      <div className="border-t border-slate-200 px-4 pb-4 pt-2 dark:border-slate-700">
+                        {renderMarkdownContent(section.body)}
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              ) : (
+                renderMarkdownContent(post.content || '')
+              )}
             </div>
 
             {/* Tags */}
