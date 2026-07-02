@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaArrowLeft, FaCalendar, FaUser } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendar, FaChevronDown, FaCube, FaRocket, FaShieldAlt, FaTools, FaUser } from 'react-icons/fa';
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
@@ -108,6 +108,12 @@ async function getPost(slug: string) {
   }
 
   return null;
+}
+
+function getSectionIcon(index: number) {
+  const icons = [FaRocket, FaShieldAlt, FaTools, FaCube];
+  const Icon = icons[index % icons.length];
+  return <Icon className="text-sm" />;
 }
 
 function renderMarkdownContent(content: string) {
@@ -328,6 +334,25 @@ export default async function BlogPostPage({
 
             {/* Main Content */}
             <div className="prose prose-slate dark:prose-invert max-w-none mb-12">
+              {sections.length > 0 && (
+                <div className="mb-6 rounded-2xl border border-violet-300/40 bg-gradient-to-r from-violet-600/10 via-white/90 to-blue-500/10 p-4 shadow-sm dark:border-violet-700/40 dark:from-violet-600/10 dark:via-slate-900/80 dark:to-blue-500/10">
+                  <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-violet-700 dark:text-violet-300">
+                    Table of Contents
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {sections.map((section, index) => (
+                      <a
+                        key={`${section.title}-${index}`}
+                        href={`#section-${index}`}
+                        className="rounded-full border border-violet-200 bg-white/80 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-violet-400 hover:bg-violet-50 hover:text-violet-700 dark:border-violet-800 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:border-violet-500 dark:hover:bg-violet-950/40"
+                      >
+                        {section.title}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {introText && renderMarkdownContent(introText)}
 
               {sections.length > 0 ? (
@@ -335,14 +360,20 @@ export default async function BlogPostPage({
                   {sections.map((section, index) => (
                     <details
                       key={`${section.title}-${index}`}
+                      id={`section-${index}`}
                       open={index === 0}
-                      className="group overflow-hidden rounded-2xl border border-violet-300/40 bg-white/80 shadow-sm backdrop-blur-sm dark:border-violet-700/40 dark:bg-slate-900/60"
+                      className="group overflow-hidden rounded-2xl border border-violet-300/40 bg-white/80 shadow-[0_10px_40px_rgba(109,40,217,0.08)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_45px_rgba(109,40,217,0.14)] dark:border-violet-700/40 dark:bg-slate-900/60"
                     >
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 font-semibold text-slate-900 transition hover:bg-violet-50 dark:text-white dark:hover:bg-violet-950/30">
-                        <span>{section.title}</span>
-                        <span className="text-xl text-violet-600 transition group-open:rotate-180 dark:text-violet-300">⌄</span>
+                        <div className="flex items-center gap-3">
+                          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-blue-500 text-sm font-bold text-white shadow-lg">
+                            {getSectionIcon(index)}
+                          </span>
+                          <span>{section.title}</span>
+                        </div>
+                        <FaChevronDown className="text-lg text-violet-600 transition duration-300 group-open:rotate-180 dark:text-violet-300" />
                       </summary>
-                      <div className="border-t border-slate-200 px-4 pb-4 pt-2 dark:border-slate-700">
+                      <div className="overflow-hidden border-t border-slate-200 bg-gradient-to-b from-slate-50/70 to-white/50 px-4 pb-4 pt-3 transition-all duration-300 dark:border-slate-700 dark:from-slate-900/70 dark:to-slate-950/50">
                         {renderMarkdownContent(section.body)}
                       </div>
                     </details>
