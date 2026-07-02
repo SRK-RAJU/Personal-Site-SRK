@@ -29,18 +29,28 @@ export default function AIBlogPostsList() {
   useEffect(() => {
     const fetchAIPosts = async () => {
       try {
-        const response = await axios.get('/api/posts?published=true&includeAI=true&limit=6', {
+        const response = await axios.get('/api/ai-posts?limit=6', {
           timeout: 10000,
         });
 
         if (response.data.data && Array.isArray(response.data.data)) {
-          const aiPosts = response.data.data
-            .filter((post: any) => post.source_table === 'ai_generated_posts' || post.ai_model)
-            .slice(0, 6);
+          // Transform and take top 6
+          const aiPosts = response.data.data.map((post: any) => ({
+            ...post,
+            ai_model: post.ai_model || 'google-gemini-2.5-flash',
+            tools_covered: Array.isArray(post.tools_covered) ? post.tools_covered : [],
+            cves_mentioned: post.cves_mentioned || 0,
+            read_time_minutes: post.read_time_minutes || Math.ceil((post.content?.length || 0) / 200),
+            view_count: post.view_count || 0,
+          })).slice(0, 6);
+          
           setPosts(aiPosts);
+          if (aiPosts.length === 0) {
+            setError('No AI posts available yet');
+          }
         }
       } catch (err) {
-        console.warn('Could not fetch AI posts:', err);
+        console.error('Error fetching AI posts:', err);
         setError('Failed to load AI posts');
       } finally {
         setLoading(false);

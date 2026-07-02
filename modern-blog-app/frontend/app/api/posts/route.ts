@@ -80,47 +80,46 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const published = searchParams.get('published');
-    const limit = searchParams.get('limit') || '100';
+    const limit = parseInt(searchParams.get('limit') || '10000');
     const order = searchParams.get('order') || 'published_at';
     const ascending = searchParams.get('ascending') === 'true';
     const includeAI = searchParams.get('includeAI') !== 'false'; // Include AI posts by default
 
-    // Query regular posts
+    // Query regular posts - NO LIMIT, fetch all
     let query = supabase.from('posts').select('id, title, slug, excerpt, content, category, featured_image_url, published, published_at, author, read_time_minutes, view_count, created_at, updated_at');
 
     if (published === 'true') {
       query = query.eq('published', true);
     }
 
-    const { data: regularPosts, error: regularError } = await query
-      .order(order, { ascending })
-      .limit(parseInt(limit));
+    const { data: regularPosts, error: regularError } = await query.order(order, { ascending });
 
-    // Query AI-generated posts if requested
-    let aiPosts = [];
+    // Query AI-generated posts if requested - NO LIMIT, fetch all
+    let aiPosts: any[] = [];
     if (includeAI) {
       try {
-        const aiQuery = supabase
+        const { data: aiData, error: aiError } = await supabase
           .from('ai_generated_posts')
-          .select('id, title, slug, excerpt, content, category, featured_image_url, published_at, created_at, updated_at, status, ai_model, tools_covered, cves_mentioned')
-          .order(order, { ascending })
-          .limit(parseInt(limit));
+          .select('*')
+          .order(order, { ascending });
 
-        // AI-generated rows are surfaced even if the status value is missing or not exactly "published",
-        // since the ingestion pipeline may write them with different status values depending on the DB state.
-        const { data: aiData, error: aiError } = await aiQuery;
-
-        if (!aiError && aiData) {
+        if (!aiError && aiData && Array.isArray(aiData)) {
           // Transform AI posts to match regular post schema
           aiPosts = aiData.map((post: any) => ({
-            ...post,
+            id: post.id,
+            title: post.title || 'Untitled',
+            slug: post.slug,
+            excerpt: post.excerpt || '',
+            content: post.content || '',
+            category: post.category || 'DevOps',
+            featured_image_url: post.featured_image_url,
             published: true,
+            published_at: post.published_at || post.created_at,
             author: 'AI Agent',
-            author_name: 'AI Agent',
-            read_time_minutes: Math.ceil((post.content?.length || 0) / 200), // Estimate reading time
+            read_time_minutes: Math.ceil((post.content?.length || 0) / 200),
             view_count: 0,
             ai_model: post.ai_model || 'google-gemini-2.5-flash',
-            tools_covered: post.tools_covered || [],
+            tools_covered: Array.isArray(post.tools_covered) ? post.tools_covered : [],
             cves_mentioned: post.cves_mentioned || 0,
             source_table: 'ai_generated_posts',
           }));
@@ -130,26 +129,21 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Merge and sort posts
+    // Merge all posts
     const allPosts = [...(regularPosts || []), ...aiPosts];
+    
+    // Sort by published_at
     const sortedPosts = allPosts.sort((a: any, b: any) => {
       const aTime = new Date(a.published_at).getTime();
       const bTime = new Date(b.published_at).getTime();
       return ascending ? aTime - bTime : bTime - aTime;
     });
 
-    // If no error on regular posts, return merged data
-    if (!regularError) {
-      return NextResponse.json({ data: sortedPosts.slice(0, parseInt(limit)) });
-    }
+    // Apply limit AFTER merging and sorting
+    const finalPosts = sortedPosts.slice(0, limit);
 
-    // If there's an error on regular posts, try AI posts only
-    if (aiPosts.length > 0) {
-      return NextResponse.json({ data: aiPosts.slice(0, parseInt(limit)) });
-    }
-
-    // If no data from either table, return fallback posts
-    return NextResponse.json({ data: DEFAULT_POSTS });
+    // Return merged posts (handles both regular and AI posts together)
+    return NextResponse.json({ data: finalPosts.length > 0 ? finalPosts : DEFAULT_POSTS });
   } catch (err) {
     // Return fallback data instead of 500 error
     return NextResponse.json({ data: DEFAULT_POSTS });

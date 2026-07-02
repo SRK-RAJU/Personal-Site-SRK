@@ -16,7 +16,7 @@ export default function Blog() {
     const loadPosts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('/api/posts?published=true&order=published_at&ascending=false&limit=100');
+        const response = await axios.get('/api/posts?published=true&order=published_at&ascending=false&limit=10000');
         setPosts(response.data.data || []);
         setError(null);
       } catch (err) {
