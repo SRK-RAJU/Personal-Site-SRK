@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
     const { data, error, count } = await supabase
       .from('ai_generated_posts')
       .select('*', { count: 'exact' })
+      .eq('status', 'published')
       .order('published_at', { ascending: false })
       .limit(10000);
 

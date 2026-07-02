@@ -4,9 +4,18 @@ import { isTrustedAutomationRequest as isTrustedDeploymentCheck } from '@/lib/re
 
 export const dynamic = 'force-dynamic';
 
-function getDeploymentTargetUrl(): string {
-  const preferred = process.env.DEPLOY_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || process.env.VERCEL_URL || 'rjexa.com';
-  return preferred.startsWith('http') ? preferred.replace(/\/$/, '') : `https://${preferred.replace(/\/$/, '')}`;
+function getDeploymentTargetUrl(request: NextRequest): string {
+  const preferred =
+    process.env.DEPLOY_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    process.env.VERCEL_URL ||
+    request.headers.get('x-forwarded-host') ||
+    request.headers.get('host') ||
+    'rjexa.com';
+
+  const normalized = preferred.toString().trim().replace(/\/$/, '');
+  return normalized.startsWith('http') ? normalized : `https://${normalized}`;
 }
 
 function getSupabaseClient() {
@@ -32,13 +41,13 @@ function getTodayDateKey(): string {
 
 function getTodaySlug(): string {
   const today = new Date();
+  const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, '0');
   const day = String(today.getDate()).padStart(2, '0');
-  const year = today.getFullYear();
-  return `devops-report-${month}-${day}-${year}`;
+  return `devops-report-${year}-${month}-${day}`;
 }
 
-async function checkAndTriggerFirstRun(): Promise<boolean> {
+async function checkAndTriggerFirstRun(request: NextRequest): Promise<boolean> {
   try {
     console.log('[DEPLOYMENT-CHECK] Checking if generation is needed for today...');
 
@@ -66,7 +75,7 @@ async function checkAndTriggerFirstRun(): Promise<boolean> {
       return false;
     }
 
-    const apiUrl = `${getDeploymentTargetUrl()}/api/posts/ai/generate`;
+    const apiUrl = `${getDeploymentTargetUrl(request)}/api/posts/ai/generate`;
 
     console.log(`[DEPLOYMENT-CHECK] Triggering AI generation at: ${apiUrl}`);
 
@@ -75,6 +84,7 @@ async function checkAndTriggerFirstRun(): Promise<boolean> {
       'User-Agent': 'Vercel-Deploy-Check/1.0',
       'x-trigger-source': 'deployment-check',
       'x-vercel-deployment-url': apiUrl,
+      'x-vercel-cron': '1',
     };
 
     if (process.env.CRON_SECRET) {
@@ -110,7 +120,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const triggered = await checkAndTriggerFirstRun();
+    const triggered = await checkAndTriggerFirstRun(request);
 
     return NextResponse.json(
       {

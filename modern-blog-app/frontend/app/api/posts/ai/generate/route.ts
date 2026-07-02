@@ -96,10 +96,10 @@ function getTodayDateKey(): string {
 
 function getTodaySlug(): string {
   const today = new Date();
+  const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, '0');
   const day = String(today.getDate()).padStart(2, '0');
-  const year = today.getFullYear();
-  return `${TODAY_SLUG_PREFIX}-${month}-${day}-${year}`;
+  return `${TODAY_SLUG_PREFIX}-${year}-${month}-${day}`;
 }
 
 function getRuntimeToolLimit(isManualTest: boolean): number {

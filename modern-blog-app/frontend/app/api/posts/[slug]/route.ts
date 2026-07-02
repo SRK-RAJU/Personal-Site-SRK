@@ -1,20 +1,61 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
+function buildSlugCandidates(slug: string): string[] {
+  const trimmed = decodeURIComponent(slug || '').trim();
+  const variants = new Set<string>();
+  const normalized = trimmed.toLowerCase();
+
+  [trimmed, normalized, normalized.replace(/_/g, '-'), normalized.replace(/-+/g, '-')].forEach((value) => {
+    if (value) variants.add(value);
+  });
+
+  const legacyMatch = normalized.match(/^devops-report-(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (legacyMatch) {
+    const [, year, month, day] = legacyMatch;
+    const paddedMonth = String(Number(month)).padStart(2, '0');
+    const paddedDay = String(Number(day)).padStart(2, '0');
+    variants.add(`devops-report-${year}-${paddedMonth}-${paddedDay}`);
+    variants.add(`devops-report-${year}-${month}-${day}`);
+  }
+
+  return Array.from(variants).filter(Boolean);
+}
+
+function getSupabaseClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.DIRECT_SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+  if (!url || !key || url.includes('placeholder') || key.includes('placeholder')) {
+    return null;
+  }
+
+  return createClient(url, key, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+}
 
 export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const slug = params.slug;
+    const supabase = getSupabaseClient();
+
+    if (!supabase) {
+      return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+    }
+
+    const slugCandidates = buildSlugCandidates(slug);
 
     const { data, error } = await supabase
       .from('posts')
       .select('*')
-      .eq('slug', slug)
+      .in('slug', slugCandidates)
       .eq('published', true)
+      .order('published_at', { ascending: false })
+      .limit(1)
       .maybeSingle();
 
     let post = data;
@@ -23,17 +64,22 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
       const { data: aiPost, error: aiError } = await supabase
         .from('ai_generated_posts')
         .select('*')
-        .eq('slug', slug)
-        .eq('status', 'published')
+        .in('slug', slugCandidates)
+        .order('published_at', { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (!aiError && aiPost) {
-        post = {
-          ...aiPost,
-          published: true,
-          author_name: aiPost.author_name || 'AI Agent',
-          published_at: aiPost.published_at || aiPost.created_at,
-        };
+        const isPublicAiPost = ['published', 'live', 'active', ''].includes(aiPost.status) || !!aiPost.published_at;
+
+        if (isPublicAiPost) {
+          post = {
+            ...aiPost,
+            published: true,
+            author_name: aiPost.author_name || aiPost.author || 'AI Agent',
+            published_at: aiPost.published_at || aiPost.created_at,
+          };
+        }
       }
     }
 

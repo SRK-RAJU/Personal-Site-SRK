@@ -101,6 +101,7 @@ export async function GET(request: NextRequest) {
         const { data: aiData, error: aiError } = await supabase
           .from('ai_generated_posts')
           .select('*')
+          .eq('status', 'published')
           .order(order, { ascending });
 
         if (!aiError && aiData && Array.isArray(aiData)) {

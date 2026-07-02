@@ -5,81 +5,8 @@ import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 60; // Revalidate every 60 seconds
+export const dynamic = 'force-dynamic';
 export const dynamicParams = true; // Enable dynamic route generation
-
-// Default fallback posts for production
-const DEFAULT_POSTS = [
-  {
-    id: 1,
-    title: 'Getting Started with Next.js 14: Complete Guide',
-    slug: 'getting-started-nextjs-14',
-    excerpt: 'Learn how to build modern web applications with Next.js 14, including App Router, Server Components, and deployment strategies.',
-    content: '<p>Next.js 14 brings incredible new features for building performant web applications. Explore App Router, Server Components, Streaming, and more to create lightning-fast applications.</p><p>With built-in optimization and modern React patterns, Next.js 14 is the perfect choice for full-stack web development.</p>',
-    category: 'web-development',
-    featured_image_url: '/images/adv-banner.svg',
-    published: true,
-    published_at: '2025-12-15T10:00:00Z',
-    author_name: 'Raju SRK',
-    reading_time: 8,
-    view_count: 142,
-  },
-  {
-    id: 2,
-    title: 'TypeScript Best Practices for Large Projects',
-    slug: 'typescript-best-practices',
-    excerpt: 'Master TypeScript with advanced patterns, type safety, and best practices for enterprise applications.',
-    content: '<p>TypeScript has become the standard for large-scale JavaScript projects. Learn advanced patterns and best practices for maintaining type safety across your codebase.</p><p>Discover generics, advanced types, and architectural patterns that will improve your development workflow.</p>',
-    category: 'programming',
-    featured_image_url: '/images/tech-stack.svg',
-    published: true,
-    published_at: '2025-12-10T14:30:00Z',
-    author_name: 'Raju SRK',
-    reading_time: 12,
-    view_count: 98,
-  },
-  {
-    id: 3,
-    title: 'Building Real-time Applications with Supabase',
-    slug: 'realtime-supabase',
-    excerpt: 'Learn how to build scalable real-time applications using Supabase and PostgreSQL.',
-    content: '<p>Supabase provides a powerful way to build real-time applications with PostgreSQL as the backbone. Explore real-time subscriptions, authentication, and storage features.</p><p>Build responsive, scalable applications that react to database changes in real-time.</p>',
-    category: 'backend',
-    featured_image_url: '/images/devsecops-banner.svg',
-    published: true,
-    published_at: '2025-12-01T09:15:00Z',
-    author_name: 'Raju SRK',
-    reading_time: 10,
-    view_count: 75,
-  },
-  {
-    id: 4,
-    title: 'AWS Solutions Architect: Designing Scalable Systems',
-    slug: 'aws-solutions-architect',
-    excerpt: 'Master AWS architecture patterns, design principles, and best practices for building scalable and resilient cloud solutions.',
-    content: '<p>Learn how to design AWS solutions that are scalable, reliable, and cost-effective. Explore EC2, RDS, S3, Lambda, and advanced architecture patterns.</p><p>Master multi-region deployments, auto-scaling, and disaster recovery strategies.</p>',
-    category: 'cloud-architecture',
-    featured_image_url: '/images/adv-banner.svg',
-    published: true,
-    published_at: '2025-11-28T11:45:00Z',
-    author_name: 'Raju SRK',
-    reading_time: 15,
-    view_count: 120,
-  },
-  {
-    id: 5,
-    title: 'PostgreSQL Performance Optimization Techniques',
-    slug: 'postgresql-performance-optimization',
-    excerpt: 'Optimize PostgreSQL databases for maximum performance with indexing, query optimization, and monitoring strategies.',
-    content: '<p>Discover techniques to optimize PostgreSQL performance including proper indexing, query optimization, connection pooling, and monitoring best practices.</p><p>Learn how to identify bottlenecks and optimize complex queries for better application performance.</p>',
-    category: 'database',
-    featured_image_url: '/images/devsecops-banner.svg',
-    published: true,
-    published_at: '2025-11-20T14:20:00Z',
-    author_name: 'Raju SRK',
-    reading_time: 11,
-    view_count: 89,
-  },
-];
 
 // Detect placeholder environment values and avoid creating a live Supabase client when not configured
 function isSupabasePlaceholder(value?: string) {
@@ -87,7 +14,7 @@ function isSupabasePlaceholder(value?: string) {
 }
 
 function getSupabaseServer() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseUrl = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey || isSupabasePlaceholder(supabaseUrl) || isSupabasePlaceholder(supabaseKey)) {
@@ -98,55 +25,43 @@ function getSupabaseServer() {
 }
 
 export async function generateStaticParams() {
-  try {
-    const supabase = getSupabaseServer();
-    if (!supabase) {
-      return DEFAULT_POSTS.map((post) => ({
-        slug: post.slug,
-      }));
-    }
+  return [];
+}
 
-    const [{ data: posts, error: postsError }, { data: aiPosts, error: aiPostsError }] = await Promise.all([
-      supabase.from('posts').select('slug').eq('published', true),
-      supabase.from('ai_generated_posts').select('slug').eq('status', 'published'),
-    ]);
+function buildSlugCandidates(slug: string): string[] {
+  const trimmed = decodeURIComponent(slug || '').trim();
+  const variants = new Set<string>();
+  const normalized = trimmed.toLowerCase();
 
-    if (postsError || aiPostsError) {
-      console.error('Error fetching posts for static generation:', postsError || aiPostsError);
-      return DEFAULT_POSTS.map((post) => ({
-        slug: post.slug,
-      }));
-    }
+  [trimmed, normalized, normalized.replace(/_/g, '-'), normalized.replace(/-+/g, '-')].forEach((value) => {
+    if (value) variants.add(value);
+  });
 
-    const allSlugs = [
-      ...(posts || []).map((post: any) => ({ slug: post.slug })),
-      ...(aiPosts || []).map((post: any) => ({ slug: post.slug })),
-    ];
-
-    if (!allSlugs.length) {
-      return DEFAULT_POSTS.map((post) => ({
-        slug: post.slug,
-      }));
-    }
-
-    return allSlugs;
-  } catch (err) {
-    console.error('Error in generateStaticParams:', err);
-    return DEFAULT_POSTS.map((post) => ({
-      slug: post.slug,
-    }));
+  const legacyMatch = normalized.match(/^devops-report-(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (legacyMatch) {
+    const [, year, month, day] = legacyMatch;
+    const paddedMonth = String(Number(month)).padStart(2, '0');
+    const paddedDay = String(Number(day)).padStart(2, '0');
+    variants.add(`devops-report-${year}-${paddedMonth}-${paddedDay}`);
+    variants.add(`devops-report-${year}-${month}-${day}`);
   }
+
+  return Array.from(variants).filter(Boolean);
 }
 
 async function getPost(slug: string) {
   try {
     const supabase = getSupabaseServer();
     if (supabase) {
+      const slugCandidates = buildSlugCandidates(slug);
+
       const { data: post, error } = await supabase
         .from('posts')
         .select('*')
-        .eq('slug', slug)
+        .in('slug', slugCandidates)
         .eq('published', true)
+        .order('published_at', { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (!error && post) {
@@ -156,26 +71,30 @@ async function getPost(slug: string) {
       const { data: aiPost, error: aiError } = await supabase
         .from('ai_generated_posts')
         .select('*')
-        .eq('slug', slug)
-        .eq('status', 'published')
+        .in('slug', slugCandidates)
+        .order('published_at', { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (!aiError && aiPost) {
-        return {
-          ...aiPost,
-          published: true,
-          author_name: aiPost.author_name || 'AI Agent',
-          published_at: aiPost.published_at || aiPost.created_at,
-        };
+        const isPublicAiPost = ['published', 'live', 'active', ''].includes(aiPost.status) || !!aiPost.published_at;
+
+        if (isPublicAiPost) {
+          return {
+            ...aiPost,
+            published: true,
+            author_name: aiPost.author_name || aiPost.author || 'AI Agent',
+            published_at: aiPost.published_at || aiPost.created_at,
+            read_time_minutes: aiPost.read_time_minutes || Math.ceil((aiPost.content?.length || 0) / 200),
+          };
+        }
       }
     }
   } catch (err) {
     console.warn('Error fetching post from database:', err);
   }
 
-  // Fallback to default posts if database query fails or post not found
-  const defaultPost = DEFAULT_POSTS.find((p) => p.slug === slug);
-  return defaultPost || null;
+  return null;
 }
 
 async function incrementViews(postId: string) {
