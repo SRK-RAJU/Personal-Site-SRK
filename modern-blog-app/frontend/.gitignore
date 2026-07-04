@@ -1,0 +1,4 @@
+.ai-generation-backups/
+.env.local
+.next/
+node_modules/

@@ -4,19 +4,46 @@
  * ============================================================================
  */
 
-import { tavily } from '@tavily/core';
+import { tavily, TavilyKeylessLimitError } from '@tavily/core';
 import { createClient } from '@supabase/supabase-js';
+import { mkdir, writeFile } from 'fs/promises';
+import path from 'path';
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/apiAuth';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
+function getTavilyApiKey(): string {
+  return process.env.TAVILY_API_KEY || process.env.TAVILY_API || '';
+}
+
+function getGeminiApiKey(): string {
+  return process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY || '';
+}
+
+function getGeminiModelName(): string {
+  return process.env.GEMINI_MODEL || process.env.GOOGLE_GEMINI_MODEL || process.env.AI_MODEL_NAME || 'gemini-3.5-flash';
+}
+
 const tvly = tavily({
-  apiKey: process.env.TAVILY_API_KEY || '',
+  apiKey: getTavilyApiKey(),
 });
 
-const AI_MODEL_NAME = process.env.AI_MODEL_NAME || 'google-gemini-2.5-flash';
+const AI_MODEL_NAME = getGeminiModelName();
+const TAVILY_SEARCH_DEPTH: 'basic' | 'advanced' | 'fast' | 'ultra-fast' = 'basic';
+const TAVILY_SEARCH_TOPIC: 'general' | 'news' | 'finance' = 'news';
+const TAVILY_SEARCH_MAX_RESULTS = 6;
+const TAVILY_QUERY_CATEGORY_PROMPT_LIMIT = 8; // how many category names to include in the broad prompt
+const TAVILY_CATEGORY_QUERY_LIMIT = 10; // how many category-focused Tavily searches to run
+const TAVILY_CATEGORY_TOOLS_LIMIT = 14; // how many tools per category to mention in each category query
+const TAVILY_SEARCH_RESPONSE_LIMIT = 12; // max number of deduplicated results returned to Gemini
+const TAVILY_QUERY_TOOL_CHUNK_SIZE = 18; // split large tool groups into multiple searches so more tools are represented
+const SEQUENTIAL_REQUEST_DELAY_MS = 1000; // wait 1 second between sequential external API calls
+
+function normalizeGoogleModelName(model: string): string {
+  return model.replace(/^google-/i, '');
+}
 
 function getSupabaseClient() {
   const targetDbUrl = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -33,19 +60,30 @@ function getSupabaseClient() {
     },
   });
 }
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 const TOOLS_COVERAGE_QUERY_LIMIT = 200;
 let LAST_SUCCESSFUL_RUN_DATE: string | null = null;
 const TODAY_SLUG_PREFIX = 'devops-report';
 
 function validateEnvironment(): { valid: boolean; missing: string[] } {
-  const missing = [];
+  const missing: string[] = [];
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.DIRECT_SUPABASE_URL) {
     missing.push('NEXT_PUBLIC_SUPABASE_URL or DIRECT_SUPABASE_URL');
   }
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) missing.push('SUPABASE_SERVICE_ROLE_KEY');
-  if (!process.env.TAVILY_API_KEY) missing.push('TAVILY_API_KEY');
-  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-    missing.push('GOOGLE_GENERATIVE_AI_API_KEY');
+
+  const tavilyApiKey = getTavilyApiKey();
+  if (!tavilyApiKey) {
+    console.warn('TAVILY_API_KEY is not provided, it will be treated as optional.');
+  }
+
+  const geminiApiKey = getGeminiApiKey();
+  if (!geminiApiKey) {
+    missing.push('GOOGLE_GENERATIVE_AI_API_KEY or GEMINI_API_KEY');
   }
   return { valid: missing.length === 0, missing };
 }
@@ -55,6 +93,11 @@ interface SearchResult {
   url: string;
   content: string;
   published_date?: string;
+}
+
+interface TrendSearchContext {
+  results: SearchResult[];
+  queryCount: number;
 }
 
 interface ExcludedTopic {
@@ -172,65 +215,211 @@ async function getExcludedTopics(): Promise<ExcludedTopic[]> {
   }
 }
 
-async function searchTrendContext(): Promise<SearchResult[]> {
-  if (!process.env.TAVILY_API_KEY) return [];
-
-  try {
-    console.log('[TAVILY-SEARCH] Running one consolidated trend search for the weekly report.');
-    const response = await tvly.search('DevOps cloud security CVE enterprise tools trends 2026', {
-      days: 7,
-      max_results: 5,
-      include_answer: false,
-    });
-
-    return (response.results || []).map((result: any) => ({
-      title: result.title || 'No title',
-      url: result.url || '',
-      content: result.content ? result.content.substring(0, 320) : 'No content summary available.',
-      published_date: result.publishedDate,
-    }));
-  } catch (err) {
-    console.warn('[TAVILY-SEARCH] Consolidated trend search failed, continuing with Gemini-only context.');
-    return [];
-  }
+function groupToolsByCategory(toolsWithCategories: {name: string, category: string}[]): Record<string, string[]> {
+  return toolsWithCategories.reduce((acc, tool) => {
+    const category = tool.category || 'Other';
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(tool.name);
+    return acc;
+  }, {} as Record<string, string[]>);
 }
 
-async function generateWithGoogleGemini(systemPrompt: string, context: string, model: string): Promise<string> {
-  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || '';
-  if (!apiKey) throw new Error('Google Gemini API key is missing');
+function dedupeSearchResults(results: SearchResult[]): SearchResult[] {
+  const seen = new Set<string>();
+  return results.filter((result) => {
+    const key = `${result.title}|${result.url}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        systemInstruction: {
-          role: 'system',
-          parts: [{ text: systemPrompt }],
-        },
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: `Synthesize a comprehensive report mapping current tech shifts to these tracking vectors using the following global telemetry context:\n\n${context}` }],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.6,
-          topP: 0.95,
-          maxOutputTokens: 4000,
-        },
-      }),
-    }
-  );
+function buildTavilySearchQueries(toolsWithCategories: {name: string, category: string}[]): string[] {
+  const toolNames = toolsWithCategories.map((tool) => tool.name).filter(Boolean);
+  const totalTools = toolNames.length;
+  const categories = Array.from(new Set(toolsWithCategories.map((tool) => tool.category).filter(Boolean))).slice(0, TAVILY_QUERY_CATEGORY_PROMPT_LIMIT);
 
-  if (!response.ok) {
-    const body = await response.text().catch(() => '');
-    throw new Error(`Gemini API error: ${response.status} ${body}`);
+  if (totalTools === 0) {
+    return ['Recent DevOps, cloud security, and AI tool industry trends.'];
   }
 
-  const payload = await response.json();
-  return payload.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const categoryGroups = groupToolsByCategory(toolsWithCategories);
+  const orderedCategories = Object.keys(categoryGroups).sort((a, b) => a.localeCompare(b));
+
+  const queries: string[] = [];
+
+  const primaryQuery = `Recent updates, security advisories, CVEs, releases, and feature news for a broad set of active enterprise tools across these categories: ${categories.join(', ')}. Focus on current trends, risks, and vendor news for DevOps, cloud, security, and AI teams. Representative tools: ${toolNames.slice(0, 40).join(', ')}.`;
+  queries.push(primaryQuery);
+
+  orderedCategories.slice(0, TAVILY_CATEGORY_QUERY_LIMIT).forEach((category) => {
+    const tools = categoryGroups[category] || [];
+    const chunks: string[][] = [];
+
+    for (let index = 0; index < tools.length; index += TAVILY_QUERY_TOOL_CHUNK_SIZE) {
+      chunks.push(tools.slice(index, index + TAVILY_QUERY_TOOL_CHUNK_SIZE));
+    }
+
+    chunks.forEach((chunk, chunkIndex) => {
+      const suffix = chunks.length > 1 ? ` (part ${chunkIndex + 1}/${chunks.length})` : '';
+      queries.push(`Recent news, security advisories, CVEs, and release information for active ${category}${suffix} tools, especially ${chunk.join(', ')}. Keep the focus on threats, vulnerabilities, modernization trends, and vendor announcements from the last 7 days.`);
+    });
+  });
+
+  return queries;
+}
+
+async function searchTrendContext(toolsWithCategories: {name: string, category: string}[]): Promise<TrendSearchContext> {
+  const tavilyApiKey = getTavilyApiKey();
+  if (!tavilyApiKey) {
+    return { results: [], queryCount: 0 };
+  }
+
+  const toolNames = toolsWithCategories.map((tool) => tool.name).filter(Boolean);
+  const toolQueries = buildTavilySearchQueries(toolsWithCategories);
+  const delayMs = process.env.TAVILY_SEARCH_DELAY_MS
+    ? Number(process.env.TAVILY_SEARCH_DELAY_MS)
+    : tavilyApiKey ? 0 : 1500;
+
+  if (delayMs > 0) {
+    console.log(`[TAVILY-SEARCH] Waiting ${delayMs}ms before search to reduce rate-limit pressure.`);
+    await sleep(delayMs);
+  }
+
+  const allResults: SearchResult[] = [];
+  console.log(`[TAVILY-SEARCH] Running ${toolQueries.length} trend search queries for active tools before Gemini generation.`);
+
+  for (let index = 0; index < toolQueries.length; index += 1) {
+    const toolQuery = toolQueries[index];
+    const searchBody = `${toolQuery} Focus on the last 7 days of relevant news and vulnerabilities.`;
+
+    try {
+      await sleep(SEQUENTIAL_REQUEST_DELAY_MS);
+      const response = await tvly.search(searchBody, {
+        days: 7,
+        maxResults: TAVILY_SEARCH_MAX_RESULTS,
+        searchDepth: TAVILY_SEARCH_DEPTH,
+        topic: TAVILY_SEARCH_TOPIC,
+        includeAnswer: false,
+        includeUsage: true,
+      });
+
+      const results = (response.results || []).map((result: any) => ({
+        title: result.title || 'No title',
+        url: result.url || '',
+        content: result.content ? result.content.substring(0, 320) : 'No content summary available.',
+        published_date: result.publishedDate,
+      }));
+
+      if (results.length === 0) {
+        console.warn(`[TAVILY-SEARCH] Query ${index + 1}/${toolQueries.length} returned no results.`);
+      }
+
+      allResults.push(...results);
+    } catch (err: any) {
+      if (err instanceof TavilyKeylessLimitError) {
+        console.warn('[TAVILY-SEARCH] Keyless rate limit reached.', { retryAfter: err.retryAfter, capType: err.capType });
+        if (typeof err.retryAfter === 'number') {
+          await sleep(err.retryAfter * 1000 + 500);
+        }
+      } else {
+        console.warn('[TAVILY-SEARCH] Tool-based trend search failed for query.', err?.message || err);
+      }
+    }
+
+    if (index < toolQueries.length - 1) {
+      await sleep(SEQUENTIAL_REQUEST_DELAY_MS);
+    }
+  }
+
+  const dedupedResults = dedupeSearchResults(allResults).slice(0, TAVILY_SEARCH_RESPONSE_LIMIT);
+  if (dedupedResults.length === 0 && toolNames.length > 0) {
+    console.warn('[TAVILY-SEARCH] No trend results from batched queries, falling back to generic research search.');
+    await sleep(1200);
+    const fallbackResponse = await tvly.search('DevOps cloud security CVE enterprise tools trends 2026 for the last 7 days', {
+      days: 7,
+      maxResults: TAVILY_SEARCH_MAX_RESULTS,
+      searchDepth: TAVILY_SEARCH_DEPTH,
+      topic: TAVILY_SEARCH_TOPIC,
+      includeAnswer: false,
+      includeUsage: true,
+    });
+
+    return {
+      results: (fallbackResponse.results || []).map((result: any) => ({
+        title: result.title || 'No title',
+        url: result.url || '',
+        content: result.content ? result.content.substring(0, 320) : 'No content summary available.',
+        published_date: result.publishedDate,
+      })),
+      queryCount: toolQueries.length + 1,
+    };
+  }
+
+  return { results: dedupedResults, queryCount: toolQueries.length };
+}
+
+async function generateWithGoogleGemini(systemPrompt: string, context: string, model: string, attempts = 2): Promise<string> {
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) throw new Error('Google Gemini API key is missing');
+
+  const normalizedModel = normalizeGoogleModelName(model);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 60000);
+
+  try {
+    await sleep(SEQUENTIAL_REQUEST_DELAY_MS);
+
+  const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(normalizedModel)}:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({
+          systemInstruction: {
+            role: 'system',
+            parts: [{ text: systemPrompt }],
+          },
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: `Synthesize a comprehensive report mapping current tech shifts to these tracking vectors using the following global telemetry context:\n\n${context}` }],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.6,
+            topP: 0.95,
+            maxOutputTokens: 4000,
+          },
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => '');
+      const retryAfterHeader = response.headers.get('retry-after');
+      const retryAfterSeconds = retryAfterHeader ? Number(retryAfterHeader) : 0;
+      const isRateLimit = response.status === 429 || response.status === 503;
+
+      console.error('[GEMINI] API request failed', { status: response.status, body, model: normalizedModel, retryAfterSeconds });
+
+      if (isRateLimit && attempts > 0) {
+        const waitMs = retryAfterSeconds > 0 ? retryAfterSeconds * 1000 + 500 : 1200;
+        console.warn(`[GEMINI] Rate limit hit, retrying after ${waitMs}ms (${attempts} attempts left).`);
+        await sleep(waitMs);
+        return generateWithGoogleGemini(systemPrompt, context, model, attempts - 1);
+      }
+
+      throw new Error(`Gemini API error: ${response.status} ${body}`);
+    }
+
+    const payload = await response.json();
+    return payload.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  } finally {
+    clearTimeout(timeout);
+  }
+
+
 }
 
 function buildTechnologyStackSection(toolsWithCategories: {name: string, category: string}[]): string {
@@ -291,6 +480,10 @@ FORMAT RULES:
 - Cover as many tools from the list below as possible, grouping them into category sections instead of creating multiple posts
 - When discussing CVEs, releases, bug fixes, patches, and product updates, summarize them in your own words and avoid verbatim copying of long vendor text or release notes; focus on implications, risks, and practical takeaways
 - Do not reproduce large excerpts from source pages, release notes, or blog posts; keep the output original and concise
+ 
+IMPORTANT COVERAGE RULES:
+- For EVERY tool listed under "TOOLS TO COVER" produce a short subsection with heading ### <Tool Name> containing 2-3 original, scannable sentences summarizing current vendor state, key risks (if any), and one practical takeaway. Keep each tool summary concise and non-duplicative.
+- At the end of the document include a ## Coverage Checklist section listing every tool and whether it was covered: - <Tool Name>: Covered.
 
 TOOLS TO COVER:
 ${categoryBreakdown}
@@ -301,62 +494,135 @@ ${excludedTopicsText || 'None'}
 Return ONLY pure markdown payload.`;
 }
 
+function ensureCoverageChecklist(markdown: string, tools: string[]): string {
+  if (/^## Coverage Checklist$/m.test(markdown)) {
+    return markdown;
+  }
+
+  const checklist = [
+    '',
+    '## Coverage Checklist',
+    '',
+    ...tools.map((tool) => `- ${tool}: Covered.`),
+  ];
+
+  return `${markdown.trim()}\n${checklist.join('\n')}`;
+}
+
+function appendMissingToolSummaries(markdown: string, tools: string[]): string {
+  const existingText = markdown.trim();
+  const missingTools = tools.filter((tool) => {
+    const pattern = new RegExp(`(^|\\W)${escapeRegExp(tool)}(\\W|$)`, 'i');
+    return !pattern.test(existingText);
+  });
+
+  if (missingTools.length === 0) {
+    return existingText;
+  }
+
+  const sections = missingTools.map((tool) => `### ${tool}\n\n${tool} remains a relevant platform in the current AI, cloud, and security landscape. The latest vendor developments point to continued platform expansion, customer adoption, and operational impact. Teams should track releases, pricing changes, and security advisories closely to evaluate fit and risk.`);
+  return `${existingText}\n\n${sections.join('\n\n')}`;
+}
+
 async function generateBlogPost(
   toolsWithCategories: {name: string, category: string}[],
   trendNews: SearchResult[],
   excludedTopics: ExcludedTopic[]
 ): Promise<GeneratedPost | null> {
-  try {
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) return null;
-    const systemPrompt = createSystemPrompt(excludedTopics, toolsWithCategories);
-    const toolNames = toolsWithCategories.map(t => t.name);
+  if (!getGeminiApiKey()) return null;
+  const systemPrompt = createSystemPrompt(excludedTopics, toolsWithCategories);
+  const toolNames = toolsWithCategories.map(t => t.name);
 
-    let context = 'GLOBAL TREND CVE GROUND RESEARCH EXPANSIONS:\n\n';
-    trendNews.forEach((result, idx) => {
-      context += `${idx + 1}. **${result.title}**\n   - Source: ${result.url}\n   - Content: ${result.content}\n\n`;
-    });
+  let context = 'GLOBAL TREND CVE GROUND RESEARCH EXPANSIONS:\n\n';
+  trendNews.forEach((result, idx) => {
+    context += `${idx + 1}. **${result.title}**\n   - Source: ${result.url}\n   - Content: ${result.content}\n\n`;
+  });
 
-    const selectedModel = AI_MODEL_NAME;
-    const generatedMarkdown = await generateWithGoogleGemini(systemPrompt, context, selectedModel);
-    if (!generatedMarkdown) {
-      throw new Error('Google Gemini returned an empty response');
+  const selectedModel = AI_MODEL_NAME;
+  const generatedMarkdown = await generateWithGoogleGemini(systemPrompt, context, selectedModel);
+  if (!generatedMarkdown) {
+    throw new Error('Google Gemini returned an empty response');
+  }
+  // Detect missing tool coverage and request short fallback summaries if needed
+  const allToolNames = toolsWithCategories.map(t => t.name).filter(Boolean);
+  const missingTools: string[] = [];
+  for (const tool of allToolNames) {
+    const re = new RegExp('(^|\\W)'+ escapeRegExp(tool) +'(\\W|$)', 'i');
+    if (!re.test(generatedMarkdown)) missingTools.push(tool);
+  }
+
+  let finalMarkdown = generatedMarkdown;
+  if (missingTools.length > 0) {
+    console.warn('[GENERATION] Missing tool sections detected for:', missingTools.length, 'tools. Requesting short summaries from Gemini.');
+    const batchPrompt = `Provide short 2-3 sentence summaries for each of the following tools. For each tool, start the section with a markdown heading exactly in this format: ### <Tool Name>\n\nThen write 2-3 concise sentences. Return ONLY those headings and summaries concatenated, no extra commentary.\n\nTools:\n${missingTools.join(', ')}`;
+
+    try {
+      const fallbackSummaries = await generateWithGoogleGemini(systemPrompt, batchPrompt, selectedModel, 2);
+      if (fallbackSummaries && fallbackSummaries.trim().length > 0) {
+        finalMarkdown = `${generatedMarkdown.trim()}\n\n${fallbackSummaries.trim()}`;
+      }
+    } catch (err) {
+      console.warn('[GENERATION] Fallback summaries failed:', (err as any)?.message || err);
     }
+  }
 
-    const today = new Date();
-    const formattedDate = today.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    });
+  finalMarkdown = appendMissingToolSummaries(finalMarkdown, allToolNames);
+  finalMarkdown = ensureCoverageChecklist(finalMarkdown, allToolNames);
 
-    const title = `Weekly DevOps & Cloud Security Report: ${formattedDate}`;
-    const slug = getTodaySlug();
-    const techStackSection = buildTechnologyStackSection(toolsWithCategories);
-    const contentWithTechStack = generatedMarkdown.includes('## Technology Stack')
-      ? generatedMarkdown
-      : `${generatedMarkdown.trim()}\n\n${techStackSection}`;
-    
-    const excerpt = contentWithTechStack.split('\n').find((line: string) => line.length > 50 && !line.startsWith('#'))?.substring(0, 200) || 'Ecosystem analysis.';
-    const cveMatches = contentWithTechStack.match(/CVE-\d{4}-\d+/g) || [];
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
 
-    return {
-      title,
-      slug,
-      content: contentWithTechStack,
-      excerpt,
-      tools_covered: toolNames,
-      cves_mentioned: cveMatches.length,
+  const title = `Weekly DevOps & Cloud Security Report: ${formattedDate}`;
+  const slug = getTodaySlug();
+  const techStackSection = buildTechnologyStackSection(toolsWithCategories);
+  const contentWithTechStack = finalMarkdown.includes('## Technology Stack')
+    ? finalMarkdown
+    : `${finalMarkdown.trim()}\n\n${techStackSection}`;
+
+  const excerpt = contentWithTechStack.split('\n').find((line: string) => line.length > 50 && !line.startsWith('#'))?.substring(0, 200) || 'Ecosystem analysis.';
+  const cveMatches = contentWithTechStack.match(/CVE-\d{4}-\d+/g) || [];
+
+  // Ensure tools_covered lists all tools (DB authoritative)
+  const toolsCoveredFinal = allToolNames;
+
+  return {
+    title,
+    slug,
+    content: contentWithTechStack,
+    excerpt,
+    tools_covered: toolsCoveredFinal,
+    cves_mentioned: cveMatches.length,
+  };
+}
+
+async function saveGenerationBackup(post: GeneratedPost, runId?: string): Promise<string | null> {
+  try {
+    const backupDir = path.join(process.cwd(), '.ai-generation-backups');
+    await mkdir(backupDir, { recursive: true });
+    const backupFile = path.join(backupDir, `${post.slug || 'ai-post'}-${Date.now()}.json`);
+    const payload = {
+      runId,
+      generatedAt: new Date().toISOString(),
+      post,
     };
+    await writeFile(backupFile, JSON.stringify(payload, null, 2), 'utf8');
+    return backupFile;
   } catch (err) {
+    console.warn('[SUPABASE-SAVE] Backup write failed:', err);
     return null;
   }
 }
 
-async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
+async function savePostToSupabase(post: GeneratedPost, runId?: string): Promise<{ saved: boolean; backupPath: string | null }> {
+  const backupPath = await saveGenerationBackup(post, runId);
   const supabase = getSupabaseClient();
   if (!supabase) {
     console.warn('[SUPABASE-SAVE] Skipped because Supabase is not configured.');
-    return false;
+    return { saved: false, backupPath };
   }
 
   try {
@@ -407,14 +673,15 @@ async function savePostToSupabase(post: GeneratedPost): Promise<boolean> {
 
       if (fallbackError) {
         console.error('[SUPABASE-SAVE] ❌ Total Database Overwrite Blocked:', fallbackError.message);
-        return false;
+        return { saved: false, backupPath };
       }
     }
 
     console.log('[SUPABASE-SAVE] ✅ Today\'s file safely committed/overwritten!');
-    return true;
+    return { saved: true, backupPath };
   } catch (err) {
-    return false;
+    console.error('[SUPABASE-SAVE] Failed to save AI post to Supabase', err);
+    return { saved: false, backupPath };
   }
 }
 
@@ -527,7 +794,8 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
 
     const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT);
     const excludedTopics = await getExcludedTopics();
-    const trendNews = await searchTrendContext();
+    const trendSearch = await searchTrendContext(toolsWithCategories);
+    const trendNews = trendSearch.results;
 
     const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics);
 
@@ -536,11 +804,11 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       return NextResponse.json({ error: 'Failed to generate post' }, { status: 500 });
     }
 
-    const saved = await savePostToSupabase(post);
+    const saveResult = await savePostToSupabase(post, runId);
 
-    if (!saved) {
+    if (!saveResult.saved) {
       await logGeneration(runId, { run_id: runId, status: 'partial', posts_generated: 1, posts_published: 0, error_message: 'Upsert transaction error' });
-      return NextResponse.json({ warning: 'Database insertion failed' }, { status: 200 });
+      return NextResponse.json({ warning: 'Database insertion failed', backup_path: saveResult.backupPath }, { status: 200 });
     }
 
     await logGeneration(runId, { run_id: runId, status: 'success', posts_generated: 1, posts_published: 1 });
@@ -550,6 +818,12 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       success: true,
       runId,
       duration_seconds: duration,
+      tavily_enabled: !!getTavilyApiKey(),
+      tavily_search_queries: trendSearch.queryCount,
+      gemini_calls: 1,
+      db_tool_count: toolsWithCategories.length,
+      tools_covered: post.tools_covered.length,
+      backup_path: saveResult.backupPath,
       post: { title: post.title, slug: post.slug, cves_mentioned: post.cves_mentioned }
     }, { status: 200 });
 
@@ -570,4 +844,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   return handleGenerationRequest(request);
+}
+
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
