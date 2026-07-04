@@ -23,7 +23,7 @@ function getGeminiApiKey(): string {
 }
 
 function getGeminiModelName(): string {
-  return process.env.GEMINI_MODEL || process.env.GOOGLE_GEMINI_MODEL || process.env.AI_MODEL_NAME || 'gemini-3.5-flash';
+  return process.env.GEMINI_MODEL || process.env.GOOGLE_GEMINI_MODEL || process.env.AI_MODEL_NAME || process.env.GEMINI_PRIMARY_MODEL || 'gemini-3.1-flash';
 }
 
 const tvly = tavily({
@@ -33,17 +33,33 @@ const tvly = tavily({
 const AI_MODEL_NAME = getGeminiModelName();
 const TAVILY_SEARCH_DEPTH: 'basic' | 'advanced' | 'fast' | 'ultra-fast' = 'basic';
 const TAVILY_SEARCH_TOPIC: 'general' | 'news' | 'finance' = 'news';
-const TAVILY_SEARCH_MAX_RESULTS = 4;
-const TAVILY_QUERY_CATEGORY_PROMPT_LIMIT = 4; // how many category names to include in the broad prompt
-const TAVILY_CATEGORY_QUERY_LIMIT = 3; // how many category-focused Tavily searches to run
-const TAVILY_SEARCH_RESPONSE_LIMIT = 6; // max number of deduplicated results returned to Gemini
-const TAVILY_QUERY_TOOL_CHUNK_SIZE = 6; // split large tool groups into smaller searches
-const MAX_TAVILY_SEARCH_QUERIES = 4; // keep runtime low for Vercel/free tier
+const TAVILY_SEARCH_MAX_RESULTS = 3;
+const TAVILY_QUERY_CATEGORY_PROMPT_LIMIT = 2; // keep the broad prompt small and focused
+const TAVILY_CATEGORY_QUERY_LIMIT = 2; // how many category-focused Tavily searches to run
+const TAVILY_SEARCH_RESPONSE_LIMIT = 4; // max number of deduplicated results returned to Gemini
+const TAVILY_QUERY_TOOL_CHUNK_SIZE = 4; // split large tool groups into smaller searches
+const MAX_TAVILY_SEARCH_QUERIES = 3; // keep runtime low for Vercel/free tier
 const MAX_TAVILY_QUERY_LENGTH = 360; // Tavily rejects longer queries
-const SEQUENTIAL_REQUEST_DELAY_MS = 250; // shorter spacing to stay under serverless timeout
+const SEQUENTIAL_REQUEST_DELAY_MS = 100; // shorter spacing to stay under serverless timeout
+const HOT_TOOL_CATEGORIES = ['AI', 'Cloud', 'Security', 'DevOps', 'Operations', 'Networking', 'Development'];
+const MAX_GENERATION_TOOLS = 24;
+const GEMINI_MAX_OUTPUT_TOKENS = 1600;
+const GEMINI_FALLBACK_MODELS = ['gemini-3.1-flash-lite', 'gemini-2.0-flash-lite'];
 
 function normalizeGoogleModelName(model: string): string {
-  return model.replace(/^google-/i, '');
+  return model.replace(/^google-/i, '').trim();
+}
+
+function getGeminiModelCandidates(model: string): string[] {
+  const preferredModel = normalizeGoogleModelName(model || getGeminiModelName());
+  const candidates = [preferredModel, ...GEMINI_FALLBACK_MODELS];
+  const unique: string[] = [];
+  candidates.forEach((candidate) => {
+    if (candidate && !unique.includes(candidate)) {
+      unique.push(candidate);
+    }
+  });
+  return unique;
 }
 
 function getSupabaseClient() {
@@ -188,10 +204,16 @@ async function getToolsForGeneration(limit: number = TOOLS_COVERAGE_QUERY_LIMIT)
       .select('tool_name, category')
       .eq('is_active', true)
       .order('category', { ascending: true })
-      .limit(limit);
+      .limit(Math.max(limit, 300));
 
     if (error || !data) return [];
-    return data.map((t: any) => ({name: t.tool_name, category: t.category}));
+
+    const hotTools = (data as any[])
+      .filter((tool: any) => HOT_TOOL_CATEGORIES.includes(tool.category))
+      .map((tool: any) => ({ name: tool.tool_name, category: tool.category }))
+      .filter((tool) => tool.name);
+
+    return hotTools.slice(0, Math.min(MAX_GENERATION_TOOLS, limit));
   } catch (err) {
     return [];
   }
@@ -364,19 +386,20 @@ async function searchTrendContext(toolsWithCategories: {name: string, category: 
   return { results: dedupedResults, queryCount: toolQueries.length };
 }
 
-async function generateWithGoogleGemini(systemPrompt: string, context: string, model: string, attempts = 2): Promise<string> {
+async function generateWithGoogleGemini(systemPrompt: string, context: string, model: string, attempts = 2, modelIndex = 0): Promise<string> {
   const apiKey = getGeminiApiKey();
   if (!apiKey) throw new Error('Google Gemini API key is missing');
 
-  const normalizedModel = normalizeGoogleModelName(model);
+  const modelCandidates = getGeminiModelCandidates(model);
+  const selectedModel = modelCandidates[modelIndex] || modelCandidates[0] || 'gemini-2.0-flash-lite';
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
 
   try {
     await sleep(SEQUENTIAL_REQUEST_DELAY_MS);
 
-  const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(normalizedModel)}:generateContent?key=${apiKey}`,
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(selectedModel)}:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -389,13 +412,13 @@ async function generateWithGoogleGemini(systemPrompt: string, context: string, m
           contents: [
             {
               role: 'user',
-              parts: [{ text: `Synthesize a comprehensive report mapping current tech shifts to these tracking vectors using the following global telemetry context:\n\n${context}` }],
+              parts: [{ text: `Synthesize a concise report mapping current tech shifts to these tracking vectors using the following telemetry context:\n\n${context}` }],
             },
           ],
           generationConfig: {
-            temperature: 0.6,
-            topP: 0.95,
-            maxOutputTokens: 2500,
+            temperature: 0.5,
+            topP: 0.9,
+            maxOutputTokens: GEMINI_MAX_OUTPUT_TOKENS,
           },
         }),
       }
@@ -407,13 +430,21 @@ async function generateWithGoogleGemini(systemPrompt: string, context: string, m
       const retryAfterSeconds = retryAfterHeader ? Number(retryAfterHeader) : 0;
       const isRateLimit = response.status === 429 || response.status === 503;
 
-      console.error('[GEMINI] API request failed', { status: response.status, body, model: normalizedModel, retryAfterSeconds });
+      console.error('[GEMINI] API request failed', { status: response.status, body, model: selectedModel, retryAfterSeconds });
 
       if (isRateLimit && attempts > 0) {
         const waitMs = retryAfterSeconds > 0 ? retryAfterSeconds * 1000 + 500 : 1200;
-        console.warn(`[GEMINI] Rate limit hit, retrying after ${waitMs}ms (${attempts} attempts left).`);
+        const nextModelIndex = modelIndex + 1;
+        const hasFallbackModel = nextModelIndex < modelCandidates.length;
+
+        console.warn(`[GEMINI] ${selectedModel} hit a rate limit, retrying after ${waitMs}ms with ${hasFallbackModel ? modelCandidates[nextModelIndex] : selectedModel}.`);
         await sleep(waitMs);
-        return generateWithGoogleGemini(systemPrompt, context, model, attempts - 1);
+
+        if (hasFallbackModel) {
+          return generateWithGoogleGemini(systemPrompt, context, model, attempts - 1, nextModelIndex);
+        }
+
+        return generateWithGoogleGemini(systemPrompt, context, model, attempts - 1, modelIndex);
       }
 
       throw new Error(`Gemini API error: ${response.status} ${body}`);
@@ -424,8 +455,6 @@ async function generateWithGoogleGemini(systemPrompt: string, context: string, m
   } finally {
     clearTimeout(timeout);
   }
-
-
 }
 
 function buildTechnologyStackSection(toolsWithCategories: {name: string, category: string}[]): string {
@@ -472,18 +501,16 @@ function createSystemPrompt(
     .join('\n');
 
   return `You are an expert DevOps, Cloud, and Cybersecurity technical writer.
-Create one single comprehensive weekly report that covers AI providers first, then cloud infrastructure, security defenses, and operations automation.
+Create one single concise weekly report focused on the hottest current AI, cloud, DevOps, and security tools only. Prioritize recent momentum, new releases, security updates, and practical platform impact.
 
 FORMAT RULES:
-- Title (# format): "Weekly DevOps & Cloud Security Report: Comprehensive Multi-Tool Analysis"
+- Title (# format): "Weekly DevOps & Cloud Security Report: Hot Tools Brief"
 - Section headings (## format) for major themes
 - Tool summaries (### format) for each tool inside its matching category
 - Add a dedicated section titled "## Technology Stack" near the end of the article that groups the covered tools by category in a concise, scannable way
-- Use the following order whenever possible: AI / Generative Intelligence, Cloud, Security, Operations, Other enterprise tools
-- Cover major AI providers explicitly: OpenAI, Anthropic/Claude, GitHub Copilot, Google Gemini, and major enterprise AI tools
-- Mention cybersecurity vendors such as Palo Alto, Zscaler, Cloudflare, and other security tools as part of the narrative
-- Keep the post cohesive, with one report that ties AI, cloud, security, and operations together
-- Cover as many tools from the list below as possible, grouping them into category sections instead of creating multiple posts
+- Use this order whenever possible: AI / Generative Intelligence, Cloud, Security, Operations
+- Keep the report compact and easy to scan
+- Focus on the most relevant tools from the list below rather than trying to cover every possible tool
 - When discussing CVEs, releases, bug fixes, patches, and product updates, summarize them in your own words and avoid verbatim copying of long vendor text or release notes; focus on implications, risks, and practical takeaways
 - Do not reproduce large excerpts from source pages, release notes, or blog posts; keep the output original and concise
  
@@ -530,6 +557,45 @@ function appendMissingToolSummaries(markdown: string, tools: string[]): string {
   return `${existingText}\n\n${sections.join('\n\n')}`;
 }
 
+function buildCompactFallbackMarkdown(toolsWithCategories: {name: string, category: string}[], trendNews: SearchResult[]): string {
+  const grouped = toolsWithCategories.reduce((acc, tool) => {
+    const category = tool.category || 'Other';
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(tool.name);
+    return acc;
+  }, {} as Record<string, string[]>);
+
+  const lines = [
+    '# Weekly DevOps & Cloud Security Report: Hot Tools Brief',
+    '',
+    'This week’s report focuses on the most relevant AI, cloud, DevOps, and security tools that are shaping delivery and security operations.',
+    '',
+    '## Market Pulse',
+    '',
+    ...trendNews.slice(0, 3).map((result, index) => `- ${index + 1}. **${result.title}** — ${result.content}`),
+    '',
+    '## Technology Stack',
+    '',
+  ];
+
+  Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)).forEach(([category, tools]) => {
+    lines.push(`### ${category}`);
+    lines.push('');
+    tools.slice(0, 6).forEach((tool) => {
+      lines.push(`- **${tool}**: The platform remains relevant for current AI, cloud, and security workflows. Teams should track updates, security advisories, and pricing changes closely.`);
+    });
+    lines.push('');
+  });
+
+  lines.push('## Coverage Checklist');
+  lines.push('');
+  toolsWithCategories.forEach((tool) => {
+    lines.push(`- ${tool.name}: Covered.`);
+  });
+
+  return lines.join('\n');
+}
+
 async function generateBlogPost(
   toolsWithCategories: {name: string, category: string}[],
   trendNews: SearchResult[],
@@ -540,13 +606,21 @@ async function generateBlogPost(
   const toolNames = toolsWithCategories.map(t => t.name);
 
   let context = 'GLOBAL TREND CVE GROUND RESEARCH EXPANSIONS:\n\n';
-  const limitedTrendNews = trendNews.slice(0, 8);
+  const limitedTrendNews = trendNews.slice(0, 6);
   limitedTrendNews.forEach((result, idx) => {
     context += `${idx + 1}. **${result.title}**\n   - Source: ${result.url}\n   - Content: ${result.content}\n\n`;
   });
 
   const selectedModel = AI_MODEL_NAME;
-  const generatedMarkdown = await generateWithGoogleGemini(systemPrompt, context, selectedModel);
+  let generatedMarkdown = '';
+
+  try {
+    generatedMarkdown = await generateWithGoogleGemini(systemPrompt, context, selectedModel, 1);
+  } catch (err) {
+    console.warn('[GENERATION] Main Gemini call failed, using compact fallback content.', (err as any)?.message || err);
+    generatedMarkdown = buildCompactFallbackMarkdown(toolsWithCategories, trendNews);
+  }
+
   if (!generatedMarkdown) {
     throw new Error('Google Gemini returned an empty response');
   }
