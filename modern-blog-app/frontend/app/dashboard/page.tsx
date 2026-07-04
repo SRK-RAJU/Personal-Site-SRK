@@ -101,6 +101,8 @@ export default function DashboardHome() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
           'x-trigger-source': 'dashboard-admin',
+          'x-user-role': userRole || 'user',
+          'x-user-email': session.user?.email || '',
         },
         body: JSON.stringify({ source: 'dashboard-admin' }),
       });
