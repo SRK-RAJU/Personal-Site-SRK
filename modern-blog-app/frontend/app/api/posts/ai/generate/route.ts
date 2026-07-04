@@ -450,6 +450,29 @@ async function logGeneration(runId: string, log: GenerationLog): Promise<void> {
 // ADMIN-TRIGGERED GENERATION HANDLER
 // ============================================================================
 
+async function releaseStaleGenerationLocks(): Promise<void> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return;
+
+  try {
+    const staleBefore = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+    const { error } = await supabase
+      .from('ai_generation_logs')
+      .update({
+        status: 'failed',
+        error_message: 'Stale lock released',
+      })
+      .eq('status', 'running')
+      .lt('scheduled_time', staleBefore);
+
+    if (error) {
+      console.warn('[GENERATOR-LOCK] Failed to clear stale lock:', error.message);
+    }
+  } catch (err) {
+    console.warn('[GENERATOR-LOCK] Failed to clear stale lock:', err);
+  }
+}
+
 async function hasActiveGenerationInProgress(): Promise<boolean> {
   const supabase = getSupabaseClient();
   if (!supabase) return false;
@@ -487,6 +510,8 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
     if (!envCheck.valid) {
       return NextResponse.json({ error: 'Configuration Error', missing_vars: envCheck.missing }, { status: 503 });
     }
+
+    await releaseStaleGenerationLocks();
 
     const generationInProgress = await hasActiveGenerationInProgress();
     if (generationInProgress) {
