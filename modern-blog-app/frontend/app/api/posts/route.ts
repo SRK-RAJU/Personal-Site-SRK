@@ -59,7 +59,7 @@ const DEFAULT_POSTS: any[] = [];
 
 export async function GET(request: NextRequest) {
   if (isTrustedReadRequest(request)) {
-    // Allow internal automation and deployment checks without public-rate-limit interference.
+    // Allow trusted internal requests without public rate-limit interference.
   } else {
     const clientIp = getClientIp(request);
     if (isRateLimited(clientIp)) {
@@ -116,7 +116,8 @@ export async function GET(request: NextRequest) {
             featured_image_url: post.featured_image_url,
             published: true,
             published_at: post.published_at || post.created_at,
-            author: 'AI Agent',
+            author: post.author || 'AI Agent',
+            author_name: post.author_name || post.author || 'AI Agent',
             read_time_minutes: Math.ceil((post.content?.length || 0) / 200),
             view_count: 0,
             ai_model: post.ai_model || 'google-gemini-2.5-flash',

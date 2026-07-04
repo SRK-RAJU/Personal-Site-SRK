@@ -8,13 +8,13 @@
 
 ## 📋 QUICK OVERVIEW
 
-This guide covers the complete setup and testing of your AI-powered blogging platform that automatically generates DevOps, Cloud, and Security content weekly using:
+This guide covers the complete setup and testing of your AI-powered blogging platform that generates DevOps, Cloud, and Security content when an admin triggers it using:
 
 - **LLM**: Google Gemini API (100% FREE - gemini-3.5-flash model)
 - **Search**: Tavily AI API (100% FREE - 1,000 calls/month)
 - **Database**: Supabase PostgreSQL (100% FREE tier)
 - **Hosting**: Vercel (100% FREE tier for Next.js)
-- **Automation**: Vercel Cron Jobs (Runs every Monday 3 AM UTC)
+- **Automation**: Manual admin trigger from the dashboard
 
 ---
 
@@ -81,10 +81,6 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ0eXBlOiJKV1QiLC...
 GOOGLE_GENERATIVE_AI_API_KEY=AIzaSy...YOUR_GOOGLE_API_KEY...
 TAVILY_API_KEY=tvly-...YOUR_TAVILY_API_KEY...
 
-# Cron Secret (Generate 32+ random characters)
-# On PowerShell: [System.Convert]::ToBase64String([System.Security.Cryptography.RNGCryptoServiceProvider]::new().GenerateRandomBytes(32))
-# On Mac/Linux: openssl rand -hex 32
-CRON_SECRET=abc123xyz789... (save this, you'll need it for Vercel)
 ```
 
 ### 2.2 Install Dependencies
@@ -175,46 +171,28 @@ Value: AIzaSy...
 Name: TAVILY_API_KEY
 Value: tvly-...
 
-Name: CRON_SECRET
-Value: (your 32+ char secret from .env.local)
-
 4. Click "Save"
 5. Trigger new deployment (Deployments → Redeploy)
 ```
 
 ---
 
-## ✅ PHASE 5: TESTING (Manual Trigger)
+## ✅ PHASE 5: TESTING (Manual Admin Trigger)
 
-### 5.1 Test via URL (Before Monday)
+### 5.1 Trigger from the Dashboard
 ```
-Once deployed to Vercel, you can test manually:
-
-URL Format:
-https://YOUR-VERCEL-URL.vercel.app/api/ai-agent/generate-post?test=true&secret=YOUR_CRON_SECRET
-
-Example:
-https://my-blog.vercel.app/api/ai-agent/generate-post?test=true&secret=abc123xyz789...
+Once deployed to Vercel, sign in as an admin and open the dashboard.
 
 Steps:
-1. Copy your deployed Vercel URL
-2. Get your CRON_SECRET from .env.local
-3. Construct the URL above
-4. Open URL in browser
-5. Wait 30-60 seconds for response
+1. Open /dashboard
+2. Sign in with an admin account
+3. Click "Run AI Generation"
+4. Confirm the prompt
+5. Wait 30-60 seconds for the response
 
-Expected Response (Success):
-{
-  "success": true,
-  "runId": "ai-blog-1686528000000-xyz789abc",
-  "duration_seconds": 45,
-  "post": {
-    "title": "Weekly DevOps & Security Digest...",
-    "slug": "weekly-devops-security-digest-...",
-    "tools_covered": ["Kubernetes", "Docker", ...],
-    "cves_mentioned": 5
-  }
-}
+Expected Result:
+- A new AI-generated post is saved to Supabase
+- The post appears on the blog page
 ```
 
 ### 5.2 Verify Post in Database
@@ -241,28 +219,19 @@ Expected Response (Success):
 
 ---
 
-## 🤖 PHASE 6: AUTOMATIC SCHEDULING
+## 🤖 PHASE 6: MANUAL ADMIN TRIGGER
 
-### 6.1 Verify Cron Schedule
+### 6.1 Trigger a Generation
 ```
-Cron Schedule: 0 3 * * 1
-Meaning: Monday (day 1), at 03:00 UTC
-
-IST Equivalent: Monday 8:30 AM IST
-PST Equivalent: Sunday 8:00 PM PST
-EST Equivalent: Sunday 10:00 PM EST
-
-Next Run: Automatically this Monday at 3 AM UTC
+The generation endpoint is intentionally manual and admin-only.
+Use the dashboard button whenever you want to generate a new post.
 ```
 
-### 6.2 Monitor Cron Execution
+### 6.2 Monitor Execution
 ```
-Option A: Check Vercel Dashboard
-1. Go to: https://vercel.com/dashboard
-2. Select your project
-3. Go to "Functions" tab
-4. Look for: /api/ai-agent/generate-post
-5. View recent invocations
+Option A: Check the dashboard status card
+1. Open /dashboard
+2. Review the latest AI post generation message
 
 Option B: Check Supabase Logs
 1. Go to Supabase dashboard
@@ -276,10 +245,10 @@ Option B: Check Supabase Logs
 ## 🔍 TROUBLESHOOTING
 
 ### Problem: API returns 401 Unauthorized
-**Solution**: 
-- Verify CRON_SECRET is correct
-- Check URL parameter: `?secret=YOUR_EXACT_SECRET`
-- Ensure secret matches in .env.local AND Vercel
+**Solution**:
+- Ensure the signed-in user is an admin
+- Confirm the dashboard request is authenticated
+- Check the Supabase role configuration for the admin user
 
 ### Problem: 500 Error - API Request Failed
 **Solution**:
@@ -294,22 +263,21 @@ Option B: Check Supabase Logs
 - Verify RLS policies in Supabase (should be disabled for service role)
 - Check Network tab in browser for failed requests
 
-### Problem: Cron Job Not Running Monday
+### Problem: Manual Trigger Is Not Working
 **Solution**:
-- Verify vercel.json schedule: "0 3 * * 1"
-- Check Vercel project has deployment from main branch
-- Monitor Vercel Functions tab for invocation logs
+- Verify the signed-in account has admin access
+- Check the Vercel deployment logs for any API error
+- Review the Supabase ai_generation_logs table for failures
 
 ---
 
 ## 📊 MONITORING & MAINTENANCE
 
-### Weekly Post Generation
+### Post Generation
 ```
-✅ Every Monday 3 AM UTC
-✅ Automatically generates 15-20 KB article
+✅ Generates a 15-20 KB article when triggered by an admin
 ✅ Covers 8-10 different DevOps/Cloud/Security tools
-✅ No duplicate topics from last 14 days
+✅ Avoids duplicate topics from recent history
 ✅ 100% original content (paraphrased, not copy-pasted)
 ```
 
@@ -345,11 +313,10 @@ Before considering your platform live:
 - [ ] Code pushed to GitHub
 - [ ] Deployed to Vercel successfully
 - [ ] Environment variables added to Vercel
-- [ ] Manual test successful (post visible on /blog)
+- [ ] Manual admin trigger successful (post visible on /blog)
 - [ ] Post appears in ai_generated_posts table
-- [ ] Cron schedule verified in vercel.json (0 3 * * 1)
-- [ ] CRON_SECRET saved and kept private
-- [ ] First Monday generation monitored
+- [ ] Admin access verified for the dashboard trigger
+- [ ] First generation monitored in ai_generation_logs
 
 ---
 
@@ -362,15 +329,15 @@ Before considering your platform live:
 4. ✅ Test manual generation
 5. ✅ Verify post on blog page
 
-### This Monday
-1. Monitor automatic cron execution
+### Next Run
+1. Trigger generation from the dashboard
 2. Check ai_generation_logs for success
-3. Verify new post appears on /blog page
-4. Share link on social media (optional)
+3. Verify the new post appears on /blog page
+4. Share the link on social media (optional)
 
 ### Ongoing
 1. Monitor Supabase storage usage
-2. Review generated content weekly
+2. Review generated content after each run
 3. Update .env.local if API keys change
 4. Backup database monthly
 
@@ -379,7 +346,7 @@ Before considering your platform live:
 ## 📞 SUPPORT & RESOURCES
 
 ### Documentation
-- [Vercel Cron Docs](https://vercel.com/docs/cron-jobs)
+- [Vercel Docs](https://vercel.com/docs)
 - [Supabase Docs](https://supabase.com/docs)
 - [Google Gemini API Docs](https://ai.google.dev/docs)
 - [Tavily AI Docs](https://docs.tavily.com)
@@ -399,7 +366,7 @@ Before considering your platform live:
 
 Your platform is working perfectly when:
 
-✅ Weekly post generates every Monday  
+✅ A new post can be generated whenever an admin triggers it  
 ✅ Post covers 8-10 different tools  
 ✅ Content is 15-20 KB of original markdown  
 ✅ Post visible on /blog page within 5 minutes  
@@ -411,5 +378,5 @@ Your platform is working perfectly when:
 
 **Status**: 🚀 **READY FOR PRODUCTION**
 
-Your AI blogging platform is fully configured and automated. Enjoy your weekly DevOps & Security digest!
+Your AI blogging platform is fully configured for manual admin-triggered generation. Enjoy your DevOps & Security digest whenever you need it!
 

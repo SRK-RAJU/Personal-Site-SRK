@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from 'next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ContentProtectionWrapper from '../components/ContentProtectionWrapper';
-// 🌟 FIXED: పాత AIBlogGenerator ఇంపోర్ట్‌ని పూర్తిగా తీసేశాం
 import { AuthProvider } from '../lib/authContext';
 import { Toaster } from 'react-hot-toast';
 
@@ -61,7 +60,6 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
-            {/* 🌟 FIXED: ఇక్కడున్న <AIBlogGenerator /> ట్యాగ్‌ని పూర్తిగా డిలీట్ చేసాం */}
           </AuthProvider>
         </ContentProtectionWrapper>
       </body>

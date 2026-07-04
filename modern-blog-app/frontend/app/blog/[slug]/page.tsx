@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaArrowLeft, FaCalendar, FaChevronDown, FaCube, FaRocket, FaShieldAlt, FaTools, FaUser } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendar, FaChevronDown, FaCloud, FaCodeBranch, FaCogs, FaCube, FaDatabase, FaLayerGroup, FaRocket, FaServer, FaShieldAlt, FaStar, FaTools, FaUser } from 'react-icons/fa';
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
@@ -116,9 +116,130 @@ function getSectionIcon(index: number) {
   return <Icon className="text-sm" />;
 }
 
+function getTechnologyStackIcon(category: string) {
+  const normalized = category.toLowerCase();
+
+  if (normalized.includes('cloud')) return FaCloud;
+  if (normalized.includes('security') || normalized.includes('identity') || normalized.includes('ops')) return FaShieldAlt;
+  if (normalized.includes('data') || normalized.includes('database')) return FaDatabase;
+  if (normalized.includes('infra') || normalized.includes('container') || normalized.includes('network')) return FaServer;
+  if (normalized.includes('dev') || normalized.includes('delivery') || normalized.includes('tool')) return FaCodeBranch;
+  if (normalized.includes('ai') || normalized.includes('ml')) return FaRocket;
+  if (normalized.includes('crm') || normalized.includes('erp') || normalized.includes('hr')) return FaLayerGroup;
+
+  return FaCogs;
+}
+
+function renderTechnologyStackContent(content: string): JSX.Element | null {
+  const lines = content
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const cards = lines
+    .map((line) => line.match(/^[-*]\s+\*\*(.+?)\*\*:\s*(.+)$/))
+    .filter(Boolean)
+    .map((match) => ({
+      title: match?.[1]?.trim() || 'Focus Area',
+      tools: (match?.[2] || '')
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean),
+    }))
+    .filter((card) => card.tools.length > 0);
+
+  if (cards.length === 0) {
+    return renderMarkdownContent(content);
+  }
+
+  const featuredTools = cards.flatMap((card) => card.tools.slice(0, 2)).slice(0, 8);
+
+  return (
+    <div className="my-8 overflow-hidden rounded-3xl border border-violet-300/40 bg-gradient-to-br from-slate-950 via-violet-950/90 to-slate-900 p-6 shadow-[0_20px_60px_rgba(109,40,217,0.2)] dark:border-violet-700/40">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-violet-300">
+            Ecosystem Overview
+          </p>
+          <h3 className="mt-2 text-2xl font-semibold text-white">
+            Technology Stack
+          </h3>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+            A compact view of the platforms, services, and operational tooling shaping the current landscape.
+          </p>
+        </div>
+        <div className="rounded-full border border-violet-400/30 bg-white/10 px-3 py-1 text-sm font-medium text-violet-100">
+          {cards.length} focus areas
+        </div>
+      </div>
+
+      {featuredTools.length > 0 && (
+        <div className="mb-5 rounded-2xl border border-violet-400/20 bg-white/10 p-3 backdrop-blur-sm">
+          <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-violet-200">
+            <FaStar className="text-violet-300" />
+            Highlighted tools
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {featuredTools.map((tool) => (
+              <span
+                key={tool}
+                className="rounded-full border border-violet-400/20 bg-gradient-to-r from-violet-500/20 to-cyan-500/20 px-2.75 py-1 text-xs font-semibold text-violet-50"
+              >
+                {tool}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="grid gap-4 md:grid-cols-2">
+        {cards.map((card, index) => {
+          const Icon = getTechnologyStackIcon(card.title);
+          return (
+            <div
+              key={`${card.title}-${index}`}
+              className="group rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-400/40 hover:bg-white/15"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-cyan-500 text-white shadow-lg transition-transform duration-300 group-hover:scale-105">
+                  <Icon className="text-lg" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-white">{card.title}</h4>
+                  <p className="text-sm text-slate-300">{card.tools.length} tools</p>
+                </div>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {card.tools.slice(0, 8).map((tool) => (
+                  <span
+                    key={tool}
+                    className="rounded-full border border-violet-400/20 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-100 transition-colors duration-300 hover:bg-violet-500/20"
+                  >
+                    {tool}
+                  </span>
+                ))}
+                {card.tools.length > 8 && (
+                  <span className="rounded-full border border-white/10 bg-slate-800/70 px-2.5 py-1 text-xs font-medium text-slate-300">
+                    +{card.tools.length - 8} more
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function renderMarkdownContent(content: string) {
   if (!content?.trim()) {
     return null;
+  }
+
+  if (/technology stack/i.test(content) || /^\s*[-*]\s+\*\*(.+?)\*\*:\s*(.+)$/m.test(content)) {
+    return renderTechnologyStackContent(content);
   }
 
   return (

@@ -212,20 +212,31 @@ export default function AIBlogPostsDisplay({
 
           {/* Tools Tags */}
           {post.tools_covered && post.tools_covered.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {post.tools_covered.slice(0, 5).map((tool: string) => (
-                <span
-                  key={tool}
-                  className="inline-block px-3 py-1 bg-violet-100 dark:bg-violet-950 text-violet-700 dark:text-violet-300 rounded-full text-xs font-semibold"
-                >
-                  {tool}
+            <div className="mb-4 rounded-2xl border border-violet-200/70 bg-violet-50/70 p-3 shadow-sm dark:border-violet-900/60 dark:bg-violet-950/30">
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500 dark:text-slate-400">
+                  <FaCode className="text-violet-500" />
+                  Tool Stack
+                </div>
+                <span className="rounded-full border border-violet-300/60 bg-white/70 px-2.5 py-1 text-[11px] font-medium text-violet-700 dark:border-violet-800/70 dark:bg-violet-900/40 dark:text-violet-300">
+                  {post.tools_covered.length} tools
                 </span>
-              ))}
-              {post.tools_covered.length > 5 && (
-                <span className="inline-block px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full text-xs font-semibold">
-                  +{post.tools_covered.length - 5} more
-                </span>
-              )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {post.tools_covered.slice(0, 6).map((tool: string) => (
+                  <span
+                    key={tool}
+                    className="inline-block rounded-full border border-violet-300/60 bg-gradient-to-r from-violet-100 to-fuchsia-100 px-3 py-1 text-xs font-semibold text-violet-700 shadow-sm dark:border-violet-800/70 dark:from-violet-950/70 dark:to-fuchsia-950/70 dark:text-violet-200"
+                  >
+                    {tool}
+                  </span>
+                ))}
+                {post.tools_covered.length > 6 && (
+                  <span className="inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                    +{post.tools_covered.length - 6} more
+                  </span>
+                )}
+              </div>
             </div>
           )}
 

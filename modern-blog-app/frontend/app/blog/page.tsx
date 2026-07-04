@@ -44,7 +44,7 @@ export default function Blog() {
               <span className="gradient-text">Latest</span> Posts
             </h1>
             <p className="text-slate-900 dark:text-slate-100 text-base sm:text-lg max-w-2xl mx-auto font-semibold">
-              Fresh AI-generated posts and weekly reports covering DevOps, cloud architecture, security, and automation.
+              Fresh AI-generated posts covering DevOps, cloud architecture, security, and automation.
             </p>
           </motion.div>
         </div>
@@ -123,10 +123,10 @@ export default function Blog() {
                           </div>
                         )}
                         
-                        {post.author_name && (
+                        {(post.author_name || post.author) && (
                           <div className="flex items-center gap-1.5">
                             <FaUser className="text-blue-500" />
-                            <span>{post.author_name}</span>
+                            <span>{post.author_name || post.author || 'AI Agent'}</span>
                           </div>
                         )}
 

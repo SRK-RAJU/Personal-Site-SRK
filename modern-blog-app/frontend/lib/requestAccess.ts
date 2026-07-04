@@ -23,23 +23,14 @@ export function getClientIp(request: NextRequest): string {
 }
 
 export function isTrustedAutomationRequest(request: NextRequest): boolean {
-  const authHeader = request.headers.get('authorization') || '';
-  const hasValidSecret = authHeader === `Bearer ${process.env.CRON_SECRET || ''}`;
   const userAgent = request.headers.get('user-agent') || '';
   const requestSource = request.headers.get('x-trigger-source') || '';
+  const isSameOrigin = request.headers.get('x-internal-trigger') === 'true';
 
   return (
-    hasValidSecret ||
+    isSameOrigin ||
     request.headers.has('x-vercel-id') ||
-    userAgent.includes('vercel-cron') ||
     userAgent.includes('Vercel-Deploy-Check') ||
-    userAgent.includes('GitHub-Hookshot') ||
-    userAgent.includes('GitHub-Actions-Workflow') ||
-    request.headers.get('x-vercel-cron') === '1' ||
-    request.headers.get('x-vercel-deployment-url') !== null ||
-    request.headers.get('x-github-event') !== null ||
-    requestSource === 'github-actions' ||
-    requestSource === 'deployment-check' ||
-    requestSource === 'vercel-deploy'
+    requestSource === 'dashboard-admin'
   );
 }

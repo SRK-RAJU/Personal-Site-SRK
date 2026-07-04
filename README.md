@@ -1,10 +1,9 @@
 # 🚀 AI-Powered Tech Blog & Portfolio Platform
 
-**Automated AI blogging platform with Google Generative AI + Tavily - Fully automated, production-ready, 100% FREE!**
+**AI-powered tech blog and portfolio platform with manual admin-triggered generation, production-ready, and 100% free to run.**
 
-> 🎯 **AUTOMATED AI BLOGGING**: Blog posts generate automatically every Monday at 3 AM UTC  
-> � **SMART FIRST-RUN**: Auto-tests on first deployment, then Monday auto-runs  
-> �📋 **START HERE**: Read [PRODUCTION_SETUP_GUIDE.md](./PRODUCTION_SETUP_GUIDE.md) for complete setup instructions  
+> 🎯 **ADMIN-TRIGGERED AI BLOGGING**: Blog posts are generated when an authenticated admin clicks the dashboard button  
+> 📋 **START HERE**: Read [PRODUCTION_SETUP_GUIDE.md](./PRODUCTION_SETUP_GUIDE.md) for complete setup instructions  
 > ⏱️ **Time to Deploy**: ~45 minutes | 💰 **Cost**: $0/month (free tiers only)
 
 ---
@@ -12,8 +11,8 @@
 ## ✨ Features
 
 - ⚡ **Fast**: Next.js 14 with optimized images and code splitting
-- 🤖 **AI-Powered**: Automatic blog posts every Monday (Google Generative AI + Tavily)
-- � **Instant on Deploy**: First post generates within minutes of Vercel deployment!
+- 🤖 **AI-Powered**: Manual admin-triggered blog posts (Google Generative AI + Tavily)
+- ⚡ **Instant Setup**: Generate a post from the admin dashboard whenever needed
 - �📚 **50+ Tools Covered**: DevOps, Cloud, Security, and AI/ML tools
 - 🎨 **Modern UI**: Futuristic design with dark mode support
 - 📱 **Responsive**: Perfect on mobile, tablet, and desktop
@@ -31,7 +30,7 @@
 | **Database** | PostgreSQL (Supabase) | Free (500MB) | Content & analytics |
 | **AI Engine** | Google Generative AI | Free (15K tokens/min) | Post generation |
 | **Research** | Tavily AI Search | Free (100 queries/month) | Tool updates research |
-| **Deployment** | Vercel Serverless | Free | Hosting + Cron jobs |
+| **Deployment** | Vercel Serverless | Free | Hosting + serverless functions |
 | **Storage** | Supabase Storage | Free (1GB) | Images (unused) |
 | **Auth** | Supabase Auth | Free | Admin access |
 | **Custom Domain** | Your domain (optional) | $12/year | Brand URL |
@@ -72,10 +71,8 @@ vercel --prod
 ### Verification
 
 ```bash
-# Test AI agent (replace with your secret)
-curl -X GET "https://your-vercel-domain.vercel.app/api/ai-agent/generate-post?test=true&secret=YOUR_CRON_SECRET"
-
-# Should return a successful post with 50+ tools covered
+# After deployment, sign in as an admin and use the dashboard button to generate a post.
+# The app will create the article and save it to Supabase.
 ```
 
 ---
@@ -89,7 +86,7 @@ The guide covers:
 - Local environment setup
 - Database schema initialization
 - Vercel deployment
-- Manual cron testing
+- Manual admin generation from the dashboard
 - Monitoring and maintenance
 - Troubleshooting common issues
 
@@ -129,13 +126,13 @@ modern-blog-app/
 
 ## 🤖 How AI Blog Generation Works
 
-### Every Monday at 3 AM UTC (8:30 AM IST)
+### Manual admin trigger
 
 1. **Research**: Tavily API searches for updates on 50+ tools
-2. **Generate**: Google Generative AI writes original blog post
-3. **Anti-Duplicate**: Excludes topics from last 14 days
-4. **Save**: Post stored in Supabase with metadata
-5. **Publish**: Automatically visible on /blog page
+2. **Generate**: Google Generative AI writes an original blog post
+3. **Anti-Duplicate**: Excludes topics from the recent history
+4. **Save**: Post is stored in Supabase with metadata
+5. **Publish**: The post becomes visible on the blog page
 
 ### Tools Covered (50+)
 
@@ -271,7 +268,7 @@ See `docs/DEPLOYMENT.md` for more options.
 ## 📊 Performance
 
 Built for speed:
-- ⚡ Next.js automatic code splitting
+- ⚡ Next.js optimized code splitting
 - 🖼️ Optimized images (WebP, responsive)
 - 💾 Image compression before upload
 - 🔄 Efficient data fetching

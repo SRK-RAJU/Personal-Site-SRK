@@ -106,7 +106,7 @@ export default function AIBlogPostsList() {
                 </h2>
               </div>
               <p className="mt-3 max-w-3xl text-base text-slate-300">
-                AI-generated posts from the weekly automation pipeline. If new content is available, it will appear here automatically.
+                AI-generated posts appear here when an admin triggers a new generation from the dashboard.
               </p>
             </div>
             <Link
@@ -136,7 +136,7 @@ export default function AIBlogPostsList() {
             <p className="text-sm uppercase tracking-[0.25em] text-violet-300 mb-4">No AI posts yet</p>
             <h3 className="text-3xl font-bold text-white mb-2">No generated posts are available yet.</h3>
             <p className="text-slate-300 max-w-2xl mx-auto">
-              The automation pipeline will publish the first AI post when the scheduled deploy/check job runs. Refreshing the page will not retrigger generation.
+              An admin can trigger the AI post generation manually from the dashboard when needed.
             </p>
           </div>
         ) : (
@@ -180,20 +180,25 @@ export default function AIBlogPostsList() {
                       {post.excerpt}
                     </p>
 
-                    <div className="mb-4 rounded-xl border border-white/10 bg-white/5 p-3">
-                      <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                        <FaTools className="text-purple-300" />
-                        Tools Covered
+                    <div className="mb-4 rounded-2xl border border-violet-400/20 bg-slate-950/70 p-3 shadow-inner shadow-violet-950/20">
+                      <div className="mb-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400">
+                          <FaTools className="text-purple-300" />
+                          Tool Coverage
+                        </div>
+                        <span className="rounded-full border border-violet-400/20 bg-violet-500/10 px-2.5 py-1 text-[11px] font-medium text-violet-200">
+                          {post.tools_covered.length} tools
+                        </span>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {post.tools_covered.slice(0, 3).map((tool) => (
-                          <span key={tool} className="rounded-full border border-white/10 bg-slate-800/70 px-2.5 py-1 text-xs text-slate-200">
+                        {post.tools_covered.slice(0, 4).map((tool) => (
+                          <span key={tool} className="rounded-full border border-violet-400/20 bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 px-2.75 py-1 text-[11px] font-medium text-slate-100 shadow-sm shadow-violet-950/20">
                             {tool}
                           </span>
                         ))}
-                        {post.tools_covered.length > 3 && (
-                          <span className="rounded-full border border-white/10 bg-slate-800/70 px-2.5 py-1 text-xs text-slate-400">
-                            +{post.tools_covered.length - 3} more
+                        {post.tools_covered.length > 4 && (
+                          <span className="rounded-full border border-white/10 bg-slate-800/70 px-2.5 py-1 text-[11px] text-slate-400">
+                            +{post.tools_covered.length - 4} more
                           </span>
                         )}
                       </div>

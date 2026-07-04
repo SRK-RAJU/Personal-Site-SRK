@@ -16,37 +16,6 @@ interface TrendingPost {
   featured_image_url: string;
 }
 
-// Fallback posts with guaranteed working images
-const FALLBACK_POSTS: TrendingPost[] = [
-  {
-    id: '1',
-    title: 'Getting Started with Next.js 14: Complete Guide',
-    slug: 'getting-started-nextjs-14',
-    excerpt: 'Learn how to build modern web applications with Next.js 14.',
-    view_count: 142,
-    published_at: '2025-12-15T10:00:00Z',
-    featured_image_url: '/images/adv-banner.svg',
-  },
-  {
-    id: '2',
-    title: 'TypeScript Best Practices for Large Projects',
-    slug: 'typescript-best-practices',
-    excerpt: 'Master TypeScript with advanced patterns and type safety.',
-    view_count: 98,
-    published_at: '2025-12-10T14:30:00Z',
-    featured_image_url: '/images/tech-stack.svg',
-  },
-  {
-    id: '3',
-    title: 'Building Real-time Applications with Supabase',
-    slug: 'realtime-supabase',
-    excerpt: 'Learn how to build scalable real-time applications.',
-    view_count: 75,
-    published_at: '2025-12-01T09:15:00Z',
-    featured_image_url: '/images/adv-banner.svg',
-  },
-];
-
 function TrendingCard({ post, index }: { post: TrendingPost; index: number }) {
   const [imgSrc, setImgSrc] = useState<string>(
     post.featured_image_url && post.featured_image_url.trim() 
@@ -146,8 +115,7 @@ export default function TrendingPosts() {
           .limit(3);
 
         if (queryError || !data || data.length === 0) {
-          console.warn('Error fetching trending posts or no data, using fallback:', queryError);
-          setPosts(FALLBACK_POSTS);
+          setPosts([]);
           setLoading(false);
           return;
         }
@@ -170,7 +138,7 @@ export default function TrendingPosts() {
         setPosts(postsData);
       } catch (err) {
         console.error('Error fetching trending posts:', err);
-        setPosts(FALLBACK_POSTS);
+        setPosts([]);
       } finally {
         setLoading(false);
       }
