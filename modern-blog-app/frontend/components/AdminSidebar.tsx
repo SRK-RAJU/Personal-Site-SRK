@@ -101,6 +101,12 @@ export function AdminSidebar() {
       </button>
 
       <aside
+        onMouseEnter={() => {
+          if (isDesktop) setIsCollapsed(false);
+        }}
+        onMouseLeave={() => {
+          if (isDesktop && !isOpen) setIsCollapsed(true);
+        }}
         className={`fixed inset-y-0 left-0 z-50 flex flex-col border-r border-white/10 bg-slate-950/95 text-white shadow-2xl shadow-slate-950/40 backdrop-blur-xl transition-all duration-300 ${
           isDesktop ? (isCollapsed ? 'w-20' : 'w-72') : 'w-72'
         } ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
