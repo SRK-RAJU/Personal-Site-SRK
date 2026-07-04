@@ -85,6 +85,10 @@ export function usePageViews() {
             user_ip: 'unknown',
             user_agent: navigator.userAgent,
           },
+        }, {
+          headers: {
+            'x-analytics-fallback': String(nextLocalCount),
+          },
         }).catch(() => {
           // Silent tracking error
         });
@@ -95,6 +99,9 @@ export function usePageViews() {
       try {
         const response = await axios.get('/api/analytics?action=page-views', {
           timeout: 5000,
+          headers: {
+            'x-analytics-fallback': String(previousLocalCount || 0),
+          },
         });
         const remoteTotal = Number(response.data.total_views || 0);
         if (remoteTotal > 0) {

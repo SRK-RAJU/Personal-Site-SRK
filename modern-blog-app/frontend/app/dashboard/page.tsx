@@ -29,51 +29,63 @@ export default function DashboardHome() {
 
   const fetchStats = async () => {
     try {
-      // Fetch posts count
-      const { data: postsData, error: postsError } = await supabase
-        .from('posts')
-        .select('id, view_count', { count: 'exact' });
-
-      // Fetch images count - using storage.objects or count from database
-      // This is an estimate; actual storage count would need separate query
+      let totalPosts = 0;
+      let totalViews = 0;
+      let totalUsers = 0;
       let imagesCount = 0;
+
       try {
-        const { data: storageData, error: storageError } = await supabase.storage
+        const { data: postsData } = await supabase
+          .from('posts')
+          .select('id, view_count', { count: 'exact' });
+
+        totalPosts = postsData?.length || 0;
+        totalViews = (postsData || []).reduce((sum: number, post: any) => sum + (post.view_count || 0), 0);
+      } catch {
+        totalPosts = 0;
+        totalViews = 0;
+      }
+
+      try {
+        const { data: storageData } = await supabase.storage
           .from('uploads')
           .list('', { limit: 1 });
         imagesCount = storageData?.length || 0;
-      } catch (e) {
-        imagesCount = 0; // Graceful fallback
+      } catch {
+        imagesCount = 0;
       }
 
-      // Fetch users count from user_roles table (auth users)
-      const { data: usersData, count: usersCount, error: usersError } = await supabase
-        .from('user_roles')
-        .select('user_id', { count: 'exact' });
-
-      let totalViews = 0;
-      if (postsData) {
-        totalViews = postsData.reduce((sum: number, post: any) => sum + (post.view_count || 0), 0);
+      try {
+        const { count } = await supabase
+          .from('user_roles')
+          .select('user_id', { count: 'exact' });
+        totalUsers = count || 0;
+      } catch {
+        totalUsers = 0;
       }
 
       setStats({
-        totalPosts: postsData?.length || 0,
+        totalPosts,
         totalImages: imagesCount,
-        totalUsers: usersCount || 0,
+        totalUsers,
         totalViews,
       });
 
-      const { data: aiPostsData } = await supabase
-        .from('ai_generated_posts')
-        .select('published_at')
-        .eq('status', 'published')
-        .order('published_at', { ascending: false })
-        .limit(1)
-        .maybeSingle<{ published_at: string }>();
+      try {
+        const { data: aiPostsData } = await supabase
+          .from('ai_generated_posts')
+          .select('published_at')
+          .eq('status', 'published')
+          .order('published_at', { ascending: false })
+          .limit(1)
+          .maybeSingle<{ published_at: string }>();
 
-      if (aiPostsData?.published_at) {
-        setLastGeneratedAt(new Date(aiPostsData.published_at).toLocaleString());
-      } else {
+        if (aiPostsData?.published_at) {
+          setLastGeneratedAt(new Date(aiPostsData.published_at).toLocaleString());
+        } else {
+          setLastGeneratedAt(null);
+        }
+      } catch {
         setLastGeneratedAt(null);
       }
     } catch (err) {

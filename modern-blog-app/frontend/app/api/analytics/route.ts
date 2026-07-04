@@ -189,9 +189,10 @@ export async function GET(request: NextRequest) {
       try {
         const totalViews = await getPageAnalyticsTotalViews();
         const fallbackViews = Array.from(fallbackPageViewCounts.values()).reduce((sum, value) => sum + value, 0);
+        const headerFallback = Number(request.headers.get('x-analytics-fallback') || '0');
 
         return NextResponse.json({
-          total_views: totalViews + fallbackViews,
+          total_views: Math.max(totalViews + fallbackViews, headerFallback),
           timestamp: new Date().toISOString(),
         });
       } catch (err) {
@@ -235,7 +236,8 @@ export async function GET(request: NextRequest) {
         try {
           const monthlyViews = await getPageAnalyticsTotalViews();
           const fallbackViews = Array.from(fallbackPageViewCounts.values()).reduce((sum, value) => sum + value, 0);
-          if (monthlyViews + fallbackViews > 0) fallbackStats.monthly_views = monthlyViews + fallbackViews;
+          const headerFallback = Number(request.headers.get('x-analytics-fallback') || '0');
+          if (monthlyViews + fallbackViews + headerFallback > 0) fallbackStats.monthly_views = monthlyViews + fallbackViews + headerFallback;
         } catch (err) {
           // Silent failure - use fallback
         }
@@ -316,8 +318,9 @@ export async function POST(request: NextRequest) {
 
             const currentVisits = statsData?.total_visits || 0;
             const currentMonthlyViews = statsData?.monthly_views || 0;
-            const newVisits = currentVisits + 1;
-            const newMonthlyViews = currentMonthlyViews + 1;
+            const headerFallback = Number(request.headers.get('x-analytics-fallback') || '0');
+            const newVisits = Math.max(currentVisits + 1, headerFallback + 1);
+            const newMonthlyViews = Math.max(currentMonthlyViews + 1, headerFallback + 1);
 
             fallbackTotalVisits += 1;
             fallbackPageViewCounts.set(page, (fallbackPageViewCounts.get(page) || 0) + 1);
