@@ -61,12 +61,7 @@ export async function verifyAdminAuth(request: NextRequest): Promise<{ isValid: 
       return { isValid: true, userId: user.id };
     }
 
-    const supabaseAdmin = createClient(
-      supabaseUrl,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey
-    );
-
-    const { data: roleData, error: roleError } = await supabaseAdmin
+    const { data: roleData, error: roleError } = await supabase
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
@@ -74,6 +69,19 @@ export async function verifyAdminAuth(request: NextRequest): Promise<{ isValid: 
 
     if (!roleError && roleData?.role === 'admin') {
       return { isValid: true, userId: user.id };
+    }
+
+    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      const supabaseAdmin = createClient(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY);
+      const { data: adminRoleData, error: adminRoleError } = await supabaseAdmin
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!adminRoleError && adminRoleData?.role === 'admin') {
+        return { isValid: true, userId: user.id };
+      }
     }
 
     return { isValid: false, error: 'Insufficient permissions' };
