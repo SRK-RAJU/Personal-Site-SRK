@@ -423,20 +423,26 @@ async function logGeneration(runId: string, log: GenerationLog): Promise<void> {
   if (!supabase) return;
 
   try {
-    await supabase
+    const { error } = await supabase
       .from('ai_generation_logs')
-      .insert([{
-        run_id: runId,
-        scheduled_time: new Date().toISOString(),
-        execution_start: new Date().toISOString(),
-        execution_end: new Date().toISOString(),
-        status: log.status,
-        posts_generated: log.posts_generated,
-        posts_published: log.posts_published,
-        error_message: log.error_message,
-      }]);
+      .upsert([
+        {
+          run_id: runId,
+          scheduled_time: new Date().toISOString(),
+          execution_start: new Date().toISOString(),
+          execution_end: new Date().toISOString(),
+          status: log.status,
+          posts_generated: log.posts_generated,
+          posts_published: log.posts_published,
+          error_message: log.error_message,
+        },
+      ], { onConflict: 'run_id' });
+
+    if (error) {
+      console.warn('[LOG-GENERATION] ⚠️ Logging write skipped.', error.message);
+    }
   } catch (err) {
-    console.warn('[LOG-GENERATION] ⚠️ Logging write skipped.');
+    console.warn('[LOG-GENERATION] ⚠️ Logging write skipped.', err);
   }
 }
 
