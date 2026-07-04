@@ -16,6 +16,30 @@ const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes
 const RATE_LIMIT_MAX = 50; // max requests per window
 
+const fallbackPageViewCounts = new Map<string, number>();
+let fallbackTotalVisits = 0;
+
+function normalizePagePath(pageName?: string, pagePath?: string) {
+  const rawValue = pagePath || pageName || '';
+  if (typeof rawValue !== 'string') return '/';
+
+  const trimmed = rawValue.trim();
+  if (!trimmed || trimmed === 'undefined' || trimmed === 'null') return '/';
+
+  if (trimmed === 'homepage' || trimmed === 'home' || trimmed === '/') return '/';
+
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    try {
+      const url = new URL(trimmed);
+      return url.pathname || '/';
+    } catch {
+      return '/';
+    }
+  }
+
+  return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+}
+
 function isRateLimited(ip: string) {
   const now = Date.now();
   const timestamps = rateLimitMap.get(ip) || [];
@@ -23,6 +47,133 @@ function isRateLimited(ip: string) {
   recent.push(now);
   rateLimitMap.set(ip, recent);
   return recent.length > RATE_LIMIT_MAX;
+}
+
+async function getPageAnalyticsTotalViews() {
+  try {
+    const { data, error } = await supabase
+      .from('page_analytics')
+      .select('view_count')
+      .not('view_count', 'is', null);
+
+    if (!error && Array.isArray(data)) {
+      return data.reduce((sum, row: any) => sum + (row?.view_count || 0), 0);
+    }
+  } catch {
+    // Fall through to legacy schema
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('page_analytics')
+      .select('visit_count')
+      .not('visit_count', 'is', null);
+
+    if (!error && Array.isArray(data)) {
+      return data.reduce((sum, row: any) => sum + (row?.visit_count || 0), 0);
+    }
+  } catch {
+    // Ignore and return 0
+  }
+
+  return 0;
+}
+
+async function getOrCreatePageAnalyticsEntry(page: string) {
+  try {
+    const { data, error } = await supabase
+      .from('page_analytics')
+      .select('id, view_count')
+      .eq('page_path', page)
+      .maybeSingle();
+
+    if (!error) {
+      return { row: data, schema: 'page_path' as const };
+    }
+  } catch {
+    // Fall through to legacy schema
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('page_analytics')
+      .select('id, visit_count')
+      .eq('page_name', page)
+      .maybeSingle();
+
+    if (!error) {
+      return {
+        row: data ? { id: data.id, view_count: data.visit_count } : null,
+        schema: 'page_name' as const,
+      };
+    }
+  } catch {
+    // Ignore and return null
+  }
+
+  return { row: null, schema: null as 'page_path' | 'page_name' | null };
+}
+
+async function savePageAnalyticsEntry(page: string, newCount: number) {
+  const { row, schema } = await getOrCreatePageAnalyticsEntry(page);
+
+  if (schema === 'page_path') {
+    if (row?.id) {
+      await supabase
+        .from('page_analytics')
+        .update({
+          view_count: newCount,
+          last_visited: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', row.id);
+    } else {
+      await supabase.from('page_analytics').insert({
+        page_path: page,
+        view_count: newCount,
+        last_visited: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+    return;
+  }
+
+  if (schema === 'page_name') {
+    if (row?.id) {
+      await supabase
+        .from('page_analytics')
+        .update({
+          visit_count: newCount,
+          last_visited: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', row.id);
+    } else {
+      await supabase.from('page_analytics').insert({
+        page_name: page,
+        visit_count: newCount,
+        last_visited: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+    return;
+  }
+
+  try {
+    await supabase.from('page_analytics').insert({
+      page_path: page,
+      view_count: newCount,
+      last_visited: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+  } catch {
+    await supabase.from('page_analytics').insert({
+      page_name: page,
+      visit_count: newCount,
+      last_visited: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+  }
 }
 
 export async function GET(request: NextRequest) {
@@ -36,30 +187,17 @@ export async function GET(request: NextRequest) {
 
     if (action === 'page-views') {
       try {
-        // Get total page views with error handling
-        const { data, error } = await supabase
-          .from('page_analytics')
-          .select('view_count')
-          .eq('page', 'homepage')
-          .maybeSingle(); // Changed from .single() to .maybeSingle()
-
-        // Handle errors gracefully
-        if (error) {
-          // Return success with fallback
-          return NextResponse.json({
-            total_views: 0,
-            timestamp: new Date().toISOString(),
-          });
-        }
+        const totalViews = await getPageAnalyticsTotalViews();
+        const fallbackViews = Array.from(fallbackPageViewCounts.values()).reduce((sum, value) => sum + value, 0);
 
         return NextResponse.json({
-          total_views: data?.view_count || 0,
+          total_views: totalViews + fallbackViews,
           timestamp: new Date().toISOString(),
         });
       } catch (err) {
         return NextResponse.json(
           { total_views: 0 },
-          { status: 200 } // Return 200 with fallback data
+          { status: 200 }
         );
       }
     }
@@ -95,12 +233,9 @@ export async function GET(request: NextRequest) {
         }
 
         try {
-          const { data: pageData } = await supabase
-            .from('page_analytics')
-            .select('view_count')
-            .eq('page', 'homepage')
-            .single();
-          if (pageData?.view_count != null) fallbackStats.monthly_views = pageData.view_count;
+          const monthlyViews = await getPageAnalyticsTotalViews();
+          const fallbackViews = Array.from(fallbackPageViewCounts.values()).reduce((sum, value) => sum + value, 0);
+          if (monthlyViews + fallbackViews > 0) fallbackStats.monthly_views = monthlyViews + fallbackViews;
         } catch (err) {
           // Silent failure - use fallback
         }
@@ -161,49 +296,41 @@ export async function POST(request: NextRequest) {
     const { action, data } = body;
 
     if (action === 'track-page-view') {
-      const { page_name = 'homepage', user_ip, user_agent } = data;
+      const { page_name = 'homepage', page_path, user_ip, user_agent } = data;
 
       try {
-        // Simplified tracking - just increment with error handling
-        const page = page_name || 'homepage';
-        
-        try {
-          // Use RPC function or direct increment if available
-          const { data: existing } = await supabase
-            .from('page_analytics')
-            .select('view_count')
-            .eq('page', page)
-            .maybeSingle();
+        const page = normalizePagePath(page_name, page_path);
 
-          const currentCount = existing?.view_count || 0;
+        try {
+          const { row } = await getOrCreatePageAnalyticsEntry(page);
+          const currentCount = row?.view_count || 0;
           const newCount = currentCount + 1;
 
-          // Upsert the new count
-          await supabase
-            .from('page_analytics')
-            .upsert({
-              page: page,
-              view_count: newCount,
-              last_viewed: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            });
+          await savePageAnalyticsEntry(page, newCount);
 
-          // Also update global total_visits 
           try {
             const { data: statsData } = await supabase
               .from('website_stats')
-              .select('total_visits')
+              .select('total_visits, monthly_views')
               .maybeSingle();
 
             const currentVisits = statsData?.total_visits || 0;
+            const currentMonthlyViews = statsData?.monthly_views || 0;
             const newVisits = currentVisits + 1;
+            const newMonthlyViews = currentMonthlyViews + 1;
+
+            fallbackTotalVisits += 1;
+            fallbackPageViewCounts.set(page, (fallbackPageViewCounts.get(page) || 0) + 1);
 
             await supabase
               .from('website_stats')
               .upsert({
                 id: 1,
                 total_visits: newVisits,
-                updated_at: new Date().toISOString()
+                monthly_views: newMonthlyViews,
+                updated_at: new Date().toISOString(),
+              }, {
+                onConflict: 'id'
               });
           } catch (statsErr) {
             // Stats update skipped - continue anyway
@@ -215,12 +342,10 @@ export async function POST(request: NextRequest) {
             message: 'Page view tracked'
           });
         } catch (err) {
-          // Still return success to not block the page
           return NextResponse.json({ success: true, total_views: 1 });
         }
 
       } catch (err) {
-        // Don't fail - return success anyway
         return NextResponse.json({ success: true, total_views: 1 });
       }
     }

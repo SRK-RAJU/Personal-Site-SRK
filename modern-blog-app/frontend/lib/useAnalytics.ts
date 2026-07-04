@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import axios from 'axios';
 
 export interface WebsiteStats {
@@ -58,42 +59,56 @@ export function useWebsiteStats() {
 export function usePageViews() {
   const [totalViews, setTotalViews] = useState(0);
   const [loading, setLoading] = useState(true);
-  const trackedRef = useRef(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const trackPageView = async () => {
-      // Only track once per session
-      if (trackedRef.current) return;
-      trackedRef.current = true;
+      if (typeof window === 'undefined') return;
 
-      try {
-        // Track the page view (fire and forget, don't block on this)
+      const currentPath = pathname || '/';
+      const viewKey = `analytics:${currentPath}`;
+      const hasTracked = window.sessionStorage.getItem(viewKey);
+      const siteTotalKey = 'analytics:site-total';
+      const previousLocalCount = Number(window.localStorage.getItem(siteTotalKey) || '0');
+
+      if (!hasTracked) {
+        window.sessionStorage.setItem(viewKey, 'tracked');
+        const nextLocalCount = previousLocalCount + 1;
+        window.localStorage.setItem(siteTotalKey, String(nextLocalCount));
+        setTotalViews(nextLocalCount);
+
         axios.post('/api/analytics', {
           action: 'track-page-view',
           data: {
-            page_name: 'homepage',
+            page_name: currentPath === '/' ? 'homepage' : currentPath,
+            page_path: currentPath,
             user_ip: 'unknown',
             user_agent: navigator.userAgent,
           },
-        }).catch(err => { /* silent tracking error */ });
+        }).catch(() => {
+          // Silent tracking error
+        });
+      } else {
+        setTotalViews(previousLocalCount || 0);
+      }
 
-        // Get total views with timeout
-        try {
-          const response = await axios.get('/api/analytics?action=page-views', {
-            timeout: 5000
-          });
-          setTotalViews(response.data.total_views || 0);
-        } catch (err) {
-          // Could not fetch page views
-          setTotalViews(0); // Default to 0
+      try {
+        const response = await axios.get('/api/analytics?action=page-views', {
+          timeout: 5000,
+        });
+        const remoteTotal = Number(response.data.total_views || 0);
+        if (remoteTotal > 0) {
+          setTotalViews(remoteTotal);
         }
+      } catch (err) {
+        setTotalViews(previousLocalCount || 0);
       } finally {
         setLoading(false);
       }
     };
 
     trackPageView();
-  }, []);
+  }, [pathname]);
 
   return { totalViews, loading };
 }
