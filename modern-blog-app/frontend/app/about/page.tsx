@@ -28,9 +28,9 @@ const itemVariants = {
 
 export default function About() {
   return (
-    <div className="container-max py-12">
+    <div className="container-max py-10 sm:py-12 lg:py-16">
       <motion.div 
-        className="max-w-4xl mx-auto" 
+        className="mx-auto max-w-6xl rounded-[2rem] border border-white/80 bg-white/70 p-6 shadow-2xl shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70 sm:p-8 lg:p-12" 
         variants={containerVariants} 
         initial="hidden" 
         animate="visible"
@@ -47,14 +47,14 @@ export default function About() {
         </motion.div>
 
         {/* Header - Combined Names */}
-        <motion.div variants={itemVariants} className="mb-12">
-          <h1 className="text-5xl sm:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+        <motion.div variants={itemVariants} className="mb-10 rounded-[1.5rem] border border-violet-200/70 bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.15),_transparent_34%),linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-8 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[radial-gradient(circle_at_top_left,_rgba(167,139,250,0.2),_transparent_34%),linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))] sm:p-10">
+          <h1 className="mb-4 text-5xl font-bold bg-gradient-to-r from-violet-600 via-blue-600 to-purple-600 bg-clip-text text-transparent sm:text-6xl">
             Raju
           </h1>
-          <h2 className="text-2xl text-slate-800 dark:text-slate-200 font-semibold mb-2">
+          <h2 className="mb-2 text-2xl font-semibold text-slate-800 dark:text-slate-200">
             Full-Stack Developer, DevOps, Security & Cloud Engineer
           </h2>
-          <p className="text-lg text-violet-600 dark:text-violet-400 font-semibold mb-4">
+          <p className="mb-4 text-lg font-semibold text-violet-600 dark:text-violet-400">
             Personal Tech Blog & AI Content Platform
           </p>
           <p className="text-lg text-slate-800 dark:text-slate-200">
@@ -63,7 +63,7 @@ export default function About() {
         </motion.div>
 
         {/* About & Journey Section */}
-        <motion.section variants={itemVariants} className="mb-12 p-8 bg-blue-50 dark:bg-slate-800/50 rounded-2xl border border-blue-100 dark:border-slate-700">
+        <motion.section variants={itemVariants} className="mb-10 rounded-[1.5rem] border border-white/70 bg-white/80 p-8 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
             <FaRocket className="text-blue-600" /> My Story
           </h2>
@@ -91,7 +91,7 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* Cloud & DevOps */}
-            <div className="p-6 bg-gradient-to-br from-blue-50 to-violet-50 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-sm border border-blue-200 dark:border-blue-700/30">
+            <div className="rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-6 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
                 <FaCloud className="text-blue-500" /> Cloud & Infrastructure
               </h3>
@@ -110,7 +110,7 @@ export default function About() {
             </div>
 
             {/* Full-Stack Development */}
-            <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-sm border border-purple-200 dark:border-purple-700/30">
+            <div className="rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-6 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
                 <FaCode className="text-purple-500" /> Full-Stack Development
               </h3>
@@ -129,7 +129,7 @@ export default function About() {
             </div>
 
             {/* Security & DevOps */}
-            <div className="p-6 bg-gradient-to-br from-red-50 to-orange-50 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-sm border border-red-200 dark:border-red-700/30">
+            <div className="rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-6 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
                 <FaDatabase className="text-red-500" /> Security & DevOps
               </h3>
@@ -150,24 +150,24 @@ export default function About() {
         </motion.section>
 
         {/* Certifications */}
-        <motion.section variants={itemVariants} className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+        <motion.section variants={itemVariants} className="mb-10 rounded-[1.5rem] border border-white/70 bg-white/80 p-8 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70">
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold">
             <FaAward className="text-yellow-600" /> Certifications & Credentials
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 border-l-4 border-yellow-600 bg-slate-50 dark:bg-slate-800/30">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="border-l-4 border-yellow-600 bg-slate-50 p-4 dark:bg-slate-800/30">
               <h3 className="font-semibold dark:text-white">AWS Certified</h3>
               <p className="text-sm text-slate-800 dark:text-slate-200">Solutions Architect</p>
             </div>
-            <div className="p-4 border-l-4 border-blue-500 bg-slate-50 dark:bg-slate-800/30">
+            <div className="border-l-4 border-blue-500 bg-slate-50 p-4 dark:bg-slate-800/30">
               <h3 className="font-semibold dark:text-white">Azure Certified</h3>
               <p className="text-sm text-slate-800 dark:text-slate-200">AZ-900, AZ-104</p>
             </div>
-            <div className="p-4 border-l-4 border-red-600 bg-slate-50 dark:bg-slate-800/30">
+            <div className="border-l-4 border-red-600 bg-slate-50 p-4 dark:bg-slate-800/30">
               <h3 className="font-semibold dark:text-white">GCP Certified</h3>
               <p className="text-sm text-slate-800 dark:text-slate-200">Associate Cloud Engineer & DevOps Professional</p>
             </div>
-            <div className="p-4 border-l-4 border-gray-700 bg-slate-50 dark:bg-slate-800/30">
+            <div className="border-l-4 border-gray-700 bg-slate-50 p-4 dark:bg-slate-800/30">
               <h3 className="font-semibold dark:text-white">GitHub Foundations</h3>
               <p className="text-sm text-slate-800 dark:text-slate-200">GitHub Certified Foundations</p>
             </div>
@@ -177,7 +177,7 @@ export default function About() {
         {/* CTA Section */}
         <motion.section 
           variants={itemVariants} 
-          className="mb-12 bg-gradient-to-r from-blue-600 to-purple-700 p-10 rounded-3xl text-white text-center sm:text-left"
+          className="mb-10 rounded-[1.75rem] bg-[linear-gradient(135deg,_rgba(124,58,237,0.95),_rgba(59,130,246,0.95),_rgba(236,72,153,0.95))] p-8 text-center text-white shadow-2xl shadow-violet-500/20 sm:text-left lg:p-10"
         >
           <h2 className="text-3xl font-bold mb-4">Let's Connect</h2>
           <p className="mb-8 text-blue-100 max-w-2xl">
@@ -202,7 +202,7 @@ export default function About() {
           {/* Logo Row - Cloud, DevOps, Security, Development */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
             {/* Cloud Logo */}
-            <div className="flex flex-col items-center p-4 bg-blue-50 dark:bg-slate-800 rounded-xl border border-blue-200 dark:border-blue-700/30 hover:scale-105 transition-transform">
+            <div className="flex flex-col items-center rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-4 shadow-lg shadow-violet-500/10 transition-transform hover:scale-105 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
               <div className="w-20 h-20 mb-3">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                   <defs>
@@ -220,7 +220,7 @@ export default function About() {
             </div>
 
             {/* DevOps Logo */}
-            <div className="flex flex-col items-center p-4 bg-orange-50 dark:bg-slate-800 rounded-xl border border-orange-200 dark:border-orange-700/30 hover:scale-105 transition-transform">
+            <div className="flex flex-col items-center rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-4 shadow-lg shadow-violet-500/10 transition-transform hover:scale-105 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
               <div className="w-20 h-20 mb-3">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                   <defs>
@@ -242,7 +242,7 @@ export default function About() {
             </div>
 
             {/* Security Logo */}
-            <div className="flex flex-col items-center p-4 bg-red-50 dark:bg-slate-800 rounded-xl border border-red-200 dark:border-red-700/30 hover:scale-105 transition-transform">
+            <div className="flex flex-col items-center rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-4 shadow-lg shadow-violet-500/10 transition-transform hover:scale-105 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
               <div className="w-20 h-20 mb-3">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                   <defs>
@@ -261,7 +261,7 @@ export default function About() {
             </div>
 
             {/* Development Logo */}
-            <div className="flex flex-col items-center p-4 bg-purple-50 dark:bg-slate-800 rounded-xl border border-purple-200 dark:border-purple-700/30 hover:scale-105 transition-transform">
+            <div className="flex flex-col items-center rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-4 shadow-lg shadow-violet-500/10 transition-transform hover:scale-105 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
               <div className="w-20 h-20 mb-3">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                   <defs>

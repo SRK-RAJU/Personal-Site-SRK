@@ -94,7 +94,7 @@ export default function Home() {
     <div className="w-full">
       {/* Hero Section with animated background */}
       <motion.section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-gradient-to-br from-slate-50 via-violet-50/50 to-purple-50/50 dark:from-slate-950 dark:via-violet-950/20 dark:to-slate-950"
+        className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.16),_transparent_30%),linear-gradient(135deg,_rgba(248,250,252,1),_rgba(239,246,255,0.95))] pt-20 dark:bg-[radial-gradient(circle_at_top_left,_rgba(167,139,250,0.22),_transparent_32%),linear-gradient(135deg,_rgba(2,6,23,1),_rgba(15,23,42,0.96))]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -131,7 +131,7 @@ export default function Home() {
 
         <div className="container-max py-12">
           <motion.div
-            className="max-w-4xl mx-auto text-center"
+            className="mx-auto max-w-5xl rounded-[2rem] border border-white/80 bg-white/70 p-8 text-center shadow-2xl shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70 sm:p-12 lg:p-16"
             variants={containerVariants}
             initial="hidden"
             animate="visible"

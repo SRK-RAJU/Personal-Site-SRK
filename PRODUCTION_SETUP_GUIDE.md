@@ -10,6 +10,47 @@
 
 This guide covers the complete setup and testing of your AI-powered blogging platform that generates DevOps, Cloud, and Security content when an admin triggers it using:
 
+## ✅ FINAL PRODUCTION CHECKLIST
+
+Use this checklist right before deployment:
+
+1. Confirm your Supabase project is created and the production database is ready.
+2. Add these environment variables in Vercel under Project Settings → Environment Variables:
+   - NEXT_PUBLIC_SUPABASE_URL
+   - NEXT_PUBLIC_SUPABASE_ANON_KEY
+   - SUPABASE_SERVICE_ROLE_KEY
+   - GOOGLE_GENERATIVE_AI_API_KEY
+   - TAVILY_API_KEY
+   - NEXT_PUBLIC_SITE_URL
+   - NEXT_PUBLIC_SITE_NAME
+   - NEXT_PUBLIC_SITE_DESCRIPTION
+   - NEXT_PUBLIC_AUTHOR
+   - NEXT_PUBLIC_ADMIN_EMAILS (or ADMIN_EMAILS)
+3. Apply the SQL schema from [modern-blog-app/frontend/docs/PRODUCTION_SCHEMA_FINAL.sql](modern-blog-app/frontend/docs/PRODUCTION_SCHEMA_FINAL.sql) in your production Supabase project.
+4. Redeploy the Vercel project after the variables are saved.
+5. Verify the live site by checking:
+   - homepage loads
+   - blog page loads
+   - dashboard login works
+   - admin AI generation works end to end
+
+### Vercel environment variable template
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+GOOGLE_GENERATIVE_AI_API_KEY=your-gemini-key
+TAVILY_API_KEY=your-tavily-key
+NEXT_PUBLIC_SITE_URL=https://yourdomain.com
+NEXT_PUBLIC_SITE_NAME=Your Site Name
+NEXT_PUBLIC_SITE_DESCRIPTION=Your site description
+NEXT_PUBLIC_AUTHOR=Your Name
+NEXT_PUBLIC_ADMIN_EMAILS=you@example.com,admin@example.com
+```
+
+> Use the same values in Preview and Production environments if you want parity during testing.
+
 - **LLM**: Google Gemini API (100% FREE - gemini-3.5-flash model)
 - **Search**: Tavily AI API (100% FREE - 1,000 calls/month)
 - **Database**: Supabase PostgreSQL (100% FREE tier)

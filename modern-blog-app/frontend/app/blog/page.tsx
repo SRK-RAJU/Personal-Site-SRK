@@ -32,7 +32,7 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen w-full">
-      <section className="section-padding bg-gradient-to-br from-violet-50/80 via-blue-50/50 to-violet-50/80 dark:from-violet-950/30 dark:via-blue-950/20 dark:to-violet-950/30 border-b border-violet-300/50 dark:border-violet-700/50">
+      <section className="section-padding border-b border-violet-300/60 bg-[radial-gradient(circle_at_top,_rgba(124,58,237,0.16),_transparent_45%),linear-gradient(135deg,_rgba(248,250,252,1),_rgba(239,246,255,0.9))] dark:border-violet-700/50 dark:bg-[radial-gradient(circle_at_top,_rgba(167,139,250,0.2),_transparent_48%),linear-gradient(135deg,_rgba(2,6,23,1),_rgba(15,23,42,0.96))]">
         <div className="container-max">
           <motion.div
             className="text-center max-w-3xl mx-auto"
@@ -40,7 +40,7 @@ export default function Blog() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 text-slate-900 dark:text-white">
+            <h1 className="mb-4 text-4xl font-bold text-slate-900 dark:text-white sm:mb-6 sm:text-5xl md:text-6xl">
               <span className="gradient-text">Latest</span> Posts
             </h1>
             <p className="text-slate-900 dark:text-slate-100 text-base sm:text-lg max-w-2xl mx-auto font-semibold">
@@ -82,7 +82,7 @@ export default function Blog() {
                   transition={{ duration: 0.3, delay: idx * 0.1 }}
                 >
                   <Link href={`/blog/${post.slug}`} className="group block h-full">
-                    <div className="card-glass card-gradient h-full flex flex-col hover:border-violet-500/50 transition-all duration-300 overflow-hidden">
+                    <div className="flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/80 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/60 hover:shadow-2xl hover:shadow-violet-500/20 dark:border-slate-800/70 dark:bg-slate-900/70">
                       {post.featured_image_url && (
                         <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-violet-500/20 to-blue-500/20 mb-4 sm:mb-6 rounded-lg border border-violet-200 dark:border-violet-800">
                           <Image

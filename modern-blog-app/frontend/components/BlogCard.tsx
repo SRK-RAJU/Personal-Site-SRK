@@ -52,7 +52,7 @@ export default function BlogCard({
       className="group h-full"
     >
       <Link href={`/blog/${slug}`}>
-        <div className={`h-full bg-gradient-to-br from-white/5 to-white/0 dark:from-slate-800/20 dark:to-slate-900/10 rounded-xl border border-violet-500/20 dark:border-violet-500/30 overflow-hidden hover:border-violet-400/50 dark:hover:border-violet-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/30 flex flex-col backdrop-blur-sm ${
+        <div className={`relative h-full overflow-hidden rounded-[1.5rem] border border-violet-500/20 bg-white/80 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-400/60 hover:shadow-2xl hover:shadow-violet-500/30 dark:border-violet-500/30 dark:bg-slate-900/70 ${
           featured ? 'ring-2 ring-violet-500/50 dark:ring-violet-400/50' : ''
         }`}>
           {/* Featured badge */}
@@ -66,7 +66,7 @@ export default function BlogCard({
 
           {/* Image */}
           {featured_image_url && (
-            <div className="relative h-48 sm:h-56 overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800">
+            <div className="relative h-48 overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 sm:h-56">
               <Image
                 src={featured_image_url}
                 alt={title}
@@ -78,7 +78,7 @@ export default function BlogCard({
           )}
 
           {/* Content */}
-          <div className="p-6 flex-1 flex flex-col">
+          <div className="flex flex-1 flex-col p-6">
             {/* Category badge */}
             <div className="mb-3">
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-violet-500/20 to-purple-500/20 text-violet-300 dark:text-violet-200 text-xs font-semibold border border-violet-500/30 dark:border-violet-400/30">
@@ -88,7 +88,7 @@ export default function BlogCard({
             </div>
 
             {/* Title */}
-            <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2 line-clamp-2 group-hover:bg-gradient-to-r group-hover:from-violet-300 group-hover:to-purple-300 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+            <h3 className="mb-2 line-clamp-2 text-lg font-bold text-slate-900 transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-violet-300 group-hover:to-purple-300 group-hover:bg-clip-text group-hover:text-transparent dark:text-white sm:text-xl">
               {title}
             </h3>
 

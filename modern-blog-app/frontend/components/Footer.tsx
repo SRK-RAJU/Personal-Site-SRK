@@ -69,7 +69,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-gradient-to-br from-white via-violet-50 to-blue-50 dark:from-slate-950/95 dark:via-slate-900/85 dark:to-slate-950/95 border-t border-violet-200/40 dark:border-violet-500/30">
+    <footer className="relative border-t border-violet-200/50 bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.12),_transparent_32%),linear-gradient(135deg,_rgba(248,250,252,0.98),_rgba(239,246,255,0.92))] dark:border-violet-500/20 dark:bg-[radial-gradient(circle_at_top_left,_rgba(167,139,250,0.16),_transparent_36%),linear-gradient(135deg,_rgba(2,6,23,0.98),_rgba(15,23,42,0.95))]">
       {/* Decorative elements */}
       <motion.div
         className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-violet-200/20 to-purple-200/20 rounded-full blur-3xl -z-10"
@@ -92,7 +92,7 @@ export default function Footer() {
           viewport={{ once: true }}
         >
           {/* Brand Section */}
-          <motion.div className="col-span-1 space-y-4" variants={itemVariants}>
+          <motion.div className="col-span-1 space-y-4 rounded-3xl border border-white/70 bg-white/70 p-6 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70" variants={itemVariants}>
             <Link href="/" className="group cursor-pointer inline-block">
               <div className="relative inline-block">
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-100 to-blue-100 rounded-lg blur opacity-70 group-hover:opacity-100 transition duration-300" />
@@ -139,7 +139,7 @@ export default function Footer() {
           {/* Links Columns */}
           {footerLinks.map((section) => (
             <motion.div key={section.title} variants={itemVariants}>
-              <h4 className="font-bold text-slate-900 dark:text-white mb-4 text-lg flex items-center gap-2">
+              <h4 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white">
                 {section.title}
                 <FaArrowRight className="text-violet-600 dark:text-violet-400 text-sm" />
               </h4>
@@ -185,7 +185,7 @@ export default function Footer() {
         >
           {/* Copyright */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 group cursor-help"
+            className="group cursor-help rounded-2xl border border-white/70 bg-white/70 p-5 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition hover:-translate-y-1 hover:border-violet-500 dark:border-slate-800/70 dark:bg-slate-900/70 dark:hover:border-violet-500"
             variants={itemVariants}
             onMouseEnter={() => setCopyrightTooltip(true)}
             onMouseLeave={() => setCopyrightTooltip(false)}
@@ -217,7 +217,7 @@ export default function Footer() {
 
           {/* Content Protection */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500"
+            className="rounded-2xl border border-white/70 bg-white/70 p-5 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition hover:-translate-y-1 hover:border-violet-500 dark:border-slate-800/70 dark:bg-slate-900/70 dark:hover:border-violet-500"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
@@ -238,7 +238,7 @@ export default function Footer() {
 
           {/* Privacy Notice */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500"
+            className="rounded-2xl border border-white/70 bg-white/70 p-5 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition hover:-translate-y-1 hover:border-violet-500 dark:border-slate-800/70 dark:bg-slate-900/70 dark:hover:border-violet-500"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >

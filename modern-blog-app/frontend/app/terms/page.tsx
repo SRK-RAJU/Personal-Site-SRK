@@ -48,9 +48,9 @@ export default function Terms() {
   ];
 
   return (
-    <div className="container-max py-12">
+    <div className="container-max py-10 sm:py-12 lg:py-16">
       <motion.div
-        className="max-w-4xl mx-auto"
+        className="mx-auto max-w-5xl rounded-[2rem] border border-white/80 bg-white/70 p-6 shadow-2xl shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70 sm:p-8 lg:p-12"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -65,8 +65,8 @@ export default function Terms() {
           </Link>
         </motion.div>
 
-        <motion.div variants={itemVariants} className="mb-12">
-          <h1 className="text-5xl sm:text-6xl font-bold mb-4">Terms of Service</h1>
+        <motion.div variants={itemVariants} className="mb-10 rounded-[1.5rem] border border-violet-200/70 bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.15),_transparent_34%),linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-8 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[radial-gradient(circle_at_top_left,_rgba(167,139,250,0.2),_transparent_34%),linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))] sm:p-10">
+          <h1 className="mb-4 text-5xl font-bold text-slate-900 dark:text-white sm:text-6xl">Terms of Service</h1>
           <p className="text-lg text-slate-800 dark:text-slate-200">Last Updated: {lastUpdated}</p>
         </motion.div>
 
@@ -74,7 +74,7 @@ export default function Terms() {
           {sections.map((section, index) => (
             <div
               key={index}
-              className="bg-slate-50 dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700"
+              className="rounded-[1.25rem] border border-violet-200/70 bg-white/80 p-6 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70"
             >
               <h2 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
                 {section.title}
@@ -88,7 +88,7 @@ export default function Terms() {
 
         <motion.div
           variants={itemVariants}
-          className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700 text-center"
+          className="mt-10 rounded-[1.5rem] border border-white/70 bg-white/70 p-8 text-center shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70"
         >
           <p className="text-slate-800 dark:text-slate-200 mb-4">
             Questions about our terms? Let us know.

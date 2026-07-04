@@ -367,13 +367,13 @@ export default async function BlogPostPage({
   return (
     <article className="w-full">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-50 via-violet-50/30 to-blue-50/30 dark:from-slate-950 dark:via-violet-950/10 dark:to-blue-950/10 py-12 border-b border-violet-500/20">
+      <section className="border-b border-violet-500/20 bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.16),_transparent_34%),linear-gradient(135deg,_rgba(248,250,252,1),_rgba(239,246,255,0.92))] py-12 dark:bg-[radial-gradient(circle_at_top_left,_rgba(167,139,250,0.22),_transparent_34%),linear-gradient(135deg,_rgba(2,6,23,1),_rgba(15,23,42,0.96))]">
         <div className="container-max">
-          <div className="max-w-3xl mx-auto">
+          <div className="mx-auto max-w-4xl rounded-[2rem] border border-white/70 bg-white/70 p-6 shadow-2xl shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70 sm:p-8 lg:p-10">
             {/* Back Button */}
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 mb-6 font-semibold transition-colors"
+              className="mb-6 inline-flex items-center gap-2 font-semibold text-violet-600 transition-colors hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300"
             >
               <FaArrowLeft className="text-sm" />
               Back to Articles
@@ -382,19 +382,19 @@ export default async function BlogPostPage({
             {/* Category Badge */}
             {post.category && (
               <div className="mb-4">
-                <span className="inline-block px-3 py-1 bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-500/30 rounded-full text-sm font-semibold">
+                <span className="inline-block rounded-full border border-violet-500/30 bg-violet-500/15 px-3 py-1 text-sm font-semibold text-violet-700 shadow-sm shadow-violet-500/10 dark:text-violet-300">
                   {post.category}
                 </span>
               </div>
             )}
 
             {/* Title */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-slate-900 dark:text-white leading-tight">
+            <h1 className="mb-4 text-4xl font-bold leading-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl">
               {post.title}
             </h1>
 
             {/* Meta Info */}
-            <div className="flex flex-wrap gap-6 mt-8 text-slate-800 dark:text-slate-200 text-sm sm:text-base">
+            <div className="mt-8 flex flex-wrap gap-6 text-sm text-slate-800 dark:text-slate-200 sm:text-base">
               {post.author_name && (
                 <div className="flex items-center gap-2">
                   <FaUser className="text-violet-500" />
@@ -426,7 +426,7 @@ export default async function BlogPostPage({
       {post.featured_image_url && (
         <section className="py-8">
           <div className="container-max">
-            <div className="max-w-3xl mx-auto rounded-xl overflow-hidden shadow-lg">
+            <div className="mx-auto max-w-4xl overflow-hidden rounded-[1.75rem] border border-white/70 bg-white/70 shadow-2xl shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70">
               <Image
                 src={post.featured_image_url}
                 alt={post.title}
@@ -446,17 +446,17 @@ export default async function BlogPostPage({
           <div className="max-w-3xl mx-auto">
             {/* Excerpt */}
             {post.excerpt && (
-              <div className="mb-8 p-6 bg-violet-500/10 dark:bg-violet-500/5 border-l-4 border-violet-500 rounded">
-                <p className="text-lg text-slate-800 dark:text-slate-200 font-semibold italic">
+              <div className="mb-8 rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-6 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
+                <p className="text-lg font-semibold italic text-slate-800 dark:text-slate-200">
                   {post.excerpt}
                 </p>
               </div>
             )}
 
             {/* Main Content */}
-            <div className="prose prose-slate dark:prose-invert max-w-none mb-12">
+            <div className="prose prose-slate dark:prose-invert mb-12 max-w-none">
               {sections.length > 0 && (
-                <div className="mb-6 rounded-2xl border border-violet-300/40 bg-gradient-to-r from-violet-600/10 via-white/90 to-blue-500/10 p-4 shadow-sm dark:border-violet-700/40 dark:from-violet-600/10 dark:via-slate-900/80 dark:to-blue-500/10">
+                <div className="mb-6 rounded-[1.25rem] border border-violet-200/70 bg-white/80 p-4 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-violet-800/40 dark:bg-slate-900/70">
                   <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-violet-700 dark:text-violet-300">
                     Table of Contents
                   </p>
@@ -483,7 +483,7 @@ export default async function BlogPostPage({
                       key={`${section.title}-${index}`}
                       id={`section-${index}`}
                       open={index === 0}
-                      className="group overflow-hidden rounded-2xl border border-violet-300/40 bg-white/80 shadow-[0_10px_40px_rgba(109,40,217,0.08)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_45px_rgba(109,40,217,0.14)] dark:border-violet-700/40 dark:bg-slate-900/60"
+                      className="group overflow-hidden rounded-[1.25rem] border border-violet-200/70 bg-white/80 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-violet-500/20 dark:border-violet-800/40 dark:bg-slate-900/70"
                     >
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 font-semibold text-slate-900 transition hover:bg-violet-50 dark:text-white dark:hover:bg-violet-950/30">
                         <div className="flex items-center gap-3">
@@ -507,7 +507,7 @@ export default async function BlogPostPage({
 
             {/* Tags */}
             {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
-              <div className="mb-12 pt-8 border-t border-slate-200 dark:border-slate-700">
+              <div className="mb-12 border-t border-slate-200 pt-8 dark:border-slate-700">
                 <div className="flex flex-wrap gap-3">
                   {post.tags.map((tag: string) => (
                     <Link
@@ -523,21 +523,21 @@ export default async function BlogPostPage({
             )}
 
             {/* Call to Action */}
-            <div className="mt-12 p-8 bg-gradient-to-r from-violet-500/10 to-blue-500/10 dark:from-violet-500/5 dark:to-blue-500/5 border border-violet-500/30 rounded-xl">
-              <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
+            <div className="mt-12 rounded-[1.5rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(124,58,237,0.12),_rgba(59,130,246,0.1))] p-8 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(124,58,237,0.16),_rgba(59,130,246,0.12))]">
+              <h3 className="mb-4 text-2xl font-bold text-slate-900 dark:text-white">
                 Want More Tech Insights?
               </h3>
               <p className="text-slate-800 dark:text-slate-200 mb-6">
                 Subscribe to my blog for the latest updates on web development, cloud architecture, and DevOps practices.
               </p>
-              <button className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all hover:shadow-lg">
+              <button className="rounded-lg bg-gradient-to-r from-violet-600 to-blue-600 px-6 py-3 font-semibold text-white transition-all hover:from-violet-700 hover:to-blue-700 hover:shadow-lg">
                 Subscribe Now
               </button>
             </div>
 
             {/* More Posts */}
-            <div className="mt-12 pt-12 border-t border-slate-200 dark:border-slate-700">
-              <h3 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white">
+            <div className="mt-12 border-t border-slate-200 pt-12 dark:border-slate-700">
+              <h3 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">
                 More from Blog
               </h3>
               <Link

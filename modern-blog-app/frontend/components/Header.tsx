@@ -20,7 +20,7 @@ import {
   FaSun,
 } from 'react-icons/fa';
 import { useAuth } from '@/lib/authContext';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 
 export default function Header() {
@@ -30,6 +30,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const { user, userRole, signOut, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -66,8 +67,8 @@ export default function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-lg shadow-violet-500/30 border-b border-violet-100 dark:border-violet-900/20'
-          : 'bg-white/50 dark:bg-slate-950/50 backdrop-blur-md border-b border-transparent'
+          ? 'border-b border-white/60 bg-white/80 shadow-lg shadow-violet-500/20 backdrop-blur-xl dark:border-violet-900/20 dark:bg-slate-950/80'
+          : 'border-b border-transparent bg-white/60 backdrop-blur-md dark:bg-slate-950/60'
       }`}
     >
       <nav aria-label="Primary navigation" className="container-max flex items-center justify-between h-20">
@@ -119,7 +120,11 @@ export default function Header() {
               >
                 <Link
                   href={item.href}
-                  className="px-4 py-2 rounded-full bg-slate-100/90 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:text-violet-700 dark:hover:text-violet-100 transition-all duration-200 flex items-center gap-2 font-semibold ring-1 ring-slate-200 dark:ring-slate-700"
+                  className={`flex items-center gap-2 rounded-full px-4 py-2 font-semibold transition-all duration-200 ${
+                    pathname === item.href
+                      ? 'bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/20'
+                      : 'bg-slate-100/90 text-slate-900 ring-1 ring-slate-200 hover:bg-violet-100 hover:text-violet-700 dark:bg-slate-900/60 dark:text-slate-100 dark:ring-slate-700 dark:hover:bg-violet-900/40 dark:hover:text-violet-100'
+                  }`}
                 >
                   <Icon className="text-sm" />
                   {item.label}
@@ -281,7 +286,11 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-full bg-slate-100/90 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:text-violet-700 dark:hover:text-violet-100 transition-all font-semibold"
+                  className={`flex items-center gap-3 rounded-full px-4 py-3 font-semibold transition-all ${
+                    pathname === item.href
+                      ? 'bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/20'
+                      : 'bg-slate-100/90 text-slate-900 hover:bg-violet-100 hover:text-violet-700 dark:bg-slate-900/60 dark:text-slate-100 dark:hover:bg-violet-900/40 dark:hover:text-violet-100'
+                  }`}
                 >
                   <Icon className="text-lg" />
                   {item.label}
