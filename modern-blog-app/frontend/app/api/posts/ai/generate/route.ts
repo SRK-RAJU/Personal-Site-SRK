@@ -33,13 +33,14 @@ const tvly = tavily({
 const AI_MODEL_NAME = getGeminiModelName();
 const TAVILY_SEARCH_DEPTH: 'basic' | 'advanced' | 'fast' | 'ultra-fast' = 'basic';
 const TAVILY_SEARCH_TOPIC: 'general' | 'news' | 'finance' = 'news';
-const TAVILY_SEARCH_MAX_RESULTS = 6;
-const TAVILY_QUERY_CATEGORY_PROMPT_LIMIT = 8; // how many category names to include in the broad prompt
-const TAVILY_CATEGORY_QUERY_LIMIT = 10; // how many category-focused Tavily searches to run
-const TAVILY_CATEGORY_TOOLS_LIMIT = 14; // how many tools per category to mention in each category query
-const TAVILY_SEARCH_RESPONSE_LIMIT = 12; // max number of deduplicated results returned to Gemini
-const TAVILY_QUERY_TOOL_CHUNK_SIZE = 18; // split large tool groups into multiple searches so more tools are represented
-const SEQUENTIAL_REQUEST_DELAY_MS = 1000; // wait 1 second between sequential external API calls
+const TAVILY_SEARCH_MAX_RESULTS = 4;
+const TAVILY_QUERY_CATEGORY_PROMPT_LIMIT = 4; // how many category names to include in the broad prompt
+const TAVILY_CATEGORY_QUERY_LIMIT = 3; // how many category-focused Tavily searches to run
+const TAVILY_SEARCH_RESPONSE_LIMIT = 6; // max number of deduplicated results returned to Gemini
+const TAVILY_QUERY_TOOL_CHUNK_SIZE = 6; // split large tool groups into smaller searches
+const MAX_TAVILY_SEARCH_QUERIES = 4; // keep runtime low for Vercel/free tier
+const MAX_TAVILY_QUERY_LENGTH = 360; // Tavily rejects longer queries
+const SEQUENTIAL_REQUEST_DELAY_MS = 250; // shorter spacing to stay under serverless timeout
 
 function normalizeGoogleModelName(model: string): string {
   return model.replace(/^google-/i, '');
@@ -234,38 +235,43 @@ function dedupeSearchResults(results: SearchResult[]): SearchResult[] {
   });
 }
 
+function buildCompactTavilyQuery(category: string, tools: string[]): string {
+  const toolNames = tools.slice(0, TAVILY_QUERY_TOOL_CHUNK_SIZE).join(', ');
+  const baseQuery = `Recent ${category} tool news: ${toolNames}. Include CVEs, releases, security updates.`;
+
+  if (baseQuery.length <= MAX_TAVILY_QUERY_LENGTH) {
+    return baseQuery;
+  }
+
+  const shorterTools = tools.slice(0, Math.max(1, TAVILY_QUERY_TOOL_CHUNK_SIZE - 2)).join(', ');
+  return `Recent ${category} tool news: ${shorterTools}. Include CVEs and releases.`;
+}
+
 function buildTavilySearchQueries(toolsWithCategories: {name: string, category: string}[]): string[] {
   const toolNames = toolsWithCategories.map((tool) => tool.name).filter(Boolean);
   const totalTools = toolNames.length;
   const categories = Array.from(new Set(toolsWithCategories.map((tool) => tool.category).filter(Boolean))).slice(0, TAVILY_QUERY_CATEGORY_PROMPT_LIMIT);
 
   if (totalTools === 0) {
-    return ['Recent DevOps, cloud security, and AI tool industry trends.'];
+    return ['Recent DevOps, cloud security, and AI tool news.'];
   }
 
   const categoryGroups = groupToolsByCategory(toolsWithCategories);
   const orderedCategories = Object.keys(categoryGroups).sort((a, b) => a.localeCompare(b));
 
   const queries: string[] = [];
-
-  const primaryQuery = `Recent updates, security advisories, CVEs, releases, and feature news for a broad set of active enterprise tools across these categories: ${categories.join(', ')}. Focus on current trends, risks, and vendor news for DevOps, cloud, security, and AI teams. Representative tools: ${toolNames.slice(0, 40).join(', ')}.`;
+  const primaryQuery = `Recent enterprise DevOps, cloud, security, and AI tool news for ${categories.join(', ')}. Include CVEs, releases, and vendor updates.`;
   queries.push(primaryQuery);
 
   orderedCategories.slice(0, TAVILY_CATEGORY_QUERY_LIMIT).forEach((category) => {
     const tools = categoryGroups[category] || [];
-    const chunks: string[][] = [];
-
-    for (let index = 0; index < tools.length; index += TAVILY_QUERY_TOOL_CHUNK_SIZE) {
-      chunks.push(tools.slice(index, index + TAVILY_QUERY_TOOL_CHUNK_SIZE));
+    const query = buildCompactTavilyQuery(category, tools);
+    if (query) {
+      queries.push(query);
     }
-
-    chunks.forEach((chunk, chunkIndex) => {
-      const suffix = chunks.length > 1 ? ` (part ${chunkIndex + 1}/${chunks.length})` : '';
-      queries.push(`Recent news, security advisories, CVEs, and release information for active ${category}${suffix} tools, especially ${chunk.join(', ')}. Keep the focus on threats, vulnerabilities, modernization trends, and vendor announcements from the last 7 days.`);
-    });
   });
 
-  return queries;
+  return queries.slice(0, MAX_TAVILY_SEARCH_QUERIES);
 }
 
 async function searchTrendContext(toolsWithCategories: {name: string, category: string}[]): Promise<TrendSearchContext> {
@@ -389,7 +395,7 @@ async function generateWithGoogleGemini(systemPrompt: string, context: string, m
           generationConfig: {
             temperature: 0.6,
             topP: 0.95,
-            maxOutputTokens: 4000,
+            maxOutputTokens: 2500,
           },
         }),
       }
@@ -534,7 +540,8 @@ async function generateBlogPost(
   const toolNames = toolsWithCategories.map(t => t.name);
 
   let context = 'GLOBAL TREND CVE GROUND RESEARCH EXPANSIONS:\n\n';
-  trendNews.forEach((result, idx) => {
+  const limitedTrendNews = trendNews.slice(0, 8);
+  limitedTrendNews.forEach((result, idx) => {
     context += `${idx + 1}. **${result.title}**\n   - Source: ${result.url}\n   - Content: ${result.content}\n\n`;
   });
 
@@ -552,12 +559,12 @@ async function generateBlogPost(
   }
 
   let finalMarkdown = generatedMarkdown;
-  if (missingTools.length > 0) {
+  if (missingTools.length > 0 && process.env.ENABLE_GEMINI_FALLBACK === 'true' && missingTools.length <= 6) {
     console.warn('[GENERATION] Missing tool sections detected for:', missingTools.length, 'tools. Requesting short summaries from Gemini.');
     const batchPrompt = `Provide short 2-3 sentence summaries for each of the following tools. For each tool, start the section with a markdown heading exactly in this format: ### <Tool Name>\n\nThen write 2-3 concise sentences. Return ONLY those headings and summaries concatenated, no extra commentary.\n\nTools:\n${missingTools.join(', ')}`;
 
     try {
-      const fallbackSummaries = await generateWithGoogleGemini(systemPrompt, batchPrompt, selectedModel, 2);
+      const fallbackSummaries = await generateWithGoogleGemini(systemPrompt, batchPrompt, selectedModel, 1);
       if (fallbackSummaries && fallbackSummaries.trim().length > 0) {
         finalMarkdown = `${generatedMarkdown.trim()}\n\n${fallbackSummaries.trim()}`;
       }
