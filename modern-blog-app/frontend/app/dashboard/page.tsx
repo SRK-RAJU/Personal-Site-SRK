@@ -21,6 +21,9 @@ export default function DashboardHome() {
   const [aiMessage, setAiMessage] = useState('');
   const [aiError, setAiError] = useState('');
   const [lastGeneratedAt, setLastGeneratedAt] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState('AI/ML');
+  const [generateMode, setGenerateMode] = useState<'single' | 'all'>('single');
+  const [categoryCursor, setCategoryCursor] = useState(0);
 
   useEffect(() => {
     // Only fetch dashboard data on load. Generation is never triggered automatically.
@@ -95,16 +98,40 @@ export default function DashboardHome() {
     }
   };
 
-  const handleGenerateAiPost = async () => {
+  const categoryOptions = [
+    'AI/ML',
+    'Cloud',
+    'Security',
+    'Infrastructure',
+    'Container',
+    'Delivery',
+    'Observability',
+    'Database',
+    'Data',
+    'Networking',
+    'Identity',
+    'Developer',
+    'Operations',
+    'ERP',
+    'CRM',
+    'Marketing',
+    'HR',
+  ];
+
+  const nextCategory = categoryOptions[categoryCursor % categoryOptions.length];
+
+  const handleGenerateAiPost = async (categoryOverride?: string) => {
     if (!session?.access_token) {
       setAiError('You need to be signed in to run this action.');
       return;
     }
 
+    const effectiveCategory = categoryOverride || selectedCategory;
+
     setShowConfirm(false);
     setIsGeneratingAi(true);
     setAiError('');
-    setAiMessage('Generation started. The report is being created now without reloading the page.');
+    setAiMessage(generateMode === 'all' ? 'Starting category-based generation for all available categories...' : `Starting generation for ${effectiveCategory}...`);
 
     try {
       const response = await fetch('/api/posts/ai/generate', {
@@ -116,7 +143,11 @@ export default function DashboardHome() {
           'x-user-role': userRole || 'user',
           'x-user-email': session.user?.email || '',
         },
-        body: JSON.stringify({ source: 'dashboard-admin' }),
+        body: JSON.stringify({
+          source: 'dashboard-admin',
+          mode: generateMode === 'all' ? 'all-categories' : 'single-category',
+          category: effectiveCategory,
+        }),
       });
 
       const result = await response.json();
@@ -124,9 +155,12 @@ export default function DashboardHome() {
       if (response.ok && (result.success || result.skipped)) {
         const message = result.skipped
           ? `Generation was skipped: ${result.reason || 'No new post needed.'}`
-          : `Generation started successfully. ${result.post?.title ? `Created ${result.post.title}` : ''}`.trim();
+          : generateMode === 'all'
+            ? `Generated ${result.generated?.filter((item: any) => item.post)?.length || 0} category posts.`
+            : `Generation completed for ${result.category || effectiveCategory}.`;
         setAiMessage(message);
         setLastGeneratedAt(result.skipped ? lastGeneratedAt : 'Just now');
+        setCategoryCursor((value) => value + 1);
       } else {
         setAiError(result.error || 'AI generation failed.');
       }
@@ -230,40 +264,87 @@ export default function DashboardHome() {
               </h3>
             </div>
             <p className="text-sm text-slate-800 dark:text-slate-200 mb-3">
-              Admin-only action to generate a new AI report post when needed.
+              Admin-only action to generate a new AI report post for one category or all categories.
             </p>
             {userRole === 'admin' ? (
               <>
-                <button
-                  onClick={() => {
-                    setAiMessage('');
-                    setAiError('');
-                    setShowConfirm(true);
-                  }}
-                  disabled={isGeneratingAi}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {isGeneratingAi ? (
-                    <>
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      Running...
-                    </>
-                  ) : (
-                    'Run AI Generation'
-                  )}
-                </button>
+                <div className="mb-3 flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setGenerateMode('single')}
+                    className={`rounded-full px-3 py-1.5 text-sm font-semibold ${generateMode === 'single' ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200'}`}
+                  >
+                    Single category
+                  </button>
+                  <button
+                    onClick={() => setGenerateMode('all')}
+                    className={`rounded-full px-3 py-1.5 text-sm font-semibold ${generateMode === 'all' ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200'}`}
+                  >
+                    All categories
+                  </button>
+                </div>
+                {generateMode === 'single' && (
+                  <select
+                    value={selectedCategory}
+                    onChange={(event) => setSelectedCategory(event.target.value)}
+                    className="mb-3 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                  >
+                    {categoryOptions.map((category) => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                )}
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <button
+                    onClick={() => {
+                      if (isGeneratingAi) return;
+                      setShowConfirm(true);
+                    }}
+                    disabled={isGeneratingAi}
+                    className="flex-1 items-center justify-center gap-2 rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isGeneratingAi ? (
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mx-auto" />
+                    ) : generateMode === 'all' ? (
+                      'Generate all categories'
+                    ) : (
+                      `Generate ${selectedCategory}`
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (isGeneratingAi) return;
+                      setGenerateMode('single');
+                      setSelectedCategory(nextCategory);
+                      setShowConfirm(true);
+                    }}
+                    disabled={isGeneratingAi}
+                    className="flex-1 rounded-lg border border-amber-400 bg-white px-3 py-2 text-sm font-semibold text-amber-700 hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-900 dark:text-amber-300"
+                  >
+                    {isGeneratingAi ? 'Working…' : `Generate next: ${nextCategory}`}
+                  </button>
+                </div>
                 {showConfirm && (
                   <div className="mt-3 rounded-lg border border-amber-300 bg-white p-3 text-sm text-slate-700 dark:border-amber-700 dark:bg-slate-900 dark:text-slate-200">
-                    <p className="mb-2 font-semibold">Are you sure you want to run AI generation?</p>
+                    <p className="mb-2 font-semibold">
+                      {generateMode === 'all'
+                        ? 'Generate AI posts for all categories?'
+                        : `Generate the ${selectedCategory} post now?`}
+                    </p>
                     <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
-                      This uses paid AI/search credits, so only run it when you really need a new post.
+                      This uses paid AI/search credits, so only continue when you really want a new post.
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <button
-                        onClick={handleGenerateAiPost}
+                        onClick={() => {
+                          if (generateMode === 'all') {
+                            void handleGenerateAiPost();
+                          } else {
+                            void handleGenerateAiPost(selectedCategory);
+                          }
+                        }}
                         className="rounded bg-amber-600 px-3 py-1.5 text-white hover:bg-amber-700"
                       >
-                        Yes, run it
+                        Yes, generate it
                       </button>
                       <button
                         onClick={() => {
@@ -273,7 +354,7 @@ export default function DashboardHome() {
                         }}
                         className="rounded border border-slate-300 px-3 py-1.5 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800"
                       >
-                        No, keep it
+                        Cancel
                       </button>
                     </div>
                   </div>

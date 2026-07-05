@@ -84,6 +84,7 @@ export async function GET(request: NextRequest) {
     const order = searchParams.get('order') || 'published_at';
     const ascending = searchParams.get('ascending') === 'true';
     const includeAI = searchParams.get('includeAI') !== 'false'; // Include AI posts by default
+    const category = searchParams.get('category') || '';
 
     // Query regular posts - NO LIMIT, fetch all
     let query = supabase.from('posts').select('id, title, slug, excerpt, content, category, featured_image_url, published, published_at, author, read_time_minutes, view_count, created_at, updated_at');
@@ -92,17 +93,27 @@ export async function GET(request: NextRequest) {
       query = query.eq('published', true);
     }
 
+    if (category) {
+      query = query.ilike('category', `%${category}%`);
+    }
+
     const { data: regularPosts, error: regularError } = await query.order(order, { ascending });
 
     // Query AI-generated posts if requested - NO LIMIT, fetch all
     let aiPosts: any[] = [];
     if (includeAI) {
       try {
-        const { data: aiData, error: aiError } = await supabase
+        let aiQuery = supabase
           .from('ai_generated_posts')
           .select('*')
           .eq('status', 'published')
           .order(order, { ascending });
+
+        if (category) {
+          aiQuery = aiQuery.ilike('category', `%${category}%`);
+        }
+
+        const { data: aiData, error: aiError } = await aiQuery;
 
         if (!aiError && aiData && Array.isArray(aiData)) {
           // Transform AI posts to match regular post schema

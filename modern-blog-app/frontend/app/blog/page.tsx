@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaCalendar, FaUser, FaEye, FaArrowRight } from 'react-icons/fa';
@@ -11,6 +11,7 @@ export default function Blog() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -30,6 +31,26 @@ export default function Blog() {
     loadPosts();
   }, []);
 
+  const groupedPosts = useMemo(() => {
+    const groups = new Map<string, any[]>();
+
+    posts.forEach((post) => {
+      const category = (post.category || 'General').toString().trim() || 'General';
+      if (!groups.has(category)) {
+        groups.set(category, []);
+      }
+      groups.get(category)!.push(post);
+    });
+
+    return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b));
+  }, [posts]);
+
+  const visibleGroups = selectedCategory === 'all'
+    ? groupedPosts
+    : groupedPosts.filter(([category]) => category === selectedCategory);
+
+  const categories = ['all', ...groupedPosts.map(([category]) => category)];
+
   return (
     <div className="min-h-screen w-full">
       <section className="section-padding border-b border-violet-300/60 bg-[radial-gradient(circle_at_top,_rgba(124,58,237,0.16),_transparent_45%),linear-gradient(135deg,_rgba(248,250,252,1),_rgba(239,246,255,0.9))] dark:border-violet-700/50 dark:bg-[radial-gradient(circle_at_top,_rgba(167,139,250,0.2),_transparent_48%),linear-gradient(135deg,_rgba(2,6,23,1),_rgba(15,23,42,0.96))]">
@@ -44,7 +65,7 @@ export default function Blog() {
               <span className="gradient-text">Latest</span> Posts
             </h1>
             <p className="text-slate-900 dark:text-slate-100 text-base sm:text-lg max-w-2xl mx-auto font-semibold">
-              Fresh AI-generated posts covering DevOps, cloud architecture, security, and automation.
+              Fresh weekly posts across AI/ML, cloud, DevOps, security, and platform engineering.
             </p>
           </motion.div>
         </div>
@@ -57,93 +78,120 @@ export default function Blog() {
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-violet-500 border-t-transparent mx-auto"></div>
               <p className="mt-4 text-slate-800 dark:text-slate-200">Loading articles...</p>
             </div>
-          ) : posts.length > 0 ? (
+          ) : error ? (
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
-              initial="hidden"
-              animate="visible"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.1,
-                  },
-                },
-              }}
+              className="text-center py-16 sm:py-20"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
             >
-              {posts.map((post: any, idx: number) => (
-                <motion.div
-                  key={post.id}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0 },
-                  }}
-                  transition={{ duration: 0.3, delay: idx * 0.1 }}
-                >
-                  <Link href={`/blog/${post.slug}`} className="group block h-full">
-                    <div className="flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/80 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/60 hover:shadow-2xl hover:shadow-violet-500/20 dark:border-slate-800/70 dark:bg-slate-900/70">
-                      {post.featured_image_url && (
-                        <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-violet-500/20 to-blue-500/20 mb-4 sm:mb-6 rounded-lg border border-violet-200 dark:border-violet-800">
-                          <Image
-                            src={post.featured_image_url}
-                            alt={post.title}
-                            fill
-                            unoptimized
-                            onError={(e) => {
-                              const img = e.target as HTMLImageElement;
-                              img.style.display = 'none';
-                            }}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                        </div>
-                      )}
-
-                      {post.category && (
-                        <div className="mb-3 flex gap-2">
-                          <span className="badge text-xs">{post.category}</span>
-                        </div>
-                      )}
-
-                      <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 line-clamp-2 group-hover:text-violet-500 transition-colors">
-                        {post.title}
-                      </h3>
-
-                      <p className="text-slate-800 dark:text-slate-200 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-3 flex-1">
-                        {post.excerpt || post.content?.slice(0, 150)}
-                      </p>
-
-                      <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-800 dark:text-slate-200">
-                        {post.published_at && (
-                          <div className="flex items-center gap-1.5">
-                            <FaCalendar className="text-violet-500" />
-                            <span>{new Date(post.published_at).toLocaleDateString()}</span>
-                          </div>
-                        )}
-                        
-                        {(post.author_name || post.author) && (
-                          <div className="flex items-center gap-1.5">
-                            <FaUser className="text-blue-500" />
-                            <span>{post.author_name || post.author || 'AI Agent'}</span>
-                          </div>
-                        )}
-
-                        {post.view_count !== undefined && (
-                          <div className="flex items-center gap-1.5">
-                            <FaEye className="text-purple-500" />
-                            <span>{post.view_count}</span>
-                          </div>
-                        )}
-
-                        <FaArrowRight className="ml-auto text-violet-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
+              <div className="text-6xl mb-4">⚠️</div>
+              <h3 className="text-2xl sm:text-3xl font-bold mb-2">Unable to load posts</h3>
+              <p className="text-slate-800 dark:text-slate-200 mb-6">{error}</p>
             </motion.div>
+          ) : posts.length > 0 ? (
+            <>
+              <div className="mb-8 flex flex-wrap gap-2">
+                {categories.map((category) => {
+                  const isActive = selectedCategory === category;
+                  const label = category === 'all' ? 'All topics' : category;
+                  return (
+                    <button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${isActive ? 'border-violet-500 bg-violet-600 text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-violet-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200'}`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {visibleGroups.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-700 dark:border-slate-700 dark:text-slate-300">
+                  No posts found for this category yet.
+                </div>
+              ) : (
+                visibleGroups.map(([category, categoryPosts]) => (
+                  <div key={category} className="mb-10">
+                    <div className="mb-4 flex items-center justify-between">
+                      <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">{category}</h2>
+                      <span className="text-sm text-slate-600 dark:text-slate-400">Weekly updates</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+                      {categoryPosts.map((post: any, idx: number) => (
+                        <motion.div
+                          key={post.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: idx * 0.08 }}
+                        >
+                          <Link href={`/blog/${post.slug}`} className="group block h-full">
+                            <div className="flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/80 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/60 hover:shadow-2xl hover:shadow-violet-500/20 dark:border-slate-800/70 dark:bg-slate-900/70">
+                              {post.featured_image_url && (
+                                <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-violet-500/20 to-blue-500/20 mb-4 sm:mb-6 rounded-lg border border-violet-200 dark:border-violet-800">
+                                  <Image
+                                    src={post.featured_image_url}
+                                    alt={post.title}
+                                    fill
+                                    unoptimized
+                                    onError={(e) => {
+                                      const img = e.target as HTMLImageElement;
+                                      img.style.display = 'none';
+                                    }}
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                                </div>
+                              )}
+
+                              {post.category && (
+                                <div className="mb-3 flex gap-2">
+                                  <span className="badge text-xs">{post.category}</span>
+                                </div>
+                              )}
+
+                              <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 line-clamp-2 group-hover:text-violet-500 transition-colors">
+                                {post.title}
+                              </h3>
+
+                              <p className="text-slate-800 dark:text-slate-200 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-3 flex-1">
+                                {post.excerpt || post.content?.slice(0, 150)}
+                              </p>
+
+                              <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-800 dark:text-slate-200">
+                                {post.published_at && (
+                                  <div className="flex items-center gap-1.5">
+                                    <FaCalendar className="text-violet-500" />
+                                    <span>{new Date(post.published_at).toLocaleDateString()}</span>
+                                  </div>
+                                )}
+
+                                {(post.author_name || post.author) && (
+                                  <div className="flex items-center gap-1.5">
+                                    <FaUser className="text-blue-500" />
+                                    <span>{post.author_name || post.author || 'AI Agent'}</span>
+                                  </div>
+                                )}
+
+                                {post.view_count !== undefined && (
+                                  <div className="flex items-center gap-1.5">
+                                    <FaEye className="text-purple-500" />
+                                    <span>{post.view_count}</span>
+                                  </div>
+                                )}
+
+                                <FaArrowRight className="ml-auto text-violet-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                            </div>
+                          </Link>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                ))
+              )}
+            </>
           ) : (
             <motion.div
               className="text-center py-16 sm:py-20"
