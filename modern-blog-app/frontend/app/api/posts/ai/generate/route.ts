@@ -1093,11 +1093,15 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       return NextResponse.json({ error: 'Configuration Error', missing_vars: envCheck.missing }, { status: 503 });
     }
 
+    const isAdmin = auth.isValid;
+
     await releaseStaleGenerationLocks();
 
-    const generationInProgress = await hasActiveGenerationInProgress();
-    if (generationInProgress) {
-      return NextResponse.json({ success: true, skipped: true, reason: 'Generation already in progress' }, { status: 200 });
+    if (!isAdmin) {
+      const generationInProgress = await hasActiveGenerationInProgress();
+      if (generationInProgress) {
+        return NextResponse.json({ success: true, skipped: true, reason: 'Generation already in progress' }, { status: 200 });
+      }
     }
 
     await logGeneration(runId, { run_id: runId, status: 'running', posts_generated: 0, posts_published: 0 });
@@ -1142,10 +1146,12 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
 
       for (const category of selectedCategories) {
         const categorySlug = getTodaySlug(category);
-        const { alreadyGenerated } = await checkIfAlreadyGeneratedToday(category);
-        if (alreadyGenerated) {
-          generated.push({ category, skipped: true, slug: categorySlug, reason: 'Already generated today' });
-          continue;
+        if (!isAdmin) {
+          const { alreadyGenerated } = await checkIfAlreadyGeneratedToday(category);
+          if (alreadyGenerated) {
+            generated.push({ category, skipped: true, slug: categorySlug, reason: 'Already generated today' });
+            continue;
+          }
         }
 
         const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, 1, category);
@@ -1189,9 +1195,11 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
     }
 
     const category = selectedCategories[0];
-    const { alreadyGenerated, slug } = await checkIfAlreadyGeneratedToday(category);
-    if (alreadyGenerated) {
-      return NextResponse.json({ success: true, skipped: true, slug, reason: 'Already generated today' }, { status: 200 });
+    if (!isAdmin) {
+      const { alreadyGenerated, slug } = await checkIfAlreadyGeneratedToday(category);
+      if (alreadyGenerated) {
+        return NextResponse.json({ success: true, skipped: true, slug, reason: 'Already generated today' }, { status: 200 });
+      }
     }
 
     const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, batchIndex, category);
