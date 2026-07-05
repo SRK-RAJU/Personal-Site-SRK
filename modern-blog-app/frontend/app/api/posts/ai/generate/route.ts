@@ -287,7 +287,7 @@ async function getToolsForGeneration(limit: number = TOOLS_COVERAGE_QUERY_LIMIT,
       .limit(Math.max(limit, 1000));
 
     if (category && category.trim()) {
-      query = query.ilike('category', `%${category.trim()}%`);
+      query = query.ilike('category', category.trim());
     }
 
     const { data, error } = await query;
@@ -358,12 +358,140 @@ function dedupeSearchResults(results: SearchResult[]): SearchResult[] {
   });
 }
 
-function buildTavilySearchQuery(toolsWithCategories: {name: string, category: string}[]): string {
-  const category = toolsWithCategories[0]?.category || 'AI/ML';
+function normalizeCategoryLabel(category?: string): string {
+  return (category || 'General').trim();
+}
+
+function getCategoryPromptDetails(category?: string) {
+  const normalized = (category || 'General').toLowerCase();
+
+  if (normalized.includes('security') || normalized.includes('sec')) {
+    return {
+      title: 'Security Report',
+      focus: 'vulnerabilities, CVEs, threat intelligence, security incidents, attack campaigns, patches, and risk mitigation',
+      guidance: 'Prioritize security advisories, active CVEs, incident analysis, exploit trends, patch guidance, and vulnerability management updates.',
+    };
+  }
+
+  if (normalized.includes('ai') || normalized.includes('ml')) {
+    return {
+      title: 'AI/ML Report',
+      focus: 'model releases, generative AI updates, research breakthroughs, tool adoption, and product innovations',
+      guidance: 'Prioritize new releases, model improvements, AI product advances, deployment trends, and relevant developer or enterprise implications.',
+    };
+  }
+
+  if (normalized.includes('cloud')) {
+    return {
+      title: 'Cloud Report',
+      focus: 'platform releases, service updates, outages, pricing changes, and migration guidance',
+      guidance: 'Prioritize new cloud service launches, infrastructure updates, region expansions, cost changes, upgrade paths, and operational impacts.',
+    };
+  }
+
+  if (normalized.includes('devops') || normalized.includes('ops') || normalized.includes('delivery')) {
+    return {
+      title: 'DevOps Report',
+      focus: 'release pipelines, automation, deployments, issue resolution, bug fixes, and observability updates',
+      guidance: 'Prioritize operational incidents, release cadence, deployment tooling updates, bug fix summaries, and platform stability improvements.',
+    };
+  }
+
+  if (normalized.includes('container')) {
+    return {
+      title: 'Container Report',
+      focus: 'container platforms, orchestration updates, runtime security, image management, and Kubernetes stability',
+      guidance: 'Prioritize Kubernetes and container platform releases, runtime security patches, registry updates, deployment automation, and runtime performance issues.',
+    };
+  }
+
+  if (normalized.includes('observability') || normalized.includes('monitoring') || normalized.includes('tracing')) {
+    return {
+      title: 'Observability Report',
+      focus: 'monitoring, logging, tracing, alerting, incident detection, and reliability improvements',
+      guidance: 'Prioritize observability platform releases, new instrumentation features, alerting enhancements, incident response workflows, and reliability signals.',
+    };
+  }
+
+  if (normalized.includes('database')) {
+    return {
+      title: 'Database Report',
+      focus: 'database releases, performance updates, backups, replication, and security hardening',
+      guidance: 'Prioritize database engine updates, cloud data service changes, performance tuning, backup/recovery improvements, and data security advisories.',
+    };
+  }
+
+  if (normalized.includes('data')) {
+    return {
+      title: 'Data Report',
+      focus: 'data platforms, analytics releases, pipelines, governance, and privacy updates',
+      guidance: 'Prioritize data integration, analytics platform updates, pipeline stability, governance controls, and compliance or privacy-related news.',
+    };
+  }
+
+  if (normalized.includes('developer') || normalized.includes('dev')) {
+    return {
+      title: 'Developer Tools Report',
+      focus: 'developer tooling, SDKs, APIs, productivity improvements, and CI/CD integrations',
+      guidance: 'Prioritize developer experience updates, new SDK releases, API changes, tooling enhancements, and workflow automation improvements.',
+    };
+  }
+
+  if (normalized.includes('network') || normalized.includes('identity')) {
+    return {
+      title: 'Infrastructure Report',
+      focus: 'connectivity, access control, performance, security incidents, and infrastructure updates',
+      guidance: 'Prioritize networking changes, identity updates, incident response, and infrastructure stability improvements.',
+    };
+  }
+
+  if (normalized.includes('erp')) {
+    return {
+      title: 'ERP Report',
+      focus: 'enterprise resource planning updates, business process automation, integrations, and platform stability',
+      guidance: 'Prioritize ERP feature launches, integration updates, business workflow changes, and reliability fixes for enterprise systems.',
+    };
+  }
+
+  if (normalized.includes('crm')) {
+    return {
+      title: 'CRM Report',
+      focus: 'customer relationship management updates, sales automation, support workflows, and integration improvements',
+      guidance: 'Prioritize CRM product releases, sales and service automation updates, integration changes, and customer data handling improvements.',
+    };
+  }
+
+  if (normalized.includes('marketing')) {
+    return {
+      title: 'Marketing Report',
+      focus: 'marketing automation, campaign analytics, creative tools, and audience engagement updates',
+      guidance: 'Prioritize marketing platform releases, analytics enhancements, campaign automation features, and data-driven engagement improvements.',
+    };
+  }
+
+  if (normalized.includes('hr')) {
+    return {
+      title: 'HR Report',
+      focus: 'people operations, talent management, recruiting tools, and compliance updates',
+      guidance: 'Prioritize HR and people ops platform releases, workforce management improvements, recruiting tool updates, and compliance or benefits-related news.',
+    };
+  }
+
+  return {
+    title: `${normalizeCategoryLabel(category)} Report`,
+    focus: 'new releases, issues, bug fixes, security notices, and category-specific updates',
+    guidance: 'Prioritize category-relevant news, releases, bug fixes, and any security or reliability updates that matter to practitioners.',
+  };
+}
+
+function buildTavilySearchQuery(toolsWithCategories: {name: string, category: string}[], category?: string): string {
+  const selectedCategory = normalizeCategoryLabel(category || toolsWithCategories[0]?.category || 'General');
   const toolNames = toolsWithCategories.map((tool) => tool.name).filter(Boolean).slice(0, 4);
-  return toolNames.length === 0
-    ? 'Recent AI, cloud, DevOps, and security tool releases and CVEs for the last 7 days.'
-    : `Recent ${category} tool releases, CVEs, pricing changes, and migration guidance for the last 7 days. Focus on ${toolNames.join(', ')}.`;
+  const baseQuery = toolNames.length === 0
+    ? `Recent ${selectedCategory} news, releases, vulnerabilities, incidents, and bug fixes for the last 7 days.`
+    : `Recent ${selectedCategory} news, releases, vulnerabilities, incidents, and bug fixes for the last 7 days. Focus on ${toolNames.join(', ')}.`;
+
+  return baseQuery;
 }
 
 async function searchTrendContext(toolsWithCategories: {name: string, category: string}[]): Promise<TrendSearchContext> {
@@ -372,7 +500,8 @@ async function searchTrendContext(toolsWithCategories: {name: string, category: 
     return { results: [], queryCount: 0 };
   }
 
-  const toolQueries = [buildTavilySearchQuery(toolsWithCategories)].slice(0, MAX_TAVILY_SEARCH_QUERIES);
+  const category = toolsWithCategories[0]?.category;
+  const toolQueries = [buildTavilySearchQuery(toolsWithCategories, category)].slice(0, MAX_TAVILY_SEARCH_QUERIES);
   const delayMs = process.env.TAVILY_SEARCH_DELAY_MS
     ? Number(process.env.TAVILY_SEARCH_DELAY_MS)
     : tavilyApiKey ? 0 : 1500;
@@ -434,7 +563,7 @@ async function searchTrendContext(toolsWithCategories: {name: string, category: 
       console.warn('[TAVILY-SEARCH] No trend results from batched queries, falling back to generic research search.');
       await sleep(1200);
       try {
-        const fallbackResponse: any = await withRetry(() => tvly.search('DevOps cloud security CVE enterprise tools trends 2026 for the last 7 days', {
+const fallbackResponse: any = await withRetry(() => tvly.search(buildTavilySearchQuery(toolsWithCategories, category) + ' Focus on the last 7 days of relevant news and vulnerabilities.', {
           days: 7,
           maxResults: TAVILY_SEARCH_MAX_RESULTS,
           searchDepth: TAVILY_SEARCH_DEPTH,
@@ -565,45 +694,49 @@ function buildTechnologyStackSection(toolsWithCategories: {name: string, categor
 
 function createSystemPrompt(
   excludedTopics: ExcludedTopic[],
-  toolsWithCategories: {name: string, category: string}[]
+  toolsWithCategories: {name: string, category: string}[],
+  category?: string
 ): string {
+  const categoryLabel = normalizeCategoryLabel(category || toolsWithCategories[0]?.category || 'General');
+  const categoryDetails = getCategoryPromptDetails(categoryLabel);
   const excludedTopicsText = excludedTopics.map((t) => `- ${t.tool_name}: ${t.feature_or_fix}`).join('\n');
-  const categoryPriority = ['AI', 'Cloud', 'Security', 'Operations', 'DevOps', 'Networking', 'Development', 'Other'];
   const toolsByCategory = toolsWithCategories.reduce((acc, tool) => {
-    const category = tool.category || 'Other';
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(tool.name);
+    const toolCategory = tool.category || categoryLabel || 'Other';
+    if (!acc[toolCategory]) acc[toolCategory] = [];
+    acc[toolCategory].push(tool.name);
     return acc;
   }, {} as Record<string, string[]>);
 
   const categoryBreakdown = Object.entries(toolsByCategory)
-    .sort(([a], [b]) => {
-      const aIndex = categoryPriority.indexOf(a);
-      const bIndex = categoryPriority.indexOf(b);
-      const aKey = aIndex === -1 ? categoryPriority.length : aIndex;
-      const bKey = bIndex === -1 ? categoryPriority.length : bIndex;
-      return aKey - bKey || a.localeCompare(b);
-    })
     .map(([cat, tools]) => `- **${cat}**: ${tools.join(', ')}`)
     .join('\n');
 
-  return `You are an expert DevOps, Cloud, and Cybersecurity technical writer.
-Create one concise weekly report focused on the most important current AI, cloud, DevOps, and security tools from the provided tool set. Prioritize recent momentum, new releases, security updates, and practical platform impact.
+  return `You are an expert technical writer for ${categoryLabel} content.
+Generate a focused ${categoryDetails.title} for the selected category only. Do not write about unrelated categories, unrelated tools, or general DevOps/cloud/security topics outside the chosen category.
+
+FOCUS:
+- ${categoryDetails.guidance}
+- If the category is security-related, emphasize CVEs, security incidents, patches, and mitigation guidance.
+- If the category is AI/ML, emphasize model updates, feature releases, research advances, and practical product implications.
+- If the category is cloud-related, emphasize service updates, rollout changes, pricing changes, migration guidance, and operational implications.
+- If the category is DevOps/operations-related, emphasize automation, release pipelines, observability, bug fixes, issues, and infrastructure stability.
+- Always keep category coverage specific and do not include information from other categories.
 
 FORMAT RULES:
-- Title (# format): "Weekly DevOps & Cloud Security Report: Hot Tools Brief"
-- Section headings (## format) for major themes
-- Tool summaries (### format) for the most relevant tools inside each category
-- Add a dedicated section titled "## Technology Stack" near the end of the article that groups the covered tools by category in a concise, scannable way
-- Use this order whenever possible: AI / Generative Intelligence, Cloud, Security, Operations
-- Keep the report compact and easy to scan
-- Focus on the most relevant tools from the list below rather than trying to cover every possible tool
-- When discussing CVEs, releases, bug fixes, patches, and product updates, summarize them in your own words and avoid verbatim copying of long vendor text or release notes; focus on implications, risks, and practical takeaways
-- Do not reproduce large excerpts from source pages, release notes, or blog posts; keep the output original and concise
- 
+- Title (# format): "Weekly ${categoryDetails.title}: Category Update"
+- Section headings (## format) for major themes.
+- Tool summaries (### format) only for tools in the selected category.
+- Add a dedicated section titled "## Category Context" or "## Technology Stack" near the end of the article.
+- Use plain, professional markdown.
+- Keep content factual, concise, and focused on the selected category.
+- Do not reproduce long vendor release notes verbatim.
+- Use the provided tool list as your coverage universe.
+
 IMPORTANT COVERAGE RULES:
-- Use the provided tool list as your coverage universe. If the list is long, prioritize the highest-impact tools and summarize the rest by category.
-- At the end of the document include a ## Coverage Checklist section listing every category and the major tools covered.
+- Cover only the selected category and its relevant tools.
+- Do not include other categories or unrelated tool updates.
+- If multiple tools are present, summarize each category tool in its own section.
+- Finish with a ## Coverage Checklist section listing every tool and category covered.
 
 TOOLS TO COVER:
 ${categoryBreakdown}
@@ -644,18 +777,20 @@ function appendMissingToolSummaries(markdown: string, tools: string[]): string {
   return `${existingText}\n\n${sections.join('\n\n')}`;
 }
 
-function buildCompactFallbackMarkdown(toolsWithCategories: {name: string, category: string}[], trendNews: SearchResult[]): string {
+function buildCompactFallbackMarkdown(toolsWithCategories: {name: string, category: string}[], trendNews: SearchResult[], category?: string): string {
+  const selectedCategory = normalizeCategoryLabel(category || toolsWithCategories[0]?.category || 'General');
+  const categoryDetail = getCategoryPromptDetails(selectedCategory);
   const grouped = toolsWithCategories.reduce((acc, tool) => {
-    const category = tool.category || 'Other';
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(tool.name);
+    const toolCategory = tool.category || selectedCategory;
+    if (!acc[toolCategory]) acc[toolCategory] = [];
+    acc[toolCategory].push(tool.name);
     return acc;
   }, {} as Record<string, string[]>);
 
   const lines = [
-    '# Weekly DevOps & Cloud Security Report: Hot Tools Brief',
+    `# Weekly ${categoryDetail.title}: Hot Tools Brief`,
     '',
-    'This week’s report focuses on the most relevant AI, cloud, DevOps, and security tools that are shaping delivery and security operations.',
+    `This week’s report focuses on the most relevant ${selectedCategory} tools and updates.`,
     '',
     '## Market Pulse',
     '',
@@ -690,7 +825,7 @@ async function generateBlogPost(
   category?: string
 ): Promise<GeneratedPost | null> {
   if (!getAiApiKey()) return null;
-  const systemPrompt = createSystemPrompt(excludedTopics, toolsWithCategories);
+  const systemPrompt = createSystemPrompt(excludedTopics, toolsWithCategories, category);
 
   let context = 'GLOBAL TREND CVE GROUND RESEARCH EXPANSIONS:\n\n';
   const limitedTrendNews = trendNews.slice(0, 6);
@@ -708,7 +843,7 @@ async function generateBlogPost(
   }
 
   if (!generatedMarkdown) {
-    generatedMarkdown = buildCompactFallbackMarkdown(toolsWithCategories, trendNews);
+    generatedMarkdown = buildCompactFallbackMarkdown(toolsWithCategories, trendNews, category);
   }
 
   if (!generatedMarkdown) {
@@ -1080,6 +1215,7 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
 
     await logGeneration(runId, { run_id: runId, status: 'success', posts_generated: 1, posts_published: 1 });
     const duration = Math.round((Date.now() - startTime) / 1000);
+    const promptDetails = getCategoryPromptDetails(category);
 
     return NextResponse.json({
       success: true,
@@ -1094,6 +1230,7 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       tools_covered: post.tools_covered.length,
       batch: batchIndex,
       backup_path: saveResult.backupPath,
+      category_prompt_details: promptDetails,
       post: { title: post.title, slug: post.slug, cves_mentioned: post.cves_mentioned }
     }, { status: 200 });
 

@@ -6,6 +6,48 @@ import { useRouter } from 'next/navigation';
 import { FaBook, FaImage, FaUsers, FaEye, FaArrowLeft, FaRobot } from 'react-icons/fa';
 import { useAuth } from '@/lib/authContext';
 
+function getCategoryPromptDetails(category: string) {
+  const normalized = (category || 'General').toLowerCase();
+
+  if (normalized.includes('security') || normalized.includes('sec')) {
+    return {
+      title: 'Security Report',
+      focus: 'vulnerabilities, CVEs, security incidents, patches, and risk mitigation',
+      guidance: 'Prioritize security advisories, active CVEs, incident analysis, exploit trends, patch guidance, and vulnerability management updates.',
+    };
+  }
+
+  if (normalized.includes('ai') || normalized.includes('ml')) {
+    return {
+      title: 'AI/ML Report',
+      focus: 'AI model updates, generative AI releases, research advances, and product implications',
+      guidance: 'Prioritize new model releases, AI feature updates, research breakthroughs, developer adoption, and enterprise impacts.',
+    };
+  }
+
+  if (normalized.includes('cloud')) {
+    return {
+      title: 'Cloud Report',
+      focus: 'cloud service updates, region expansions, pricing changes, and migration guidance',
+      guidance: 'Prioritize cloud platform releases, service improvements, pricing changes, migration notes, and operational impacts.',
+    };
+  }
+
+  if (normalized.includes('devops') || normalized.includes('ops') || normalized.includes('delivery')) {
+    return {
+      title: 'DevOps Report',
+      focus: 'release pipelines, automation, deployments, issue resolution, bug fixes, and observability updates',
+      guidance: 'Prioritize operational incidents, deployment workflows, tooling updates, bug fix summaries, and stability improvements.',
+    };
+  }
+
+  return {
+    title: `${category} Report`,
+    focus: 'category-specific releases, bug fixes, issues, and updates',
+    guidance: 'Prioritize news that is directly relevant to the selected category and avoid unrelated topics.',
+  };
+}
+
 export default function DashboardHome() {
   const router = useRouter();
   const { session, userRole } = useAuth();
@@ -24,6 +66,9 @@ export default function DashboardHome() {
   const [selectedCategory, setSelectedCategory] = useState('AI/ML');
   const [generateMode, setGenerateMode] = useState<'single' | 'all'>('single');
   const [categoryCursor, setCategoryCursor] = useState(0);
+  const [promptDetails, setPromptDetails] = useState<{ title: string; focus: string; guidance: string } | null>(null);
+  const [promptDetailsByCategory, setPromptDetailsByCategory] = useState<Array<{ category: string; title: string; focus: string; guidance: string }>>([]);
+  const [categoryStatuses, setCategoryStatuses] = useState<Array<{ category: string; saved?: boolean; skipped?: boolean; reason?: string; title?: string; slug?: string }>>([]);
 
   useEffect(() => {
     // Only fetch dashboard data on load. Generation is never triggered automatically.
@@ -132,6 +177,9 @@ export default function DashboardHome() {
     setIsGeneratingAi(true);
     setAiError('');
     setAiMessage(generateMode === 'all' ? 'Starting category-based generation for all available categories...' : `Starting generation for ${effectiveCategory}...`);
+    setPromptDetails(null);
+    setPromptDetailsByCategory([]);
+    setCategoryStatuses([]);
 
     try {
       const response = await fetch('/api/posts/ai/generate', {
@@ -158,9 +206,18 @@ export default function DashboardHome() {
           : generateMode === 'all'
             ? `Generated ${result.generated?.filter((item: any) => item.post)?.length || 0} category posts.`
             : `Generation completed for ${result.category || effectiveCategory}.`;
+
         setAiMessage(message);
         setLastGeneratedAt(result.skipped ? lastGeneratedAt : 'Just now');
         setCategoryCursor((value) => value + 1);
+
+        if (result.mode === 'all-categories') {
+          setPromptDetailsByCategory(result.prompt_details_by_category || []);
+          setCategoryStatuses(result.generated || []);
+        } else {
+          setPromptDetails(result.category_prompt_details || null);
+          setCategoryStatuses([{ category: result.category || effectiveCategory, saved: !result.skipped, skipped: result.skipped, reason: result.reason || (result.post ? 'Generated successfully.' : 'No details'), title: result.post?.title, slug: result.post?.slug }]);
+        }
       } else {
         setAiError(result.error || 'AI generation failed.');
       }
@@ -333,6 +390,32 @@ export default function DashboardHome() {
                     <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
                       This uses paid AI/search credits, so only continue when you really want a new post.
                     </p>
+                    {generateMode === 'single' && (
+                      <div className="mb-3 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                          Selected category prompt
+                        </p>
+                        <p className="mt-2 text-sm font-semibold text-slate-900 dark:text-white">
+                          {getCategoryPromptDetails(selectedCategory).title}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+                          Focus: {getCategoryPromptDetails(selectedCategory).focus}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+                          Guidance: {getCategoryPromptDetails(selectedCategory).guidance}
+                        </p>
+                      </div>
+                    )}
+                    {generateMode === 'all' && (
+                      <div className="mb-3 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                          All-categories generation
+                        </p>
+                        <p className="mt-2 text-xs text-slate-600 dark:text-slate-400">
+                          Each category will be generated with its own specific prompt. The system will avoid mixing unrelated category topics in a single post.
+                        </p>
+                      </div>
+                    )}
                     <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => {
@@ -361,6 +444,45 @@ export default function DashboardHome() {
                 )}
                 {aiMessage && <p className="mt-3 text-sm text-emerald-700 dark:text-emerald-400">{aiMessage}</p>}
                 {aiError && <p className="mt-3 text-sm text-red-700 dark:text-red-400">{aiError}</p>}
+                {promptDetails && (
+                  <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+                    <h4 className="font-semibold mb-2">Category prompt details</h4>
+                    <p className="text-sm"><span className="font-semibold">Title focus:</span> {promptDetails.title}</p>
+                    <p className="text-sm mt-1"><span className="font-semibold">Focus:</span> {promptDetails.focus}</p>
+                    <p className="text-sm mt-1"><span className="font-semibold">Guidance:</span> {promptDetails.guidance}</p>
+                  </div>
+                )}
+                {promptDetailsByCategory.length > 0 && (
+                  <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+                    <h4 className="font-semibold mb-2">Category prompt details</h4>
+                    <div className="space-y-3">
+                      {promptDetailsByCategory.map((detail) => (
+                        <div key={detail.category} className="rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-800">
+                          <p className="text-sm font-semibold">{detail.category}</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-400"><span className="font-semibold">Title focus:</span> {detail.title}</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1"><span className="font-semibold">Focus:</span> {detail.focus}</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1"><span className="font-semibold">Guidance:</span> {detail.guidance}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {categoryStatuses.length > 0 && (
+                  <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+                    <h4 className="font-semibold mb-2">Generation status</h4>
+                    <ul className="space-y-2 text-sm">
+                      {categoryStatuses.map((status) => (
+                        <li key={status.category} className="rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-800">
+                          <p className="font-semibold">{status.category}</p>
+                          <p>{status.skipped ? 'Skipped' : status.saved ? 'Saved' : 'Failed'}</p>
+                          {status.reason && <p className="text-xs text-slate-500 dark:text-slate-400">{status.reason}</p>}
+                          {status.title && <p className="text-xs text-slate-500 dark:text-slate-400">Post: {status.title}</p>}
+                          {status.slug && <p className="text-xs text-slate-500 dark:text-slate-400">Slug: {status.slug}</p>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </>
             ) : (
               <p className="text-sm text-slate-600 dark:text-slate-400">
