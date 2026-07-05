@@ -76,7 +76,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
           post = {
             ...aiPost,
             published: true,
-            author_name: aiPost.author_name || aiPost.author || 'AI Agent',
+            author_name: aiPost.author_name || aiPost.author || 'Raju',
             published_at: aiPost.published_at || aiPost.created_at,
           };
         }

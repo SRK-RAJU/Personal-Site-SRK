@@ -79,7 +79,7 @@ export default function NewPostPage() {
         published: false, // Default to draft
         published_at: new Date().toISOString(),
         view_count: 0,
-        author_name: 'SRK', // Or get from user context
+        author_name: 'Raju', // Or get from user context
         created_at: new Date().toISOString(),
       };
 

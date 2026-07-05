@@ -170,7 +170,7 @@ export default function Blog() {
                                 {(post.author_name || post.author) && (
                                   <div className="flex items-center gap-1.5">
                                     <FaUser className="text-blue-500" />
-                                    <span>{post.author_name || post.author || 'AI Agent'}</span>
+                                    <span>{post.author_name || post.author || 'Raju'}</span>
                                   </div>
                                 )}
 

@@ -96,7 +96,7 @@ async function getPost(slug: string) {
           return {
             ...aiPost,
             published: true,
-            author_name: aiPost.author_name || aiPost.author || 'AI Agent',
+            author_name: aiPost.author_name || aiPost.author || 'Raju',
             published_at: aiPost.published_at || aiPost.created_at,
             read_time_minutes: aiPost.read_time_minutes || Math.ceil((aiPost.content?.length || 0) / 200),
           };
@@ -342,7 +342,7 @@ export async function generateMetadata({
       description: post.excerpt || 'Read this article',
       type: 'article',
       publishedTime: post.published_at,
-      authors: [post.author_name || 'Raju SRK'],
+      authors: [post.author_name || 'Raju'],
       images: post.featured_image_url ? [{ url: post.featured_image_url, width: 1200, height: 400 }] : undefined,
     },
   };
