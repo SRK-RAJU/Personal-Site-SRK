@@ -261,6 +261,9 @@ export default function DashboardHome() {
   ];
 
   const nextCategory = categoryOptions[categoryCursor % categoryOptions.length];
+  const selectedCoverage = categoryCoverage.find((item) => item.category === selectedCategory);
+  const selectedBatchCount = selectedCoverage?.batchCount || 1;
+  const selectedBatchOptions = Array.from({ length: selectedBatchCount }, (_, index) => index + 1);
 
   const handleGenerateAiPost = async (categoryOverride?: string) => {
     if (!session?.access_token) {
@@ -289,6 +292,8 @@ export default function DashboardHome() {
           'x-trigger-source': 'dashboard-admin',
           'x-user-email': user?.email || '',
           'x-user-role': userRole || '',
+          'x-admin-email': user?.email || '',
+          'x-admin-role': userRole === 'admin' ? 'admin' : '',
         },
         body: JSON.stringify({
           source: 'dashboard-admin',
@@ -478,25 +483,33 @@ export default function DashboardHome() {
                     <input
                       type="number"
                       min={1}
-                      placeholder="Optional batch number"
+                      max={selectedBatchCount}
+                      placeholder={`Optional batch number (1-${selectedBatchCount})`}
                       value={batchOverride}
                       onChange={(event) => setBatchOverride(event.target.value)}
                       className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
                     />
+                    <select
+                      value={batchOverride}
+                      onChange={(event) => setBatchOverride(event.target.value)}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                    >
+                      <option value="">Auto-rotate next batch</option>
+                      {selectedBatchOptions.map((batchNumber) => (
+                        <option key={batchNumber} value={String(batchNumber)}>
+                          Batch {batchNumber} of {selectedBatchCount}
+                        </option>
+                      ))}
+                    </select>
                     <p className="text-xs text-slate-600 dark:text-slate-400">
-                      Leave blank to auto-rotate batches. Enter a batch number to force a specific 4-tool chunk.
+                      Leave blank to auto-rotate batches. Select a batch to force that 4-tool chunk for the chosen category.
                     </p>
-                    {(() => {
-                      const selectedCoverage = categoryCoverage.find((item) => item.category === selectedCategory);
-                      if (!selectedCoverage) return null;
-
-                      return (
-                        <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
-                          <p>Tools: {selectedCoverage.toolCount} | Published: {selectedCoverage.publishedCount}</p>
-                          <p>Current batch: {selectedCoverage.currentBatch}/{selectedCoverage.batchCount} | Next batch: {selectedCoverage.nextBatch}/{selectedCoverage.batchCount}</p>
-                        </div>
-                      );
-                    })()}
+                    {selectedCoverage ? (
+                      <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                        <p>Tools: {selectedCoverage.toolCount} | Published: {selectedCoverage.publishedCount}</p>
+                        <p>Current batch: {selectedCoverage.currentBatch}/{selectedCoverage.batchCount} | Next batch: {selectedCoverage.nextBatch}/{selectedCoverage.batchCount}</p>
+                      </div>
+                    ) : null}
                   </div>
                 )}
                 <div className="flex flex-col gap-2 sm:flex-row">
