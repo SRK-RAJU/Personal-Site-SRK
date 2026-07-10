@@ -48,6 +48,8 @@ function getCategoryPromptDetails(category: string) {
   };
 }
 
+const GENERATION_TOOL_BATCH_SIZE = 4;
+
 async function countStorageFiles(bucket: string, prefix: string = ''): Promise<number> {
   let total = 0;
   let offset = 0;
@@ -89,7 +91,7 @@ async function countStorageFiles(bucket: string, prefix: string = ''): Promise<n
 
 export default function DashboardHome() {
   const router = useRouter();
-  const { session, userRole } = useAuth();
+  const { session, user, userRole } = useAuth();
   const [stats, setStats] = useState({
     totalPosts: 0,
     totalImages: 0,
@@ -108,6 +110,8 @@ export default function DashboardHome() {
   const [promptDetails, setPromptDetails] = useState<{ title: string; focus: string; guidance: string } | null>(null);
   const [promptDetailsByCategory, setPromptDetailsByCategory] = useState<Array<{ category: string; title: string; focus: string; guidance: string }>>([]);
   const [categoryStatuses, setCategoryStatuses] = useState<Array<{ category: string; saved?: boolean; skipped?: boolean; reason?: string; title?: string; slug?: string }>>([]);
+  const [categoryCoverage, setCategoryCoverage] = useState<Array<{ category: string; toolCount: number; batchCount: number; publishedCount: number; currentBatch: number; nextBatch: number }>>([]);
+  const [batchOverride, setBatchOverride] = useState('');
 
   const fetchStats = useCallback(async () => {
     try {
@@ -160,6 +164,52 @@ export default function DashboardHome() {
         totalUsers,
         totalViews,
       });
+
+      try {
+        const { data: coverageData } = await supabase
+          .from('tools_coverage_metadata')
+          .select('category')
+          .eq('is_active', true);
+
+        const { data: publishedCategoryData } = await supabase
+          .from('ai_generated_posts')
+          .select('category')
+          .eq('status', 'published');
+
+        const coverageCounts = (coverageData || []).reduce((acc: Record<string, number>, item: any) => {
+          const category = String(item.category || 'General').trim() || 'General';
+          acc[category] = (acc[category] || 0) + 1;
+          return acc;
+        }, {});
+
+        const publishedCounts = (publishedCategoryData || []).reduce((acc: Record<string, number>, item: any) => {
+          const category = String(item.category || 'General').trim() || 'General';
+          acc[category] = (acc[category] || 0) + 1;
+          return acc;
+        }, {});
+
+        setCategoryCoverage(
+          Object.entries(coverageCounts)
+            .map(([category, toolCount]) => {
+              const batchCount = Math.max(1, Math.ceil(toolCount / GENERATION_TOOL_BATCH_SIZE));
+              const publishedCount = publishedCounts[category] || 0;
+              const currentBatch = (publishedCount % batchCount) + 1;
+              const nextBatch = batchCount === 1 ? 1 : (currentBatch % batchCount) + 1;
+
+              return {
+              category,
+              toolCount,
+              batchCount,
+              publishedCount,
+              currentBatch,
+              nextBatch,
+              };
+            })
+            .sort((a, b) => a.category.localeCompare(b.category))
+        );
+      } catch {
+        setCategoryCoverage([]);
+      }
 
       try {
         const { data: aiPostsData } = await supabase
@@ -219,6 +269,8 @@ export default function DashboardHome() {
     }
 
     const effectiveCategory = categoryOverride || selectedCategory;
+    const parsedBatch = Number(batchOverride);
+    const batch = Number.isFinite(parsedBatch) && parsedBatch > 0 ? Math.floor(parsedBatch) : undefined;
 
     setShowConfirm(false);
     setIsGeneratingAi(true);
@@ -235,11 +287,14 @@ export default function DashboardHome() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
           'x-trigger-source': 'dashboard-admin',
+          'x-user-email': user?.email || '',
+          'x-user-role': userRole || '',
         },
         body: JSON.stringify({
           source: 'dashboard-admin',
           mode: generateMode === 'all' ? 'all-categories' : 'single-category',
           category: effectiveCategory,
+          batch,
         }),
       });
 
@@ -349,6 +404,34 @@ export default function DashboardHome() {
         </div>
       </div>
 
+      {/* Category Coverage */}
+      <div className="dashboard-card mb-8">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Category Coverage</h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Tool count per category and how many 4-tool batches each category needs.</p>
+          </div>
+          <div className="text-sm text-slate-500 dark:text-slate-400">Batch size: {GENERATION_TOOL_BATCH_SIZE}</div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {categoryCoverage.map((item) => (
+            <div key={item.category} className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900/70">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-semibold text-slate-900 dark:text-white">{item.category}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">{item.toolCount} tools total</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    Current batch: {item.currentBatch}/{item.batchCount} • Next batch: {item.nextBatch}/{item.batchCount}
+                  </p>
+                </div>
+                <span className="futurist-pill">{item.batchCount} batches</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Quick Actions */}
       <div className="dashboard-card">
         <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white">
@@ -382,15 +465,39 @@ export default function DashboardHome() {
                   </button>
                 </div>
                 {generateMode === 'single' && (
-                  <select
-                    value={selectedCategory}
-                    onChange={(event) => setSelectedCategory(event.target.value)}
-                    className="mb-3 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-                  >
-                    {categoryOptions.map((category) => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
-                  </select>
+                  <div className="space-y-3">
+                    <select
+                      value={selectedCategory}
+                      onChange={(event) => setSelectedCategory(event.target.value)}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                    >
+                      {categoryOptions.map((category) => (
+                        <option key={category} value={category}>{category}</option>
+                      ))}
+                    </select>
+                    <input
+                      type="number"
+                      min={1}
+                      placeholder="Optional batch number"
+                      value={batchOverride}
+                      onChange={(event) => setBatchOverride(event.target.value)}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                    />
+                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                      Leave blank to auto-rotate batches. Enter a batch number to force a specific 4-tool chunk.
+                    </p>
+                    {(() => {
+                      const selectedCoverage = categoryCoverage.find((item) => item.category === selectedCategory);
+                      if (!selectedCoverage) return null;
+
+                      return (
+                        <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                          <p>Tools: {selectedCoverage.toolCount} | Published: {selectedCoverage.publishedCount}</p>
+                          <p>Current batch: {selectedCoverage.currentBatch}/{selectedCoverage.batchCount} | Next batch: {selectedCoverage.nextBatch}/{selectedCoverage.batchCount}</p>
+                        </div>
+                      );
+                    })()}
+                  </div>
                 )}
                 <div className="flex flex-col gap-2 sm:flex-row">
                   <button

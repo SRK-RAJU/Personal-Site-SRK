@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
@@ -11,6 +11,7 @@ interface Post {
   title: string;
   slug: string;
   excerpt: string;
+  category?: string;
   published: boolean;
   published_at: string;
   view_count: number;
@@ -25,6 +26,20 @@ export default function PostsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'published' | 'draft'>('all');
   const [deleting, setDeleting] = useState<string | null>(null);
+
+  const groupedPosts = useMemo(() => {
+    const groups = new Map<string, Post[]>();
+
+    posts.forEach((post) => {
+      const category = post.category || 'General';
+      if (!groups.has(category)) {
+        groups.set(category, []);
+      }
+      groups.get(category)!.push(post);
+    });
+
+    return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b));
+  }, [posts]);
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -161,8 +176,8 @@ export default function PostsPage() {
         </div>
       </div>
 
-      {/* Posts Table */}
-      <div className="dashboard-card overflow-hidden p-0">
+      {/* Posts by Category */}
+      <div className="space-y-6">
         {loading ? (
           <div className="p-8 text-center">
             <p className="text-slate-800 dark:text-slate-200">Loading posts...</p>
@@ -180,83 +195,94 @@ export default function PostsPage() {
             </Link>
           </div>
         ) : (
-          <table className="w-full">
-            <thead className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
-              <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">
-                  Title
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">
-                  Views
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {posts.map((post) => (
-                <tr
-                  key={post.id}
-                  className="border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                >
-                  <td className="px-6 py-4">
-                    <div>
-                      <p className="font-semibold text-slate-900 dark:text-white">
-                        {post.title}
-                      </p>
-                      <p className="text-sm text-slate-800 dark:text-slate-200">
-                        /{post.slug}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        post.published
-                          ? 'bg-violet-100 dark:bg-violet-900/20 text-violet-800 dark:text-violet-200'
-                          : 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200'
-                      }`}
+          groupedPosts.map(([category, categoryPosts]) => (
+            <div key={category} className="dashboard-card overflow-hidden p-0">
+              <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-6 py-4 dark:border-slate-700">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">{category}</h2>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">{categoryPosts.length} posts in this category</p>
+                </div>
+                <span className="futurist-pill">Category view</span>
+              </div>
+              <table className="w-full">
+                <thead className="border-b border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">
+                      Title
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">
+                      Views
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {categoryPosts.map((post) => (
+                    <tr
+                      key={post.id}
+                      className="border-b border-slate-200 hover:bg-slate-50 transition-colors dark:border-slate-700 dark:hover:bg-slate-700/50"
                     >
-                      {post.published ? 'Published' : 'Draft'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-slate-800 dark:text-slate-200">
-                    <div className="flex items-center gap-2">
-                      <FaEye className="text-sm" />
-                      {post.view_count || 0}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-slate-800 dark:text-slate-200 text-sm">
-                    {new Date(post.published_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <Link
-                        href={`/dashboard/posts/${post.id}`}
-                        className="text-blue-600 hover:text-blue-700 dark:text-blue-400"
-                      >
-                        <FaEdit />
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(post.id)}
-                        disabled={deleting === post.id}
-                        className="text-red-600 hover:text-red-700 dark:text-red-400 disabled:opacity-50"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <td className="px-6 py-4">
+                        <div>
+                          <p className="font-semibold text-slate-900 dark:text-white">
+                            {post.title}
+                          </p>
+                          <p className="text-sm text-slate-800 dark:text-slate-200">
+                            /{post.slug}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            post.published
+                              ? 'bg-violet-100 text-violet-800 dark:bg-violet-900/20 dark:text-violet-200'
+                              : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200'
+                          }`}
+                        >
+                          {post.published ? 'Published' : 'Draft'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-slate-800 dark:text-slate-200">
+                        <div className="flex items-center gap-2">
+                          <FaEye className="text-sm" />
+                          {post.view_count || 0}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-800 dark:text-slate-200">
+                        {new Date(post.published_at).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <Link
+                            href={`/dashboard/posts/${post.id}`}
+                            className="text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                          >
+                            <FaEdit />
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(post.id)}
+                            disabled={deleting === post.id}
+                            className="text-red-600 hover:text-red-700 dark:text-red-400 disabled:opacity-50"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))
         )}
       </div>
     </div>

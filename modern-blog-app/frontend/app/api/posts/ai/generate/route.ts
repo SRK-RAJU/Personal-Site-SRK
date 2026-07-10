@@ -49,6 +49,7 @@ const MAX_TAVILY_QUERY_LENGTH = 320; // Tavily rejects longer queries
 const SEQUENTIAL_REQUEST_DELAY_MS = 100; // shorter spacing to stay under serverless timeout
 const DEFAULT_TOOL_BATCH_SIZE = 4;
 const MAX_GENERATION_TOOLS = 4;
+const GENERATION_TOOL_BATCH_SIZE = Math.min(DEFAULT_TOOL_BATCH_SIZE, MAX_GENERATION_TOOLS);
 const GEMINI_MAX_OUTPUT_TOKENS = 900;
 const GEMINI_TIMEOUT_MS = 45000;
 const DEFAULT_CATEGORY_CATALOG = ['AI/ML', 'Cloud', 'Security', 'Infrastructure', 'Container', 'Delivery', 'Observability', 'Database', 'Data', 'Networking', 'Identity', 'Developer', 'Operations', 'ERP', 'CRM', 'Marketing', 'HR'];
@@ -299,13 +300,66 @@ async function getToolsForGeneration(limit: number = TOOLS_COVERAGE_QUERY_LIMIT,
       .filter((tool) => tool.name);
 
     const batch = (typeof batchIndex === 'number' && batchIndex > 0) ? Math.floor(batchIndex) : 1;
-    const batchSize = Math.min(DEFAULT_TOOL_BATCH_SIZE, MAX_GENERATION_TOOLS);
+    const batchSize = GENERATION_TOOL_BATCH_SIZE;
     const start = (batch - 1) * batchSize;
     const end = start + batchSize;
 
     return activeTools.slice(start, end);
   } catch (err) {
     return [];
+  }
+}
+
+async function countToolsForCategory(category?: string): Promise<number> {
+  const supabase = getSupabaseClient();
+  if (!supabase || !category?.trim()) return 0;
+
+  try {
+    const { count, error } = await supabase
+      .from('tools_coverage_metadata')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .ilike('category', category.trim());
+
+    if (error) return 0;
+    return count || 0;
+  } catch {
+    return 0;
+  }
+}
+
+async function getCategoryGenerationBatchIndex(category?: string, explicitBatchIndex?: number): Promise<number> {
+  if (typeof explicitBatchIndex === 'number' && explicitBatchIndex > 0) {
+    return Math.floor(explicitBatchIndex);
+  }
+
+  if (!category?.trim()) {
+    return 1;
+  }
+
+  const totalTools = await countToolsForCategory(category);
+  const batchCount = Math.max(1, Math.ceil(totalTools / GENERATION_TOOL_BATCH_SIZE));
+
+  if (batchCount === 1) {
+    return 1;
+  }
+
+  const supabase = getSupabaseClient();
+  if (!supabase) return 1;
+
+  try {
+    const { count, error } = await supabase
+      .from('ai_generated_posts')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'published')
+      .eq('category', category.trim());
+
+    if (error) return 1;
+
+    const publishedCount = count || 0;
+    return (publishedCount % batchCount) + 1;
+  } catch {
+    return 1;
   }
 }
 
@@ -1154,7 +1208,8 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
           }
         }
 
-        const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, 1, category);
+        const batchForCategory = await getCategoryGenerationBatchIndex(category, batchIndex);
+        const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, batchForCategory, category);
         if (!toolsWithCategories.length) {
           generated.push({ category, skipped: true, reason: 'No tools found for category' });
           continue;
@@ -1202,7 +1257,8 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       }
     }
 
-    const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, batchIndex, category);
+    const batchForCategory = await getCategoryGenerationBatchIndex(category, batchIndex);
+    const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, batchForCategory, category);
     const excludedTopics = await getExcludedTopics();
     const trendSearch = await searchTrendContext(toolsWithCategories);
     const trendNews = trendSearch.results;
@@ -1231,6 +1287,8 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       duration_seconds: duration,
       mode: 'single-category',
       category,
+      batch_index: batchForCategory,
+      batch_count: Math.max(1, Math.ceil((await countToolsForCategory(category)) / GENERATION_TOOL_BATCH_SIZE)),
       tavily_enabled: !!getTavilyApiKey(),
       tavily_search_queries: trendSearch.queryCount,
       gemini_calls: 1,
