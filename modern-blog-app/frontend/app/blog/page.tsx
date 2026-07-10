@@ -12,6 +12,14 @@ export default function Blog() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [sourceFilter, setSourceFilter] = useState<'all' | 'human' | 'ai'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const currentQuery = (new URLSearchParams(window.location.search).get('search') || '').trim().toLowerCase();
+    setSearchQuery(currentQuery);
+  }, []);
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -32,9 +40,34 @@ export default function Blog() {
   }, []);
 
   const groupedPosts = useMemo(() => {
+    const sourceFiltered = posts.filter((post) => {
+      const isAi = post.source_table === 'ai_generated_posts';
+      if (sourceFilter === 'ai') return isAi;
+      if (sourceFilter === 'human') return !isAi;
+      return true;
+    });
+
+    const searchFiltered = sourceFiltered.filter((post) => {
+      if (!searchQuery) return true;
+
+      const title = String(post.title || '').toLowerCase();
+      const excerpt = String(post.excerpt || '').toLowerCase();
+      const content = String(post.content || '').toLowerCase();
+      const category = String(post.category || '').toLowerCase();
+      const tags = Array.isArray(post.tags) ? post.tags.join(' ').toLowerCase() : '';
+
+      return (
+        title.includes(searchQuery) ||
+        excerpt.includes(searchQuery) ||
+        content.includes(searchQuery) ||
+        category.includes(searchQuery) ||
+        tags.includes(searchQuery)
+      );
+    });
+
     const groups = new Map<string, any[]>();
 
-    posts.forEach((post) => {
+    searchFiltered.forEach((post) => {
       const category = (post.category || 'General').toString().trim() || 'General';
       if (!groups.has(category)) {
         groups.set(category, []);
@@ -43,7 +76,7 @@ export default function Blog() {
     });
 
     return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b));
-  }, [posts]);
+  }, [posts, sourceFilter, searchQuery]);
 
   const visibleGroups = selectedCategory === 'all'
     ? groupedPosts
@@ -52,11 +85,11 @@ export default function Blog() {
   const categories = ['all', ...groupedPosts.map(([category]) => category)];
 
   return (
-    <div className="min-h-screen w-full">
-      <section className="section-padding border-b border-violet-300/60 bg-[radial-gradient(circle_at_top,_rgba(124,58,237,0.16),_transparent_45%),linear-gradient(135deg,_rgba(248,250,252,1),_rgba(239,246,255,0.9))] dark:border-violet-700/50 dark:bg-[radial-gradient(circle_at_top,_rgba(167,139,250,0.2),_transparent_48%),linear-gradient(135deg,_rgba(2,6,23,1),_rgba(15,23,42,0.96))]">
+    <div className="min-h-screen w-full futurist-grid-bg">
+      <section className="section-padding border-b border-cyan-200/60 dark:border-cyan-900/40">
         <div className="container-max">
           <motion.div
-            className="text-center max-w-3xl mx-auto"
+            className="futurist-hero text-center max-w-4xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -64,9 +97,14 @@ export default function Blog() {
             <h1 className="mb-4 text-4xl font-bold text-slate-900 dark:text-white sm:mb-6 sm:text-5xl md:text-6xl">
               <span className="gradient-text">Latest</span> Posts
             </h1>
-            <p className="text-slate-900 dark:text-slate-100 text-base sm:text-lg max-w-2xl mx-auto font-semibold">
-              Fresh weekly posts across AI/ML, cloud, DevOps, security, and platform engineering.
+            <p className="text-slate-800 dark:text-slate-100 text-base sm:text-lg max-w-2xl mx-auto font-semibold leading-8">
+              Fresh admin-published posts across AI/ML, cloud, DevOps, security, and platform engineering.
             </p>
+            {searchQuery && (
+              <p className="mt-4 futurist-pill">
+                Showing results for: {searchQuery}
+              </p>
+            )}
           </motion.div>
         </div>
       </section>
@@ -98,9 +136,28 @@ export default function Blog() {
                     <button
                       key={category}
                       onClick={() => setSelectedCategory(category)}
-                      className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${isActive ? 'border-violet-500 bg-violet-600 text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-violet-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200'}`}
+                      className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${isActive ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-cyan-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200'}`}
                     >
                       {label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mb-10 flex flex-wrap gap-2">
+                {[
+                  { id: 'all', label: 'All Sources' },
+                  { id: 'human', label: 'Human Posts' },
+                  { id: 'ai', label: 'AI Posts' },
+                ].map((opt) => {
+                  const isActive = sourceFilter === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => setSourceFilter(opt.id as 'all' | 'human' | 'ai')}
+                      className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${isActive ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-cyan-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200'}`}
+                    >
+                      {opt.label}
                     </button>
                   );
                 })}
@@ -112,10 +169,10 @@ export default function Blog() {
                 </div>
               ) : (
                 visibleGroups.map(([category, categoryPosts]) => (
-                  <div key={category} className="mb-10">
+                  <div key={category} className="mb-12">
                     <div className="mb-4 flex items-center justify-between">
                       <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">{category}</h2>
-                      <span className="text-sm text-slate-600 dark:text-slate-400">Weekly updates</span>
+                      <span className="futurist-pill">Weekly updates</span>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                       {categoryPosts.map((post: any, idx: number) => (
@@ -126,9 +183,9 @@ export default function Blog() {
                           transition={{ duration: 0.3, delay: idx * 0.08 }}
                         >
                           <Link href={`/blog/${post.slug}`} className="group block h-full">
-                            <div className="flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/80 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/60 hover:shadow-2xl hover:shadow-violet-500/20 dark:border-slate-800/70 dark:bg-slate-900/70">
+                            <div className="futurist-card flex h-full flex-col overflow-hidden">
                               {post.featured_image_url && (
-                                <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-violet-500/20 to-blue-500/20 mb-4 sm:mb-6 rounded-lg border border-violet-200 dark:border-violet-800">
+                                <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-cyan-500/20 to-pink-500/20 mb-4 sm:mb-6 rounded-lg border border-cyan-200 dark:border-cyan-800">
                                   <Image
                                     src={post.featured_image_url}
                                     alt={post.title}
@@ -148,10 +205,15 @@ export default function Blog() {
                               {post.category && (
                                 <div className="mb-3 flex gap-2">
                                   <span className="badge text-xs">{post.category}</span>
+                                  {post.source_table === 'ai_generated_posts' && (
+                                    <span className="futurist-pill">
+                                      AI
+                                    </span>
+                                  )}
                                 </div>
                               )}
 
-                              <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 line-clamp-2 group-hover:text-violet-500 transition-colors">
+                              <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 line-clamp-2 group-hover:text-cyan-500 transition-colors">
                                 {post.title}
                               </h3>
 
@@ -181,7 +243,7 @@ export default function Blog() {
                                   </div>
                                 )}
 
-                                <FaArrowRight className="ml-auto text-violet-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <FaArrowRight className="ml-auto text-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                               </div>
                             </div>
                           </Link>

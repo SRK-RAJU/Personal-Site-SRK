@@ -265,10 +265,10 @@ export async function GET(request: NextRequest) {
         }
 
         return NextResponse.json({
-          articles: statsData?.articles ?? fallbackStats.articles,
-          monthly_views: statsData?.monthly_views ?? fallbackStats.monthly_views,
-          topics: statsData?.topics ?? fallbackStats.topics,
-          total_visits: statsData?.total_visits ?? fallbackStats.total_visits,
+          articles: Math.max(Number(statsData?.articles || 0), fallbackStats.articles),
+          monthly_views: Math.max(Number(statsData?.monthly_views || 0), fallbackStats.monthly_views),
+          topics: Math.max(Number(statsData?.topics || 0), fallbackStats.topics),
+          total_visits: Math.max(Number(statsData?.total_visits || 0), fallbackStats.total_visits),
           timestamp: new Date().toISOString(),
         });
       } catch (err) {

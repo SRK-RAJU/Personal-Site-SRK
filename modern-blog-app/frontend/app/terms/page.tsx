@@ -48,9 +48,9 @@ export default function Terms() {
   ];
 
   return (
-    <div className="container-max py-10 sm:py-12 lg:py-16">
+    <div className="page-wrapper">
       <motion.div
-        className="mx-auto max-w-5xl rounded-[2rem] border border-white/80 bg-white/70 p-6 shadow-2xl shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70 sm:p-8 lg:p-12"
+        className="page-frame max-w-5xl"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -65,17 +65,14 @@ export default function Terms() {
           </Link>
         </motion.div>
 
-        <motion.div variants={itemVariants} className="mb-10 rounded-[1.5rem] border border-violet-200/70 bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.15),_transparent_34%),linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-8 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[radial-gradient(circle_at_top_left,_rgba(167,139,250,0.2),_transparent_34%),linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))] sm:p-10">
+        <motion.div variants={itemVariants} className="page-hero">
           <h1 className="mb-4 text-5xl font-bold text-slate-900 dark:text-white sm:text-6xl">Terms of Service</h1>
           <p className="text-lg text-slate-800 dark:text-slate-200">Last Updated: {lastUpdated}</p>
         </motion.div>
 
         <motion.div variants={itemVariants} className="space-y-8">
           {sections.map((section, index) => (
-            <div
-              key={index}
-              className="rounded-[1.25rem] border border-violet-200/70 bg-white/80 p-6 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70"
-            >
+            <div key={index} className="page-panel">
               <h2 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
                 {section.title}
               </h2>
@@ -88,10 +85,10 @@ export default function Terms() {
 
         <motion.div
           variants={itemVariants}
-          className="mt-10 rounded-[1.5rem] border border-white/70 bg-white/70 p-8 text-center shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70"
+          className="page-panel mt-10 text-center sm:p-8"
         >
           <p className="text-slate-800 dark:text-slate-200 mb-4">
-            Questions about our terms? Let us know.
+            Questions about these terms? Reach out.
           </p>
           <Link
             href="/contact"

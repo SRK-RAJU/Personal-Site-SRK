@@ -57,6 +57,24 @@ function isRateLimited(ip: string, isWrite: boolean = false) {
 // If Supabase is not configured or no posts exist, return an empty list instead of dummy data.
 const DEFAULT_POSTS: any[] = [];
 
+function getSortValue(post: any, key: string) {
+  const value = post?.[key];
+  if (value === undefined || value === null) return null;
+
+  if (key.includes('published_at') || key.includes('created_at') || key.includes('updated_at')) {
+    const time = new Date(value).getTime();
+    return Number.isNaN(time) ? null : time;
+  }
+
+  if (typeof value === 'number') return value;
+  if (typeof value === 'boolean') return value ? 1 : 0;
+
+  const numeric = Number(value);
+  if (!Number.isNaN(numeric) && value !== '') return numeric;
+
+  return String(value).toLowerCase();
+}
+
 export async function GET(request: NextRequest) {
   if (isTrustedReadRequest(request)) {
     // Allow trusted internal requests without public rate-limit interference.
@@ -130,7 +148,7 @@ export async function GET(request: NextRequest) {
             author: post.author || 'Raju',
             author_name: post.author_name || post.author || 'Raju',
             read_time_minutes: Math.ceil((post.content?.length || 0) / 200),
-            view_count: 0,
+            view_count: typeof post.view_count === 'number' ? post.view_count : 0,
             ai_model: post.ai_model || 'google-gemini-2.5-flash',
             tools_covered: Array.isArray(post.tools_covered) ? post.tools_covered : [],
             cves_mentioned: post.cves_mentioned || 0,
@@ -145,11 +163,18 @@ export async function GET(request: NextRequest) {
     // Merge all posts
     const allPosts = [...(regularPosts || []), ...aiPosts];
     
-    // Sort by published_at
+    // Sort by requested field after merging.
     const sortedPosts = allPosts.sort((a: any, b: any) => {
-      const aTime = new Date(a.published_at).getTime();
-      const bTime = new Date(b.published_at).getTime();
-      return ascending ? aTime - bTime : bTime - aTime;
+      const aValue = getSortValue(a, order);
+      const bValue = getSortValue(b, order);
+
+      // Fall back to published_at when the requested field is missing.
+      const left = aValue ?? getSortValue(a, 'published_at') ?? 0;
+      const right = bValue ?? getSortValue(b, 'published_at') ?? 0;
+
+      if (left < right) return ascending ? -1 : 1;
+      if (left > right) return ascending ? 1 : -1;
+      return 0;
     });
 
     // Apply limit AFTER merging and sorting

@@ -107,24 +107,24 @@ export default function NewPostPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-12">
+    <div className="mx-auto max-w-4xl space-y-6 py-12">
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <Link href="/dashboard/posts" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
           <FaArrowLeft className="text-xl text-slate-800 dark:text-slate-200" />
         </Link>
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-white">Create New Post</h1>
+        <h1 className="dashboard-title">Create New Post</h1>
       </div>
 
       {/* Error Message */}
       {error && (
-        <div className="mb-6 p-4 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-800 dark:text-red-200 rounded-lg">
+        <div className="mb-6 rounded-lg border border-red-300 bg-red-100 p-4 text-red-800 dark:border-red-700 dark:bg-red-900/20 dark:text-red-200">
           {error}
         </div>
       )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="dashboard-card space-y-6">
         {/* Title */}
         <div>
           <label htmlFor="title" className="block text-sm font-semibold text-slate-900 dark:text-white mb-2">
@@ -272,7 +272,7 @@ export default function NewPostPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            className="flex items-center gap-2 rounded-lg bg-cyan-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-cyan-700 disabled:opacity-50"
           >
             <FaSave /> {loading ? 'Creating...' : 'Create Draft Post'}
           </button>

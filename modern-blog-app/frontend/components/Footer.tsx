@@ -69,10 +69,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative border-t border-violet-200/50 bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.12),_transparent_32%),linear-gradient(135deg,_rgba(248,250,252,0.98),_rgba(239,246,255,0.92))] dark:border-violet-500/20 dark:bg-[radial-gradient(circle_at_top_left,_rgba(167,139,250,0.16),_transparent_36%),linear-gradient(135deg,_rgba(2,6,23,0.98),_rgba(15,23,42,0.95))]">
+    <footer className="relative border-t border-cyan-200/50 bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.14),_transparent_32%),linear-gradient(135deg,_rgba(248,250,252,0.98),_rgba(239,246,255,0.92))] dark:border-cyan-900/30 dark:bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.2),_transparent_36%),linear-gradient(135deg,_rgba(2,6,23,0.98),_rgba(15,23,42,0.95))]">
       {/* Decorative elements */}
       <motion.div
-        className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-violet-200/20 to-purple-200/20 rounded-full blur-3xl -z-10"
+        className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-cyan-200/30 to-fuchsia-200/25 rounded-full blur-3xl -z-10"
         animate={{ y: [0, -30, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -82,25 +82,25 @@ export default function Footer() {
         transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
       />
 
-      <div className="container-max py-16">
+      <div className="container-max py-12 sm:py-16">
         {/* Main Footer Grid */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12"
+          className="grid grid-cols-1 md:grid-cols-4 gap-8 sm:gap-12 mb-10 sm:mb-12"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
         >
           {/* Brand Section */}
-          <motion.div className="col-span-1 space-y-4 rounded-3xl border border-white/70 bg-white/70 p-6 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70" variants={itemVariants}>
+          <motion.div className="col-span-1 space-y-4 futurist-card" variants={itemVariants}>
             <Link href="/" className="group cursor-pointer inline-block">
               <div className="relative inline-block">
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-100 to-blue-100 rounded-lg blur opacity-70 group-hover:opacity-100 transition duration-300" />
-                <div className="relative px-4 py-3 bg-white dark:bg-slate-950 rounded-lg shadow-md shadow-violet-200/30">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-100 to-fuchsia-100 rounded-lg blur opacity-70 group-hover:opacity-100 transition duration-300" />
+                <div className="relative px-4 py-3 bg-white dark:bg-slate-950 rounded-lg shadow-md shadow-cyan-300/30">
                   <h3 className="text-3xl font-serif text-slate-900 dark:text-white">Rj</h3>
                 </div>
               </div>
-              <p className="text-sm text-slate-900 dark:text-slate-100 mt-3 font-semibold group-hover:text-violet-700 dark:group-hover:text-violet-400 transition-colors">Tech Blog</p>
+              <p className="text-sm text-slate-900 dark:text-slate-100 mt-3 font-semibold group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-colors">Tech Blog</p>
             </Link>
             <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-semibold">
               Cloud & DevOps specialist. Full-stack development, security engineering, and modern infrastructure solutions. Building secure, scalable applications.
@@ -139,9 +139,9 @@ export default function Footer() {
           {/* Links Columns */}
           {footerLinks.map((section) => (
             <motion.div key={section.title} variants={itemVariants}>
-              <h4 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white">
+              <h4 className="mb-3 sm:mb-4 flex items-center gap-2 text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                 {section.title}
-                <FaArrowRight className="text-violet-600 dark:text-violet-400 text-sm" />
+                <FaArrowRight className="text-cyan-600 dark:text-cyan-300 text-sm" />
               </h4>
               <ul className="space-y-3">
                 {section.links.map((link) => (
@@ -154,7 +154,7 @@ export default function Footer() {
                       href={link.href}
                       target={link.href.startsWith('http') ? '_blank' : undefined}
                       rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className="text-slate-800 dark:text-slate-100 hover:text-violet-600 dark:hover:text-violet-300 transition-colors text-sm font-medium inline-flex items-center gap-2"
+                      className="text-slate-800 dark:text-slate-100 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-sm font-medium inline-flex items-center gap-2"
                     >
                       {link.label}
                       {link.href.startsWith('http') && <FaArrowRight className="text-xs opacity-0 group-hover:opacity-100" />}
@@ -177,7 +177,7 @@ export default function Footer() {
 
         {/* Features/Trust Boxes */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-12"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -185,14 +185,14 @@ export default function Footer() {
         >
           {/* Copyright */}
           <motion.div
-            className="group cursor-help rounded-2xl border border-white/70 bg-white/70 p-5 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition hover:-translate-y-1 hover:border-violet-500 dark:border-slate-800/70 dark:bg-slate-900/70 dark:hover:border-violet-500"
+            className="group cursor-help futurist-card p-5"
             variants={itemVariants}
             onMouseEnter={() => setCopyrightTooltip(true)}
             onMouseLeave={() => setCopyrightTooltip(false)}
             whileHover={{ y: -5 }}
           >
             <div className="flex items-start gap-3">
-              <div className="text-2xl text-violet-600 dark:text-violet-400">
+              <div className="text-2xl text-cyan-600 dark:text-cyan-300">
                 <FaCopyright />
               </div>
               <div className="flex-1">
@@ -217,12 +217,12 @@ export default function Footer() {
 
           {/* Content Protection */}
           <motion.div
-            className="rounded-2xl border border-white/70 bg-white/70 p-5 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition hover:-translate-y-1 hover:border-violet-500 dark:border-slate-800/70 dark:bg-slate-900/70 dark:hover:border-violet-500"
+            className="futurist-card p-5"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
             <div className="flex items-start gap-3">
-              <div className="text-2xl text-violet-600 dark:text-violet-400">
+              <div className="text-2xl text-cyan-600 dark:text-cyan-300">
                 <FaShieldAlt />
               </div>
               <div>
@@ -230,7 +230,7 @@ export default function Footer() {
                   Content Protection
                 </p>
                 <p className="text-xs text-slate-800 dark:text-slate-200 mt-1">
-                  Advanced security prevents unauthorized copying.
+                  Security controls are applied to reduce unauthorized use.
                 </p>
               </div>
             </div>
@@ -238,12 +238,12 @@ export default function Footer() {
 
           {/* Privacy Notice */}
           <motion.div
-            className="rounded-2xl border border-white/70 bg-white/70 p-5 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition hover:-translate-y-1 hover:border-violet-500 dark:border-slate-800/70 dark:bg-slate-900/70 dark:hover:border-violet-500"
+            className="futurist-card p-5"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
             <div className="flex items-start gap-3">
-              <div className="text-2xl text-violet-600 dark:text-violet-400">
+              <div className="text-2xl text-cyan-600 dark:text-cyan-300">
                 <FaLock />
               </div>
               <div>
@@ -251,7 +251,7 @@ export default function Footer() {
                   Privacy & Security
                 </p>
                 <p className="text-xs text-slate-800 dark:text-slate-200 mt-1">
-                  Encrypted data with no third-party tracking.
+                  Data is handled securely with minimal third-party services.
                 </p>
               </div>
             </div>
@@ -260,14 +260,14 @@ export default function Footer() {
 
         {/* Disclaimer */}
         <motion.div
-          className="bg-gradient-to-r from-violet-50/50 to-pink-50/50 dark:from-violet-900/10 dark:to-pink-900/10 border border-violet-200/50 dark:border-violet-800/30 rounded-xl p-6 mb-8"
+          className="bg-gradient-to-r from-cyan-50/50 to-fuchsia-50/50 dark:from-cyan-900/10 dark:to-fuchsia-900/10 border border-cyan-200/50 dark:border-cyan-800/30 rounded-xl p-6 mb-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
           <p className="text-sm text-slate-800 dark:text-slate-200 text-center">
-            <span className="font-bold text-violet-700 dark:text-violet-400">📢 Disclaimer:</span> All content is for educational purposes. Always verify with official documentation and test in a safe environment before production use.
+            <span className="font-bold text-cyan-700 dark:text-cyan-300">📢 Disclaimer:</span> All content is for educational purposes. Always verify with official documentation and test in a safe environment before production use.
           </p>
         </motion.div>
 
@@ -280,7 +280,7 @@ export default function Footer() {
         >
           <p>
             © {currentYear} Raju{' '}
-            <Link href="/" className="text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-bold transition-colors">
+            <Link href="/" className="text-cyan-600 dark:text-cyan-300 hover:text-cyan-700 dark:hover:text-cyan-200 font-bold transition-colors">
               [Tech Blog]
             </Link>
             {' '} — This is my personal blog. All content reflects my own interests and experiences. Unauthorized copying is prohibited.
@@ -297,7 +297,7 @@ export default function Footer() {
           <p className="flex items-center gap-1">
             Made with{' '}
             <span className="text-red-600 dark:text-red-400 animate-pulse">❤️</span> by
-            <Link href="/" className="font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors">
+            <Link href="/" className="font-semibold text-cyan-600 dark:text-cyan-300 hover:text-cyan-700 dark:hover:text-cyan-200 transition-colors">
               Raju
             </Link>
           </p>
@@ -310,7 +310,7 @@ export default function Footer() {
 
           <p className="flex flex-wrap items-center gap-2 justify-center">
             Powered by
-            <Link href="/" className="font-semibold text-slate-900 dark:text-white hover:text-violet-600 dark:hover:text-violet-400 transition-colors">
+            <Link href="/" className="font-semibold text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors">
               Raju
             </Link>
             {/* <span>•</span>

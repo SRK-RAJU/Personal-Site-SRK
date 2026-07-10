@@ -3,9 +3,9 @@ import { FaLock } from 'react-icons/fa';
 
 export default function UnauthorizedPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+    <div className="auth-shell">
       <div className="max-w-md">
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-8 text-center">
+        <div className="auth-card text-center">
           <FaLock className="text-6xl text-red-500 mx-auto mb-4" />
 
           <h1 className="text-3xl font-bold mb-2 text-slate-900 dark:text-white">

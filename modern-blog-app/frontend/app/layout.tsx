@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ContentProtectionWrapper from '../components/ContentProtectionWrapper';
+import Providers from '../components/Providers';
 import { AuthProvider } from '../lib/authContext';
 import { Toaster } from 'react-hot-toast';
 
@@ -45,23 +46,25 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link focus-visible:outline-none">
           Skip to main content
         </a>
-        <ContentProtectionWrapper>
-          <AuthProvider>
-            <Toaster
-              position="top-right"
-              reverseOrder={false}
-              gutter={8}
-              toastOptions={{
-                duration: 4000,
-              }}
-            />
-            <Header />
-            <main id="main-content" className="flex-1 w-full pt-16 sm:pt-20">
-              {children}
-            </main>
-            <Footer />
-          </AuthProvider>
-        </ContentProtectionWrapper>
+        <Providers>
+          <ContentProtectionWrapper>
+            <AuthProvider>
+              <Toaster
+                position="top-right"
+                reverseOrder={false}
+                gutter={8}
+                toastOptions={{
+                  duration: 4000,
+                }}
+              />
+              <Header />
+              <main id="main-content" className="site-main flex-1 w-full pt-16 sm:pt-20">
+                {children}
+              </main>
+              <Footer />
+            </AuthProvider>
+          </ContentProtectionWrapper>
+        </Providers>
       </body>
     </html>
   );

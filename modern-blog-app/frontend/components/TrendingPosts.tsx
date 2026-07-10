@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaEye, FaFire, FaArrowRight } from 'react-icons/fa';
-import { supabase } from '@/lib/supabaseClient';
+import axios from 'axios';
 
 interface TrendingPost {
   id: string;
@@ -106,15 +106,13 @@ export default function TrendingPosts() {
   useEffect(() => {
     const fetchTrendingPosts = async () => {
       try {
-        // Use singleton client that's already initialized
-        const { data, error: queryError } = await supabase
-          .from('posts')
-          .select('id, title, slug, excerpt, view_count, published_at, featured_image_url')
-          .eq('published', true)
-          .order('view_count', { ascending: false })
-          .limit(3);
+        const response = await axios.get('/api/posts?published=true&order=view_count&ascending=false&limit=3', {
+          timeout: 10000,
+        });
 
-        if (queryError || !data || data.length === 0) {
+        const data = response.data?.data;
+
+        if (!Array.isArray(data) || data.length === 0) {
           setPosts([]);
           setLoading(false);
           return;

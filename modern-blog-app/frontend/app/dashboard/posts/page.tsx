@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
+import { useAuth } from '@/lib/authContext';
 import { FaEdit, FaTrash, FaPlus, FaEye, FaSearch, FaArrowLeft } from 'react-icons/fa';
 
 interface Post {
@@ -19,6 +19,7 @@ interface Post {
 
 export default function PostsPage() {
   const router = useRouter();
+  const { session } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -79,10 +80,18 @@ export default function PostsPage() {
       return;
     }
 
+    if (!session?.access_token) {
+      alert('You need to be signed in to delete posts.');
+      return;
+    }
+
     try {
       setDeleting(postId);
       const response = await fetch(`/api/admin/posts/${postId}`, {
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
 
       const result = await response.json();
@@ -92,7 +101,7 @@ export default function PostsPage() {
         return;
       }
 
-      setPosts(posts.filter((p) => p.id !== postId));
+      setPosts((currentPosts) => currentPosts.filter((p) => p.id !== postId));
       alert('Post deleted successfully');
     } catch (err) {
       console.error('Error deleting post:', err);
@@ -103,7 +112,7 @@ export default function PostsPage() {
   };
 
   return (
-    <div>
+    <div className="space-y-6">
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <button
@@ -112,20 +121,20 @@ export default function PostsPage() {
           >
             <FaArrowLeft /> Back
           </button>
-          <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
+          <h1 className="dashboard-title">
             Manage Posts
           </h1>
         </div>
         <Link
           href="/dashboard/posts/new"
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+          className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-700"
         >
           <FaPlus /> New Post
         </Link>
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 mb-6">
+      <div className="dashboard-card mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search */}
           <div className="relative">
@@ -153,7 +162,7 @@ export default function PostsPage() {
       </div>
 
       {/* Posts Table */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden">
+      <div className="dashboard-card overflow-hidden p-0">
         {loading ? (
           <div className="p-8 text-center">
             <p className="text-slate-800 dark:text-slate-200">Loading posts...</p>

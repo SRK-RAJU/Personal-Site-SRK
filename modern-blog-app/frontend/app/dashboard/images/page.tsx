@@ -179,7 +179,7 @@ export default function ImagesPage() {
   };
 
   return (
-    <div>
+    <div className="space-y-6">
       <div className="flex items-center gap-4 mb-2">
         <button
           onClick={() => router.back()}
@@ -187,7 +187,7 @@ export default function ImagesPage() {
         >
           <FaArrowLeft size={24} />
         </button>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent">
+        <h1 className="dashboard-title bg-gradient-to-r from-cyan-500 to-fuchsia-500 bg-clip-text text-transparent">
           Image Manager
         </h1>
       </div>
@@ -196,7 +196,7 @@ export default function ImagesPage() {
       </p>
 
       {/* Upload Section */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 mb-8 border border-violet-200 dark:border-violet-900/30">
+      <div className="dashboard-card mb-8 border-violet-200/60 dark:border-violet-900/40">
         <div className="border-2 border-dashed border-violet-300 dark:border-violet-700 rounded-lg p-8 text-center bg-gradient-to-b from-violet-50 to-transparent dark:from-violet-900/10 dark:to-transparent">
           <FaUpload className="text-4xl text-violet-500 dark:text-violet-400 mx-auto mb-4" />
 
@@ -260,7 +260,7 @@ export default function ImagesPage() {
       </div>
 
       {/* Images Grid */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-slate-200 dark:border-slate-700">
+      <div className="dashboard-card border-slate-200/70 dark:border-slate-700/70">
         <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white">
           Your Images ({images.length})
         </h2>

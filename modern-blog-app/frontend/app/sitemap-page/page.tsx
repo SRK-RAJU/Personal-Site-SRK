@@ -28,9 +28,9 @@ export default function SitemapPage() {
   ];
 
   return (
-    <div className="container-max py-12">
+    <div className="page-wrapper">
       <motion.div
-        className="max-w-4xl mx-auto"
+        className="page-frame max-w-4xl"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -47,7 +47,7 @@ export default function SitemapPage() {
         </motion.div>
 
         {/* Header */}
-        <motion.div variants={itemVariants} className="mb-12">
+        <motion.div variants={itemVariants} className="page-hero">
           <h1 className="text-5xl sm:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-pink-600">
             Site Map
           </h1>
@@ -70,7 +70,7 @@ export default function SitemapPage() {
             return (
               <motion.div
                 key={idx}
-                className="card-glass p-6 border border-violet-200 dark:border-violet-800/50"
+                className="page-panel p-6"
                 variants={itemVariants}
               >
                 <div className="flex items-center gap-3 mb-2">

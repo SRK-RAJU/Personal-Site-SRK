@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
-import { supabase } from './supabaseClient';
+import { isSupabaseConfigured, supabase } from './supabaseClient';
 
 interface AuthContextType {
   user: User | null;
@@ -17,18 +17,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function getConfiguredAdminEmails(): string[] {
-  return (process.env.NEXT_PUBLIC_ADMIN_EMAILS || process.env.ADMIN_EMAILS || '')
-    .split(',')
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-function isAdminEmail(email?: string | null): boolean {
-  if (!email) return false;
-  return getConfiguredAdminEmails().includes(email.trim().toLowerCase());
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -37,54 +25,82 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const loadSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      const currentSession: Session | null = data.session;
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      if (currentSession?.user) {
-        await fetchUserRole(currentSession.user.id, currentSession.user.email);
+      if (!isSupabaseConfigured) {
+        setLoading(false);
+        setSession(null);
+        setUser(null);
+        setUserRole(null);
+        return;
       }
-      setLoading(false);
+
+      try {
+        const { data } = await supabase.auth.getSession();
+        const currentSession: Session | null = data.session;
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+        if (currentSession?.access_token) {
+          await fetchUserRole(currentSession.access_token);
+        } else {
+          setUserRole(null);
+        }
+      } catch (err) {
+        setSession(null);
+        setUser(null);
+        setUserRole(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadSession();
+
+    if (!isSupabaseConfigured) {
+      return;
+    }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event: AuthChangeEvent, newSession: Session | null) => {
         setSession(newSession);
         setUser(newSession?.user ?? null);
-        if (newSession?.user) {
-          await fetchUserRole(newSession.user.id, newSession.user.email);
+        if (newSession?.access_token) {
+          await fetchUserRole(newSession.access_token);
         } else {
           setUserRole(null);
         }
+        setLoading(false);
       }
     );
 
     return () => subscription?.unsubscribe();
   }, []);
 
-  const fetchUserRole = async (userId: string, email?: string | null) => {
+  const fetchUserRole = async (accessToken: string) => {
     try {
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
-        .single();
+      const response = await fetch('/api/auth/role', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-      if (error) {
-        setUserRole(isAdminEmail(email) ? 'admin' : 'user');
-      } else {
-        const role = (data as any)?.role ?? 'user';
-        setUserRole(role === 'admin' || isAdminEmail(email) ? 'admin' : role);
+      if (!response.ok) {
+        setUserRole('user');
+        return;
       }
+
+      const result = await response.json();
+      const role = result.role;
+      setUserRole(role === 'admin' || role === 'author' || role === 'user' ? role : 'user');
     } catch (err) {
-      setUserRole(isAdminEmail(email) ? 'admin' : 'user');
+      setUserRole('user');
     }
   };
 
   const signUp: AuthContextType['signUp'] = async (email, password, metadata) => {
     try {
+      if (!isSupabaseConfigured) {
+        throw new Error('Supabase is not configured');
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -113,6 +129,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn: AuthContextType['signIn'] = async (email, password) => {
     try {
+      if (!isSupabaseConfigured) {
+        throw new Error('Supabase is not configured');
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -127,6 +147,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut: AuthContextType['signOut'] = async () => {
     try {
+      if (!isSupabaseConfigured) {
+        setSession(null);
+        setUser(null);
+        setUserRole(null);
+        return;
+      }
+
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     } catch (err) {
@@ -136,6 +163,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const resetPassword: AuthContextType['resetPassword'] = async (email) => {
     try {
+      if (!isSupabaseConfigured) {
+        throw new Error('Supabase is not configured');
+      }
+
       const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/reset-password`,
       });

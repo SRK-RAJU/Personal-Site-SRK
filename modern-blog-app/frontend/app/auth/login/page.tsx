@@ -77,7 +77,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+    <div className="auth-shell">
       <div className="w-full max-w-md">
         {/* Back Button */}
         <Link
@@ -89,7 +89,7 @@ export default function LoginPage() {
         </Link>
 
         {/* Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-8">
+        <div className="auth-card">
           <h1 className="text-3xl font-bold mb-2 text-slate-900 dark:text-white">
             Welcome Back
           </h1>

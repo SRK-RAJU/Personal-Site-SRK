@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import { FaBook, FaImage, FaUsers, FaEye, FaArrowLeft, FaRobot } from 'react-icons/fa';
@@ -48,6 +48,45 @@ function getCategoryPromptDetails(category: string) {
   };
 }
 
+async function countStorageFiles(bucket: string, prefix: string = ''): Promise<number> {
+  let total = 0;
+  let offset = 0;
+  const pageSize = 100;
+
+  while (true) {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .list(prefix, { limit: pageSize, offset });
+
+    if (error || !data || data.length === 0) {
+      break;
+    }
+
+    for (const item of data as any[]) {
+      const name = item?.name || '';
+      if (!name || name === '.emptyFolderPlaceholder') {
+        continue;
+      }
+
+      if (item?.id) {
+        total += 1;
+        continue;
+      }
+
+      const nestedPrefix = prefix ? `${prefix}/${name}` : name;
+      total += await countStorageFiles(bucket, nestedPrefix);
+    }
+
+    if (data.length < pageSize) {
+      break;
+    }
+
+    offset += pageSize;
+  }
+
+  return total;
+}
+
 export default function DashboardHome() {
   const router = useRouter();
   const { session, userRole } = useAuth();
@@ -70,12 +109,7 @@ export default function DashboardHome() {
   const [promptDetailsByCategory, setPromptDetailsByCategory] = useState<Array<{ category: string; title: string; focus: string; guidance: string }>>([]);
   const [categoryStatuses, setCategoryStatuses] = useState<Array<{ category: string; saved?: boolean; skipped?: boolean; reason?: string; title?: string; slug?: string }>>([]);
 
-  useEffect(() => {
-    // Only fetch dashboard data on load. Generation is never triggered automatically.
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       let totalPosts = 0;
       let totalViews = 0;
@@ -87,18 +121,26 @@ export default function DashboardHome() {
           .from('posts')
           .select('id, view_count', { count: 'exact' });
 
-        totalPosts = postsData?.length || 0;
-        totalViews = (postsData || []).reduce((sum: number, post: any) => sum + (post.view_count || 0), 0);
+        const { data: aiPostsData } = await supabase
+          .from('ai_generated_posts')
+          .select('id, view_count')
+          .eq('status', 'published');
+
+        totalPosts = (postsData?.length || 0) + (aiPostsData?.length || 0);
+        totalViews =
+          (postsData || []).reduce((sum: number, post: any) => sum + (post.view_count || 0), 0) +
+          (aiPostsData || []).reduce((sum: number, post: any) => sum + (post.view_count || 0), 0);
       } catch {
         totalPosts = 0;
         totalViews = 0;
       }
 
       try {
-        const { data: storageData } = await supabase.storage
-          .from('uploads')
-          .list('', { limit: 1 });
-        imagesCount = storageData?.length || 0;
+        const [uploadsCount, blogImagesCount] = await Promise.all([
+          countStorageFiles('uploads'),
+          countStorageFiles('blog-images'),
+        ]);
+        imagesCount = uploadsCount + blogImagesCount;
       } catch {
         imagesCount = 0;
       }
@@ -141,7 +183,12 @@ export default function DashboardHome() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    // Only fetch dashboard data on load. Generation is never triggered automatically.
+    fetchStats();
+  }, [fetchStats]);
 
   const categoryOptions = [
     'AI/ML',
@@ -188,8 +235,6 @@ export default function DashboardHome() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
           'x-trigger-source': 'dashboard-admin',
-          'x-user-role': userRole || 'user',
-          'x-user-email': session.user?.email || '',
         },
         body: JSON.stringify({
           source: 'dashboard-admin',
@@ -256,7 +301,7 @@ export default function DashboardHome() {
   ];
 
   return (
-    <div>
+    <div className="space-y-6">
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => router.push('/')}
@@ -264,7 +309,7 @@ export default function DashboardHome() {
         >
           <FaArrowLeft size={24} />
         </button>
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
+        <h1 className="dashboard-title">
           Welcome to Admin Dashboard
         </h1>
       </div>
@@ -272,10 +317,7 @@ export default function DashboardHome() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {statCards.map((card) => (
-          <div
-            key={card.label}
-            className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6"
-          >
+          <div key={card.label} className="dashboard-card">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-slate-800 dark:text-slate-200 text-sm font-semibold">
@@ -293,7 +335,7 @@ export default function DashboardHome() {
         ))}
       </div>
 
-      <div className="mb-8 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div className="dashboard-card mb-8 p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Last AI post generated</p>
@@ -308,7 +350,7 @@ export default function DashboardHome() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
+      <div className="dashboard-card">
         <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white">
           Quick Start
         </h2>

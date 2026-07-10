@@ -3,10 +3,10 @@ import { FaHome } from 'react-icons/fa';
 
 export default function NotFound() {
   return (
-    <div className="container-max py-20 min-h-screen flex items-center justify-center">
-      <div className="max-w-2xl mx-auto text-center">
+    <div className="page-wrapper min-h-screen flex items-center justify-center">
+      <div className="page-frame max-w-2xl text-center">
         <div className="mb-8">
-          <h1 className="text-8xl font-bold text-blue-600 mb-4">404</h1>
+          <h1 className="text-8xl font-bold text-cyan-600 mb-4">404</h1>
           <h2 className="text-4xl font-bold mb-4 text-slate-900 dark:text-slate-100">
             Page Not Found
           </h2>
@@ -26,10 +26,10 @@ export default function NotFound() {
           </Link>
         </div>
 
-        <div className="mt-16 p-8 bg-slate-100 dark:bg-slate-800 rounded-lg">
+        <div className="page-panel mt-16 p-8">
           <p className="text-sm text-slate-800 dark:text-slate-200">
             Need help? You can always reach out through the{' '}
-            <Link href="/contact" className="text-blue-600 hover:underline">
+            <Link href="/contact" className="text-cyan-600 hover:underline">
               contact page
             </Link>
             .

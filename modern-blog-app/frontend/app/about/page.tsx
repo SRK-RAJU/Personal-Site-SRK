@@ -28,9 +28,9 @@ const itemVariants = {
 
 export default function About() {
   return (
-    <div className="container-max py-10 sm:py-12 lg:py-16">
+    <div className="page-wrapper">
       <motion.div 
-        className="mx-auto max-w-6xl rounded-[2rem] border border-white/80 bg-white/70 p-6 shadow-2xl shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70 sm:p-8 lg:p-12" 
+        className="page-frame max-w-6xl" 
         variants={containerVariants} 
         initial="hidden" 
         animate="visible"
@@ -47,7 +47,7 @@ export default function About() {
         </motion.div>
 
         {/* Header - Combined Names */}
-        <motion.div variants={itemVariants} className="mb-10 rounded-[1.5rem] border border-violet-200/70 bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.15),_transparent_34%),linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-8 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[radial-gradient(circle_at_top_left,_rgba(167,139,250,0.2),_transparent_34%),linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))] sm:p-10">
+        <motion.div variants={itemVariants} className="page-hero">
           <h1 className="mb-4 text-5xl font-bold bg-gradient-to-r from-violet-600 via-blue-600 to-purple-600 bg-clip-text text-transparent sm:text-6xl">
             Raju
           </h1>
@@ -63,7 +63,7 @@ export default function About() {
         </motion.div>
 
         {/* About & Journey Section */}
-        <motion.section variants={itemVariants} className="mb-10 rounded-[1.5rem] border border-white/70 bg-white/80 p-8 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70">
+        <motion.section variants={itemVariants} className="page-panel mb-10">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
             <FaRocket className="text-blue-600" /> My Story
           </h2>
@@ -150,7 +150,7 @@ export default function About() {
         </motion.section>
 
         {/* Certifications */}
-        <motion.section variants={itemVariants} className="mb-10 rounded-[1.5rem] border border-white/70 bg-white/80 p-8 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70">
+        <motion.section variants={itemVariants} className="page-panel mb-10">
           <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold">
             <FaAward className="text-yellow-600" /> Certifications & Credentials
           </h2>

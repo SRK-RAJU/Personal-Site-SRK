@@ -365,15 +365,15 @@ export default async function BlogPostPage({
   const { introText, sections } = parseMarkdownSections(post.content || '');
 
   return (
-    <article className="w-full">
+    <article className="w-full futurist-grid-bg">
       {/* Hero Section */}
-      <section className="border-b border-violet-500/20 bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.16),_transparent_34%),linear-gradient(135deg,_rgba(248,250,252,1),_rgba(239,246,255,0.92))] py-12 dark:bg-[radial-gradient(circle_at_top_left,_rgba(167,139,250,0.22),_transparent_34%),linear-gradient(135deg,_rgba(2,6,23,1),_rgba(15,23,42,0.96))]">
+      <section className="border-b border-cyan-500/20 py-12">
         <div className="container-max">
-          <div className="mx-auto max-w-4xl rounded-[2rem] border border-white/70 bg-white/70 p-6 shadow-2xl shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70 sm:p-8 lg:p-10">
+          <div className="futurist-hero mx-auto max-w-4xl">
             {/* Back Button */}
             <Link
               href="/blog"
-              className="mb-6 inline-flex items-center gap-2 font-semibold text-violet-600 transition-colors hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300"
+              className="mb-6 inline-flex items-center gap-2 font-semibold text-cyan-600 transition-colors hover:text-cyan-700 dark:text-cyan-300 dark:hover:text-cyan-200"
             >
               <FaArrowLeft className="text-sm" />
               Back to Articles
@@ -382,7 +382,7 @@ export default async function BlogPostPage({
             {/* Category Badge */}
             {post.category && (
               <div className="mb-4">
-                <span className="inline-block rounded-full border border-violet-500/30 bg-violet-500/15 px-3 py-1 text-sm font-semibold text-violet-700 shadow-sm shadow-violet-500/10 dark:text-violet-300">
+                <span className="futurist-pill">
                   {post.category}
                 </span>
               </div>
@@ -446,8 +446,8 @@ export default async function BlogPostPage({
           <div className="max-w-3xl mx-auto">
             {/* Excerpt */}
             {post.excerpt && (
-              <div className="mb-8 rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-6 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
-                <p className="text-lg font-semibold italic text-slate-800 dark:text-slate-200">
+              <div className="futurist-card mb-8">
+                <p className="text-lg font-semibold italic leading-8 text-slate-800 dark:text-slate-100">
                   {post.excerpt}
                 </p>
               </div>
@@ -456,7 +456,7 @@ export default async function BlogPostPage({
             {/* Main Content */}
             <div className="prose prose-slate dark:prose-invert mb-12 max-w-none">
               {sections.length > 0 && (
-                <div className="mb-6 rounded-[1.25rem] border border-violet-200/70 bg-white/80 p-4 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-violet-800/40 dark:bg-slate-900/70">
+                <div className="futurist-card mb-6 p-4">
                   <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-violet-700 dark:text-violet-300">
                     Table of Contents
                   </p>
@@ -483,7 +483,7 @@ export default async function BlogPostPage({
                       key={`${section.title}-${index}`}
                       id={`section-${index}`}
                       open={index === 0}
-                      className="group overflow-hidden rounded-[1.25rem] border border-violet-200/70 bg-white/80 shadow-lg shadow-violet-500/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-violet-500/20 dark:border-violet-800/40 dark:bg-slate-900/70"
+                      className="group futurist-card overflow-hidden"
                     >
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 font-semibold text-slate-900 transition hover:bg-violet-50 dark:text-white dark:hover:bg-violet-950/30">
                         <div className="flex items-center gap-3">
@@ -494,7 +494,7 @@ export default async function BlogPostPage({
                         </div>
                         <FaChevronDown className="text-lg text-violet-600 transition duration-300 group-open:rotate-180 dark:text-violet-300" />
                       </summary>
-                      <div className="overflow-hidden border-t border-slate-200 bg-gradient-to-b from-slate-50/70 to-white/50 px-4 pb-4 pt-3 transition-all duration-300 dark:border-slate-700 dark:from-slate-900/70 dark:to-slate-950/50">
+                      <div className="overflow-hidden border-t border-slate-200 bg-gradient-to-b from-slate-50/80 to-white/70 px-4 pb-4 pt-3 transition-all duration-300 dark:border-slate-700 dark:from-slate-900/80 dark:to-slate-950/70">
                         {renderMarkdownContent(section.body)}
                       </div>
                     </details>
@@ -523,7 +523,7 @@ export default async function BlogPostPage({
             )}
 
             {/* Call to Action */}
-            <div className="mt-12 rounded-[1.5rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(124,58,237,0.12),_rgba(59,130,246,0.1))] p-8 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(124,58,237,0.16),_rgba(59,130,246,0.12))]">
+            <div className="futurist-card mt-12 bg-[linear-gradient(135deg,_rgba(14,165,233,0.12),_rgba(236,72,153,0.1))] dark:bg-[linear-gradient(135deg,_rgba(14,165,233,0.2),_rgba(236,72,153,0.16))]">
               <h3 className="mb-4 text-2xl font-bold text-slate-900 dark:text-white">
                 Want More Tech Insights?
               </h3>

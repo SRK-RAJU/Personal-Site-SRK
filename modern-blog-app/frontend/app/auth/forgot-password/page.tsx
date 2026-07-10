@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-violet-950/20 flex items-center justify-center p-4 pt-24">
+    <div className="auth-shell">
       <div className="w-full max-w-md">
         {/* Back Button */}
         <Link
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
         </Link>
 
         {/* Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
+        <div className="auth-card">
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-900/30 mb-6 mx-auto">
             <FaEnvelope className="text-violet-600 dark:text-violet-400 text-xl" />
           </div>

@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
 import { FaUsers, FaShieldAlt } from 'react-icons/fa';
+import { useAuth } from '@/lib/authContext';
 
 interface UserRow {
   user_id: string;
@@ -11,29 +11,41 @@ interface UserRow {
 }
 
 export default function DashboardUsersPage() {
+  const { session } = useAuth();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadUsers = async () => {
+      if (!session?.access_token) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const { data, error } = await supabase.from('user_roles').select('user_id, role, created_at').order('created_at', { ascending: false });
-        if (!error) {
-          setUsers((data || []) as UserRow[]);
+        const response = await fetch('/api/admin/users', {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+
+        if (!response.ok) {
+          return;
         }
-      } catch (err) {
-        console.error('Failed to load users', err);
+
+        const result = await response.json();
+        setUsers((result.data || []) as UserRow[]);
       } finally {
         setLoading(false);
       }
     };
 
     loadUsers();
-  }, []);
+  }, [session?.access_token]);
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div className="dashboard-card">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600/10 text-violet-600">
             <FaUsers className="text-xl" />
@@ -45,7 +57,7 @@ export default function DashboardUsersPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div className="dashboard-card">
         {loading ? (
           <div className="text-sm text-slate-500 dark:text-slate-400">Loading users…</div>
         ) : users.length === 0 ? (

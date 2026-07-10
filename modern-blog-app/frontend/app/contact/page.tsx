@@ -98,9 +98,9 @@ export default function Contact() {
   };
 
   return (
-    <div className="container-max py-10 sm:py-12 lg:py-16">
+    <div className="page-wrapper">
       <motion.div 
-        className="mx-auto max-w-6xl rounded-[2rem] border border-white/80 bg-white/70 p-6 shadow-2xl shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70 sm:p-8 lg:p-12" 
+        className="page-frame max-w-6xl" 
         variants={containerVariants} 
         initial="hidden" 
         animate="visible"
@@ -117,7 +117,7 @@ export default function Contact() {
         </motion.div>
 
         {/* Header */}
-        <motion.div variants={itemVariants} className="mb-10 rounded-[1.5rem] border border-violet-200/70 bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.15),_transparent_34%),linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-8 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[radial-gradient(circle_at_top_left,_rgba(167,139,250,0.2),_transparent_34%),linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))] sm:p-10">
+        <motion.div variants={itemVariants} className="page-hero">
           <h1 className="mb-4 text-5xl font-bold text-slate-900 dark:text-white sm:text-6xl">Get In Touch</h1>
           <p className="text-lg text-slate-800 dark:text-slate-200">
             Have a project, question, or just want to discuss Anything? I'd love to hear from you.
@@ -127,7 +127,7 @@ export default function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Contact Form */}
           <motion.div variants={itemVariants} className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="space-y-6 rounded-[1.5rem] border border-white/70 bg-white/80 p-6 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70 sm:p-8">
+            <form onSubmit={handleSubmit} className="page-panel space-y-6 sm:p-8">
               {submitted && (
                 <div role="status" aria-live="polite" className="bg-violet-100 dark:bg-violet-900 border border-violet-400 dark:border-violet-700 text-violet-800 dark:text-violet-200 p-4 rounded-lg flex items-center gap-2">
                   <span className="text-xl">✓</span>
@@ -268,7 +268,7 @@ export default function Contact() {
 
           {/* Contact Information */}
           <motion.div variants={itemVariants} className="space-y-6">
-            <div className="rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-6 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
+            <div className="page-panel">
               <h3 className="text-xl font-bold mb-6 text-slate-900 dark:text-white">Contact Information</h3>
 
               {/* Email */}
@@ -297,7 +297,7 @@ export default function Contact() {
             </div>
 
             {/* FAQ Box */}
-            <div className="rounded-[1.25rem] border border-violet-200/70 bg-white/70 p-6 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70">
+            <div className="page-panel">
               <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white">Quick Facts</h3>
               <ul className="space-y-2 text-sm text-slate-800 dark:text-slate-200">
                 <li>✓ Response time: 24-48 hours</li>
@@ -312,7 +312,7 @@ export default function Contact() {
         </div>
 
         {/* Personal Topics */}
-        <motion.section variants={itemVariants} className="mt-10 rounded-[1.5rem] border border-white/70 bg-white/70 p-8 shadow-lg shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/70">
+        <motion.section variants={itemVariants} className="page-panel mt-10 sm:p-8">
           <h2 className="text-2xl font-bold mb-6">Topics I Explore</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[

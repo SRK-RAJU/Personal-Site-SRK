@@ -91,10 +91,10 @@ export default function Home() {
   ];
 
   return (
-    <div className="w-full">
+    <div className="w-full futurist-grid-bg">
       {/* Hero Section with animated background */}
       <motion.section
-        className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.16),_transparent_30%),linear-gradient(135deg,_rgba(248,250,252,1),_rgba(239,246,255,0.95))] pt-20 dark:bg-[radial-gradient(circle_at_top_left,_rgba(167,139,250,0.22),_transparent_32%),linear-gradient(135deg,_rgba(2,6,23,1),_rgba(15,23,42,0.96))]"
+        className="relative flex min-h-screen items-center justify-center overflow-hidden pt-20"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -131,7 +131,7 @@ export default function Home() {
 
         <div className="container-max py-12">
           <motion.div
-            className="mx-auto max-w-5xl rounded-[2rem] border border-white/80 bg-white/70 p-8 text-center shadow-2xl shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70 sm:p-12 lg:p-16"
+            className="futurist-hero mx-auto max-w-5xl text-center"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -161,11 +161,11 @@ export default function Home() {
 
             {/* Description */}
             <motion.p
-              className="text-lg sm:text-xl text-slate-800 dark:text-slate-100 mb-12 leading-relaxed max-w-3xl mx-auto font-semibold"
+              className="text-lg sm:text-xl text-slate-800 dark:text-slate-100 mb-12 leading-8 max-w-3xl mx-auto font-semibold"
               variants={itemVariants}
             >
               Real-world insights on AI/Automation, Cloud Computing, DevOps, Cybersecurity, and Enterprise IT Solutions. 
-              AI-powered, weekly-updated content covering 50+ enterprise tools and frameworks. 
+              AI-powered, admin-triggered updates covering 50+ enterprise tools and frameworks. 
               Learn practical engineering techniques from production environments.
             </motion.p>
 
@@ -206,7 +206,7 @@ export default function Home() {
                 return (
                   <motion.div
                     key={stat.label}
-                    className="card-glass text-center py-6 sm:py-8 bg-white dark:bg-slate-800 hover:bg-gradient-to-br hover:from-violet-50 hover:to-violet-50 dark:hover:from-violet-900/30 dark:hover:to-violet-900/30 transition-all duration-300 border-2 border-slate-100 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500 shadow-md hover:shadow-xl"
+                    className="futurist-card text-center py-6 sm:py-8"
                     variants={itemVariants}
                     whileHover={{ scale: 1.08, y: -8 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -232,7 +232,7 @@ export default function Home() {
 
       {/* Trending Posts */}
       <motion.section
-        className="bg-gradient-to-b from-slate-50 via-violet-50/50 to-slate-50 dark:from-slate-900 dark:via-violet-900/10 dark:to-slate-900 border-y border-slate-200 dark:border-slate-800 section-padding-tight"
+        className="border-y border-cyan-200/60 dark:border-cyan-900/40 section-padding-tight"
         initial="hidden"
         whileInView="visible"
         variants={sectionVariants}
@@ -245,7 +245,7 @@ export default function Home() {
 
       {/* AI-Generated Weekly Insights */}
       <motion.section
-        className="bg-gradient-to-b from-slate-950 via-purple-950/30 to-slate-950 border-y border-purple-900/50 dark:border-purple-800/50"
+        className="border-y border-cyan-900/40 bg-[linear-gradient(135deg,_rgba(2,6,23,0.98),_rgba(15,23,42,0.95))]"
         initial="hidden"
         whileInView="visible"
         variants={sectionVariants}

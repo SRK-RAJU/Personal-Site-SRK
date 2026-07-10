@@ -42,6 +42,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
   try {
     const slug = params.slug;
     const supabase = getSupabaseClient();
+    let isAiPost = false;
 
     if (!supabase) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
@@ -73,6 +74,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
         const isPublicAiPost = ['published', 'live', 'active', ''].includes(aiPost.status) || !!aiPost.published_at;
 
         if (isPublicAiPost) {
+          isAiPost = true;
           post = {
             ...aiPost,
             published: true,
@@ -92,7 +94,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
 
     // Attempt to increment view count, but don't fail the request if it errors
     try {
-      if (post?.id && post?.source_table !== 'ai_generated_posts') {
+      if (post?.id && !isAiPost) {
         const { data: checkData } = await supabase
           .from('posts')
           .select('view_count')
@@ -103,6 +105,19 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
           await supabase
             .from('posts')
             .update({ view_count: (checkData.view_count || 0) + 1 })
+            .eq('id', post.id);
+        }
+      } else if (post?.id && isAiPost) {
+        const { data: checkAiData } = await supabase
+          .from('ai_generated_posts')
+          .select('view_count')
+          .eq('id', post.id)
+          .single();
+
+        if (checkAiData && typeof checkAiData.view_count === 'number') {
+          await supabase
+            .from('ai_generated_posts')
+            .update({ view_count: (checkAiData.view_count || 0) + 1 })
             .eq('id', post.id);
         }
       }

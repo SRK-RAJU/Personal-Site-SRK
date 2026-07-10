@@ -3,6 +3,13 @@
 @import 'tailwindcss/utilities';
 
 @layer base {
+  :root {
+    --fx-accent: 14 165 233;
+    --fx-accent-2: 236 72 153;
+    --fx-ink: 15 23 42;
+    --fx-paper: 248 250 252;
+  }
+
   html {
     @apply scroll-smooth;
   }
@@ -11,6 +18,24 @@
     @apply bg-white text-slate-900 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-100;
     transition: background-color 0.3s ease, color 0.3s ease;
     background-attachment: fixed;
+    font-family: 'Space Grotesk', 'Segoe UI', 'Trebuchet MS', sans-serif;
+    letter-spacing: 0.01em;
+    line-height: 1.55;
+  }
+
+  .site-main {
+    min-height: calc(100vh - 5rem);
+    background:
+      radial-gradient(circle at 8% 10%, rgba(14, 165, 233, 0.14), transparent 32%),
+      radial-gradient(circle at 88% 2%, rgba(236, 72, 153, 0.12), transparent 30%),
+      linear-gradient(135deg, rgba(248, 250, 252, 0.84), rgba(241, 245, 249, 0.7));
+  }
+
+  .dark .site-main {
+    background:
+      radial-gradient(circle at 8% 10%, rgba(14, 165, 233, 0.24), transparent 36%),
+      radial-gradient(circle at 88% 2%, rgba(236, 72, 153, 0.2), transparent 32%),
+      linear-gradient(135deg, rgba(2, 6, 23, 0.93), rgba(15, 23, 42, 0.84));
   }
 
   .skip-link {
@@ -78,6 +103,72 @@
 @layer components {
   .container-max {
     @apply max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8;
+  }
+
+  .page-wrapper {
+    @apply container-max py-8 sm:py-12 lg:py-16;
+  }
+
+  .page-frame {
+    @apply mx-auto rounded-[1.5rem] sm:rounded-[2rem] border border-white/80 bg-white/75 p-5 sm:p-8 shadow-2xl shadow-cyan-500/15 backdrop-blur-xl dark:border-slate-800/90 dark:bg-slate-900/80 lg:p-12;
+  }
+
+  .page-hero {
+    @apply mb-8 sm:mb-10 rounded-[1.25rem] sm:rounded-[1.5rem] border border-cyan-200/70 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.18),_transparent_36%),linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-6 sm:p-10 shadow-lg shadow-cyan-500/10 dark:border-cyan-800/40 dark:bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.16),_transparent_36%),linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))];
+  }
+
+  .page-panel {
+    @apply rounded-[1.1rem] sm:rounded-[1.25rem] border border-white/80 bg-white/85 p-5 sm:p-6 shadow-lg shadow-cyan-500/15 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/80;
+  }
+
+  .futurist-hero {
+    @apply relative overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] border border-cyan-200/70 bg-[radial-gradient(circle_at_8%_10%,_rgba(14,165,233,0.18),_transparent_36%),radial-gradient(circle_at_88%_5%,_rgba(236,72,153,0.16),_transparent_38%),linear-gradient(135deg,_rgba(248,250,252,0.96),_rgba(239,246,255,0.9))] p-6 sm:p-10 shadow-2xl shadow-cyan-500/20 dark:border-cyan-800/40 dark:bg-[radial-gradient(circle_at_8%_10%,_rgba(14,165,233,0.26),_transparent_38%),radial-gradient(circle_at_88%_5%,_rgba(236,72,153,0.22),_transparent_40%),linear-gradient(135deg,_rgba(2,6,23,0.96),_rgba(15,23,42,0.92))] lg:p-14;
+  }
+
+  .futurist-card {
+    @apply rounded-2xl border border-cyan-200/60 bg-white/90 p-5 sm:p-6 shadow-lg shadow-cyan-500/15 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/70 hover:shadow-2xl hover:shadow-cyan-500/20 dark:border-cyan-900/60 dark:bg-slate-900/80 dark:hover:border-cyan-700/70;
+  }
+
+  .futurist-pill {
+    @apply inline-flex items-center rounded-full border border-cyan-300/70 bg-cyan-50/70 px-3 py-1 text-xs font-semibold tracking-wide text-cyan-700 dark:border-cyan-800/70 dark:bg-cyan-950/40 dark:text-cyan-200;
+  }
+
+  .futurist-grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(14, 165, 233, 0.12) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(14, 165, 233, 0.12) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .dark .futurist-grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(14, 165, 233, 0.18) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(14, 165, 233, 0.18) 1px, transparent 1px);
+  }
+
+  .auth-shell {
+    @apply min-h-screen flex items-center justify-center p-4 pt-24;
+    background: radial-gradient(circle at 20% 10%, rgba(34, 211, 238, 0.14), transparent 35%), linear-gradient(135deg, #0f172a, #111827);
+  }
+
+  .auth-card {
+    @apply rounded-2xl border border-white/20 bg-white/90 p-8 shadow-xl backdrop-blur-xl dark:border-slate-700 dark:bg-slate-800;
+  }
+
+  .dashboard-shell {
+    @apply min-h-screen bg-[radial-gradient(circle_at_8%_10%,_rgba(14,165,233,0.14),_transparent_35%),radial-gradient(circle_at_92%_6%,_rgba(236,72,153,0.12),_transparent_38%),linear-gradient(135deg,_#f8fafc_0%,_#eef2ff_100%)] dark:bg-[radial-gradient(circle_at_8%_10%,_rgba(14,165,233,0.22),_transparent_38%),radial-gradient(circle_at_92%_6%,_rgba(236,72,153,0.18),_transparent_40%),linear-gradient(135deg,_#020617_0%,_#0f172a_100%)];
+  }
+
+  .dashboard-main {
+    @apply relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-8;
+  }
+
+  .dashboard-card {
+    @apply rounded-2xl border border-cyan-200/60 bg-white/90 p-6 shadow-lg shadow-cyan-500/15 backdrop-blur-xl dark:border-cyan-900/60 dark:bg-slate-900/80;
+  }
+
+  .dashboard-title {
+    @apply text-3xl leading-tight sm:text-4xl font-bold text-slate-900 dark:text-white;
   }
 
   /* Responsive spacing utilities - enhanced for mobile consistency */
