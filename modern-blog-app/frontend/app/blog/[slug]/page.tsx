@@ -325,6 +325,7 @@ export async function generateMetadata({
 }: {
   params: { slug: string };
 }) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rjexa.com';
   const post = await getPost(params.slug);
 
   if (!post) {
@@ -337,11 +338,28 @@ export async function generateMetadata({
   return {
     title: `${post.title} | Blog`,
     description: post.excerpt || post.content?.substring(0, 160) || 'Read this article',
+    alternates: {
+      canonical: `${baseUrl}/blog/${encodeURIComponent(post.slug)}`,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt || 'Read this article',
+      images: post.featured_image_url ? [post.featured_image_url] : undefined,
+    },
     openGraph: {
       title: post.title,
       description: post.excerpt || 'Read this article',
       type: 'article',
+      url: `${baseUrl}/blog/${encodeURIComponent(post.slug)}`,
       publishedTime: post.published_at,
+      modifiedTime: post.updated_at || post.published_at,
+      section: post.category || 'Technology',
+      tags: Array.isArray(post.tags) ? post.tags : undefined,
       authors: [post.author_name || 'Raju'],
       images: post.featured_image_url ? [{ url: post.featured_image_url, width: 1200, height: 400 }] : undefined,
     },
@@ -353,6 +371,7 @@ export default async function BlogPostPage({
 }: {
   params: { slug: string };
 }) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rjexa.com';
   const post = await getPost(params.slug);
 
   if (!post) {
@@ -362,10 +381,36 @@ export default async function BlogPostPage({
   // Increment view count (non-blocking)
   incrementViews(post.id).catch(console.error);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt || post.content?.substring(0, 160) || '',
+    datePublished: post.published_at,
+    dateModified: post.updated_at || post.published_at,
+    mainEntityOfPage: `${baseUrl}/blog/${encodeURIComponent(post.slug)}`,
+    author: {
+      '@type': 'Person',
+      name: post.author_name || post.author || 'Raju',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: process.env.NEXT_PUBLIC_SITE_NAME || 'Raju Tech',
+      url: baseUrl,
+    },
+    image: post.featured_image_url ? [post.featured_image_url] : undefined,
+    articleSection: post.category || 'Technology',
+    keywords: Array.isArray(post.tags) ? post.tags.join(', ') : undefined,
+  };
+
   const { introText, sections } = parseMarkdownSections(post.content || '');
 
   return (
     <article className="w-full futurist-grid-bg">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero Section */}
       <section className="border-b border-cyan-500/20 py-12">
         <div className="container-max">
