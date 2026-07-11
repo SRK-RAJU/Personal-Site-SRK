@@ -61,7 +61,12 @@ export async function GET() {
       ]);
 
       posts = [...(regular || []), ...(ai || [])]
-        .filter((post: FeedPost) => !!post?.slug)
+        .filter(
+          (post: FeedPost): post is FeedPost & { slug: string } => {
+            const slug = post?.slug;
+            return typeof slug === 'string' && slug.trim().length > 0;
+          }
+        )
         .sort(
           (a: FeedPost, b: FeedPost) =>
             new Date(b.published_at || b.updated_at || 0).getTime() -
@@ -73,7 +78,14 @@ export async function GET() {
     }
   }
 
-  const items = posts
+  const postsWithSlug = posts.filter(
+    (post): post is FeedPost & { slug: string } => {
+      const slug = post.slug;
+      return typeof slug === 'string' && slug.trim().length > 0;
+    }
+  );
+
+  const items = postsWithSlug
     .map((post) => {
       const url = `${baseUrl}/blog/${encodeURIComponent(post.slug)}`;
       const title = esc(post.title || 'Untitled');
