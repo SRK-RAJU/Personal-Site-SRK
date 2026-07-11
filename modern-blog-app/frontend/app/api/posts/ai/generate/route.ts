@@ -208,6 +208,54 @@ function getTodaySlug(category?: string): string {
   return `${categoryPrefix}-${year}-${month}-${day}`;
 }
 
+function buildUniquenessSuffix(runId?: string, attempt: number = 0): string {
+  const now = new Date();
+  const timePart = `${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+  const runPart = (runId || Math.random().toString(36).slice(2, 8)).replace(/[^a-z0-9]/gi, '').slice(-6).toLowerCase() || 'batch';
+  return attempt > 0 ? `${timePart}-${runPart}-${attempt + 1}` : `${timePart}-${runPart}`;
+}
+
+async function resolveUniquePostIdentity(supabase: any, post: GeneratedPost, runId?: string): Promise<GeneratedPost> {
+  const baseTitle = post.title.trim();
+  const baseSlug = post.slug.trim();
+
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const suffix = attempt === 0 ? '' : buildUniquenessSuffix(runId, attempt - 1);
+    const candidateTitle = suffix ? `${baseTitle} (${suffix})` : baseTitle;
+    const candidateSlug = suffix ? `${baseSlug}-${suffix}` : baseSlug;
+
+    const { data, error } = await supabase
+      .from('ai_generated_posts')
+      .select('id')
+      .or(`slug.eq.${candidateSlug},title.eq.${candidateTitle}`)
+      .limit(1);
+
+    if (error) {
+      console.warn('[SUPABASE-SAVE] Unique identity lookup failed, using candidate anyway.', error.message);
+      return {
+        ...post,
+        title: candidateTitle,
+        slug: candidateSlug,
+      };
+    }
+
+    if (!data || data.length === 0) {
+      return {
+        ...post,
+        title: candidateTitle,
+        slug: candidateSlug,
+      };
+    }
+  }
+
+  const fallbackSuffix = `${Date.now()}`;
+  return {
+    ...post,
+    title: `${baseTitle} (${fallbackSuffix})`,
+    slug: `${baseSlug}-${fallbackSuffix}`,
+  };
+}
+
 async function checkIfAlreadyGeneratedToday(category?: string): Promise<{ alreadyGenerated: boolean; slug: string }> {
   const todaySlug = getTodaySlug(category);
   const todayKey = getTodayDateKey();
@@ -981,7 +1029,7 @@ async function saveGenerationBackup(post: GeneratedPost, runId?: string): Promis
   }
 }
 
-async function savePostToSupabase(post: GeneratedPost, runId?: string): Promise<{ saved: boolean; backupPath: string | null }> {
+async function savePostToSupabase(post: GeneratedPost, runId?: string): Promise<{ saved: boolean; backupPath: string | null; savedPost?: GeneratedPost }> {
   const backupPath = await saveGenerationBackup(post, runId);
   const supabase = getSupabaseClient();
   if (!supabase) {
@@ -989,20 +1037,22 @@ async function savePostToSupabase(post: GeneratedPost, runId?: string): Promise<
     return { saved: false, backupPath };
   }
 
+  const postToSave = await resolveUniquePostIdentity(supabase, post, runId);
+
   const publishedAt = new Date().toISOString();
   const today = new Date();
   const firstJan = new Date(today.getFullYear(), 0, 1);
   const weekOfYear = Math.ceil((((today.getTime() - firstJan.getTime()) / 86400000) + firstJan.getDay() + 1) / 7);
 
   const payload = {
-    title: post.title,
-    slug: post.slug,
-    content: post.content,
-    excerpt: post.excerpt,
-    category: post.category || 'DevOps',
-    tags: post.tools_covered,
-    tools_covered: post.tools_covered,
-    cves_mentioned: post.cves_mentioned,
+    title: postToSave.title,
+    slug: postToSave.slug,
+    content: postToSave.content,
+    excerpt: postToSave.excerpt,
+    category: postToSave.category || 'DevOps',
+    tags: postToSave.tools_covered,
+    tools_covered: postToSave.tools_covered,
+    cves_mentioned: postToSave.cves_mentioned,
     ai_model: AI_MODEL_NAME,
     status: 'published',
     published_at: publishedAt,
@@ -1012,42 +1062,19 @@ async function savePostToSupabase(post: GeneratedPost, runId?: string): Promise<
   };
 
   try {
-    console.log(`[SUPABASE-SAVE] Saving report (${post.content.length} bytes)...`);
+    console.log(`[SUPABASE-SAVE] Saving report (${postToSave.content.length} bytes)...`);
 
-    const { data: existing, error: existingError } = await supabase
+    const { error: insertError } = await supabase
       .from('ai_generated_posts')
-      .select('id')
-      .eq('slug', post.slug)
-      .limit(1)
-      .maybeSingle();
+      .insert([payload]);
 
-    if (existingError) {
-      console.warn('[SUPABASE-SAVE] Existing record lookup failed, falling back to insert.', existingError.message);
+    if (insertError) {
+      console.error('[SUPABASE-SAVE] Insert failed:', insertError.message);
+      return { saved: false, backupPath };
     }
 
-    if (existing && existing.id) {
-      const { error: updateError } = await supabase
-        .from('ai_generated_posts')
-        .update(payload)
-        .eq('id', existing.id);
-
-      if (updateError) {
-        console.error('[SUPABASE-SAVE] Update failed:', updateError.message);
-        return { saved: false, backupPath };
-      }
-    } else {
-      const { error: insertError } = await supabase
-        .from('ai_generated_posts')
-        .insert([payload]);
-
-      if (insertError) {
-        console.error('[SUPABASE-SAVE] Insert failed:', insertError.message);
-        return { saved: false, backupPath };
-      }
-    }
-
-    console.log('[SUPABASE-SAVE] ✅ Today\'s file safely committed!');
-    return { saved: true, backupPath };
+    console.log('[SUPABASE-SAVE] ✅ New AI post committed without overwriting older posts.');
+    return { saved: true, backupPath, savedPost: postToSave };
   } catch (err) {
     console.error('[SUPABASE-SAVE] Failed to save AI post to Supabase', err);
     return { saved: false, backupPath };
@@ -1137,17 +1164,23 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       return NextResponse.json({ skipped: true, reason: 'Build phase' }, { status: 200 });
     }
 
-    const auth = await verifyAdminAuth(request);
-    if (!auth.isValid) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 401 });
+    const configuredCronSecret = process.env.CRON_SECRET || '';
+    const requestCronSecret = request.headers.get('x-cron-secret') || '';
+    const isCronRequest = !!configuredCronSecret && requestCronSecret === configuredCronSecret;
+
+    let isAdmin = false;
+    if (!isCronRequest) {
+      const auth = await verifyAdminAuth(request);
+      if (!auth.isValid) {
+        return NextResponse.json({ error: 'Admin access required' }, { status: 401 });
+      }
+      isAdmin = true;
     }
 
     const envCheck = validateEnvironment();
     if (!envCheck.valid) {
       return NextResponse.json({ error: 'Configuration Error', missing_vars: envCheck.missing }, { status: 503 });
     }
-
-    const isAdmin = auth.isValid;
 
     await releaseStaleGenerationLocks();
 
@@ -1169,7 +1202,7 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
 
     const mode = requestBody?.mode === 'all-categories' ? 'all-categories' : requestBody?.generateAll ? 'all-categories' : 'single-category';
     const requestedCategory = typeof requestBody?.category === 'string' ? requestBody.category.trim() : '';
-    let batchIndex = 1;
+    let batchIndex: number | undefined;
     if (requestBody && typeof requestBody.batch !== 'undefined') {
       const parsed = Number(requestBody.batch);
       if (!Number.isNaN(parsed) && parsed > 0) batchIndex = Math.floor(parsed);
@@ -1230,7 +1263,7 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
         totalGeminiCalls += 1;
         totalTools += toolsWithCategories.length;
         totalSaved += saveResult.saved ? 1 : 0;
-        generated.push({ category, saved: saveResult.saved, post: { title: post.title, slug: post.slug, cves_mentioned: post.cves_mentioned }, backupPath: saveResult.backupPath });
+        generated.push({ category, saved: saveResult.saved, post: { title: saveResult.savedPost?.title || post.title, slug: saveResult.savedPost?.slug || post.slug, cves_mentioned: post.cves_mentioned }, backupPath: saveResult.backupPath });
       }
 
       await logGeneration(runId, { run_id: runId, status: totalSaved > 0 ? 'success' : 'partial', posts_generated: generated.filter((item) => item.post).length, posts_published: totalSaved });
@@ -1294,10 +1327,10 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       gemini_calls: 1,
       db_tool_count: toolsWithCategories.length,
       tools_covered: post.tools_covered.length,
-      batch: batchIndex,
+      batch: batchForCategory,
       backup_path: saveResult.backupPath,
       category_prompt_details: promptDetails,
-      post: { title: post.title, slug: post.slug, cves_mentioned: post.cves_mentioned }
+      post: { title: saveResult.savedPost?.title || post.title, slug: saveResult.savedPost?.slug || post.slug, cves_mentioned: post.cves_mentioned }
     }, { status: 200 });
 
   } catch (error: any) {
@@ -1310,8 +1343,8 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
 export async function GET(request: NextRequest) {
   return NextResponse.json({
     status: 'ok',
-    mode: 'manual-admin-only',
-    message: 'Use POST with admin authentication to generate a post.',
+    mode: 'manual-admin-or-cron-secret',
+    message: 'Use POST with admin authentication or x-cron-secret to generate a post.',
   });
 }
 

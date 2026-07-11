@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import { FaBook, FaImage, FaUsers, FaEye, FaArrowLeft, FaRobot } from 'react-icons/fa';
@@ -49,6 +49,33 @@ function getCategoryPromptDetails(category: string) {
 }
 
 const GENERATION_TOOL_BATCH_SIZE = 4;
+
+interface CoverageBatch {
+  batchNumber: number;
+  start: number;
+  end: number;
+  tools: string[];
+}
+
+interface CategoryCoverageSummary {
+  category: string;
+  toolCount: number;
+  batchCount: number;
+  publishedCount: number;
+  currentBatch: number;
+  nextBatch: number;
+  toolNames: string[];
+  batches: CoverageBatch[];
+}
+
+interface AIGeneratedPostSummary {
+  id: number | string;
+  title: string;
+  slug: string;
+  category: string;
+  published_at: string;
+  tools_covered: string[];
+}
 
 async function countStorageFiles(bucket: string, prefix: string = ''): Promise<number> {
   let total = 0;
@@ -110,7 +137,8 @@ export default function DashboardHome() {
   const [promptDetails, setPromptDetails] = useState<{ title: string; focus: string; guidance: string } | null>(null);
   const [promptDetailsByCategory, setPromptDetailsByCategory] = useState<Array<{ category: string; title: string; focus: string; guidance: string }>>([]);
   const [categoryStatuses, setCategoryStatuses] = useState<Array<{ category: string; saved?: boolean; skipped?: boolean; reason?: string; title?: string; slug?: string }>>([]);
-  const [categoryCoverage, setCategoryCoverage] = useState<Array<{ category: string; toolCount: number; batchCount: number; publishedCount: number; currentBatch: number; nextBatch: number }>>([]);
+  const [categoryCoverage, setCategoryCoverage] = useState<CategoryCoverageSummary[]>([]);
+  const [aiGeneratedPosts, setAiGeneratedPosts] = useState<AIGeneratedPostSummary[]>([]);
   const [batchOverride, setBatchOverride] = useState('');
 
   const fetchStats = useCallback(async () => {
@@ -168,17 +196,23 @@ export default function DashboardHome() {
       try {
         const { data: coverageData } = await supabase
           .from('tools_coverage_metadata')
-          .select('category')
+          .select('category, tool_name')
           .eq('is_active', true);
 
         const { data: publishedCategoryData } = await supabase
           .from('ai_generated_posts')
-          .select('category')
-          .eq('status', 'published');
+          .select('id, title, slug, category, published_at, tools_covered')
+          .eq('status', 'published')
+          .order('published_at', { ascending: false });
 
-        const coverageCounts = (coverageData || []).reduce((acc: Record<string, number>, item: any) => {
+        const coverageTools = (coverageData || []).reduce((acc: Record<string, string[]>, item: any) => {
           const category = String(item.category || 'General').trim() || 'General';
-          acc[category] = (acc[category] || 0) + 1;
+          const toolName = String(item.tool_name || '').trim();
+          if (!toolName) return acc;
+          if (!acc[category]) {
+            acc[category] = [];
+          }
+          acc[category].push(toolName);
           return acc;
         }, {});
 
@@ -188,27 +222,53 @@ export default function DashboardHome() {
           return acc;
         }, {});
 
+        setAiGeneratedPosts(
+          (publishedCategoryData || []).map((item: any) => ({
+            id: item.id,
+            title: String(item.title || ''),
+            slug: String(item.slug || ''),
+            category: String(item.category || 'General').trim() || 'General',
+            published_at: String(item.published_at || ''),
+            tools_covered: Array.isArray(item.tools_covered) ? item.tools_covered.filter(Boolean) : [],
+          }))
+        );
+
         setCategoryCoverage(
-          Object.entries(coverageCounts)
-            .map(([category, toolCount]) => {
+          Object.entries(coverageTools)
+            .map(([category, toolNames]) => {
+              const normalizedToolNames = [...toolNames].sort((a, b) => a.localeCompare(b));
+              const toolCount = normalizedToolNames.length;
               const batchCount = Math.max(1, Math.ceil(toolCount / GENERATION_TOOL_BATCH_SIZE));
               const publishedCount = publishedCounts[category] || 0;
               const currentBatch = (publishedCount % batchCount) + 1;
               const nextBatch = batchCount === 1 ? 1 : (currentBatch % batchCount) + 1;
+              const batches = Array.from({ length: batchCount }, (_, index) => {
+                const start = index * GENERATION_TOOL_BATCH_SIZE;
+                const tools = normalizedToolNames.slice(start, start + GENERATION_TOOL_BATCH_SIZE);
+                return {
+                  batchNumber: index + 1,
+                  start: start + 1,
+                  end: start + tools.length,
+                  tools,
+                };
+              });
 
               return {
-              category,
-              toolCount,
-              batchCount,
-              publishedCount,
-              currentBatch,
-              nextBatch,
+                category,
+                toolCount,
+                batchCount,
+                publishedCount,
+                currentBatch,
+                nextBatch,
+                toolNames: normalizedToolNames,
+                batches,
               };
             })
             .sort((a, b) => a.category.localeCompare(b.category))
         );
       } catch {
         setCategoryCoverage([]);
+        setAiGeneratedPosts([]);
       }
 
       try {
@@ -263,7 +323,33 @@ export default function DashboardHome() {
   const nextCategory = categoryOptions[categoryCursor % categoryOptions.length];
   const selectedCoverage = categoryCoverage.find((item) => item.category === selectedCategory);
   const selectedBatchCount = selectedCoverage?.batchCount || 1;
-  const selectedBatchOptions = Array.from({ length: selectedBatchCount }, (_, index) => index + 1);
+  const parsedBatchOverride = Number(batchOverride);
+  const effectiveBatchNumber = Number.isFinite(parsedBatchOverride) && parsedBatchOverride > 0
+    ? Math.min(Math.floor(parsedBatchOverride), selectedBatchCount)
+    : selectedCoverage?.nextBatch || 1;
+  const effectiveBatch = selectedCoverage?.batches.find((batch) => batch.batchNumber === effectiveBatchNumber) || null;
+  const selectedBatchOptions = selectedCoverage?.batches || [];
+  const previousBatchPosts = useMemo(() => {
+    if (!selectedCoverage || !effectiveBatch) return [];
+
+    const batchToolSet = new Set(effectiveBatch.tools.map((tool) => tool.toLowerCase()));
+    return aiGeneratedPosts
+      .filter((post) => post.category === selectedCoverage.category)
+      .map((post) => {
+        const matchedTools = post.tools_covered.filter((tool) => batchToolSet.has(String(tool).toLowerCase()));
+        return {
+          ...post,
+          matchedTools,
+          matchedCount: matchedTools.length,
+        };
+      })
+      .filter((post) => post.matchedCount > 0)
+      .sort((a, b) => {
+        if (b.matchedCount !== a.matchedCount) return b.matchedCount - a.matchedCount;
+        return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
+      })
+      .slice(0, 5);
+  }, [aiGeneratedPosts, effectiveBatch, selectedCoverage]);
 
   const handleGenerateAiPost = async (categoryOverride?: string) => {
     if (!session?.access_token) {
@@ -480,24 +566,15 @@ export default function DashboardHome() {
                         <option key={category} value={category}>{category}</option>
                       ))}
                     </select>
-                    <input
-                      type="number"
-                      min={1}
-                      max={selectedBatchCount}
-                      placeholder={`Optional batch number (1-${selectedBatchCount})`}
-                      value={batchOverride}
-                      onChange={(event) => setBatchOverride(event.target.value)}
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-                    />
                     <select
                       value={batchOverride}
                       onChange={(event) => setBatchOverride(event.target.value)}
                       className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
                     >
                       <option value="">Auto-rotate next batch</option>
-                      {selectedBatchOptions.map((batchNumber) => (
-                        <option key={batchNumber} value={String(batchNumber)}>
-                          Batch {batchNumber} of {selectedBatchCount}
+                      {selectedBatchOptions.map((batch) => (
+                        <option key={batch.batchNumber} value={String(batch.batchNumber)}>
+                          Batch {batch.batchNumber} of {selectedBatchCount} • tools {batch.start}-{batch.end}
                         </option>
                       ))}
                     </select>
@@ -508,8 +585,39 @@ export default function DashboardHome() {
                       <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
                         <p>Tools: {selectedCoverage.toolCount} | Published: {selectedCoverage.publishedCount}</p>
                         <p>Current batch: {selectedCoverage.currentBatch}/{selectedCoverage.batchCount} | Next batch: {selectedCoverage.nextBatch}/{selectedCoverage.batchCount}</p>
+                        {effectiveBatch ? (
+                          <>
+                            <p>Selected batch: {effectiveBatch.batchNumber}/{selectedCoverage.batchCount} | Tool range: {effectiveBatch.start}-{effectiveBatch.end}</p>
+                            <p className="mt-1">Tools in batch: {effectiveBatch.tools.join(', ')}</p>
+                          </>
+                        ) : null}
                       </div>
                     ) : null}
+                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                        Previous posts for this batch
+                      </p>
+                      {previousBatchPosts.length > 0 ? (
+                        <div className="mt-2 space-y-2">
+                          {previousBatchPosts.map((post) => (
+                            <a
+                              key={post.id}
+                              href={`/blog/${post.slug}`}
+                              className="block rounded-lg border border-slate-200 bg-white p-3 hover:border-amber-300 hover:shadow-sm dark:border-slate-700 dark:bg-slate-900"
+                            >
+                              <p className="text-sm font-semibold text-slate-900 dark:text-white">{post.title}</p>
+                              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                {new Date(post.published_at).toLocaleString()} • matched tools: {post.matchedTools.join(', ')}
+                              </p>
+                            </a>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                          No previous AI posts matched this category batch yet.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 )}
                 <div className="flex flex-col gap-2 sm:flex-row">
