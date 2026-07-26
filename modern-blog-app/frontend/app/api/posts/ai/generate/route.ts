@@ -1200,6 +1200,8 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       requestBody = {};
     }
 
+    const triggerSource = (request.headers.get('x-trigger-source') || requestBody?.source || '').toString().trim().toLowerCase();
+
     const mode = requestBody?.mode === 'all-categories' ? 'all-categories' : requestBody?.generateAll ? 'all-categories' : 'single-category';
     const requestedCategory = typeof requestBody?.category === 'string' ? requestBody.category.trim() : '';
     let batchIndex: number | undefined;
@@ -1207,6 +1209,7 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       const parsed = Number(requestBody.batch);
       if (!Number.isNaN(parsed) && parsed > 0) batchIndex = Math.floor(parsed);
     }
+    const isSchedulerBatchRun = !isAdmin && isCronRequest && triggerSource === 'supabase-scheduler' && typeof batchIndex === 'number' && batchIndex > 0;
 
     const requestedCategories = mode === 'all-categories'
       ? await getToolCategories()
@@ -1233,7 +1236,7 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
 
       for (const category of selectedCategories) {
         const categorySlug = getTodaySlug(category);
-        if (!isAdmin) {
+        if (!isAdmin && !isSchedulerBatchRun) {
           const { alreadyGenerated } = await checkIfAlreadyGeneratedToday(category);
           if (alreadyGenerated) {
             generated.push({ category, skipped: true, slug: categorySlug, reason: 'Already generated today' });
@@ -1283,7 +1286,7 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
     }
 
     const category = selectedCategories[0];
-    if (!isAdmin) {
+    if (!isAdmin && !isSchedulerBatchRun) {
       const { alreadyGenerated, slug } = await checkIfAlreadyGeneratedToday(category);
       if (alreadyGenerated) {
         return NextResponse.json({ success: true, skipped: true, slug, reason: 'Already generated today' }, { status: 200 });

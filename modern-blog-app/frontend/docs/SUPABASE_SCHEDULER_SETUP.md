@@ -42,6 +42,7 @@ create table if not exists public.ai_scheduler_config (
   cursor int not null default 0,
   week_key text not null default '',
   processed_this_week int not null default 0,
+  batch_cursor jsonb not null default '{}'::jsonb,
   last_run_at timestamptz,
   updated_at timestamptz not null default now()
 );
@@ -111,6 +112,7 @@ type ConfigRow = {
   cursor: number;
   week_key: string;
   processed_this_week: number;
+  batch_cursor?: Record<string, number> | null;
   last_run_at: string | null;
 };
 
@@ -139,6 +141,36 @@ async function logRun(
   });
 }
 
+function getServiceRoleKey(): string {
+  const secretKeysRaw = Deno.env.get("SUPABASE_SECRET_KEYS") || "{}";
+  try {
+    const parsed = JSON.parse(secretKeysRaw);
+    const role = parsed?.default;
+    if (typeof role === "string" && role.trim()) {
+      return role.trim();
+    }
+  } catch {
+    // fall back to legacy env
+  }
+  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+}
+
+async function getCategoryBatchCount(supabase: any, category: string): Promise<number> {
+  const schedulerBatchSize = 4;
+  const { count, error } = await supabase
+    .from("tools_coverage_metadata")
+    .select("id", { count: "exact", head: true })
+    .eq("is_active", true)
+    .ilike("category", category);
+
+  if (error) {
+    return 1;
+  }
+
+  const totalTools = count || 0;
+  return Math.max(1, Math.ceil(totalTools / schedulerBatchSize));
+}
+
 serve(async (req) => {
   try {
     const inboundSecret = req.headers.get("x-supa-cron-secret") || "";
@@ -148,17 +180,7 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-    const secretKeysRaw = Deno.env.get("SUPABASE_SECRET_KEYS") || "{}";
-    let serviceRole = "";
-    try {
-      const parsed = JSON.parse(secretKeysRaw);
-      serviceRole = parsed?.default || "";
-    } catch {
-      serviceRole = "";
-    }
-    if (!serviceRole) {
-      serviceRole = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-    }
+    const serviceRole = getServiceRoleKey();
     if (!supabaseUrl || !serviceRole) {
       return new Response(JSON.stringify({ ok: false, error: "Missing Supabase env" }), { status: 500 });
     }
@@ -203,11 +225,16 @@ serve(async (req) => {
     let cursor = cfg.cursor;
     let processed = cfg.processed_this_week;
     let weekKey = cfg.week_key || "";
+    let batchCursor: Record<string, number> =
+      cfg.batch_cursor && typeof cfg.batch_cursor === "object"
+        ? { ...(cfg.batch_cursor as Record<string, number>) }
+        : {};
 
     if (weekKey !== currentWeek) {
       cursor = 0;
       processed = 0;
       weekKey = currentWeek;
+      batchCursor = {};
     }
 
     const categories = Array.isArray(cfg.categories) ? cfg.categories : [];
@@ -223,6 +250,9 @@ serve(async (req) => {
 
     const idx = cursor % categories.length;
     const category = categories[idx];
+    const batchCount = await getCategoryBatchCount(supabase, category);
+    const currentBatch = Number(batchCursor[category] || 0);
+    const nextBatch = Math.min(batchCount, Math.max(1, currentBatch + 1));
     const targetBase = cfg.mode === "prod"
       ? (Deno.env.get("PROD_BASE_URL") || "")
       : (Deno.env.get("PREVIEW_BASE_URL") || "");
@@ -249,14 +279,25 @@ serve(async (req) => {
         source: "supabase-scheduler",
         mode: "single-category",
         category,
+        batch: nextBatch,
       }),
     });
 
     const forwardText = await forwardRes.text();
     const ok = forwardRes.ok;
 
-    const nextCursor = (idx + 1) % categories.length;
-    const nextProcessed = processed + 1;
+    let nextCursor = cursor;
+    let nextProcessed = processed;
+
+    if (ok) {
+      if (nextBatch >= batchCount) {
+        batchCursor[category] = 0;
+        nextCursor = (idx + 1) % categories.length;
+        nextProcessed = processed + 1;
+      } else {
+        batchCursor[category] = nextBatch;
+      }
+    }
 
     await supabase
       .from("ai_scheduler_config")
@@ -264,6 +305,7 @@ serve(async (req) => {
         cursor: nextCursor,
         processed_this_week: nextProcessed,
         week_key: weekKey,
+        batch_cursor: batchCursor,
         last_run_at: now.toISOString(),
         updated_at: now.toISOString(),
       })
@@ -274,17 +316,27 @@ serve(async (req) => {
       ok ? "success" : "error",
       cfg.mode,
       category,
-      undefined,
-      { status: forwardRes.status, body: forwardText.slice(0, 2000), cursor: nextCursor, processed_this_week: nextProcessed }
+      nextBatch,
+      {
+        status: forwardRes.status,
+        body: forwardText.slice(0, 2000),
+        batch: nextBatch,
+        batch_count: batchCount,
+        cursor: nextCursor,
+        processed_this_week: nextProcessed,
+      }
     );
 
     return Response.json({
       ok,
       mode: cfg.mode,
       category,
+      batch: nextBatch,
+      batch_count: batchCount,
       status: forwardRes.status,
+      cursor: nextCursor,
       processed_this_week: nextProcessed,
-      total_categories: categories.length,
+      total_categories: categories.length
     });
   } catch (e) {
     return new Response(JSON.stringify({ ok: false, error: String(e) }), { status: 500 });
