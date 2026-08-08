@@ -17,6 +17,15 @@ interface Image {
   created_at: string | null;
 }
 
+interface ToolProgress {
+  number: number;
+  tool_name: string;
+  category: string;
+  generated: boolean;
+  image_name: string | null;
+  image_url: string | null;
+}
+
 export default function ImagesPage() {
   const router = useRouter();
   const [images, setImages] = useState<Image[]>([]);
@@ -29,6 +38,15 @@ export default function ImagesPage() {
   const [batchCategory, setBatchCategory] = useState('');
   const [batchStatus, setBatchStatus] = useState('');
   const [batchSummary, setBatchSummary] = useState('');
+  const [selectedToolNumber, setSelectedToolNumber] = useState(1);
+  const [progressLoading, setProgressLoading] = useState(false);
+  const [progressTotal, setProgressTotal] = useState(0);
+  const [progressGenerated, setProgressGenerated] = useState(0);
+  const [generatedUptoNumber, setGeneratedUptoNumber] = useState(0);
+  const [nextToolNumber, setNextToolNumber] = useState<number | null>(null);
+  const [nextPendingNumber, setNextPendingNumber] = useState<number | null>(null);
+  const [allGenerated, setAllGenerated] = useState(false);
+  const [toolProgress, setToolProgress] = useState<ToolProgress[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -55,7 +73,12 @@ export default function ImagesPage() {
 
   useEffect(() => {
     fetchImages();
+    void fetchProgress('');
   }, []);
+
+  useEffect(() => {
+    void fetchProgress(batchCategory);
+  }, [batchCategory]);
 
   const fetchImages = async () => {
     try {
@@ -195,7 +218,47 @@ export default function ImagesPage() {
     setTimeout(() => setCopiedUrl(null), 2000);
   };
 
-  const runImageBatch = async (offset: number) => {
+  const fetchProgress = async (category: string) => {
+    try {
+      setProgressLoading(true);
+      const { data: authData, error: authError } = await supabase.auth.getSession();
+      if (authError || !authData?.session?.access_token) {
+        return;
+      }
+
+      const query = category ? `?category=${encodeURIComponent(category)}` : '';
+      const response = await fetch(`/api/images/ai/progress${query}`, {
+        headers: {
+          Authorization: `Bearer ${authData.session.access_token}`,
+          'x-user-email': authData.session.user.email || '',
+        },
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result?.success) {
+        return;
+      }
+
+      setProgressTotal(result.total_tools || 0);
+      setProgressGenerated(result.generated_tools || 0);
+      setGeneratedUptoNumber(result.generated_upto_number || 0);
+      setNextToolNumber(result.next_tool_number || null);
+      setNextPendingNumber(result.next_pending_number || null);
+      setAllGenerated(Boolean(result.all_generated));
+      setToolProgress(Array.isArray(result.tools) ? result.tools : []);
+
+      const suggestedNumber = result.next_pending_number || result.next_tool_number || 1;
+      const suggestedOffset = Math.max(0, Number(suggestedNumber) - 1);
+      setBatchOffset(suggestedOffset);
+      setSelectedToolNumber(suggestedNumber);
+    } catch {
+      // Keep UI usable even if progress endpoint fails.
+    } finally {
+      setProgressLoading(false);
+    }
+  };
+
+  const runImageBatch = async (offset: number, limitOverride?: number) => {
     const { data: authData, error: authError } = await supabase.auth.getSession();
     if (authError || !authData?.session?.access_token) {
       throw new Error('Admin session required. Please sign in again.');
@@ -211,7 +274,7 @@ export default function ImagesPage() {
       body: JSON.stringify({
         category: batchCategory || undefined,
         offset,
-        limit: batchLimit,
+        limit: limitOverride || batchLimit,
         learningMode: 'all-levels',
       }),
     });
@@ -239,6 +302,7 @@ export default function ImagesPage() {
         setBatchSummary(`Generated ${result.generated_count}, failed ${result.failed_count}, next offset ${result.next_offset}.`);
         setSuccess('Batch completed successfully.');
         await fetchImages();
+        await fetchProgress(batchCategory);
       } else {
         let currentOffset = batchOffset;
         let totalGenerated = 0;
@@ -264,9 +328,67 @@ export default function ImagesPage() {
         setBatchSummary(`Full run done. Generated ${totalGenerated}, failed ${totalFailed}, processed upto ${currentOffset}/${totalTools}.`);
         setSuccess('Full tool-image run completed.');
         await fetchImages();
+        await fetchProgress(batchCategory);
       }
     } catch (err: any) {
       setError(err?.message || 'Unable to run image generation batch');
+    } finally {
+      setBatchRunning(false);
+      setBatchStatus('');
+    }
+  };
+
+  const handleGenerateSelectedTool = async () => {
+    if (!selectedToolNumber || selectedToolNumber < 1) {
+      setError('Enter a valid tool number.');
+      return;
+    }
+
+    const targetOffset = Math.max(0, selectedToolNumber - 1);
+    setBatchRunning(true);
+    setError('');
+    setSuccess('');
+    setBatchSummary('');
+    setBatchStatus(`Generating tool #${selectedToolNumber}...`);
+
+    try {
+      const result = await runImageBatch(targetOffset, 1);
+      setBatchSummary(`Tool #${selectedToolNumber}: generated ${result.generated_count}, failed ${result.failed_count}.`);
+      setSuccess(`Tool #${selectedToolNumber} generation completed.`);
+      await fetchImages();
+      await fetchProgress(batchCategory);
+    } catch (err: any) {
+      setError(err?.message || 'Unable to generate selected tool image.');
+    } finally {
+      setBatchRunning(false);
+      setBatchStatus('');
+    }
+  };
+
+  const handleRunFromNextPending = async () => {
+    const targetNumber = nextPendingNumber || nextToolNumber;
+    if (!targetNumber) {
+      setSuccess('All tools already generated for the selected category/filter.');
+      return;
+    }
+
+    setSelectedToolNumber(targetNumber);
+    const targetOffset = Math.max(0, targetNumber - 1);
+
+    setBatchRunning(true);
+    setError('');
+    setSuccess('');
+    setBatchSummary('');
+    setBatchStatus(`Generating next pending tool #${targetNumber}...`);
+
+    try {
+      const result = await runImageBatch(targetOffset, 1);
+      setBatchSummary(`Next pending #${targetNumber}: generated ${result.generated_count}, failed ${result.failed_count}.`);
+      setSuccess(`Generated next pending tool #${targetNumber}.`);
+      await fetchImages();
+      await fetchProgress(batchCategory);
+    } catch (err: any) {
+      setError(err?.message || 'Unable to generate next pending tool image.');
     } finally {
       setBatchRunning(false);
       setBatchStatus('');
@@ -303,8 +425,66 @@ export default function ImagesPage() {
         <div className="mb-6 rounded-lg border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-800 dark:bg-cyan-900/20">
           <h3 className="text-lg font-semibold text-cyan-900 dark:text-cyan-200">AI Tool Images (Admin Batch)</h3>
           <p className="mt-1 text-sm text-cyan-800 dark:text-cyan-300">
-            This is a separate image generated by the AI Image tool.
+            Generate tool-wise learning images and track exactly how many are done.
           </p>
+
+          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-4">
+            <div className="rounded border border-cyan-200 bg-white px-3 py-2 text-xs text-slate-700 dark:border-cyan-700 dark:bg-slate-900 dark:text-slate-300">
+              Total tools: <span className="font-semibold">{progressTotal}</span>
+            </div>
+            <div className="rounded border border-cyan-200 bg-white px-3 py-2 text-xs text-slate-700 dark:border-cyan-700 dark:bg-slate-900 dark:text-slate-300">
+              Generated: <span className="font-semibold">{progressGenerated}</span>
+            </div>
+            <div className="rounded border border-cyan-200 bg-white px-3 py-2 text-xs text-slate-700 dark:border-cyan-700 dark:bg-slate-900 dark:text-slate-300">
+              Generated upto #: <span className="font-semibold">{generatedUptoNumber}</span>
+            </div>
+            <div className="rounded border border-cyan-200 bg-white px-3 py-2 text-xs text-slate-700 dark:border-cyan-700 dark:bg-slate-900 dark:text-slate-300">
+              Next tool #: <span className="font-semibold">{nextToolNumber || '-'}</span>
+            </div>
+          </div>
+
+          {allGenerated ? (
+            <p className="mt-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+              All tools are already generated for current filter.
+            </p>
+          ) : null}
+
+          <div className="mt-3 flex flex-wrap items-end gap-2">
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">Tool number</label>
+              <input
+                type="number"
+                min={1}
+                value={selectedToolNumber}
+                onChange={(event) => setSelectedToolNumber(Math.max(1, Number(event.target.value) || 1))}
+                className="w-32 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => { void handleGenerateSelectedTool(); }}
+              disabled={batchRunning}
+              className="rounded-lg border border-cyan-500 bg-white px-4 py-2 text-sm font-semibold text-cyan-700 hover:bg-cyan-50 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-900 dark:text-cyan-300"
+            >
+              {batchRunning ? 'Generating...' : 'Generate selected tool'}
+            </button>
+            <button
+              type="button"
+              onClick={() => { void handleRunFromNextPending(); }}
+              disabled={batchRunning || allGenerated}
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {batchRunning ? 'Working...' : `Run from next pending${nextPendingNumber ? ` (#${nextPendingNumber})` : ''}`}
+            </button>
+            <button
+              type="button"
+              onClick={() => { void fetchProgress(batchCategory); }}
+              disabled={progressLoading}
+              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+            >
+              {progressLoading ? 'Refreshing...' : 'Refresh progress'}
+            </button>
+          </div>
 
           <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-4">
             <select
@@ -366,6 +546,33 @@ export default function ImagesPage() {
           {batchSummary ? (
             <p className="mt-2 text-xs text-slate-700 dark:text-slate-300">{batchSummary}</p>
           ) : null}
+
+          <div className="mt-4 max-h-64 overflow-auto rounded border border-cyan-200 bg-white dark:border-cyan-800 dark:bg-slate-900">
+            <table className="w-full text-xs">
+              <thead className="sticky top-0 bg-cyan-50 dark:bg-cyan-900/30">
+                <tr>
+                  <th className="px-3 py-2 text-left">#</th>
+                  <th className="px-3 py-2 text-left">Tool</th>
+                  <th className="px-3 py-2 text-left">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {toolProgress.slice(0, 200).map((tool) => (
+                  <tr key={`${tool.number}-${tool.tool_name}`} className="border-t border-slate-100 dark:border-slate-800">
+                    <td className="px-3 py-2">{tool.number}</td>
+                    <td className="px-3 py-2">{tool.tool_name}</td>
+                    <td className="px-3 py-2">
+                      {tool.generated ? (
+                        <span className="text-emerald-600 dark:text-emerald-400">Generated</span>
+                      ) : (
+                        <span className="text-amber-600 dark:text-amber-400">Pending</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="border-2 border-dashed border-violet-300 dark:border-violet-700 rounded-lg p-8 text-center bg-gradient-to-b from-violet-50 to-transparent dark:from-violet-900/10 dark:to-transparent">

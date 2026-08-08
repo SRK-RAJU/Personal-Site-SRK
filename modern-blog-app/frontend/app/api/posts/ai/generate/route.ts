@@ -52,7 +52,26 @@ const MAX_GENERATION_TOOLS = 4;
 const GENERATION_TOOL_BATCH_SIZE = Math.min(DEFAULT_TOOL_BATCH_SIZE, MAX_GENERATION_TOOLS);
 const GEMINI_MAX_OUTPUT_TOKENS = 900;
 const GEMINI_TIMEOUT_MS = 45000;
-const DEFAULT_CATEGORY_CATALOG = ['AI/ML', 'Cloud', 'Security', 'Infrastructure', 'Container', 'Delivery', 'Observability', 'Database', 'Data', 'Networking', 'Identity', 'Developer', 'Operations', 'ERP', 'CRM', 'Marketing', 'HR'];
+const DEFAULT_CATEGORY_CATALOG = [
+  'AI/ML',
+  'Cloud Platform',
+  'Infrastructure as Code',
+  'CI/CD Pipeline',
+  'Monitoring/Observability',
+  'Security/Zero-Trust',
+  'Container/Orchestration',
+  'Configuration Management',
+  'Service Mesh',
+  'Networking',
+  'Database',
+  'Data Streaming',
+  'Data Engineering',
+  'API Gateway',
+  'Identity & Access',
+  'DevSecOps',
+  'Automation',
+  'Developer Tools',
+];
 const GEMINI_FALLBACK_MODELS = ['gemini-3.1-flash-lite', 'gemini-2.0-flash-lite'];
 const SUPPORTED_GEMINI_MODELS = ['gemini-3.1-flash-lite', 'gemini-3.1-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-2.0-flash'];
 
@@ -1209,7 +1228,8 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       const parsed = Number(requestBody.batch);
       if (!Number.isNaN(parsed) && parsed > 0) batchIndex = Math.floor(parsed);
     }
-    const isSchedulerBatchRun = !isAdmin && isCronRequest && triggerSource === 'supabase-scheduler' && typeof batchIndex === 'number' && batchIndex > 0;
+    const isSupabaseSchedulerRun = !isAdmin && isCronRequest && triggerSource === 'supabase-scheduler';
+    const isSchedulerBatchRun = isSupabaseSchedulerRun && typeof batchIndex === 'number' && batchIndex > 0;
 
     const requestedCategories = mode === 'all-categories'
       ? await getToolCategories()
@@ -1236,7 +1256,7 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
 
       for (const category of selectedCategories) {
         const categorySlug = getTodaySlug(category);
-        if (!isAdmin && !isSchedulerBatchRun) {
+        if (!isAdmin && !isSupabaseSchedulerRun) {
           const { alreadyGenerated } = await checkIfAlreadyGeneratedToday(category);
           if (alreadyGenerated) {
             generated.push({ category, skipped: true, slug: categorySlug, reason: 'Already generated today' });
@@ -1286,7 +1306,7 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
     }
 
     const category = selectedCategories[0];
-    if (!isAdmin && !isSchedulerBatchRun) {
+    if (!isAdmin && !isSupabaseSchedulerRun) {
       const { alreadyGenerated, slug } = await checkIfAlreadyGeneratedToday(category);
       if (alreadyGenerated) {
         return NextResponse.json({ success: true, skipped: true, slug, reason: 'Already generated today' }, { status: 200 });
@@ -1295,6 +1315,27 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
 
     const batchForCategory = await getCategoryGenerationBatchIndex(category, batchIndex);
     const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, batchForCategory, category);
+    if (!toolsWithCategories.length) {
+      await logGeneration(runId, {
+        run_id: runId,
+        status: 'partial',
+        posts_generated: 0,
+        posts_published: 0,
+        error_message: `No tools found for category: ${category}`,
+      });
+      return NextResponse.json(
+        {
+          success: true,
+          skipped: true,
+          mode: 'single-category',
+          category,
+          batch_index: batchForCategory,
+          reason: 'No tools found for category',
+        },
+        { status: 200 }
+      );
+    }
+
     const excludedTopics = await getExcludedTopics();
     const trendSearch = await searchTrendContext(toolsWithCategories);
     const trendNews = trendSearch.results;

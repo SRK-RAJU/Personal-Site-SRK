@@ -35,9 +35,24 @@ create table if not exists public.ai_scheduler_config (
   weekly_dow int not null default 1 check (weekly_dow between 0 and 6),
   weekly_start_hour_utc int not null default 3 check (weekly_start_hour_utc between 0 and 23),
   categories text[] not null default array[
-    'AI/ML','Cloud','Security','Infrastructure','Container','Delivery',
-    'Observability','Database','Data','Networking','Identity','Developer',
-    'Operations','ERP','CRM','Marketing','HR'
+    'AI/ML',
+    'Cloud Platform',
+    'Infrastructure as Code',
+    'CI/CD Pipeline',
+    'Monitoring/Observability',
+    'Security/Zero-Trust',
+    'Container/Orchestration',
+    'Configuration Management',
+    'Service Mesh',
+    'Database',
+    'Data Engineering',
+    'Data Streaming',
+    'API Gateway',
+    'Networking',
+    'Identity & Access',
+    'DevSecOps',
+    'Developer Tools',
+    'Automation'
   ],
   cursor int not null default 0,
   week_key text not null default '',
@@ -124,6 +139,28 @@ function utcWeekKey(d: Date): string {
   return `${year}-W${String(week).padStart(2, "0")}`;
 }
 
+function getWeeklyStartUtc(now: Date, weeklyDow: number, weeklyHourUtc: number): Date {
+  const dayStart = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+    0,
+    0,
+    0,
+    0
+  ));
+  const currentDow = dayStart.getUTCDay();
+  const delta = (currentDow - weeklyDow + 7) % 7;
+  dayStart.setUTCDate(dayStart.getUTCDate() - delta);
+  dayStart.setUTCHours(weeklyHourUtc, 0, 0, 0);
+
+  if (dayStart.getTime() > now.getTime()) {
+    dayStart.setUTCDate(dayStart.getUTCDate() - 7);
+  }
+
+  return dayStart;
+}
+
 async function logRun(
   supabase: any,
   status: string,
@@ -164,11 +201,37 @@ async function getCategoryBatchCount(supabase: any, category: string): Promise<n
     .ilike("category", category);
 
   if (error) {
-    return 1;
+    return 0;
   }
 
   const totalTools = count || 0;
-  return Math.max(1, Math.ceil(totalTools / schedulerBatchSize));
+  if (totalTools <= 0) {
+    return 0;
+  }
+
+  return Math.ceil(totalTools / schedulerBatchSize);
+}
+
+async function getActiveCategories(supabase: any): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("tools_coverage_metadata")
+    .select("category")
+    .eq("is_active", true)
+    .not("category", "is", null)
+    .order("category", { ascending: true });
+
+  if (error || !data) {
+    return [];
+  }
+
+  const rows = data as Array<{ category?: string | null }>;
+  const normalized = rows
+    .map((row) => String(row.category || "").trim())
+    .filter((value) => value.length > 0);
+
+  const categories: string[] = Array.from(new Set(normalized));
+
+  return categories;
 }
 
 serve(async (req) => {
@@ -187,11 +250,13 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceRole);
 
-    const { data: cfg, error: cfgErr } = await supabase
+    const { data: cfgData, error: cfgErr } = await supabase
       .from("ai_scheduler_config")
       .select("*")
       .eq("id", 1)
-      .single<ConfigRow>();
+      .single();
+
+    const cfg = (cfgData ?? null) as ConfigRow | null;
 
     if (cfgErr || !cfg) {
       await logRun(supabase, "error", undefined, undefined, undefined, { step: "load_config", message: cfgErr?.message });
@@ -204,11 +269,13 @@ serve(async (req) => {
     }
 
     const now = new Date();
-    const dow = now.getUTCDay();
-    const hour = now.getUTCHours();
+    const weeklyStart = getWeeklyStartUtc(now, cfg.weekly_dow, cfg.weekly_start_hour_utc);
 
-    if (dow !== cfg.weekly_dow || hour < cfg.weekly_start_hour_utc) {
-      await logRun(supabase, "skipped", cfg.mode, undefined, undefined, { reason: "outside_weekly_window", dow, hour });
+    if (now.getTime() < weeklyStart.getTime()) {
+      await logRun(supabase, "skipped", cfg.mode, undefined, undefined, {
+        reason: "outside_weekly_window",
+        weekly_start_utc: weeklyStart.toISOString(),
+      });
       return Response.json({ ok: true, skipped: true, reason: "outside_weekly_window" });
     }
 
@@ -237,7 +304,12 @@ serve(async (req) => {
       batchCursor = {};
     }
 
-    const categories = Array.isArray(cfg.categories) ? cfg.categories : [];
+    const dbCategories = await getActiveCategories(supabase);
+    const cfgCategories = Array.isArray(cfg.categories)
+      ? cfg.categories.map((c) => (c || "").trim()).filter((c) => c.length > 0)
+      : [];
+
+    const categories = dbCategories.length > 0 ? dbCategories : cfgCategories;
     if (categories.length === 0) {
       await logRun(supabase, "skipped", cfg.mode, undefined, undefined, { reason: "no_categories" });
       return Response.json({ ok: true, skipped: true, reason: "no_categories" });
@@ -251,6 +323,43 @@ serve(async (req) => {
     const idx = cursor % categories.length;
     const category = categories[idx];
     const batchCount = await getCategoryBatchCount(supabase, category);
+    if (batchCount <= 0) {
+      const nextCursor = (idx + 1) % categories.length;
+      const nextProcessed = processed + 1;
+
+      await supabase
+        .from("ai_scheduler_config")
+        .update({
+          cursor: nextCursor,
+          processed_this_week: nextProcessed,
+          week_key: weekKey,
+          batch_cursor: {
+            ...batchCursor,
+            [category]: 0,
+          },
+          last_run_at: now.toISOString(),
+          updated_at: now.toISOString(),
+        })
+        .eq("id", 1);
+
+      await logRun(supabase, "skipped", cfg.mode, category, undefined, {
+        reason: "no_active_tools_in_category",
+        cursor: nextCursor,
+        processed_this_week: nextProcessed,
+      });
+
+      return Response.json({
+        ok: true,
+        skipped: true,
+        reason: "no_active_tools_in_category",
+        mode: cfg.mode,
+        category,
+        cursor: nextCursor,
+        processed_this_week: nextProcessed,
+        total_categories: categories.length,
+      });
+    }
+
     const currentBatch = Number(batchCursor[category] || 0);
     const nextBatch = Math.min(batchCount, Math.max(1, currentBatch + 1));
     const targetBase = cfg.mode === "prod"
@@ -285,11 +394,25 @@ serve(async (req) => {
 
     const forwardText = await forwardRes.text();
     const ok = forwardRes.ok;
+    let forwardPayload: Record<string, unknown> | null = null;
+    try {
+      forwardPayload = JSON.parse(forwardText);
+    } catch {
+      forwardPayload = null;
+    }
+
+    const skipped = Boolean(forwardPayload && (forwardPayload as { skipped?: unknown }).skipped === true);
+    const reasonValue = forwardPayload ? (forwardPayload as { reason?: unknown }).reason : "";
+    const reason = typeof reasonValue === "string" ? reasonValue : "";
+    const completedSuccessfully =
+      ok &&
+      (forwardPayload?.success === true || forwardPayload?.ok === true || !forwardPayload) &&
+      !(skipped && reason.toLowerCase() === "generation already in progress");
 
     let nextCursor = cursor;
     let nextProcessed = processed;
 
-    if (ok) {
+    if (completedSuccessfully) {
       if (nextBatch >= batchCount) {
         batchCursor[category] = 0;
         nextCursor = (idx + 1) % categories.length;
@@ -313,13 +436,16 @@ serve(async (req) => {
 
     await logRun(
       supabase,
-      ok ? "success" : "error",
+      completedSuccessfully ? "success" : (ok && skipped ? "skipped" : "error"),
       cfg.mode,
       category,
       nextBatch,
       {
         status: forwardRes.status,
         body: forwardText.slice(0, 2000),
+        skipped,
+        reason,
+        completed_successfully: completedSuccessfully,
         batch: nextBatch,
         batch_count: batchCount,
         cursor: nextCursor,
@@ -328,12 +454,15 @@ serve(async (req) => {
     );
 
     return Response.json({
-      ok,
+      ok: completedSuccessfully,
+      upstream_ok: ok,
       mode: cfg.mode,
       category,
       batch: nextBatch,
       batch_count: batchCount,
       status: forwardRes.status,
+      skipped,
+      reason,
       cursor: nextCursor,
       processed_this_week: nextProcessed,
       total_categories: categories.length
@@ -417,8 +546,30 @@ Yes. Your blog listing API already includes AI-generated posts (enabled by defau
 ## 7) Category + Batch Rotation Behavior
 
 - Every 5 minutes the scheduler picks the next category from `categories` by `cursor`.
-- For that category, the API computes the next batch automatically from published history.
-- This matches manual admin behavior when batch is not explicitly selected.
+- For that category, the scheduler computes the next batch using `batch_cursor` and forwards it as `batch`.
+- The API can also auto-rotate when `batch` is not passed, but this scheduler uses explicit per-category batch state.
+
+Important: category names must exactly match values stored in `tools_coverage_metadata.category`. If names do not match, the scheduler will keep running but may not find tools for that category.
+
+DB-valid category set (from schema `valid_category` constraint):
+- AI/ML
+- Cloud Platform
+- Infrastructure as Code
+- CI/CD Pipeline
+- Monitoring/Observability
+- Security/Zero-Trust
+- Container/Orchestration
+- Configuration Management
+- Service Mesh
+- Networking
+- Database
+- Data Streaming
+- Data Engineering
+- API Gateway
+- Identity & Access
+- DevSecOps
+- Automation
+- Developer Tools
 
 ## 8) If It Is Already Running, How To Update Safely
 

@@ -251,7 +251,15 @@ export async function GET(request: NextRequest) {
             .select('id', { count: 'exact', head: true });
           if (typeof topicsCount === 'number') fallbackStats.topics = topicsCount;
         } catch (err) {
-          // Silent failure - use fallback
+          try {
+            const { count: toolTopicsCount } = await supabase
+              .from('tools_coverage_metadata')
+              .select('id', { count: 'exact', head: true })
+              .eq('is_active', true);
+            if (typeof toolTopicsCount === 'number') fallbackStats.topics = toolTopicsCount;
+          } catch {
+            // Silent failure - use fallback
+          }
         }
 
         try {

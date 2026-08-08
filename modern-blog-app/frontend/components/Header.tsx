@@ -9,6 +9,7 @@ import {
   FaUser,
   FaHome,
   FaBook,
+  FaImages,
   FaInfoCircle,
   FaEnvelope,
   FaTachometerAlt,
@@ -57,6 +58,7 @@ export default function Header() {
   const navItems = [
     { href: '/', label: 'Home', icon: FaHome },
     { href: '/blog', label: 'Posts', icon: FaBook },
+    { href: '/learning-images', label: 'Learning Images', icon: FaImages },
     { href: '/about', label: 'About', icon: FaInfoCircle },
     { href: '/contact', label: 'Contact', icon: FaEnvelope },
   ];
