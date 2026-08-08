@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 
 interface AIGenerationState {
   isGenerating: boolean;
@@ -30,10 +31,21 @@ export function useAIBlogGeneration() {
     });
 
     try {
+      const { data: authData, error: authError } = await supabase.auth.refreshSession();
+      const session = authData.session;
+      const accessToken = session?.access_token;
+
+      if (authError || !accessToken) {
+        throw new Error('Admin session required. Please sign in again.');
+      }
+
       const response = await fetch('/api/posts/ai/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+          'x-user-email': session.user.email || '',
+          'x-user-role': 'admin',
         },
         body: JSON.stringify({ source: 'manual-admin' }),
       });

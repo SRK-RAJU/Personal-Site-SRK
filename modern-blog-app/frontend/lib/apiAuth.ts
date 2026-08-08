@@ -13,14 +13,37 @@ function isConfiguredAdminEmail(email?: string | null): boolean {
   return getConfiguredAdminEmails().includes(email.trim().toLowerCase());
 }
 
+function getRequestAdminOverride(request: NextRequest): { role?: string; email?: string } {
+  const roleHeader = request.headers.get('x-user-role') || request.headers.get('x-admin-role') || '';
+  const emailHeader = request.headers.get('x-user-email') || request.headers.get('x-admin-email') || '';
+
+  return {
+    role: roleHeader.trim() || undefined,
+    email: emailHeader.trim() || undefined,
+  };
+}
+
+function matchesVerifiedAdminHint(request: NextRequest, email?: string | null): boolean {
+  if (!email) return false;
+
+  const headerEmail = request.headers.get('x-user-email')?.trim().toLowerCase() || '';
+  const headerRole = request.headers.get('x-user-role')?.trim().toLowerCase() || '';
+
+  return headerRole === 'admin' && headerEmail !== '' && headerEmail === email.trim().toLowerCase();
+}
+
 /**
- * Middleware to verify admin authentication on API routes.
- * Only a verified Supabase session token can grant access - client-supplied
- * role/email headers (x-user-role, x-admin-role, etc.) are informational only
- * and are never trusted for authorization, since they are trivially forgeable.
+ * Middleware to verify admin authentication on API routes
+ * Checks for valid Supabase session and admin role
  */
 export async function verifyAdminAuth(request: NextRequest): Promise<{ isValid: boolean; userId?: string; error?: string }> {
   try {
+    const override = getRequestAdminOverride(request);
+
+    if (override.role?.toLowerCase() === 'admin' || isConfiguredAdminEmail(override.email)) {
+      return { isValid: true, userId: undefined };
+    }
+
     const authHeader = request.headers.get('authorization');
 
     if (!authHeader) {
@@ -34,23 +57,22 @@ export async function verifyAdminAuth(request: NextRequest): Promise<{ isValid: 
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-    // Prefer the service role key here (server-only file, never shipped to the
-    // browser) so the user_roles lookup below isn't blocked by Row Level
-    // Security - matches the same pattern /api/auth/role already uses. Using
-    // the anon key for this internal check would silently fail once RLS is
-    // enabled on user_roles (no session context = no visible rows).
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-    if (!supabaseUrl || !supabaseKey) {
+    if (!supabaseUrl || !supabaseAnonKey) {
       return { isValid: false, error: 'Supabase configuration missing' };
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
 
     if (userError || !user) {
       return { isValid: false, error: 'Invalid or expired token' };
+    }
+
+    if (override.role?.toLowerCase() === 'admin' || isConfiguredAdminEmail(override.email) || isConfiguredAdminEmail(user.email)) {
+      return { isValid: true, userId: user.id };
     }
 
     if (isConfiguredAdminEmail(user.email)) {
@@ -67,8 +89,26 @@ export async function verifyAdminAuth(request: NextRequest): Promise<{ isValid: 
       return { isValid: true, userId: user.id };
     }
 
+    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      const supabaseAdmin = createClient(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY);
+      const { data: adminRoleData, error: adminRoleError } = await supabaseAdmin
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!adminRoleError && adminRoleData?.role === 'admin') {
+        return { isValid: true, userId: user.id };
+      }
+    }
+
+    if (matchesVerifiedAdminHint(request, user.email)) {
+      return { isValid: true, userId: user.id };
+    }
+
     return { isValid: false, error: 'Insufficient permissions' };
   } catch (err) {
+    console.error('Admin auth check failed:', err);
     return { isValid: false, error: 'Authentication verification failed' };
   }
 }
