@@ -448,8 +448,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const nextOffset = offset + processed;
     const hasMore = !quotaStop && nextOffset < totalTools;
 
+    const responseStatus = generated.length === 0 && failed.length > 0 ? 502 : failed.length > 0 ? 207 : 200;
+
     return NextResponse.json({
-      success: true,
+      success: generated.length > 0 || failed.length === 0,
       total_tools: totalTools,
       offset,
       requested_limit: limit,
@@ -461,7 +463,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       quota_stop: quotaStop,
       generated,
       failed,
-    });
+    }, { status: responseStatus });
   } catch (error: any) {
     return NextResponse.json(
       {

@@ -281,7 +281,12 @@ export default function ImagesPage() {
 
     const payload = await response.json();
     if (!response.ok || !payload?.success) {
-      throw new Error(payload?.message || payload?.error || 'Batch generation failed');
+      const failure = Array.isArray(payload?.failed) ? payload.failed[0] : null;
+      throw new Error(
+        failure?.error
+          ? `${failure.tool || 'Image'} failed: ${failure.error}`
+          : payload?.message || payload?.error || 'Batch generation failed',
+      );
     }
 
     return payload;
@@ -299,7 +304,11 @@ export default function ImagesPage() {
         setBatchStatus(`Running one batch from offset ${batchOffset}...`);
         const result = await runImageBatch(batchOffset);
         setBatchOffset(result.next_offset || batchOffset);
-        setBatchSummary(`Generated ${result.generated_count}, failed ${result.failed_count}, next offset ${result.next_offset}.`);
+        const firstFailure = result.failed?.[0];
+        setBatchSummary(
+          `Generated ${result.generated_count}, failed ${result.failed_count}, next offset ${result.next_offset}.` +
+          (firstFailure?.error ? ` ${firstFailure.tool || 'Image'}: ${firstFailure.error}` : ''),
+        );
         setSuccess('Batch completed successfully.');
         await fetchImages();
         await fetchProgress(batchCategory);
