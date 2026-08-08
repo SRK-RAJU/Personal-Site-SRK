@@ -221,7 +221,7 @@ export default function ImagesPage() {
   const fetchProgress = async (category: string) => {
     try {
       setProgressLoading(true);
-      const { data: authData, error: authError } = await supabase.auth.getSession();
+      const { data: authData, error: authError } = await supabase.auth.refreshSession();
       if (authError || !authData?.session?.access_token) {
         return;
       }
@@ -259,7 +259,7 @@ export default function ImagesPage() {
   };
 
   const runImageBatch = async (offset: number, limitOverride?: number) => {
-    const { data: authData, error: authError } = await supabase.auth.getSession();
+    const { data: authData, error: authError } = await supabase.auth.refreshSession();
     if (authError || !authData?.session?.access_token) {
       throw new Error('Admin session required. Please sign in again.');
     }

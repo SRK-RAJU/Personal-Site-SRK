@@ -362,10 +362,10 @@ export default function DashboardHome() {
     // background, but the component's `session` value can still be a stale
     // snapshot by the time the button is clicked, causing a false
     // "Invalid or expired token" rejection on the server.
-    const { data: freshAuthData, error: freshAuthError } = await supabase.auth.getSession();
-    const accessToken = freshAuthData?.session?.access_token;
+    const { data: refreshedAuthData, error: refreshError } = await supabase.auth.refreshSession();
+    const accessToken = refreshedAuthData?.session?.access_token;
 
-    if (freshAuthError || !accessToken) {
+    if (refreshError || !accessToken) {
       setAiError('Your session has expired. Please sign in again and retry.');
       return;
     }
