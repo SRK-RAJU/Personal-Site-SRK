@@ -357,6 +357,19 @@ export default function DashboardHome() {
       return;
     }
 
+    // Always re-fetch the session right before calling the API instead of
+    // reusing the React state token - Supabase auto-refreshes tokens in the
+    // background, but the component's `session` value can still be a stale
+    // snapshot by the time the button is clicked, causing a false
+    // "Invalid or expired token" rejection on the server.
+    const { data: freshAuthData, error: freshAuthError } = await supabase.auth.getSession();
+    const accessToken = freshAuthData?.session?.access_token;
+
+    if (freshAuthError || !accessToken) {
+      setAiError('Your session has expired. Please sign in again and retry.');
+      return;
+    }
+
     const effectiveCategory = categoryOverride || selectedCategory;
     const parsedBatch = Number(batchOverride);
     const batch = Number.isFinite(parsedBatch) && parsedBatch > 0 ? Math.floor(parsedBatch) : undefined;
@@ -374,7 +387,7 @@ export default function DashboardHome() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${accessToken}`,
           'x-trigger-source': 'dashboard-admin',
           'x-user-email': user?.email || '',
           'x-user-role': userRole || '',
