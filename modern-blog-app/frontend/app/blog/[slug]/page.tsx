@@ -409,7 +409,8 @@ export default async function BlogPostPage({
     <article className="w-full futurist-grid-bg">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        // Escape "<" so post content can never break out of the script tag (stored-XSS hardening)
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
       {/* Hero Section */}
       <section className="border-b border-cyan-500/20 py-12">

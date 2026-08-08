@@ -25,7 +25,7 @@ Use this checklist right before deployment:
    - NEXT_PUBLIC_SITE_NAME
    - NEXT_PUBLIC_SITE_DESCRIPTION
    - NEXT_PUBLIC_AUTHOR
-   - NEXT_PUBLIC_ADMIN_EMAILS (or ADMIN_EMAILS)
+   - ADMIN_EMAILS (do NOT use the NEXT_PUBLIC_ prefix for this one - it must stay server-only, otherwise the admin's login email is baked into the public JS bundle)
 3. Apply the SQL schema from [modern-blog-app/frontend/docs/PRODUCTION_SCHEMA_FINAL.sql](modern-blog-app/frontend/docs/PRODUCTION_SCHEMA_FINAL.sql) in your production Supabase project.
 4. Redeploy the Vercel project after the variables are saved.
 5. Verify the live site by checking:
@@ -46,7 +46,7 @@ NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 NEXT_PUBLIC_SITE_NAME=Your Site Name
 NEXT_PUBLIC_SITE_DESCRIPTION=Your site description
 NEXT_PUBLIC_AUTHOR=Your Name
-NEXT_PUBLIC_ADMIN_EMAILS=you@example.com,admin@example.com
+ADMIN_EMAILS=you@example.com,admin@example.com
 ```
 
 > Use the same values in Preview and Production environments if you want parity during testing.

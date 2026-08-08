@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaCode, FaServer, FaDatabase, FaClock, FaEye, FaFire, FaRocket, FaStar, FaUsers, FaImages } from 'react-icons/fa';
+import { FaArrowRight, FaCode, FaServer, FaDatabase, FaClock, FaEye, FaFire, FaRocket, FaStar, FaUsers, FaImages, FaGlobeAmericas } from 'react-icons/fa';
 import TrendingPosts from '@/components/TrendingPosts';
 import RealtimeActivity from '@/components/RealtimeActivity';
 import AIBlogPostsList from '@/components/AIBlogPostsList';
@@ -51,6 +51,7 @@ export default function Home() {
     { icon: FaEye, label: 'Monthly Views', value: 0 },
     { icon: FaFire, label: 'Topics', value: 0 },
     { icon: FaUsers, label: 'Total Visits', value: 0 },
+    { icon: FaGlobeAmericas, label: 'Countries Reached', value: 0 },
   ]);
 
   useEffect(() => {
@@ -61,6 +62,7 @@ export default function Home() {
         { icon: FaEye, label: 'Monthly Views', value: fetchedStats.monthly_views },
         { icon: FaFire, label: 'Topics', value: fetchedStats.topics },
         { icon: FaUsers, label: 'Total Visits', value: fetchedStats.total_visits },
+        { icon: FaGlobeAmericas, label: 'Countries Reached', value: fetchedStats.countries_reached },
       ]);
     }, 300);
     return () => clearTimeout(timer);
@@ -102,23 +104,23 @@ export default function Home() {
         {/* Enhanced animated background elements with more vibrant colors */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <motion.div
-            className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-violet-400/40 to-purple-500/40 rounded-full blur-3xl"
+            className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-cyan-400/40 to-fuchsia-500/40 rounded-full blur-3xl"
             animate={{ y: [0, -30, 0], x: [0, 30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
-            className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-violet-400/40 to-blue-500/40 rounded-full blur-3xl"
+            className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-cyan-400/40 to-blue-500/40 rounded-full blur-3xl"
             animate={{ y: [0, 30, 0], x: [0, -30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
           />
           <motion.div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-violet-300/30 to-purple-500/30 rounded-full blur-3xl"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-cyan-300/30 to-fuchsia-500/30 rounded-full blur-3xl"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           />
           {/* Additional floating elements with vibrant colors */}
           <motion.div
-            className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-purple-400/40 to-pink-500/40 rounded-full blur-2xl"
+            className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-fuchsia-400/40 to-pink-500/40 rounded-full blur-2xl"
             animate={{ y: [0, -20, 0], opacity: [0.6, 1, 0.6] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
           />
@@ -138,11 +140,11 @@ export default function Home() {
           >
             {/* Badge */}
             <motion.div
-              className="mb-8 inline-block px-4 py-2 rounded-full bg-gradient-to-r from-violet-500/30 to-pink-500/30 border border-violet-400/50 dark:border-violet-500/50 backdrop-blur-sm hover:border-violet-400 transition-colors"
+              className="mb-8 inline-block px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500/30 to-fuchsia-500/30 border border-cyan-400/50 dark:border-cyan-500/50 backdrop-blur-sm hover:border-cyan-400 transition-colors"
               variants={itemVariants}
             >
-              <p className="text-sm font-semibold bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2">
-                <FaStar className="text-violet-400" /> Welcome to My Tech Blog! <FaStar className="text-pink-400" />
+              <p className="text-sm font-semibold bg-gradient-to-r from-cyan-400 to-fuchsia-400 bg-clip-text text-transparent flex items-center gap-2">
+                <FaStar className="text-cyan-400" /> Welcome to My Tech Blog! <FaStar className="text-fuchsia-400" />
               </p>
             </motion.div>
 
@@ -151,7 +153,7 @@ export default function Home() {
               className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-6 tracking-tight"
               variants={itemVariants}
             >
-              <span className="bg-gradient-to-r from-violet-500 via-pink-500 to-violet-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-cyan-600 bg-clip-text text-transparent">
                 Architecting the Future
               </span>
               <span className="block text-slate-900 dark:text-white mt-4 text-5xl sm:text-6xl font-bold">
@@ -176,7 +178,7 @@ export default function Home() {
             >
               <Link
                 href="/blog"
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-105 transform duration-200"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-fuchsia-600 hover:from-cyan-700 hover:to-fuchsia-700 text-white font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-105 transform duration-200"
               >
                 <FaCode className="text-lg" />
                 Explore Posts
@@ -200,7 +202,7 @@ export default function Home() {
 
             {/* Stats */}
             <motion.div
-              className="grid grid-cols-2 md:grid-cols-4 section-gap-tight"
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 section-gap-tight"
               variants={containerVariants}
             >
               {animatedStats.map((stat) => {
@@ -218,9 +220,9 @@ export default function Home() {
                     whileHover={{ scale: 1.08, y: -8 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
-                    <Icon className="text-3xl sm:text-4xl text-violet-500 dark:text-violet-400 mx-auto mb-3 group-hover:text-violet-600 transition-colors" />
+                    <Icon className="text-3xl sm:text-4xl text-cyan-500 dark:text-cyan-400 mx-auto mb-3 group-hover:text-cyan-600 transition-colors" />
                     <motion.p 
-                      className="text-3xl sm:text-4xl font-bold text-violet-600 dark:text-violet-400"
+                      className="text-3xl sm:text-4xl font-bold text-cyan-600 dark:text-cyan-400"
                       key={stat.value}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -310,7 +312,7 @@ export default function Home() {
             ].map((cert, idx) => (
               <motion.div
                 key={cert.title}
-                className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 text-center py-6"
+                className="card-glass border-2 border-transparent hover:border-cyan-500 dark:hover:border-cyan-500 text-center py-6"
                 variants={itemVariants}
                 whileHover={{ scale: 1.05, y: -5 }}
               >
@@ -357,7 +359,7 @@ export default function Home() {
             return (
               <motion.div
                 key={category.title}
-                className="group card-hover border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500"
+                className="group card-hover border-2 border-transparent hover:border-cyan-500 dark:hover:border-cyan-500"
                 variants={itemVariants}
                 whileHover={{ y: -5 }}
               >
@@ -424,11 +426,11 @@ export default function Home() {
         >
           {/* Stack Component 1: CI/CD Pipeline */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 overflow-hidden"
+            className="card-glass border-2 border-transparent hover:border-cyan-500 dark:hover:border-cyan-500 overflow-hidden"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
-            <div className="w-full h-48 bg-gradient-to-br from-blue-500/20 to-violet-500/20 dark:from-blue-600/40 dark:to-violet-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-blue-500/30 dark:border-blue-500/50">
+            <div className="w-full h-48 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 dark:from-blue-600/40 dark:to-cyan-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-blue-500/30 dark:border-blue-500/50">
               <div className="text-6xl">🔄</div>
             </div>
             <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">CI/CD Pipeline</h3>
@@ -442,11 +444,11 @@ export default function Home() {
 
           {/* Stack Component 2: Container Orchestration */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 overflow-hidden"
+            className="card-glass border-2 border-transparent hover:border-cyan-500 dark:hover:border-cyan-500 overflow-hidden"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
-            <div className="w-full h-48 bg-gradient-to-br from-purple-500/20 to-pink-500/20 dark:from-purple-600/40 dark:to-pink-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-purple-500/30 dark:border-purple-500/50">
+            <div className="w-full h-48 bg-gradient-to-br from-fuchsia-500/20 to-pink-500/20 dark:from-fuchsia-600/40 dark:to-pink-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-fuchsia-500/30 dark:border-fuchsia-500/50">
               <div className="text-6xl">🐳</div>
             </div>
             <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">Container Orchestration</h3>
@@ -460,11 +462,11 @@ export default function Home() {
 
           {/* Stack Component 3: Infrastructure as Code */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 overflow-hidden"
+            className="card-glass border-2 border-transparent hover:border-cyan-500 dark:hover:border-cyan-500 overflow-hidden"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
-            <div className="w-full h-48 bg-gradient-to-br from-violet-500/20 to-violet-500/20 dark:from-violet-600/40 dark:to-violet-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-violet-500/30 dark:border-violet-500/50">
+            <div className="w-full h-48 bg-gradient-to-br from-cyan-500/20 to-cyan-500/20 dark:from-cyan-600/40 dark:to-cyan-600/40 flex items-center justify-center rounded-lg mb-4 border-2 border-cyan-500/30 dark:border-cyan-500/50">
               <div className="text-6xl">🏗️</div>
             </div>
             <h3 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">Infrastructure as Code</h3>
@@ -478,7 +480,7 @@ export default function Home() {
 
           {/* Stack Component 4: Security & Monitoring */}
           <motion.div
-            className="card-glass border-2 border-transparent hover:border-violet-500 dark:hover:border-violet-500 overflow-hidden"
+            className="card-glass border-2 border-transparent hover:border-cyan-500 dark:hover:border-cyan-500 overflow-hidden"
             variants={itemVariants}
             whileHover={{ y: -5 }}
           >
@@ -504,7 +506,7 @@ export default function Home() {
         variants={sectionVariants}
         viewport={{ once: true, margin: '-100px' }}
       >
-        <div className="bg-gradient-to-r from-violet-50/50 to-pink-50/50 dark:from-violet-900/20 dark:to-pink-900/20 rounded-2xl p-8 md:p-16 border border-violet-200 dark:border-violet-800/50 backdrop-blur-sm">
+        <div className="bg-gradient-to-r from-cyan-50/50 to-fuchsia-50/50 dark:from-cyan-900/20 dark:to-fuchsia-900/20 rounded-2xl p-8 md:p-16 border border-cyan-200 dark:border-cyan-800/50 backdrop-blur-sm">
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -519,7 +521,7 @@ export default function Home() {
             </motion.h2>
             <div className="space-y-4 text-lg text-slate-800 dark:text-slate-200 leading-relaxed">
               <motion.p variants={itemVariants}>
-                Hi! I'm <span className="font-bold gradient-text">Raju SRK</span>, a <span className="font-bold text-violet-400">DevSecOps specialist and cloud engineer</span> passionate about building scalable, secure, and efficient systems. With expertise spanning cloud architecture, 
+                Hi! I'm <span className="font-bold bg-gradient-to-r from-cyan-500 to-fuchsia-500 bg-clip-text text-transparent">Raju SRK</span>, a <span className="font-bold text-cyan-500 dark:text-cyan-400">DevSecOps specialist and cloud engineer</span> passionate about building scalable, secure, and efficient systems. With expertise spanning cloud architecture, 
                 containerization, infrastructure automation, security practices, and modern web development, I help teams and fellow developers transform ideas into secure reality.
               </motion.p>
               <motion.p variants={itemVariants}>
@@ -545,7 +547,7 @@ export default function Home() {
         viewport={{ once: true, margin: '-100px' }}
       >
         <motion.div
-          className="relative bg-gradient-to-r from-violet-500 via-pink-500 to-violet-600 dark:from-violet-600 dark:via-pink-600 dark:to-violet-700 rounded-2xl p-12 md:p-20 text-center shadow-2xl overflow-hidden"
+          className="relative bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-cyan-600 dark:from-cyan-600 dark:via-fuchsia-600 dark:to-cyan-700 rounded-2xl p-12 md:p-20 text-center shadow-2xl overflow-hidden"
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
@@ -553,7 +555,7 @@ export default function Home() {
         >
           {/* Animated background */}
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-violet-400/30 to-transparent"
+            className="absolute inset-0 bg-gradient-to-r from-cyan-400/30 to-transparent"
             animate={{ x: [0, 100, 0] }}
             transition={{ duration: 8, repeat: Infinity }}
           />
@@ -572,7 +574,7 @@ export default function Home() {
               Ready to Build Something Extraordinary?
             </motion.h2>
             <motion.p
-              className="text-lg text-violet-100 mb-8 max-w-2xl mx-auto font-semibold"
+              className="text-lg text-cyan-100 mb-8 max-w-2xl mx-auto font-semibold"
               variants={itemVariants}
             >
               Whether you have a project in mind, want to collaborate, or just want to chat about cloud and DevOps, 
@@ -581,7 +583,7 @@ export default function Home() {
             <motion.div variants={itemVariants}>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-violet-600 hover:bg-violet-50 font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-110 transform duration-200"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-cyan-600 hover:bg-cyan-50 font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-110 transform duration-200"
               >
                 Start a Conversation
                 <FaArrowRight />

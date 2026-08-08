@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 
-const lastUpdated = 'May 17, 2026';
+const lastUpdated = 'August 8, 2026';
 
 export default function Privacy() {
   const containerVariants = {
@@ -27,15 +27,19 @@ export default function Privacy() {
     },
     {
       title: 'What I collect',
-      content: `I only collect information you choose to share. If you use the contact form, I receive your name, email, subject, and message. I may also collect anonymous site usage data to improve performance and stability.`,
+      content: `I only collect information you choose to share. If you use the contact form, I receive your name, email, subject, and message. I also automatically log basic visit data for every page view: your IP address, an approximate location (country/region/city derived from your IP, not GPS), the page visited, and browser/user-agent details. This is standard security and traffic monitoring data, not used for advertising.`,
     },
     {
       title: 'Why I use it',
-      content: `Contact form details are used only to reply to your message. Anonymous usage data helps improve the site experience and keep the site secure. I do not sell or use your data for advertising.`,
+      content: `Contact form details are used only to reply to your message. IP address and approximate location data is used to keep visit counts accurate, detect abuse/bot traffic, and understand which regions the site reaches. Only I, as the site admin, can view this data. I do not sell or use your data for advertising, and I do not share it with third-party marketing tools.`,
+    },
+    {
+      title: 'How long I keep it',
+      content: `Visit logs (IP address, location, page, timestamp) are retained for a limited period for security and analytics purposes and are periodically cleared. Contact form messages are kept only as long as needed to respond to you.`,
     },
     {
       title: 'Third-party services',
-      content: `This site runs on platforms like Vercel and Supabase. These providers have their own privacy policies. This site does not use advertising trackers or third-party marketing tools.`,
+      content: `This site runs on platforms like Vercel and Supabase. These providers have their own privacy policies. Approximate location is derived from IP geolocation data provided by the hosting platform (Vercel) — no third-party geo-IP service is called. This site does not use advertising trackers or third-party marketing tools.`,
     },
     {
       title: 'Your choices',

@@ -13,6 +13,7 @@ import {
   FaSignOutAlt,
   FaBars,
   FaTimes,
+  FaGlobeAmericas,
 } from 'react-icons/fa';
 
 export function AdminSidebar() {
@@ -70,6 +71,12 @@ export function AdminSidebar() {
       label: 'Users',
       href: '/dashboard/users',
       icon: <FaUsers />,
+      roles: ['admin'],
+    },
+    {
+      label: 'Analytics',
+      href: '/dashboard/analytics',
+      icon: <FaGlobeAmericas />,
       roles: ['admin'],
     },
     {

@@ -17,18 +17,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function getConfiguredAdminEmails(): string[] {
-  return (process.env.NEXT_PUBLIC_ADMIN_EMAILS || process.env.ADMIN_EMAILS || '')
-    .split(',')
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-function isAdminEmail(email?: string | null): boolean {
-  if (!email) return false;
-  return getConfiguredAdminEmails().includes(email.trim().toLowerCase());
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -95,27 +83,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const { data } = await supabase.auth.getUser(accessToken);
-        setUserRole(isAdminEmail(data.user?.email) ? 'admin' : 'user');
+        setUserRole('user');
         return;
       }
 
       const result = await response.json();
       const role = result.role;
-      if (role === 'admin' || role === 'author' || role === 'user') {
-        setUserRole(role === 'admin' || isAdminEmail((await supabase.auth.getUser(accessToken)).data.user?.email) ? 'admin' : role);
-        return;
-      }
-
-      const { data } = await supabase.auth.getUser(accessToken);
-      setUserRole(isAdminEmail(data.user?.email) ? 'admin' : 'user');
+      setUserRole(role === 'admin' || role === 'author' ? role : 'user');
     } catch (err) {
-      try {
-        const { data } = await supabase.auth.getUser(accessToken);
-        setUserRole(isAdminEmail(data.user?.email) ? 'admin' : 'user');
-      } catch {
-        setUserRole('user');
-      }
+      setUserRole('user');
     }
   };
 

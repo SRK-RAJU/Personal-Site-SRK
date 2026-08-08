@@ -9,6 +9,7 @@ export interface WebsiteStats {
   monthly_views: number;
   topics: number;
   total_visits: number;
+  countries_reached: number;
 }
 
 export function useWebsiteStats() {
@@ -17,6 +18,7 @@ export function useWebsiteStats() {
     monthly_views: 0,
     topics: 0,
     total_visits: 0,
+    countries_reached: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +37,7 @@ export function useWebsiteStats() {
           monthly_views: response.data.monthly_views ?? 0,
           topics: response.data.topics ?? 0,
           total_visits: response.data.total_visits ?? 0,
+          countries_reached: response.data.countries_reached ?? 0,
         });
         setError(null);
       } catch (err) {
@@ -68,47 +71,30 @@ export function usePageViews() {
       const currentPath = pathname || '/';
       const viewKey = `analytics:${currentPath}`;
       const hasTracked = window.sessionStorage.getItem(viewKey);
-      const siteTotalKey = 'analytics:site-total';
-      const previousLocalCount = Number(window.localStorage.getItem(siteTotalKey) || '0');
 
       if (!hasTracked) {
         window.sessionStorage.setItem(viewKey, 'tracked');
-        const nextLocalCount = previousLocalCount + 1;
-        window.localStorage.setItem(siteTotalKey, String(nextLocalCount));
-        setTotalViews(nextLocalCount);
 
         axios.post('/api/analytics', {
           action: 'track-page-view',
           data: {
             page_name: currentPath === '/' ? 'homepage' : currentPath,
             page_path: currentPath,
-            user_ip: 'unknown',
             user_agent: navigator.userAgent,
-          },
-        }, {
-          headers: {
-            'x-analytics-fallback': String(nextLocalCount),
           },
         }).catch(() => {
           // Silent tracking error
         });
-      } else {
-        setTotalViews(previousLocalCount || 0);
       }
 
       try {
         const response = await axios.get('/api/analytics?action=page-views', {
           timeout: 5000,
-          headers: {
-            'x-analytics-fallback': String(previousLocalCount || 0),
-          },
         });
         const remoteTotal = Number(response.data.total_views || 0);
-        if (remoteTotal > 0) {
-          setTotalViews(remoteTotal);
-        }
+        setTotalViews(remoteTotal);
       } catch (err) {
-        setTotalViews(previousLocalCount || 0);
+        // Keep previous value on failure
       } finally {
         setLoading(false);
       }

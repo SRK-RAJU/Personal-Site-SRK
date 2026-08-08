@@ -13,37 +13,14 @@ function isConfiguredAdminEmail(email?: string | null): boolean {
   return getConfiguredAdminEmails().includes(email.trim().toLowerCase());
 }
 
-function getRequestAdminOverride(request: NextRequest): { role?: string; email?: string } {
-  const roleHeader = request.headers.get('x-user-role') || request.headers.get('x-admin-role') || '';
-  const emailHeader = request.headers.get('x-user-email') || request.headers.get('x-admin-email') || '';
-
-  return {
-    role: roleHeader.trim() || undefined,
-    email: emailHeader.trim() || undefined,
-  };
-}
-
-function matchesVerifiedAdminHint(request: NextRequest, email?: string | null): boolean {
-  if (!email) return false;
-
-  const headerEmail = request.headers.get('x-user-email')?.trim().toLowerCase() || '';
-  const headerRole = request.headers.get('x-user-role')?.trim().toLowerCase() || '';
-
-  return headerRole === 'admin' && headerEmail !== '' && headerEmail === email.trim().toLowerCase();
-}
-
 /**
- * Middleware to verify admin authentication on API routes
- * Checks for valid Supabase session and admin role
+ * Middleware to verify admin authentication on API routes.
+ * Only a verified Supabase session token can grant access - client-supplied
+ * role/email headers (x-user-role, x-admin-role, etc.) are informational only
+ * and are never trusted for authorization, since they are trivially forgeable.
  */
 export async function verifyAdminAuth(request: NextRequest): Promise<{ isValid: boolean; userId?: string; error?: string }> {
   try {
-    const override = getRequestAdminOverride(request);
-
-    if (override.role?.toLowerCase() === 'admin' || isConfiguredAdminEmail(override.email)) {
-      return { isValid: true, userId: undefined };
-    }
-
     const authHeader = request.headers.get('authorization');
 
     if (!authHeader) {
@@ -69,10 +46,6 @@ export async function verifyAdminAuth(request: NextRequest): Promise<{ isValid: 
 
     if (userError || !user) {
       return { isValid: false, error: 'Invalid or expired token' };
-    }
-
-    if (override.role?.toLowerCase() === 'admin' || isConfiguredAdminEmail(override.email) || isConfiguredAdminEmail(user.email)) {
-      return { isValid: true, userId: user.id };
     }
 
     if (isConfiguredAdminEmail(user.email)) {
@@ -102,13 +75,8 @@ export async function verifyAdminAuth(request: NextRequest): Promise<{ isValid: 
       }
     }
 
-    if (matchesVerifiedAdminHint(request, user.email)) {
-      return { isValid: true, userId: user.id };
-    }
-
     return { isValid: false, error: 'Insufficient permissions' };
   } catch (err) {
-    console.error('Admin auth check failed:', err);
     return { isValid: false, error: 'Authentication verification failed' };
   }
 }

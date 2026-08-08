@@ -22,15 +22,20 @@ export function getClientIp(request: NextRequest): string {
   return 'unknown';
 }
 
-export function isTrustedAutomationRequest(request: NextRequest): boolean {
-  const userAgent = request.headers.get('user-agent') || '';
-  const requestSource = request.headers.get('x-trigger-source') || '';
-  const isSameOrigin = request.headers.get('x-internal-trigger') === 'true';
+export interface GeoInfo {
+  country: string;
+  region: string;
+  city: string;
+}
 
-  return (
-    isSameOrigin ||
-    request.headers.has('x-vercel-id') ||
-    userAgent.includes('Vercel-Deploy-Check') ||
-    requestSource === 'dashboard-admin'
-  );
+/**
+ * Reads Vercel's edge-injected geo headers (no external geo-IP API/cost needed).
+ * Falls back to 'Unknown' when running locally or off Vercel.
+ */
+export function getGeoInfo(request: NextRequest): GeoInfo {
+  return {
+    country: request.headers.get('x-vercel-ip-country') || 'Unknown',
+    region: request.headers.get('x-vercel-ip-country-region') || 'Unknown',
+    city: request.headers.get('x-vercel-ip-city') || 'Unknown',
+  };
 }

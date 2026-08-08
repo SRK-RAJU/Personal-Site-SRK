@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getClientIp, isTrustedAutomationRequest as isTrustedReadRequest } from '@/lib/requestAccess';
+import { getClientIp } from '@/lib/requestAccess';
 
 function getSupabaseClient() {
   const url = process.env.DIRECT_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -76,17 +76,8 @@ function getSortValue(post: any, key: string) {
 }
 
 export async function GET(request: NextRequest) {
-  if (isTrustedReadRequest(request)) {
-    // Allow trusted internal requests without public rate-limit interference.
-  } else {
-    const clientIp = getClientIp(request);
-    if (isRateLimited(clientIp)) {
-      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
-    }
-  }
-
   const clientIp = getClientIp(request);
-  if (!isTrustedReadRequest(request) && isRateLimited(clientIp)) {
+  if (isRateLimited(clientIp)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 

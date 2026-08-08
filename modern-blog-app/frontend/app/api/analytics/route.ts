@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
-import { getClientIp, isTrustedAutomationRequest } from '@/lib/requestAccess';
+import { getClientIp, getGeoInfo } from '@/lib/requestAccess';
 
 // Use service role key for all operations to bypass RLS
 const supabaseServiceRole = createClient(
@@ -178,7 +178,7 @@ async function savePageAnalyticsEntry(page: string, newCount: number) {
 
 export async function GET(request: NextRequest) {
   const clientIp = getClientIp(request);
-  if (!isTrustedAutomationRequest(request) && isRateLimited(clientIp)) {
+  if (isRateLimited(clientIp)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
   try {
@@ -189,10 +189,9 @@ export async function GET(request: NextRequest) {
       try {
         const totalViews = await getPageAnalyticsTotalViews();
         const fallbackViews = Array.from(fallbackPageViewCounts.values()).reduce((sum, value) => sum + value, 0);
-        const headerFallback = Number(request.headers.get('x-analytics-fallback') || '0');
 
         return NextResponse.json({
-          total_views: Math.max(totalViews + fallbackViews, headerFallback),
+          total_views: totalViews + fallbackViews,
           timestamp: new Date().toISOString(),
         });
       } catch (err) {
@@ -221,6 +220,7 @@ export async function GET(request: NextRequest) {
           topics: 0,
           projects: 0,
           total_visits: 0,
+          countries_reached: 0,
         };
 
         // Safely fetch live counts with try-catch for each query
@@ -236,8 +236,7 @@ export async function GET(request: NextRequest) {
         try {
           const monthlyViews = await getPageAnalyticsTotalViews();
           const fallbackViews = Array.from(fallbackPageViewCounts.values()).reduce((sum, value) => sum + value, 0);
-          const headerFallback = Number(request.headers.get('x-analytics-fallback') || '0');
-          if (monthlyViews + fallbackViews + headerFallback > 0) fallbackStats.monthly_views = monthlyViews + fallbackViews + headerFallback;
+          if (monthlyViews + fallbackViews > 0) fallbackStats.monthly_views = monthlyViews + fallbackViews;
         } catch (err) {
           // Silent failure - use fallback
         }
@@ -272,11 +271,31 @@ export async function GET(request: NextRequest) {
           // Silent failure - use fallback
         }
 
+        // Safe aggregate only (no IP/PII exposed) - how many countries the site has reached.
+        try {
+          const { data: countryRows } = await supabase
+            .from('visitor_logs')
+            .select('country')
+            .not('country', 'is', null)
+            .limit(5000);
+          if (Array.isArray(countryRows)) {
+            const uniqueCountries = new Set(
+              countryRows
+                .map((row: any) => row.country)
+                .filter((country: string) => country && country !== 'Unknown')
+            );
+            fallbackStats.countries_reached = uniqueCountries.size;
+          }
+        } catch (err) {
+          // visitor_logs table may not exist yet - use fallback
+        }
+
         return NextResponse.json({
           articles: Math.max(Number(statsData?.articles || 0), fallbackStats.articles),
           monthly_views: Math.max(Number(statsData?.monthly_views || 0), fallbackStats.monthly_views),
           topics: Math.max(Number(statsData?.topics || 0), fallbackStats.topics),
           total_visits: Math.max(Number(statsData?.total_visits || 0), fallbackStats.total_visits),
+          countries_reached: fallbackStats.countries_reached,
           timestamp: new Date().toISOString(),
         });
       } catch (err) {
@@ -287,6 +306,7 @@ export async function GET(request: NextRequest) {
             monthly_views: 0,
             topics: 0,
             total_visits: 0,
+            countries_reached: 0,
             error: 'Using default values',
           },
           { status: 200 }
@@ -306,7 +326,7 @@ export async function POST(request: NextRequest) {
     const { action, data } = body;
 
     if (action === 'track-page-view') {
-      const { page_name = 'homepage', page_path, user_ip, user_agent } = data;
+      const { page_name = 'homepage', page_path, user_agent } = data;
 
       try {
         const page = normalizePagePath(page_name, page_path);
@@ -326,9 +346,8 @@ export async function POST(request: NextRequest) {
 
             const currentVisits = statsData?.total_visits || 0;
             const currentMonthlyViews = statsData?.monthly_views || 0;
-            const headerFallback = Number(request.headers.get('x-analytics-fallback') || '0');
-            const newVisits = Math.max(currentVisits + 1, headerFallback + 1);
-            const newMonthlyViews = Math.max(currentMonthlyViews + 1, headerFallback + 1);
+            const newVisits = currentVisits + 1;
+            const newMonthlyViews = currentMonthlyViews + 1;
 
             fallbackTotalVisits += 1;
             fallbackPageViewCounts.set(page, (fallbackPageViewCounts.get(page) || 0) + 1);
@@ -345,6 +364,22 @@ export async function POST(request: NextRequest) {
               });
           } catch (statsErr) {
             // Stats update skipped - continue anyway
+          }
+
+          // Best-effort visitor log for admin-only IP/country visibility. Never blocks tracking.
+          try {
+            const ip = getClientIp(request);
+            const geo = getGeoInfo(request);
+            await supabase.from('visitor_logs').insert({
+              ip_address: ip,
+              country: geo.country,
+              region: geo.region,
+              city: geo.city,
+              page_path: page,
+              user_agent: typeof user_agent === 'string' ? user_agent.slice(0, 500) : null,
+            });
+          } catch {
+            // Table may not exist yet - ignore
           }
 
           return NextResponse.json({
