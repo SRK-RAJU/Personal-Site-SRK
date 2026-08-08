@@ -196,7 +196,7 @@ export default function Home() {
                 className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border-2 border-cyan-300 dark:border-cyan-700 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 font-bold transition-all hover:scale-105 transform duration-200"
               >
                 <FaImages className="text-lg" />
-                Learning Images
+                Tools
               </Link>
             </motion.div>
 

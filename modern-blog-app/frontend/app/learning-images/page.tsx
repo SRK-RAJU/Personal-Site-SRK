@@ -52,7 +52,7 @@ export default function LearningImagesPage() {
 
         <div className="page-hero">
           <h1 className="text-4xl sm:text-5xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-cyan-500 to-fuchsia-500">
-            Learning Images
+            Tools
           </h1>
           <p className="text-slate-800 dark:text-slate-200">
             Tool-wise architecture visuals designed for beginner to advanced learning.
@@ -66,11 +66,11 @@ export default function LearningImagesPage() {
         </div>
 
         {loading ? (
-          <p className="text-slate-700 dark:text-slate-300 mt-8">Loading learning images...</p>
+          <p className="text-slate-700 dark:text-slate-300 mt-8">Loading tool visuals...</p>
         ) : images.length === 0 ? (
           <div className="page-panel p-10 mt-8 text-center">
             <FaImages className="mx-auto text-3xl text-cyan-500 mb-3" />
-            <p className="text-slate-800 dark:text-slate-200">No learning images available yet.</p>
+            <p className="text-slate-800 dark:text-slate-200">No tool visuals available yet.</p>
           </div>
         ) : (
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
