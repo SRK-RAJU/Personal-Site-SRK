@@ -6,8 +6,7 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 45;
 
 const IMAGE_MODEL_FALLBACKS = [
-  'imagen-4.0-fast-generate-001',
-  'imagen-4.0-generate-001',
+  'gemini-2.5-flash-image',
 ];
 const IMAGE_STORAGE_BUCKET = 'blog-images';
 
@@ -228,19 +227,17 @@ async function sleep(ms: number): Promise<void> {
 
 async function generateImageWithModel(apiKey: string, model: string, prompt: string, aspectRatio: '1:1' | '4:3' | '16:9') {
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:predict?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${apiKey}`,
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        instances: [{ prompt }],
-        parameters: {
-          sampleCount: 1,
-          aspectRatio,
-          safetyFilterLevel: 'block_medium_and_above',
-          personGeneration: 'dont_allow',
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseModalities: ['IMAGE'],
+          imageConfig: { aspectRatio },
         },
       }),
     }

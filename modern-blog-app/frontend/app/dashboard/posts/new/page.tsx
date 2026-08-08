@@ -19,7 +19,7 @@ export default function NewPostPage() {
   const [learningMode, setLearningMode] = useState<'basic' | 'intermediate' | 'advanced' | 'all-levels'>('all-levels');
   const [audienceLabel, setAudienceLabel] = useState('Beginners to advanced engineers');
   const [useCaseSummary, setUseCaseSummary] = useState('Enterprise deployment, policy enforcement, monitoring, and operations');
-  const [imageModel, setImageModel] = useState('imagen-4.0-fast-generate-001');
+  const [imageModel, setImageModel] = useState('gemini-2.5-flash-image');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -321,8 +321,7 @@ export default function NewPostPage() {
                 onChange={(event) => setImageModel(event.target.value)}
                 className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
               >
-                <option value="imagen-4.0-fast-generate-001">Imagen 4 Fast</option>
-                <option value="imagen-4.0-generate-001">Imagen 4 Standard</option>
+                <option value="gemini-2.5-flash-image">Nano Banana (Gemini 2.5 Flash Image)</option>
               </select>
             </div>
           </div>
