@@ -1191,7 +1191,10 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
     if (!isCronRequest) {
       const auth = await verifyAdminAuth(request);
       if (!auth.isValid) {
-        return NextResponse.json({ error: 'Admin access required' }, { status: 401 });
+        // Surface the specific reason (e.g. "Insufficient permissions" vs
+        // "Missing authorization header") instead of a generic message, so
+        // real auth failures can be told apart from setup/config problems.
+        return NextResponse.json({ error: auth.error || 'Admin access required' }, { status: 401 });
       }
       isAdmin = true;
     }
