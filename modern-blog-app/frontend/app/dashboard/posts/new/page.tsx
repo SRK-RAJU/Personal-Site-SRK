@@ -323,7 +323,6 @@ export default function NewPostPage() {
               >
                 <option value="imagen-4.0-fast-generate-001">Imagen 4 Fast</option>
                 <option value="imagen-4.0-generate-001">Imagen 4 Standard</option>
-                <option value="imagen-4.0-ultra-generate-001">Imagen 4 Ultra</option>
               </select>
             </div>
           </div>
