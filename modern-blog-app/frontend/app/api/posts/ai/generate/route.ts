@@ -243,22 +243,27 @@ async function resolveUniquePostIdentity(supabase: any, post: GeneratedPost, run
     const candidateTitle = suffix ? `${baseTitle} (${suffix})` : baseTitle;
     const candidateSlug = suffix ? `${baseSlug}-${suffix}` : baseSlug;
 
-    const { data, error } = await supabase
+    const { data: slugData, error: slugError } = await supabase
       .from('ai_generated_posts')
       .select('id')
-      .or(`slug.eq.${candidateSlug},title.eq.${candidateTitle}`)
-      .limit(1);
+      .eq('slug', candidateSlug)
+      .maybeSingle();
 
-    if (error) {
-      console.warn('[SUPABASE-SAVE] Unique identity lookup failed, using candidate anyway.', error.message);
-      return {
-        ...post,
-        title: candidateTitle,
-        slug: candidateSlug,
-      };
+    const { data: titleData, error: titleError } = await supabase
+      .from('ai_generated_posts')
+      .select('id')
+      .eq('title', candidateTitle)
+      .maybeSingle();
+
+    if (slugError || titleError) {
+      console.warn(
+        '[SUPABASE-SAVE] Unique identity lookup failed, trying another candidate.',
+        slugError?.message || titleError?.message,
+      );
+      continue;
     }
 
-    if (!data || data.length === 0) {
+    if (!slugData && !titleData) {
       return {
         ...post,
         title: candidateTitle,
