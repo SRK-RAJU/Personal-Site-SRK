@@ -24,14 +24,19 @@ function formatFileSize(bytes: number): string {
 export default function LearningImagesPage() {
   const [images, setImages] = useState<LearningImage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const load = async () => {
       try {
         const response = await fetch('/api/images/public');
         const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result?.message || result?.error || 'Unable to load tool visuals.');
+        }
         setImages(Array.isArray(result?.images) ? result.images : []);
-      } catch {
+      } catch (loadError: any) {
+        setError(loadError?.message || 'Unable to load tool visuals.');
         setImages([]);
       } finally {
         setLoading(false);
@@ -67,6 +72,10 @@ export default function LearningImagesPage() {
 
         {loading ? (
           <p className="text-slate-700 dark:text-slate-300 mt-8">Loading tool visuals...</p>
+        ) : error ? (
+          <div className="page-panel p-10 mt-8 text-center">
+            <p className="text-red-700 dark:text-red-400">{error}</p>
+          </div>
         ) : images.length === 0 ? (
           <div className="page-panel p-10 mt-8 text-center">
             <FaImages className="mx-auto text-3xl text-cyan-500 mb-3" />
