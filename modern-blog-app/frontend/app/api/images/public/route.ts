@@ -29,7 +29,7 @@ function toTitleCaseFromSlug(slug: string): string {
     .join(' ');
 }
 
-async function listAllStorageFiles(supabase: any, bucket: string): Promise<any[]> {
+async function listAllStorageFiles(supabase: any, bucket: string, folder = ''): Promise<any[]> {
   const files: any[] = [];
   let offset = 0;
   const limit = 100;
@@ -37,13 +37,25 @@ async function listAllStorageFiles(supabase: any, bucket: string): Promise<any[]
   while (true) {
     const { data, error } = await supabase.storage
       .from(bucket)
-      .list('', { limit, offset });
+      .list(folder, { limit, offset });
 
-    if (error || !data || data.length === 0) {
-      break;
+    if (error) {
+      throw new Error(`Storage listing failed for ${folder || 'root'}: ${error.message}`);
     }
 
-    files.push(...data);
+    if (!data || data.length === 0) break;
+
+    for (const item of data) {
+      const itemName = String(item?.name || '').trim();
+      if (!itemName) continue;
+
+      const itemPath = folder ? `${folder}/${itemName}` : itemName;
+      if (item?.id) {
+        files.push({ ...item, name: itemPath });
+      } else {
+        files.push(...await listAllStorageFiles(supabase, bucket, itemPath));
+      }
+    }
     if (data.length < limit) break;
 
     offset += limit;
@@ -63,7 +75,10 @@ export async function GET(): Promise<NextResponse> {
     const files = await listAllStorageFiles(supabase, IMAGE_STORAGE_BUCKET);
 
     const aiImages = files
-      .filter((file: any) => typeof file?.name === 'string' && file.name.startsWith('ai-'))
+      .filter((file: any) => {
+        const name = String(file?.name || '');
+        return name.split('/').pop()?.startsWith('ai-');
+      })
       .sort((a: any, b: any) => {
         const at = new Date(a?.created_at || 0).getTime();
         const bt = new Date(b?.created_at || 0).getTime();
@@ -71,7 +86,8 @@ export async function GET(): Promise<NextResponse> {
       })
       .map((file: any) => {
         const name = String(file.name || '');
-        const base = name.replace(/^ai-/, '').replace(/\.[a-zA-Z0-9]+$/, '');
+        const fileName = name.split('/').pop() || name;
+        const base = fileName.replace(/^ai-/, '').replace(/\.[a-zA-Z0-9]+$/, '');
         const toolSlug = base.replace(/-\d{10,}-.*$/, '');
         const { data } = supabase.storage.from(IMAGE_STORAGE_BUCKET).getPublicUrl(name);
 
@@ -85,7 +101,14 @@ export async function GET(): Promise<NextResponse> {
       });
 
     return NextResponse.json({ images: aiImages }, { status: 200 });
-  } catch {
-    return NextResponse.json({ images: [] }, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        images: [],
+        error: 'Unable to load tool images from Supabase Storage',
+        message: error?.message || 'Storage listing failed',
+      },
+      { status: 503 },
+    );
   }
 }
