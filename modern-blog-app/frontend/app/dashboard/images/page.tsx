@@ -36,6 +36,7 @@ export default function ImagesPage() {
   const [batchLimit, setBatchLimit] = useState(4);
   const [batchOffset, setBatchOffset] = useState(0);
   const [batchCategory, setBatchCategory] = useState('');
+  const [learningMode, setLearningMode] = useState<'basic' | 'intermediate' | 'advanced' | 'all-levels'>('all-levels');
   const [batchStatus, setBatchStatus] = useState('');
   const [batchSummary, setBatchSummary] = useState('');
   const [selectedToolNumber, setSelectedToolNumber] = useState(1);
@@ -275,7 +276,7 @@ export default function ImagesPage() {
         category: batchCategory || undefined,
         offset,
         limit: limitOverride || batchLimit,
-        learningMode: 'all-levels',
+        learningMode,
       }),
     });
 
@@ -493,6 +494,22 @@ export default function ImagesPage() {
             >
               {progressLoading ? 'Refreshing...' : 'Refresh progress'}
             </button>
+          </div>
+
+          <div className="mt-3 max-w-sm">
+            <label className="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">
+              Learning diagram mode
+            </label>
+            <select
+              value={learningMode}
+              onChange={(event) => setLearningMode(event.target.value as 'basic' | 'intermediate' | 'advanced' | 'all-levels')}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+            >
+              <option value="all-levels">All levels: overview + workflow + operations</option>
+              <option value="basic">Basic: simple platform overview</option>
+              <option value="intermediate">Intermediate: module workflow</option>
+              <option value="advanced">Advanced: governance and policy flow</option>
+            </select>
           </div>
 
           <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-4">

@@ -1,13 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/apiAuth';
+import { renderArchitectureDiagram } from '@/lib/architectureDiagram';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 45;
-
-const IMAGE_MODEL_FALLBACKS = [
-  'gemini-2.5-flash-image',
-];
 
 const IMAGE_STORAGE_BUCKET = 'blog-images';
 const IMAGE_CACHE_SECONDS = 60 * 60 * 24 * 30;
@@ -19,30 +16,6 @@ interface BatchGenerateBody {
   limit?: number;
   model?: string;
   learningMode?: 'basic' | 'intermediate' | 'advanced' | 'all-levels';
-}
-
-function getGoogleApiKey(): string {
-  return process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY || '';
-}
-
-function normalizeModel(model?: string): string {
-  return (model || '').trim();
-}
-
-function getModelCandidates(requestedModel?: string): string[] {
-  const requested = normalizeModel(requestedModel);
-  const fallbackList = [...IMAGE_MODEL_FALLBACKS];
-
-  if (requested && fallbackList.includes(requested)) {
-    fallbackList.unshift(requested);
-  }
-
-  const seen = new Set<string>();
-  return fallbackList.filter((model) => {
-    if (!model || seen.has(model)) return false;
-    seen.add(model);
-    return true;
-  });
 }
 
 function sanitizeText(value: string, maxLength: number): string {
@@ -80,42 +53,6 @@ function inferImageExtension(contentType: string): string {
   if (contentType.includes('jpeg') || contentType.includes('jpg')) return 'jpg';
   if (contentType.includes('webp')) return 'webp';
   return 'png';
-}
-
-function extractImageFromPayload(payload: any): { mimeType: string; base64Data: string } | null {
-  const prediction = payload?.predictions?.[0];
-  if (prediction?.bytesBase64Encoded) {
-    return {
-      mimeType: prediction.mimeType || 'image/png',
-      base64Data: prediction.bytesBase64Encoded,
-    };
-  }
-
-  const candidatePart = payload?.candidates?.[0]?.content?.parts?.find((part: any) => part?.inlineData?.data);
-  if (candidatePart?.inlineData?.data) {
-    return {
-      mimeType: candidatePart.inlineData.mimeType || 'image/png',
-      base64Data: candidatePart.inlineData.data,
-    };
-  }
-
-  const generatedImage = payload?.generatedImages?.[0];
-  if (generatedImage?.imageBytes) {
-    return {
-      mimeType: generatedImage.mimeType || 'image/png',
-      base64Data: generatedImage.imageBytes,
-    };
-  }
-
-  const b64Json = payload?.data?.[0]?.b64_json;
-  if (b64Json) {
-    return {
-      mimeType: 'image/png',
-      base64Data: b64Json,
-    };
-  }
-
-  return null;
 }
 
 async function sleep(ms: number): Promise<void> {
@@ -231,61 +168,6 @@ function buildPrompt(input: {
   ].filter(Boolean).join(' ');
 }
 
-async function generateImageWithModel(apiKey: string, model: string, prompt: string) {
-  return fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          responseModalities: ['IMAGE'],
-          imageConfig: { aspectRatio: '16:9' },
-        },
-      }),
-    }
-  );
-}
-
-async function generateArchitectureImage(apiKey: string, prompt: string, requestedModel?: string) {
-  const modelCandidates = getModelCandidates(requestedModel);
-  let lastError = 'Unknown image generation failure';
-
-  for (const model of modelCandidates) {
-    const response = await generateImageWithModel(apiKey, model, prompt);
-
-    if (!response.ok) {
-      const body = await response.text().catch(() => '');
-      const isRetryable = response.status === 429 || response.status === 500 || response.status === 503;
-      lastError = `${model}: ${response.status} ${body}`;
-
-      if (isRetryable) {
-        await sleep(1200);
-        continue;
-      }
-
-      continue;
-    }
-
-    const payload = await response.json();
-    const extracted = extractImageFromPayload(payload);
-
-    if (!extracted) {
-      lastError = `${model}: response did not include image bytes`;
-      continue;
-    }
-
-    return {
-      model,
-      mimeType: extracted.mimeType,
-      imageBuffer: Buffer.from(extracted.base64Data, 'base64'),
-    };
-  }
-
-  throw new Error(lastError);
-}
-
 async function uploadImageToSupabase(params: {
   supabase: any;
   imageBuffer: Buffer;
@@ -344,11 +226,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: auth.error || 'Admin access required' }, { status: 401 });
     }
 
-    const apiKey = getGoogleApiKey();
-    if (!apiKey) {
-      return NextResponse.json({ error: 'Google AI API key is missing' }, { status: 503 });
-    }
-
     const supabase = getSupabaseServiceClient();
     if (!supabase) {
       return NextResponse.json({ error: 'Supabase service client is not configured' }, { status: 503 });
@@ -400,29 +277,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       try {
         const defaults = categoryDefaults(tool.category || 'General');
-        const prompt = buildPrompt({
+        const generatedImage = await renderArchitectureDiagram({
           toolName,
           category: tool.category || 'General',
-          description: tool.description || '',
-          modules: defaults.modules,
-          features: defaults.features,
-          useCase: defaults.useCase,
+          components: defaults.modules,
+          keyFeatures: defaults.features,
           learningMode: body.learningMode || 'all-levels',
+          useCase: defaults.useCase,
         });
-
-        const generatedImage = await generateArchitectureImage(apiKey, prompt, body.model);
         const uploaded = await uploadImageToSupabase({
           supabase,
           imageBuffer: generatedImage.imageBuffer,
           mimeType: generatedImage.mimeType,
           toolName,
-          model: generatedImage.model,
+          model: generatedImage.renderer,
         });
 
         generated.push({
           tool: toolName,
           category: tool.category,
-          model_used: generatedImage.model,
+          model_used: generatedImage.renderer,
           featured_image_url: uploaded.publicUrl,
           storage_path: uploaded.path,
           image_size_kb: Math.round(generatedImage.imageBuffer.length / 1024),
