@@ -86,13 +86,13 @@ where not exists (select 1 from vault.secrets where name = 'ai_sched_anon_key');
 select vault.create_secret('YOUR_CRON_TO_FUNCTION_SECRET', 'ai_sched_cron_secret')
 where not exists (select 1 from vault.secrets where name = 'ai_sched_cron_secret');
 
--- One cron job every 5 minutes
+-- One cron job: run weekly on Monday at 03:00 UTC (recommended)
 select cron.unschedule('ai_scheduler_every_5m')
 where exists (select 1 from cron.job where jobname = 'ai_scheduler_every_5m');
 
 select cron.schedule(
   'ai_scheduler_every_5m',
-  '*/5 * * * *',
+  '0 3 * * 1',
   $$
   select net.http_post(
     url := (select decrypted_secret from vault.decrypted_secrets where name = 'ai_sched_fn_url'),
@@ -269,13 +269,10 @@ serve(async (req) => {
     }
 
     const now = new Date();
-    const weeklyStart = getWeeklyStartUtc(now, cfg.weekly_dow, cfg.weekly_start_hour_utc);
-
-    if (now.getTime() < weeklyStart.getTime()) {
-      await logRun(supabase, "skipped", cfg.mode, undefined, undefined, {
-        reason: "outside_weekly_window",
-        weekly_start_utc: weeklyStart.toISOString(),
-      });
+    // Only forward on the configured weekly day/hour (UTC). Cron may still invoke frequently.
+    const isWeeklyHour = now.getUTCDay() === cfg.weekly_dow && now.getUTCHours() === cfg.weekly_start_hour_utc;
+    if (!isWeeklyHour) {
+      await logRun(supabase, "skipped", cfg.mode, undefined, undefined, { reason: "outside_weekly_window" });
       return Response.json({ ok: true, skipped: true, reason: "outside_weekly_window" });
     }
 
@@ -628,3 +625,19 @@ from public.ai_scheduler_runs
 order by run_at desc
 limit 20;
 ```
+
+
+
+
+select enabled,
+       mode,
+       weekly_dow,
+       weekly_start_hour_utc,
+       min_interval_minutes,
+       cursor,
+       processed_this_week,
+       week_key,
+       batch_cursor,
+       last_run_at
+from public.ai_scheduler_config
+where id = 1;

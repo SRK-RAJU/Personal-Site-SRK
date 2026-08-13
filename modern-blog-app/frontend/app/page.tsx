@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { FaArrowRight, FaCode, FaServer, FaDatabase, FaClock, FaEye, FaFire, FaRocket, FaStar, FaUsers, FaImages, FaGlobeAmericas } from 'react-icons/fa';
 import TrendingPosts from '@/components/TrendingPosts';
@@ -8,6 +9,12 @@ import RealtimeActivity from '@/components/RealtimeActivity';
 import AIBlogPostsList from '@/components/AIBlogPostsList';
 import { useWebsiteStats } from '@/lib/useAnalytics';
 import { useEffect, useState } from 'react';
+
+interface LearningImagePreview {
+  name: string;
+  tool_name: string;
+  url: string;
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -46,6 +53,7 @@ const sectionVariants = {
 
 export default function Home() {
   const { stats: fetchedStats } = useWebsiteStats();
+  const [toolImages, setToolImages] = useState<LearningImagePreview[]>([]);
   const [animatedStats, setAnimatedStats] = useState([
     { icon: FaClock, label: 'Articles', value: 0 },
     { icon: FaEye, label: 'Monthly Views', value: 0 },
@@ -67,6 +75,21 @@ export default function Home() {
     }, 300);
     return () => clearTimeout(timer);
   }, [fetchedStats]);
+
+  useEffect(() => {
+    const loadToolImages = async () => {
+      try {
+        const response = await fetch('/api/images/public');
+        const result = await response.json();
+        if (!response.ok) return;
+        setToolImages(Array.isArray(result?.images) ? result.images.slice(0, 6) : []);
+      } catch {
+        setToolImages([]);
+      }
+    };
+
+    void loadToolImages();
+  }, []);
 
   const skills = [
     {
@@ -250,6 +273,46 @@ export default function Home() {
         <div className="container-max">
           <TrendingPosts />
         </div>
+      </motion.section>
+
+      {/* Tool architecture visuals */}
+      <motion.section
+        className="container-max section-padding-tight"
+        initial="hidden"
+        whileInView="visible"
+        variants={sectionVariants}
+        viewport={{ once: true, margin: '-100px' }}
+      >
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-cyan-600 dark:text-cyan-400">Enterprise tool map</p>
+            <h2 className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">Architecture visuals</h2>
+          </div>
+          <Link href="/learning-images" className="font-semibold text-cyan-700 hover:underline dark:text-cyan-300">
+            View all tools <FaArrowRight className="ml-1 inline" />
+          </Link>
+        </div>
+
+        {toolImages.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {toolImages.map((image) => (
+              <Link
+                key={image.name}
+                href="/learning-images"
+                className="group overflow-hidden rounded-xl border border-cyan-200/70 bg-white shadow-sm transition hover:-translate-y-1 hover:border-cyan-400 dark:border-slate-700 dark:bg-slate-900"
+              >
+                <div className="relative h-48 bg-slate-100 dark:bg-slate-800">
+                  <Image src={image.url} alt={`${image.tool_name} architecture`} fill unoptimized className="object-cover transition duration-300 group-hover:scale-105" />
+                </div>
+                <p className="p-4 font-semibold text-slate-900 dark:text-white">{image.tool_name}</p>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed border-cyan-300 p-8 text-center text-slate-600 dark:border-cyan-800 dark:text-slate-300">
+            Tool architecture visuals will appear here after the first admin generation.
+          </div>
+        )}
       </motion.section>
 
       {/* AI-Generated Weekly Insights */}

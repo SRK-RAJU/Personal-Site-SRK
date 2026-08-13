@@ -346,7 +346,7 @@ async function getToolCategories(): Promise<string[]> {
   }
 }
 
-async function getToolsForGeneration(limit: number = TOOLS_COVERAGE_QUERY_LIMIT, batchIndex?: number, category?: string): Promise<{name: string, category: string}[]> {
+async function getToolsForGeneration(limit: number = TOOLS_COVERAGE_QUERY_LIMIT, batchIndex?: number, category?: string, batchSize: number = GENERATION_TOOL_BATCH_SIZE): Promise<{name: string, category: string}[]> {
   const supabase = getSupabaseClient();
   if (!supabase) return [];
 
@@ -372,9 +372,9 @@ async function getToolsForGeneration(limit: number = TOOLS_COVERAGE_QUERY_LIMIT,
       .filter((tool) => tool.name);
 
     const batch = (typeof batchIndex === 'number' && batchIndex > 0) ? Math.floor(batchIndex) : 1;
-    const batchSize = GENERATION_TOOL_BATCH_SIZE;
-    const start = (batch - 1) * batchSize;
-    const end = start + batchSize;
+    const effectiveBatchSize = Math.min(Math.max(1, Math.floor(batchSize)), MAX_GENERATION_TOOLS);
+    const start = (batch - 1) * effectiveBatchSize;
+    const end = start + effectiveBatchSize;
 
     return activeTools.slice(start, end);
   } catch (err) {
@@ -400,7 +400,7 @@ async function countToolsForCategory(category?: string): Promise<number> {
   }
 }
 
-async function getCategoryGenerationBatchIndex(category?: string, explicitBatchIndex?: number): Promise<number> {
+async function getCategoryGenerationBatchIndex(category?: string, explicitBatchIndex?: number, batchSize: number = Math.min(DEFAULT_TOOL_BATCH_SIZE, MAX_GENERATION_TOOLS)): Promise<number> {
   if (typeof explicitBatchIndex === 'number' && explicitBatchIndex > 0) {
     return Math.floor(explicitBatchIndex);
   }
@@ -410,7 +410,7 @@ async function getCategoryGenerationBatchIndex(category?: string, explicitBatchI
   }
 
   const totalTools = await countToolsForCategory(category);
-  const batchCount = Math.max(1, Math.ceil(totalTools / GENERATION_TOOL_BATCH_SIZE));
+  const batchCount = Math.max(1, Math.ceil(totalTools / Math.max(1, Math.floor(batchSize))));
 
   if (batchCount === 1) {
     return 1;
@@ -1236,6 +1236,14 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       const parsed = Number(requestBody.batch);
       if (!Number.isNaN(parsed) && parsed > 0) batchIndex = Math.floor(parsed);
     }
+    // support scheduler fields: start_batch, batches, tools_per_batch
+    if (requestBody && typeof requestBody.start_batch !== 'undefined') {
+      const parsedStart = Number(requestBody.start_batch);
+      if (!Number.isNaN(parsedStart) && parsedStart > 0) batchIndex = Math.floor(parsedStart);
+    }
+    const batchesRequested = requestBody && typeof requestBody.batches !== 'undefined' ? Math.max(1, Number(requestBody.batches) || 1) : 1;
+    const requestedToolsPerBatch = requestBody && typeof requestBody.tools_per_batch !== 'undefined' ? Number(requestBody.tools_per_batch) : undefined;
+    const generationToolBatchSize = Math.min(Math.max(1, requestedToolsPerBatch || DEFAULT_TOOL_BATCH_SIZE), MAX_GENERATION_TOOLS);
     const isSupabaseSchedulerRun = !isAdmin && isCronRequest && triggerSource === 'supabase-scheduler';
     const isSchedulerBatchRun = isSupabaseSchedulerRun && typeof batchIndex === 'number' && batchIndex > 0;
 
@@ -1272,8 +1280,8 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
           }
         }
 
-        const batchForCategory = await getCategoryGenerationBatchIndex(category, batchIndex);
-        const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, batchForCategory, category);
+        const batchForCategory = await getCategoryGenerationBatchIndex(category, batchIndex, generationToolBatchSize);
+        const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, batchForCategory, category, generationToolBatchSize);
         if (!toolsWithCategories.length) {
           generated.push({ category, skipped: true, reason: 'No tools found for category' });
           continue;
@@ -1321,8 +1329,73 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       }
     }
 
-    const batchForCategory = await getCategoryGenerationBatchIndex(category, batchIndex);
-    const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, batchForCategory, category);
+    // If this is a scheduler-driven call or the client requested multiple batches,
+    // run the batched loop (aggregate results) so the scheduler can advance state
+    // even when some DB inserts warn. For single admin/manual calls, preserve
+    // the old behavior: process one batch and return immediate DB insertion
+    // warnings so an operator can act on them.
+    if (isSupabaseSchedulerRun || batchesRequested > 1) {
+      const startBatchForCategory = await getCategoryGenerationBatchIndex(category, batchIndex, generationToolBatchSize);
+      const geminiCalls = [] as any[];
+      let geminiCallsCount = 0;
+      const batchesToRun = Math.max(1, batchesRequested);
+      for (let bi = 0; bi < batchesToRun; bi++) {
+        const currentBatchIndex = startBatchForCategory + bi;
+        const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, currentBatchIndex, category, generationToolBatchSize);
+        if (!toolsWithCategories.length) {
+          // if a batch produced no tools, skip it
+          geminiCalls.push({ category, skipped: true, reason: 'No tools found for category', batch_index: currentBatchIndex });
+          continue;
+        }
+
+        const excludedTopics = await getExcludedTopics();
+        const trendSearch = await searchTrendContext(toolsWithCategories);
+        const trendNews = trendSearch.results;
+
+        const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics, category);
+
+        if (!post) {
+          geminiCalls.push({ category, skipped: true, reason: 'Generation failed', batch_index: currentBatchIndex });
+          continue;
+        }
+
+        const saveResult = await savePostToSupabase(post, runId);
+        geminiCallsCount += 1;
+        geminiCalls.push({ category, saved: saveResult.saved, post: { title: saveResult.savedPost?.title || post.title, slug: saveResult.savedPost?.slug || post.slug, cves_mentioned: post.cves_mentioned }, backupPath: saveResult.backupPath, batch_index: currentBatchIndex });
+      }
+
+      if (geminiCallsCount === 0) {
+        await logGeneration(runId, { run_id: runId, status: 'partial', posts_generated: 0, posts_published: 0, error_message: 'No posts generated' });
+        return NextResponse.json({ success: true, skipped: true, mode: 'single-category', category, reason: 'No posts generated' }, { status: 200 });
+      }
+
+      await logGeneration(runId, { run_id: runId, status: 'success', posts_generated: geminiCallsCount, posts_published: geminiCalls.filter(c => c.saved).length });
+      const duration = Math.round((Date.now() - startTime) / 1000);
+      const promptDetails = getCategoryPromptDetails(category);
+
+      return NextResponse.json({
+        success: true,
+        runId,
+        duration_seconds: duration,
+        mode: 'single-category',
+        category,
+        batch_index: startBatchForCategory,
+        batches: batchesToRun,
+        batch_count: Math.max(1, Math.ceil((await countToolsForCategory(category)) / generationToolBatchSize)),
+        tavily_enabled: !!getTavilyApiKey(),
+        tavily_search_queries: 0,
+        gemini_calls: geminiCallsCount,
+        db_tool_count: geminiCalls.reduce((s, c) => s + ((c.post && c.post.tools_covered) ? c.post.tools_covered.length : 0), 0),
+        generated: geminiCalls,
+        batch: startBatchForCategory,
+        backup_paths: geminiCalls.map(c => c.backupPath).filter(Boolean),
+        category_prompt_details: promptDetails,
+      }, { status: 200 });
+    }
+
+    // --- Single-admin/manual run (preserve old behavior) ---
+    const batchForCategory = await getCategoryGenerationBatchIndex(category, batchIndex, generationToolBatchSize);
+    const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, batchForCategory, category, generationToolBatchSize);
     if (!toolsWithCategories.length) {
       await logGeneration(runId, {
         run_id: runId,
@@ -1373,7 +1446,7 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       mode: 'single-category',
       category,
       batch_index: batchForCategory,
-      batch_count: Math.max(1, Math.ceil((await countToolsForCategory(category)) / GENERATION_TOOL_BATCH_SIZE)),
+      batch_count: Math.max(1, Math.ceil((await countToolsForCategory(category)) / generationToolBatchSize)),
       tavily_enabled: !!getTavilyApiKey(),
       tavily_search_queries: trendSearch.queryCount,
       gemini_calls: 1,
