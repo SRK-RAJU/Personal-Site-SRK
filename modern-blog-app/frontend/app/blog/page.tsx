@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaCalendar, FaUser, FaEye, FaArrowRight } from 'react-icons/fa';
+import { FaCalendar, FaUser, FaEye, FaArrowRight, FaBook, FaRocket } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import ToolsList from '@/components/ToolsList';
@@ -107,6 +107,26 @@ export default function Blog() {
                 Showing results for: {searchQuery}
               </p>
             )}
+
+            {/* Navigation Buttons */}
+            <div className="mt-8 flex flex-wrap gap-4 justify-center mb-6">
+              <button
+                disabled
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-600 to-fuchsia-600 text-white font-bold shadow-lg cursor-not-allowed opacity-100"
+              >
+                <FaBook className="text-lg" />
+                Posts
+              </button>
+              <Link
+                href="/tools"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-lg border-2 border-cyan-400 dark:border-cyan-600 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 font-bold transition-all hover:scale-105 transform duration-200"
+              >
+                <FaRocket className="text-lg" />
+                View Tools
+                <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+
             <div className="mt-6 flex justify-center">
               <ToolsList />
             </div>
