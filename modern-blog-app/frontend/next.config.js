@@ -40,6 +40,11 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      {
+        source: '/posts',
+        destination: '/blog',
+        permanent: true,
+      },
       // Add redirect rules here when migrating from WordPress
       // Example:
       // {

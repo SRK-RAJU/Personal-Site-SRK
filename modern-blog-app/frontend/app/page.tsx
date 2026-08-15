@@ -228,7 +228,7 @@ export default function Home() {
                 className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border-2 border-cyan-300 dark:border-cyan-700 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 font-bold transition-all hover:scale-105 transform duration-200"
               >
                 <FaImages className="text-lg" />
-                Tools
+                Tool Images
               </Link>
               <div className="w-full flex justify-center">
                 <motion.div variants={itemVariants}>
@@ -303,7 +303,7 @@ export default function Home() {
             <h2 className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">Architecture visuals</h2>
           </div>
           <Link href="/learning-images" className="font-semibold text-cyan-700 hover:underline dark:text-cyan-300">
-            View all tools <FaArrowRight className="ml-1 inline" />
+            View all images <FaArrowRight className="ml-1 inline" />
           </Link>
         </div>
 
