@@ -18,6 +18,7 @@ import {
   FaSearch,
   FaMoon,
   FaSun,
+  FaRocket,
 } from 'react-icons/fa';
 import { useAuth } from '@/lib/authContext';
 import { usePathname, useRouter } from 'next/navigation';
@@ -58,6 +59,7 @@ export default function Header() {
   const navItems = [
     { href: '/', label: 'Home', icon: FaHome },
     { href: '/blog', label: 'Posts', icon: FaBook },
+    { href: '/tools', label: 'Tools List', icon: FaRocket },
     { href: '/learning-images', label: 'Tools', icon: FaImages },
     { href: '/about', label: 'About', icon: FaInfoCircle },
     { href: '/contact', label: 'Contact', icon: FaEnvelope },
