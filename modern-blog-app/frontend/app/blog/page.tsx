@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { FaCalendar, FaUser, FaEye, FaArrowRight } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import ToolsList from '@/components/ToolsList';
+import FloatingToolsButton from '@/components/FloatingToolsButton';
 
 export default function Blog() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -105,6 +107,9 @@ export default function Blog() {
                 Showing results for: {searchQuery}
               </p>
             )}
+            <div className="mt-6 flex justify-center">
+              <ToolsList />
+            </div>
           </motion.div>
         </div>
       </section>
@@ -273,6 +278,7 @@ export default function Blog() {
           )}
         </div>
       </section>
+      <FloatingToolsButton />
     </div>
   );
 }
