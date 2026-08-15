@@ -60,7 +60,7 @@ export default function Header() {
     { href: '/', label: 'Home', icon: FaHome },
     { href: '/blog', label: 'Posts', icon: FaBook },
     { href: '/tools', label: 'Tools List', icon: FaRocket },
-    { href: '/learning-images', label: 'Tool Images', icon: FaImages },
+    { href: '/images', label: 'Tool Images', icon: FaImages },
     { href: '/about', label: 'About', icon: FaInfoCircle },
     { href: '/contact', label: 'Contact', icon: FaEnvelope },
   ];

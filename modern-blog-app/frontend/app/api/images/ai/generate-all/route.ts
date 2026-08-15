@@ -280,6 +280,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const generatedImage = await renderArchitectureDiagram({
           toolName,
           category: tool.category || 'General',
+          description: tool.description || defaults.useCase,
           components: defaults.modules,
           keyFeatures: defaults.features,
           learningMode: body.learningMode || 'all-levels',

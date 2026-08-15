@@ -45,6 +45,11 @@ const nextConfig = {
         destination: '/blog',
         permanent: true,
       },
+      {
+        source: '/learning-images',
+        destination: '/images',
+        permanent: true,
+      },
       // Add redirect rules here when migrating from WordPress
       // Example:
       // {

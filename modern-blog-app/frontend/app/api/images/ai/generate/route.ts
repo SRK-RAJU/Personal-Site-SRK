@@ -174,6 +174,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       toolName,
       postTitle: body.postTitle,
       category: body.category,
+      description: body.extraContext || body.postTitle || `Tool architecture for ${toolName}`,
       components,
       keyFeatures,
       learningMode: body.learningMode,

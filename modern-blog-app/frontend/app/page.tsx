@@ -224,7 +224,7 @@ export default function Home() {
                 Get in Touch
               </Link>
               <Link
-                href="/learning-images"
+                href="/images"
                 className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border-2 border-cyan-300 dark:border-cyan-700 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 font-bold transition-all hover:scale-105 transform duration-200"
               >
                 <FaImages className="text-lg" />
@@ -302,7 +302,7 @@ export default function Home() {
             <p className="text-sm font-semibold uppercase tracking-wide text-cyan-600 dark:text-cyan-400">Enterprise tool map</p>
             <h2 className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">Architecture visuals</h2>
           </div>
-          <Link href="/learning-images" className="font-semibold text-cyan-700 hover:underline dark:text-cyan-300">
+          <Link href="/images" className="font-semibold text-cyan-700 hover:underline dark:text-cyan-300">
             View all images <FaArrowRight className="ml-1 inline" />
           </Link>
         </div>
