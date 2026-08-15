@@ -7,6 +7,7 @@ import { FaArrowRight, FaCode, FaServer, FaDatabase, FaClock, FaEye, FaFire, FaR
 import TrendingPosts from '@/components/TrendingPosts';
 import RealtimeActivity from '@/components/RealtimeActivity';
 import AIBlogPostsList from '@/components/AIBlogPostsList';
+import ToolsList from '@/components/ToolsList';
 import { useWebsiteStats } from '@/lib/useAnalytics';
 import { useEffect, useState } from 'react';
 
@@ -221,6 +222,11 @@ export default function Home() {
                 <FaImages className="text-lg" />
                 Tools
               </Link>
+              <div className="w-full flex justify-center">
+                <motion.div variants={itemVariants}>
+                  <ToolsList />
+                </motion.div>
+              </div>
             </motion.div>
 
             {/* Stats */}

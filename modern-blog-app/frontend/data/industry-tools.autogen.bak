@@ -1,0 +1,2101 @@
+{
+  "categories": [
+    {
+      "id": "ai-ml",
+      "displayName": "AI & Machine Learning",
+      "tools": [
+        {
+          "name": "TensorFlow",
+          "officialUrl": "https://www.tensorflow.org",
+          "description": "Open-source ML framework",
+          "tags": [
+            "framework",
+            "ml",
+            "ai"
+          ]
+        },
+        {
+          "name": "PyTorch",
+          "officialUrl": "https://pytorch.org",
+          "description": "Deep learning framework",
+          "tags": [
+            "framework",
+            "ml",
+            "ai"
+          ]
+        },
+        {
+          "name": "OpenAI",
+          "officialUrl": "https://openai.com",
+          "description": "AI models and APIs (GPT family)",
+          "tags": [
+            "api",
+            "ai",
+            "models"
+          ]
+        },
+        {
+          "name": "Anthropic (Claude)",
+          "officialUrl": "https://www.anthropic.com",
+          "description": "Anthropic Claude family (Claude Instant, Claude 2, Claude 3 family) — conversational and instruction-following models",
+          "tags": [
+            "ai",
+            "models",
+            "claude"
+          ]
+        },
+        {
+          "name": "Google Gemini",
+          "officialUrl": "https://gemini.google.com",
+          "description": "Google's family of multimodal models",
+          "tags": [
+            "ai",
+            "models"
+          ]
+        },
+        {
+          "name": "Hugging Face",
+          "officialUrl": "https://huggingface.co",
+          "description": "Model hub and tooling for transformers and other models",
+          "tags": [
+            "hub",
+            "models"
+          ]
+        },
+        {
+          "name": "Cohere",
+          "officialUrl": "https://cohere.ai",
+          "description": "LLMs and semantic search APIs",
+          "tags": [
+            "ai",
+            "models"
+          ]
+        },
+        {
+          "name": "Stability AI",
+          "officialUrl": "https://stability.ai",
+          "description": "Generative models (images, audio)",
+          "tags": [
+            "generative",
+            "image"
+          ]
+        },
+        {
+          "name": "Replicate",
+          "officialUrl": "https://replicate.com",
+          "description": "Run community ML models in the cloud",
+          "tags": [
+            "inference",
+            "cloud"
+          ]
+        },
+        {
+          "name": "Weights & Biases",
+          "officialUrl": "https://wandb.ai",
+          "description": "Experiment tracking and model monitoring",
+          "tags": [
+            "mlops"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cloud",
+      "displayName": "Cloud Providers & Services",
+      "tools": [
+        {
+          "name": "AWS",
+          "officialUrl": "https://aws.amazon.com",
+          "description": "Amazon Web Services",
+          "tags": [
+            "cloud"
+          ]
+        },
+        {
+          "name": "Microsoft Azure",
+          "officialUrl": "https://azure.microsoft.com",
+          "description": "Azure cloud platform",
+          "tags": [
+            "cloud"
+          ]
+        },
+        {
+          "name": "Google Cloud",
+          "officialUrl": "https://cloud.google.com",
+          "description": "Google Cloud Platform",
+          "tags": [
+            "cloud"
+          ]
+        },
+        {
+          "name": "DigitalOcean",
+          "officialUrl": "https://www.digitalocean.com",
+          "description": "Developer-friendly cloud",
+          "tags": [
+            "cloud"
+          ]
+        },
+        {
+          "name": "Vercel",
+          "officialUrl": "https://vercel.com",
+          "description": "Frontend deployment platform",
+          "tags": [
+            "cloud",
+            "frontend"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cybersecurity",
+      "displayName": "Cybersecurity & Threat Management",
+      "tools": [
+        {
+          "name": "Palo Alto Networks",
+          "officialUrl": "https://www.paloaltonetworks.com",
+          "description": "Enterprise security platform",
+          "tags": [
+            "security"
+          ]
+        },
+        {
+          "name": "CrowdStrike",
+          "officialUrl": "https://www.crowdstrike.com",
+          "description": "Endpoint protection and threat intelligence",
+          "tags": [
+            "edr",
+            "security"
+          ]
+        },
+        {
+          "name": "Splunk",
+          "officialUrl": "https://www.splunk.com",
+          "description": "Security information and event management (SIEM)",
+          "tags": [
+            "siem",
+            "security"
+          ]
+        },
+        {
+          "name": "Tenable",
+          "officialUrl": "https://www.tenable.com",
+          "description": "Vulnerability management",
+          "tags": [
+            "vulnerability",
+            "security"
+          ]
+        },
+        {
+          "name": "Okta",
+          "officialUrl": "https://www.okta.com",
+          "description": "Identity and access management",
+          "tags": [
+            "iam",
+            "security"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "networking",
+      "displayName": "Networking & Network Administration",
+      "tools": [
+        {
+          "name": "Cisco",
+          "officialUrl": "https://www.cisco.com",
+          "description": "Networking hardware and software",
+          "tags": [
+            "networking"
+          ]
+        },
+        {
+          "name": "Juniper Networks",
+          "officialUrl": "https://www.juniper.net",
+          "description": "Networking solutions",
+          "tags": [
+            "networking"
+          ]
+        },
+        {
+          "name": "NetBox",
+          "officialUrl": "https://netbox.dev",
+          "description": "IPAM and DCIM",
+          "tags": [
+            "ipam",
+            "networking"
+          ]
+        },
+        {
+          "name": "Wireshark",
+          "officialUrl": "https://www.wireshark.org",
+          "description": "Network protocol analyzer",
+          "tags": [
+            "networking",
+            "analysis"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crm",
+      "displayName": "CRM & Sales",
+      "tools": [
+        {
+          "name": "Salesforce",
+          "officialUrl": "https://www.salesforce.com",
+          "description": "Enterprise CRM",
+          "tags": [
+            "crm"
+          ]
+        },
+        {
+          "name": "HubSpot",
+          "officialUrl": "https://www.hubspot.com",
+          "description": "Marketing, sales, and service CRM",
+          "tags": [
+            "crm",
+            "marketing"
+          ]
+        },
+        {
+          "name": "Zoho CRM",
+          "officialUrl": "https://www.zoho.com/crm",
+          "description": "CRM for SMBs",
+          "tags": [
+            "crm"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "erp",
+      "displayName": "ERP Systems",
+      "tools": [
+        {
+          "name": "SAP",
+          "officialUrl": "https://www.sap.com",
+          "description": "Enterprise ERP suite",
+          "tags": [
+            "erp"
+          ]
+        },
+        {
+          "name": "Oracle NetSuite",
+          "officialUrl": "https://www.netsuite.com",
+          "description": "Cloud ERP",
+          "tags": [
+            "erp"
+          ]
+        },
+        {
+          "name": "Odoo",
+          "officialUrl": "https://www.odoo.com",
+          "description": "Open-source ERP",
+          "tags": [
+            "erp",
+            "open-source"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hr",
+      "displayName": "HR & Talent Management",
+      "tools": [
+        {
+          "name": "Workday",
+          "officialUrl": "https://www.workday.com",
+          "description": "HCM and finance applications",
+          "tags": [
+            "hr",
+            "hcm"
+          ]
+        },
+        {
+          "name": "BambooHR",
+          "officialUrl": "https://www.bamboohr.com",
+          "description": "HR software for SMBs",
+          "tags": [
+            "hr"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fintech",
+      "displayName": "FinTech & Payments",
+      "tools": [
+        {
+          "name": "Stripe",
+          "officialUrl": "https://stripe.com",
+          "description": "Payments infrastructure",
+          "tags": [
+            "payments"
+          ]
+        },
+        {
+          "name": "PayPal",
+          "officialUrl": "https://www.paypal.com",
+          "description": "Digital payments",
+          "tags": [
+            "payments"
+          ]
+        },
+        {
+          "name": "Plaid",
+          "officialUrl": "https://plaid.com",
+          "description": "Bank connectivity APIs",
+          "tags": [
+            "banking",
+            "api"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ecommerce",
+      "displayName": "E-commerce & Retail",
+      "tools": [
+        {
+          "name": "Shopify",
+          "officialUrl": "https://www.shopify.com",
+          "description": "Hosted commerce platform",
+          "tags": [
+            "ecommerce"
+          ]
+        },
+        {
+          "name": "Magento (Adobe Commerce)",
+          "officialUrl": "https://magento.com",
+          "description": "Flexible commerce platform",
+          "tags": [
+            "ecommerce"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "marketing",
+      "displayName": "Marketing Automation & SEO",
+      "tools": [
+        {
+          "name": "Mailchimp",
+          "officialUrl": "https://mailchimp.com",
+          "description": "Email marketing",
+          "tags": [
+            "email",
+            "marketing"
+          ]
+        },
+        {
+          "name": "HubSpot Marketing",
+          "officialUrl": "https://www.hubspot.com/products/marketing",
+          "description": "Marketing automation",
+          "tags": [
+            "marketing"
+          ]
+        },
+        {
+          "name": "Ahrefs",
+          "officialUrl": "https://ahrefs.com",
+          "description": "SEO tools",
+          "tags": [
+            "seo"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "analytics",
+      "displayName": "Analytics & Business Intelligence",
+      "tools": [
+        {
+          "name": "Tableau",
+          "officialUrl": "https://www.tableau.com",
+          "description": "Data visualization and BI",
+          "tags": [
+            "bi"
+          ]
+        },
+        {
+          "name": "Power BI",
+          "officialUrl": "https://powerbi.microsoft.com",
+          "description": "Business analytics",
+          "tags": [
+            "bi"
+          ]
+        },
+        {
+          "name": "Looker",
+          "officialUrl": "https://looker.com",
+          "description": "Modern BI platform",
+          "tags": [
+            "bi"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "devops-ci-cd",
+      "displayName": "DevOps, CI/CD & Containers",
+      "tools": [
+        {
+          "name": "Docker",
+          "officialUrl": "https://www.docker.com",
+          "description": "Container platform",
+          "tags": [
+            "containers"
+          ]
+        },
+        {
+          "name": "Kubernetes",
+          "officialUrl": "https://kubernetes.io",
+          "description": "Container orchestration",
+          "tags": [
+            "orchestration"
+          ]
+        },
+        {
+          "name": "Jenkins",
+          "officialUrl": "https://www.jenkins.io",
+          "description": "Automation server",
+          "tags": [
+            "ci",
+            "cd"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "databases",
+      "displayName": "Databases & Storage",
+      "tools": [
+        {
+          "name": "PostgreSQL",
+          "officialUrl": "https://www.postgresql.org",
+          "description": "Open-source RDBMS",
+          "tags": [
+            "database",
+            "sql"
+          ]
+        },
+        {
+          "name": "MySQL",
+          "officialUrl": "https://www.mysql.com",
+          "description": "Relational database",
+          "tags": [
+            "database",
+            "sql"
+          ]
+        },
+        {
+          "name": "MongoDB",
+          "officialUrl": "https://www.mongodb.com",
+          "description": "NoSQL document database",
+          "tags": [
+            "database",
+            "nosql"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "observability",
+      "displayName": "Monitoring & Observability",
+      "tools": [
+        {
+          "name": "Datadog",
+          "officialUrl": "https://www.datadoghq.com",
+          "description": "Monitoring and observability SaaS",
+          "tags": [
+            "monitoring"
+          ]
+        },
+        {
+          "name": "Prometheus",
+          "officialUrl": "https://prometheus.io",
+          "description": "Open-source metrics system",
+          "tags": [
+            "monitoring"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frontend-tools",
+      "displayName": "Frontend Frameworks & Tooling",
+      "tools": [
+        {
+          "name": "React",
+          "officialUrl": "https://reactjs.org",
+          "description": "UI library",
+          "tags": [
+            "frontend"
+          ]
+        },
+        {
+          "name": "Next.js",
+          "officialUrl": "https://nextjs.org",
+          "description": "React framework for production",
+          "tags": [
+            "frontend"
+          ]
+        },
+        {
+          "name": "Vue.js",
+          "officialUrl": "https://vuejs.org",
+          "description": "Progressive framework",
+          "tags": [
+            "frontend"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cms",
+      "displayName": "Content Management Systems",
+      "tools": [
+        {
+          "name": "WordPress",
+          "officialUrl": "https://wordpress.org",
+          "description": "Popular CMS",
+          "tags": [
+            "cms"
+          ]
+        },
+        {
+          "name": "Contentful",
+          "officialUrl": "https://www.contentful.com",
+          "description": "Headless CMS",
+          "tags": [
+            "cms",
+            "headless"
+          ]
+        },
+        {
+          "name": "Strapi",
+          "officialUrl": "https://strapi.io",
+          "description": "Open-source headless CMS",
+          "tags": [
+            "cms",
+            "headless"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "collaboration",
+      "displayName": "Productivity & Collaboration",
+      "tools": [
+        {
+          "name": "Slack",
+          "officialUrl": "https://slack.com",
+          "description": "Team communication",
+          "tags": [
+            "communication"
+          ]
+        },
+        {
+          "name": "Notion",
+          "officialUrl": "https://www.notion.so",
+          "description": "Notes, docs, and wiki",
+          "tags": [
+            "productivity"
+          ]
+        },
+        {
+          "name": "Jira",
+          "officialUrl": "https://www.atlassian.com/software/jira",
+          "description": "Issue and project tracking",
+          "tags": [
+            "project-management"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "design",
+      "displayName": "Design & Prototyping",
+      "tools": [
+        {
+          "name": "Figma",
+          "officialUrl": "https://www.figma.com",
+          "description": "Design and prototyping",
+          "tags": [
+            "design"
+          ]
+        },
+        {
+          "name": "Sketch",
+          "officialUrl": "https://www.sketch.com",
+          "description": "Design tool for macOS",
+          "tags": [
+            "design"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "testing-qa",
+      "displayName": "Testing & QA",
+      "tools": [
+        {
+          "name": "Jest",
+          "officialUrl": "https://jestjs.io",
+          "description": "JavaScript testing framework",
+          "tags": [
+            "testing"
+          ]
+        },
+        {
+          "name": "Cypress",
+          "officialUrl": "https://www.cypress.io",
+          "description": "End-to-end testing",
+          "tags": [
+            "testing"
+          ]
+        },
+        {
+          "name": "Playwright",
+          "officialUrl": "https://playwright.dev",
+          "description": "Browser automation",
+          "tags": [
+            "testing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "edge-iot",
+      "displayName": "IoT, Edge & Embedded",
+      "tools": [
+        {
+          "name": "Raspberry Pi",
+          "officialUrl": "https://www.raspberrypi.org",
+          "description": "Compact single-board computer",
+          "tags": [
+            "hardware",
+            "iot"
+          ]
+        },
+        {
+          "name": "Arduino",
+          "officialUrl": "https://www.arduino.cc",
+          "description": "Open-source electronics platform",
+          "tags": [
+            "hardware",
+            "iot"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "game-dev",
+      "displayName": "Game Development",
+      "tools": [
+        {
+          "name": "Unity",
+          "officialUrl": "https://unity.com",
+          "description": "Game engine",
+          "tags": [
+            "game"
+          ]
+        },
+        {
+          "name": "Unreal Engine",
+          "officialUrl": "https://www.unrealengine.com",
+          "description": "High-fidelity game engine",
+          "tags": [
+            "game"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "video-audio",
+      "displayName": "Video & Audio Production",
+      "tools": [
+        {
+          "name": "Adobe Premiere Pro",
+          "officialUrl": "https://www.adobe.com/products/premiere.html",
+          "description": "Video editing",
+          "tags": [
+            "video"
+          ]
+        },
+        {
+          "name": "Ableton Live",
+          "officialUrl": "https://www.ableton.com",
+          "description": "Music production",
+          "tags": [
+            "audio"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blockchain",
+      "displayName": "Blockchain & Crypto",
+      "tools": [
+        {
+          "name": "Coinbase",
+          "officialUrl": "https://www.coinbase.com",
+          "description": "Cryptocurrency exchange",
+          "tags": [
+            "crypto"
+          ]
+        },
+        {
+          "name": "MetaMask",
+          "officialUrl": "https://metamask.io",
+          "description": "Crypto wallet",
+          "tags": [
+            "crypto"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "legal-tech",
+      "displayName": "Legal Technology",
+      "tools": [
+        {
+          "name": "DocuSign",
+          "officialUrl": "https://www.docusign.com",
+          "description": "eSignature and agreements",
+          "tags": [
+            "legal"
+          ]
+        },
+        {
+          "name": "Clio",
+          "officialUrl": "https://www.clio.com",
+          "description": "Legal practice management",
+          "tags": [
+            "legal"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "supply-chain",
+      "displayName": "Supply Chain & Logistics",
+      "tools": [
+        {
+          "name": "Project44",
+          "officialUrl": "https://www.project44.com",
+          "description": "Supply chain visibility platform",
+          "tags": [
+            "logistics"
+          ]
+        },
+        {
+          "name": "FourKites",
+          "officialUrl": "https://www.fourkites.com",
+          "description": "Real-time supply chain visibility",
+          "tags": [
+            "logistics"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rpa",
+      "displayName": "RPA & Automation",
+      "tools": [
+        {
+          "name": "UiPath",
+          "officialUrl": "https://www.uipath.com",
+          "description": "Robotic process automation",
+          "tags": [
+            "rpa"
+          ]
+        },
+        {
+          "name": "Automation Anywhere",
+          "officialUrl": "https://www.automationanywhere.com",
+          "description": "RPA platform",
+          "tags": [
+            "rpa"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "low-code",
+      "displayName": "Low-Code & No-Code",
+      "tools": [
+        {
+          "name": "Bubble",
+          "officialUrl": "https://bubble.io",
+          "description": "No-code web apps",
+          "tags": [
+            "nocode"
+          ]
+        },
+        {
+          "name": "OutSystems",
+          "officialUrl": "https://www.outsystems.com",
+          "description": "Low-code platform",
+          "tags": [
+            "low-code"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ar-vr",
+      "displayName": "AR/VR & Immersive",
+      "tools": [
+        {
+          "name": "Unity XR",
+          "officialUrl": "https://unity.com",
+          "description": "XR tooling in Unity",
+          "tags": [
+            "xr"
+          ]
+        },
+        {
+          "name": "Unreal XR",
+          "officialUrl": "https://www.unrealengine.com",
+          "description": "XR tooling in Unreal",
+          "tags": [
+            "xr"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "search-engines",
+      "displayName": "Search & Indexing",
+      "tools": [
+        {
+          "name": "Elasticsearch",
+          "officialUrl": "https://www.elastic.co/elasticsearch",
+          "description": "Search engine",
+          "tags": [
+            "search"
+          ]
+        },
+        {
+          "name": "Algolia",
+          "officialUrl": "https://www.algolia.com",
+          "description": "Hosted search API",
+          "tags": [
+            "search"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cdns",
+      "displayName": "CDN & Edge",
+      "tools": [
+        {
+          "name": "Cloudflare",
+          "officialUrl": "https://www.cloudflare.com",
+          "description": "CDN and edge services",
+          "tags": [
+            "cdn",
+            "edge"
+          ]
+        },
+        {
+          "name": "Akamai",
+          "officialUrl": "https://www.akamai.com",
+          "description": "Content delivery network",
+          "tags": [
+            "cdn"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "education-tech",
+      "displayName": "Education Technology",
+      "tools": [
+        {
+          "name": "Coursera",
+          "officialUrl": "https://www.coursera.org",
+          "description": "Online courses and degrees",
+          "tags": [
+            "education"
+          ]
+        },
+        {
+          "name": "Udemy",
+          "officialUrl": "https://www.udemy.com",
+          "description": "Online learning marketplace",
+          "tags": [
+            "education"
+          ]
+        },
+        {
+          "name": "Khan Academy",
+          "officialUrl": "https://www.khanacademy.org",
+          "description": "Free educational resources",
+          "tags": [
+            "education"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "healthcare",
+      "displayName": "Healthcare & HealthTech",
+      "tools": [
+        {
+          "name": "Cerner",
+          "officialUrl": "https://www.cerner.com",
+          "description": "Healthcare information technology",
+          "tags": [
+            "healthcare"
+          ]
+        },
+        {
+          "name": "Epic Systems",
+          "officialUrl": "https://www.epic.com",
+          "description": "Electronic health records",
+          "tags": [
+            "ehr"
+          ]
+        },
+        {
+          "name": "Teladoc",
+          "officialUrl": "https://www.teladoc.com",
+          "description": "Telemedicine services",
+          "tags": [
+            "telemedicine"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fin-data-analytics",
+      "displayName": "Financial Data & Analytics",
+      "tools": [
+        {
+          "name": "Bloomberg",
+          "officialUrl": "https://www.bloomberg.com",
+          "description": "Financial data and analytics",
+          "tags": [
+            "finance"
+          ]
+        },
+        {
+          "name": "Refinitiv",
+          "officialUrl": "https://www.refinitiv.com",
+          "description": "Market data and infrastructure",
+          "tags": [
+            "finance"
+          ]
+        },
+        {
+          "name": "S&P Global",
+          "officialUrl": "https://www.spglobal.com",
+          "description": "Financial information and analytics",
+          "tags": [
+            "finance"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "customer-support",
+      "displayName": "Customer Support & Helpdesk",
+      "tools": [
+        {
+          "name": "Zendesk",
+          "officialUrl": "https://www.zendesk.com",
+          "description": "Customer support platform",
+          "tags": [
+            "support"
+          ]
+        },
+        {
+          "name": "Freshdesk",
+          "officialUrl": "https://freshdesk.com",
+          "description": "Helpdesk and ticketing",
+          "tags": [
+            "support"
+          ]
+        },
+        {
+          "name": "Intercom",
+          "officialUrl": "https://www.intercom.com",
+          "description": "Conversational relationship platform",
+          "tags": [
+            "support",
+            "messaging"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "advertising",
+      "displayName": "Advertising & AdTech",
+      "tools": [
+        {
+          "name": "Google Ads",
+          "officialUrl": "https://ads.google.com",
+          "description": "Online advertising platform",
+          "tags": [
+            "adtech"
+          ]
+        },
+        {
+          "name": "The Trade Desk",
+          "officialUrl": "https://www.thetradedesk.com",
+          "description": "Programmatic ad buying",
+          "tags": [
+            "adtech"
+          ]
+        },
+        {
+          "name": "MediaMath",
+          "officialUrl": "https://www.mediamath.com",
+          "description": "Programmatic marketing platform",
+          "tags": [
+            "adtech"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hr-ops",
+      "displayName": "HR Operations & Payroll",
+      "tools": [
+        {
+          "name": "ADP",
+          "officialUrl": "https://www.adp.com",
+          "description": "Payroll and HR services",
+          "tags": [
+            "hr",
+            "payroll"
+          ]
+        },
+        {
+          "name": "Gusto",
+          "officialUrl": "https://gusto.com",
+          "description": "Payroll, benefits, and HR",
+          "tags": [
+            "hr"
+          ]
+        },
+        {
+          "name": "Rippling",
+          "officialUrl": "https://www.rippling.com",
+          "description": "HR and IT management platform",
+          "tags": [
+            "hr",
+            "it"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "manufacturing",
+      "displayName": "Manufacturing & Industrial",
+      "tools": [
+        {
+          "name": "Siemens",
+          "officialUrl": "https://www.siemens.com",
+          "description": "Industrial automation and software",
+          "tags": [
+            "industrial"
+          ]
+        },
+        {
+          "name": "Rockwell Automation",
+          "officialUrl": "https://www.rockwellautomation.com",
+          "description": "Industrial automation solutions",
+          "tags": [
+            "industrial"
+          ]
+        },
+        {
+          "name": "PTC",
+          "officialUrl": "https://www.ptc.com",
+          "description": "PLM and industrial IoT",
+          "tags": [
+            "plm",
+            "iot"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "real-estate",
+      "displayName": "Real Estate & PropTech",
+      "tools": [
+        {
+          "name": "Zillow",
+          "officialUrl": "https://www.zillow.com",
+          "description": "Real estate marketplace",
+          "tags": [
+            "real-estate"
+          ]
+        },
+        {
+          "name": "Redfin",
+          "officialUrl": "https://www.redfin.com",
+          "description": "Real estate brokerage and listings",
+          "tags": [
+            "real-estate"
+          ]
+        },
+        {
+          "name": "CoStar",
+          "officialUrl": "https://www.costar.com",
+          "description": "Commercial real estate data",
+          "tags": [
+            "real-estate"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "energy",
+      "displayName": "Energy & Utilities",
+      "tools": [
+        {
+          "name": "Schneider Electric",
+          "officialUrl": "https://www.se.com",
+          "description": "Energy management and automation",
+          "tags": [
+            "energy"
+          ]
+        },
+        {
+          "name": "GE Digital",
+          "officialUrl": "https://www.ge.com/digital",
+          "description": "Industrial software and analytics",
+          "tags": [
+            "energy",
+            "industrial"
+          ]
+        },
+        {
+          "name": "Siemens Energy",
+          "officialUrl": "https://www.siemens-energy.com",
+          "description": "Energy technology solutions",
+          "tags": [
+            "energy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "logistics-tech",
+      "displayName": "Logistics Tech & Fleet",
+      "tools": [
+        {
+          "name": "Samsara",
+          "officialUrl": "https://www.samsara.com",
+          "description": "Fleet and asset tracking",
+          "tags": [
+            "logistics"
+          ]
+        },
+        {
+          "name": "Trimble",
+          "officialUrl": "https://www.trimble.com",
+          "description": "Transportation and logistics solutions",
+          "tags": [
+            "logistics"
+          ]
+        },
+        {
+          "name": "Fleet Complete",
+          "officialUrl": "https://www.fleetcomplete.com",
+          "description": "Fleet management platform",
+          "tags": [
+            "logistics"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "marketplaces",
+      "displayName": "Online Marketplaces",
+      "tools": [
+        {
+          "name": "eBay",
+          "officialUrl": "https://www.ebay.com",
+          "description": "Online consumer marketplace",
+          "tags": [
+            "marketplace"
+          ]
+        },
+        {
+          "name": "Amazon Marketplace",
+          "officialUrl": "https://sellercentral.amazon.com",
+          "description": "Third-party seller marketplace",
+          "tags": [
+            "marketplace"
+          ]
+        },
+        {
+          "name": "Etsy",
+          "officialUrl": "https://www.etsy.com",
+          "description": "Marketplace for handmade and vintage goods",
+          "tags": [
+            "marketplace"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "iot-platforms",
+      "displayName": "IoT Platforms & Management",
+      "tools": [
+        {
+          "name": "AWS IoT",
+          "officialUrl": "https://aws.amazon.com/iot",
+          "description": "IoT services on AWS",
+          "tags": [
+            "iot"
+          ]
+        },
+        {
+          "name": "Azure IoT Hub",
+          "officialUrl": "https://azure.microsoft.com/en-us/services/iot-hub",
+          "description": "Managed IoT service",
+          "tags": [
+            "iot"
+          ]
+        },
+        {
+          "name": "Google Cloud IoT",
+          "officialUrl": "https://cloud.google.com/iot",
+          "description": "IoT core and management",
+          "tags": [
+            "iot"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "financial-services",
+      "displayName": "Banking & Financial Services",
+      "tools": [
+        {
+          "name": "JPMorgan Chase (platforms)",
+          "officialUrl": "https://www.jpmorganchase.com",
+          "description": "Banking and financial services",
+          "tags": [
+            "banking"
+          ]
+        },
+        {
+          "name": "Goldman Sachs (Marquee)",
+          "officialUrl": "https://www.marquee.gs.com",
+          "description": "Institutional data and analytics",
+          "tags": [
+            "finance"
+          ]
+        },
+        {
+          "name": "Bank of America (platforms)",
+          "officialUrl": "https://www.bankofamerica.com",
+          "description": "Consumer and commercial banking",
+          "tags": [
+            "banking"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compliance-regtech",
+      "displayName": "Compliance & RegTech",
+      "tools": [
+        {
+          "name": "Thomson Reuters Regulatory Intelligence",
+          "officialUrl": "https://www.thomsonreuters.com",
+          "description": "Regulatory intelligence and compliance",
+          "tags": [
+            "compliance"
+          ]
+        },
+        {
+          "name": "LogicGate",
+          "officialUrl": "https://www.logicgate.com",
+          "description": "Risk and compliance platform",
+          "tags": [
+            "compliance"
+          ]
+        },
+        {
+          "name": "NAVEX",
+          "officialUrl": "https://www.navex.com",
+          "description": "Risk and compliance management",
+          "tags": [
+            "compliance"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scientific",
+      "displayName": "Scientific & Research",
+      "tools": [
+        {
+          "name": "MATLAB",
+          "officialUrl": "https://www.mathworks.com/products/matlab.html",
+          "description": "Numerical computing environment",
+          "tags": [
+            "scientific"
+          ]
+        },
+        {
+          "name": "RStudio",
+          "officialUrl": "https://posit.co",
+          "description": "R IDE and data science tools",
+          "tags": [
+            "data-science"
+          ]
+        },
+        {
+          "name": "Wolfram Mathematica",
+          "officialUrl": "https://www.wolfram.com/mathematica/",
+          "description": "Computation and symbolic math",
+          "tags": [
+            "scientific"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "retail-tech",
+      "displayName": "Retail Technology",
+      "tools": [
+        {
+          "name": "Square",
+          "officialUrl": "https://squareup.com",
+          "description": "Payments and POS for retailers",
+          "tags": [
+            "retail"
+          ]
+        },
+        {
+          "name": "Lightspeed",
+          "officialUrl": "https://www.lightspeedhq.com",
+          "description": "POS and commerce solutions",
+          "tags": [
+            "retail"
+          ]
+        },
+        {
+          "name": "Toast",
+          "officialUrl": "https://pos.toasttab.com",
+          "description": "Restaurant POS and management",
+          "tags": [
+            "retail",
+            "hospitality"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "research-tools",
+      "displayName": "Research & Knowledge",
+      "tools": [
+        {
+          "name": "Zotero",
+          "officialUrl": "https://www.zotero.org",
+          "description": "Reference management",
+          "tags": [
+            "research"
+          ]
+        },
+        {
+          "name": "Mendeley",
+          "officialUrl": "https://www.mendeley.com",
+          "description": "Academic reference manager",
+          "tags": [
+            "research"
+          ]
+        },
+        {
+          "name": "Hypothesis",
+          "officialUrl": "https://web.hypothes.is",
+          "description": "Web annotation and research",
+          "tags": [
+            "research"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data-integration",
+      "displayName": "Data Integration & ETL",
+      "tools": [
+        {
+          "name": "Fivetran",
+          "officialUrl": "https://www.fivetran.com",
+          "description": "Automated data pipelines",
+          "tags": [
+            "etl"
+          ]
+        },
+        {
+          "name": "Stitch",
+          "officialUrl": "https://www.stitchdata.com",
+          "description": "Cloud ETL service",
+          "tags": [
+            "etl"
+          ]
+        },
+        {
+          "name": "Airbyte",
+          "officialUrl": "https://airbyte.com",
+          "description": "Open-source data integration",
+          "tags": [
+            "etl",
+            "open-source"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "privacy-tools",
+      "displayName": "Privacy & Data Governance",
+      "tools": [
+        {
+          "name": "OneTrust",
+          "officialUrl": "https://www.onetrust.com",
+          "description": "Privacy management platform",
+          "tags": [
+            "privacy"
+          ]
+        },
+        {
+          "name": "BigID",
+          "officialUrl": "https://bigid.com",
+          "description": "Data discovery and privacy",
+          "tags": [
+            "privacy"
+          ]
+        },
+        {
+          "name": "Collibra",
+          "officialUrl": "https://www.collibra.com",
+          "description": "Data governance platform",
+          "tags": [
+            "governance"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "voice-tech",
+      "displayName": "Voice & Conversational",
+      "tools": [
+        {
+          "name": "Twilio",
+          "officialUrl": "https://www.twilio.com",
+          "description": "Communications APIs",
+          "tags": [
+            "voice",
+            "sms"
+          ]
+        },
+        {
+          "name": "Dialogflow",
+          "officialUrl": "https://cloud.google.com/dialogflow",
+          "description": "Conversational AI platform",
+          "tags": [
+            "voice",
+            "ai"
+          ]
+        },
+        {
+          "name": "Amazon Connect",
+          "officialUrl": "https://aws.amazon.com/connect/",
+          "description": "Cloud contact center service",
+          "tags": [
+            "contact-center"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "payments-infra",
+      "displayName": "Payments Infrastructure",
+      "tools": [
+        {
+          "name": "Adyen",
+          "officialUrl": "https://www.adyen.com",
+          "description": "Global payments platform",
+          "tags": [
+            "payments"
+          ]
+        },
+        {
+          "name": "Braintree",
+          "officialUrl": "https://www.braintreepayments.com",
+          "description": "Payments platform",
+          "tags": [
+            "payments"
+          ]
+        },
+        {
+          "name": "Worldpay",
+          "officialUrl": "https://www.worldpay.com",
+          "description": "Payments processing",
+          "tags": [
+            "payments"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "identity",
+      "displayName": "Identity & Access",
+      "tools": [
+        {
+          "name": "Auth0",
+          "officialUrl": "https://auth0.com",
+          "description": "Authentication and authorization",
+          "tags": [
+            "auth",
+            "iam"
+          ]
+        },
+        {
+          "name": "Okta",
+          "officialUrl": "https://www.okta.com",
+          "description": "Identity management",
+          "tags": [
+            "iam"
+          ]
+        },
+        {
+          "name": "Keycloak",
+          "officialUrl": "https://www.keycloak.org",
+          "description": "Open-source identity provider",
+          "tags": [
+            "iam",
+            "open-source"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai-ops",
+      "displayName": "AIOps & ML Ops",
+      "tools": [
+        {
+          "name": "PagerDuty",
+          "officialUrl": "https://www.pagerduty.com",
+          "description": "Incident response and operations",
+          "tags": [
+            "ops"
+          ]
+        },
+        {
+          "name": "Datadog APM",
+          "officialUrl": "https://www.datadoghq.com/product/apm/",
+          "description": "Application performance monitoring",
+          "tags": [
+            "apm"
+          ]
+        },
+        {
+          "name": "Sentry",
+          "officialUrl": "https://sentry.io",
+          "description": "Error tracking and monitoring",
+          "tags": [
+            "monitoring"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "media-management",
+      "displayName": "Digital Asset & Media Management",
+      "tools": [
+        {
+          "name": "Bynder",
+          "officialUrl": "https://www.bynder.com",
+          "description": "Digital asset management",
+          "tags": [
+            "dam"
+          ]
+        },
+        {
+          "name": "Widen",
+          "officialUrl": "https://www.widen.com",
+          "description": "DAM and product content management",
+          "tags": [
+            "dam"
+          ]
+        },
+        {
+          "name": "Cloudinary",
+          "officialUrl": "https://cloudinary.com",
+          "description": "Media management and optimization",
+          "tags": [
+            "media"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "open-source-hosting",
+      "displayName": "Open Source Hosting & Repos",
+      "tools": [
+        {
+          "name": "GitHub",
+          "officialUrl": "https://github.com",
+          "description": "Code hosting and collaboration",
+          "tags": [
+            "git",
+            "hosting"
+          ]
+        },
+        {
+          "name": "GitLab",
+          "officialUrl": "https://gitlab.com",
+          "description": "DevOps platform",
+          "tags": [
+            "git",
+            "hosting"
+          ]
+        },
+        {
+          "name": "Bitbucket",
+          "officialUrl": "https://bitbucket.org",
+          "description": "Code hosting and CI",
+          "tags": [
+            "git",
+            "hosting"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "backup-recovery",
+      "displayName": "Backup & Disaster Recovery",
+      "tools": [
+        {
+          "name": "Veeam",
+          "officialUrl": "https://www.veeam.com",
+          "description": "Backup and recovery solutions",
+          "tags": [
+            "backup"
+          ]
+        },
+        {
+          "name": "Rubrik",
+          "officialUrl": "https://www.rubrik.com",
+          "description": "Cloud data management and backup",
+          "tags": [
+            "backup"
+          ]
+        },
+        {
+          "name": "Acronis",
+          "officialUrl": "https://www.acronis.com",
+          "description": "Cyber protection and backup",
+          "tags": [
+            "backup",
+            "security"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hardware",
+      "displayName": "Hardware & Infrastructure",
+      "tools": [
+        {
+          "name": "Dell Technologies",
+          "officialUrl": "https://www.dell.com",
+          "description": "Enterprise hardware and servers",
+          "tags": [
+            "hardware"
+          ]
+        },
+        {
+          "name": "Hewlett Packard Enterprise",
+          "officialUrl": "https://www.hpe.com",
+          "description": "Enterprise IT infrastructure",
+          "tags": [
+            "hardware"
+          ]
+        },
+        {
+          "name": "Lenovo",
+          "officialUrl": "https://www.lenovo.com",
+          "description": "Servers and workstation hardware",
+          "tags": [
+            "hardware"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "telecom",
+      "displayName": "Telecommunications",
+      "tools": [
+        {
+          "name": "Verizon",
+          "officialUrl": "https://www.verizon.com",
+          "description": "Telecommunications services",
+          "tags": [
+            "telecom"
+          ]
+        },
+        {
+          "name": "AT&T",
+          "officialUrl": "https://www.att.com",
+          "description": "Telecom and network services",
+          "tags": [
+            "telecom"
+          ]
+        },
+        {
+          "name": "T-Mobile",
+          "officialUrl": "https://www.t-mobile.com",
+          "description": "Wireless network provider",
+          "tags": [
+            "telecom"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "small-business",
+      "displayName": "Small Business Tools",
+      "tools": [
+        {
+          "name": "QuickBooks",
+          "officialUrl": "https://quickbooks.intuit.com",
+          "description": "Accounting software for SMBs",
+          "tags": [
+            "finance"
+          ]
+        },
+        {
+          "name": "Xero",
+          "officialUrl": "https://www.xero.com",
+          "description": "Accounting software",
+          "tags": [
+            "finance"
+          ]
+        },
+        {
+          "name": "Square Online",
+          "officialUrl": "https://squareup.com/us/en/online-store",
+          "description": "Ecommerce for small businesses",
+          "tags": [
+            "ecommerce"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hospitality",
+      "displayName": "Hospitality & Travel Tech",
+      "tools": [
+        {
+          "name": "Amadeus",
+          "officialUrl": "https://amadeus.com",
+          "description": "Travel technology and distribution",
+          "tags": [
+            "travel"
+          ]
+        },
+        {
+          "name": "Sabre",
+          "officialUrl": "https://www.sabre.com",
+          "description": "Travel reservation systems",
+          "tags": [
+            "travel"
+          ]
+        },
+        {
+          "name": "Oracle Hospitality",
+          "officialUrl": "https://www.oracle.com/industries/hospitality/",
+          "description": "Hospitality management solutions",
+          "tags": [
+            "hospitality"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "construction",
+      "displayName": "Construction Tech",
+      "tools": [
+        {
+          "name": "Procore",
+          "officialUrl": "https://www.procore.com",
+          "description": "Construction management platform",
+          "tags": [
+            "construction"
+          ]
+        },
+        {
+          "name": "Viewpoint",
+          "officialUrl": "https://www.viewpoint.com",
+          "description": "Construction ERP solutions",
+          "tags": [
+            "construction"
+          ]
+        },
+        {
+          "name": "Autodesk Construction Cloud",
+          "officialUrl": "https://construction.autodesk.com",
+          "description": "Construction management and BIM",
+          "tags": [
+            "construction",
+            "bim"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agriculture-tech",
+      "displayName": "Agriculture & AgTech",
+      "tools": [
+        {
+          "name": "John Deere",
+          "officialUrl": "https://www.deere.com",
+          "description": "Agricultural machinery and tech",
+          "tags": [
+            "agriculture"
+          ]
+        },
+        {
+          "name": "Climate FieldView",
+          "officialUrl": "https://climate.com",
+          "description": "Farm data and insights",
+          "tags": [
+            "agtech"
+          ]
+        },
+        {
+          "name": "FarmLogs",
+          "officialUrl": "https://farmlogs.com",
+          "description": "Farm management software",
+          "tags": [
+            "agtech"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "professional-services",
+      "displayName": "Professional Services & Consulting",
+      "tools": [
+        {
+          "name": "Accenture (platforms)",
+          "officialUrl": "https://www.accenture.com",
+          "description": "Consulting and technology services",
+          "tags": [
+            "consulting"
+          ]
+        },
+        {
+          "name": "Deloitte (technology)",
+          "officialUrl": "https://www2.deloitte.com",
+          "description": "Technology consulting services",
+          "tags": [
+            "consulting"
+          ]
+        },
+        {
+          "name": "PwC (digital)",
+          "officialUrl": "https://www.pwc.com",
+          "description": "Professional services and digital consulting",
+          "tags": [
+            "consulting"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quant-finance",
+      "displayName": "Quantitative Finance & Trading",
+      "tools": [
+        {
+          "name": "QuantConnect",
+          "officialUrl": "https://www.quantconnect.com",
+          "description": "Algorithmic trading platform",
+          "tags": [
+            "trading"
+          ]
+        },
+        {
+          "name": "Kdb+",
+          "officialUrl": "https://kx.com",
+          "description": "Time-series database for finance",
+          "tags": [
+            "database",
+            "finance"
+          ]
+        },
+        {
+          "name": "Quantopian (historical)",
+          "officialUrl": "https://www.quantopian.com",
+          "description": "Quant research platform (historical)",
+          "tags": [
+            "trading"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "govtech",
+      "displayName": "Government Tech & Civic",
+      "tools": [
+        {
+          "name": "OpenGov",
+          "officialUrl": "https://opengov.com",
+          "description": "Civic engagement and budgeting",
+          "tags": [
+            "govtech"
+          ]
+        },
+        {
+          "name": "Accela",
+          "officialUrl": "https://www.accela.com",
+          "description": "Government operations software",
+          "tags": [
+            "govtech"
+          ]
+        },
+        {
+          "name": "Tyler Technologies",
+          "officialUrl": "https://www.tylertech.com",
+          "description": "Public sector software",
+          "tags": [
+            "govtech"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "insurance-tech",
+      "displayName": "Insurance Technology",
+      "tools": [
+        {
+          "name": "Guidewire",
+          "officialUrl": "https://www.guidewire.com",
+          "description": "Insurance software platform",
+          "tags": [
+            "insurance"
+          ]
+        },
+        {
+          "name": "Lemonade",
+          "officialUrl": "https://www.lemonade.com",
+          "description": "Digital insurance provider",
+          "tags": [
+            "insurance"
+          ]
+        },
+        {
+          "name": "Duck Creek",
+          "officialUrl": "https://www.duckcreek.com",
+          "description": "Core insurance platform",
+          "tags": [
+            "insurance"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "media-tech",
+      "displayName": "Publishing & Media Tech",
+      "tools": [
+        {
+          "name": "WordPress VIP",
+          "officialUrl": "https://wpvip.com",
+          "description": "Enterprise WordPress hosting and services",
+          "tags": [
+            "publishing"
+          ]
+        },
+        {
+          "name": "Outbrain",
+          "officialUrl": "https://www.outbrain.com",
+          "description": "Content recommendation and native ads",
+          "tags": [
+            "media"
+          ]
+        },
+        {
+          "name": "Taboola",
+          "officialUrl": "https://www.taboola.com",
+          "description": "Content discovery platform",
+          "tags": [
+            "media"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nonprofit-tech",
+      "displayName": "Nonprofit & Fundraising",
+      "tools": [
+        {
+          "name": "Blackbaud",
+          "officialUrl": "https://www.blackbaud.com",
+          "description": "Software for nonprofits and fundraising",
+          "tags": [
+            "nonprofit"
+          ]
+        },
+        {
+          "name": "Classy",
+          "officialUrl": "https://www.classy.org",
+          "description": "Online fundraising platform",
+          "tags": [
+            "fundraising"
+          ]
+        },
+        {
+          "name": "Network for Good",
+          "officialUrl": "https://www.networkforgood.org",
+          "description": "Donor management software",
+          "tags": [
+            "fundraising"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "enterprise-architecture",
+      "displayName": "Enterprise Architecture & Modeling",
+      "tools": [
+        {
+          "name": "Sparx Systems Enterprise Architect",
+          "officialUrl": "https://sparxsystems.com/products/ea/index.html",
+          "description": "Modeling and architecture tool",
+          "tags": [
+            "architecture"
+          ]
+        },
+        {
+          "name": "ArchiMate (tools)",
+          "officialUrl": "https://www.opengroup.org",
+          "description": "Enterprise architecture modeling standard and tools",
+          "tags": [
+            "architecture"
+          ]
+        },
+        {
+          "name": "SaaS tools (enterprise)",
+          "officialUrl": "https://example.com",
+          "description": "Placeholder for enterprise architecture tools",
+          "tags": [
+            "architecture"
+          ]
+        }
+      ]
+    }
+  ]
+}
