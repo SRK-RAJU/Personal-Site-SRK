@@ -209,6 +209,14 @@ export default function Home() {
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
+                href="/tools"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-105 transform duration-200"
+              >
+                <FaRocket className="text-lg" />
+                View Tools
+                <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
                 href="/contact"
                 className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border-2 border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900/20 font-bold transition-all hover:scale-105 transform duration-200"
               >
