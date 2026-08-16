@@ -1,0 +1,5931 @@
+{
+  "generatedAt": "2026-08-16",
+  "schemaVersion": 2,
+  "sourcePolicy": "Official product documentation and local architecture-family mapping only. We generate our own original architecture diagrams from product metadata and family blueprints; we do not copy public vendor screenshots or product-specific marketing art.",
+  "families": {
+    "ai-ml": {
+      "title": "AI / ML architecture",
+      "entry": [
+        "Developers",
+        "Apps",
+        "Agents"
+      ],
+      "core": [
+        "Prompt Layer",
+        "Model Gateway",
+        "Inference Runtime",
+        "Context Retrieval",
+        "Safety Filters",
+        "Evaluation Loop"
+      ],
+      "data": [
+        "Vector Store",
+        "Knowledge Base",
+        "Feature Store",
+        "Model Registry",
+        "Embedding Cache",
+        "Conversation State"
+      ],
+      "ops": [
+        "Monitoring",
+        "Governance",
+        "Feedback Loop",
+        "Model Versioning",
+        "Prompt Management",
+        "Usage Controls"
+      ]
+    },
+    "cloud-platform": {
+      "title": "Cloud platform architecture",
+      "entry": [
+        "Users",
+        "API Requests",
+        "Deployment Events",
+        "Control Plane Requests"
+      ],
+      "core": [
+        "Identity & Access",
+        "Compute Layer",
+        "Networking",
+        "Runtime Services",
+        "Regions",
+        "Autoscaling"
+      ],
+      "data": [
+        "Storage",
+        "Databases",
+        "Caching",
+        "Queues",
+        "Object Buckets",
+        "Secrets"
+      ],
+      "ops": [
+        "Monitoring",
+        "Security Policies",
+        "Scaling",
+        "Cost Controls",
+        "Resilience",
+        "Governance"
+      ]
+    },
+    "infrastructure-as-code": {
+      "title": "Infrastructure as code architecture",
+      "entry": [
+        "Developers",
+        "Git Repo",
+        "Config Inputs",
+        "Environment Specs"
+      ],
+      "core": [
+        "IaC Templates",
+        "State Layer",
+        "Provisioning Engine",
+        "Resource Graph",
+        "Policy Engine",
+        "Change Planner"
+      ],
+      "data": [
+        "Secrets Store",
+        "Environment Config",
+        "Policy Rules",
+        "Change History",
+        "Drift Snapshot",
+        "Approval Logs"
+      ],
+      "ops": [
+        "Validation",
+        "Drift Detection",
+        "Rollback",
+        "Compliance Checks",
+        "Audits",
+        "Automation"
+      ]
+    },
+    "ci-cd-pipeline": {
+      "title": "CI/CD architecture",
+      "entry": [
+        "Developers",
+        "Git Events",
+        "Change Requests",
+        "Merge Triggers"
+      ],
+      "core": [
+        "Source Control",
+        "Build Pipeline",
+        "Test Stage",
+        "Artifact Store",
+        "Deployment Engine",
+        "Release Workflow"
+      ],
+      "data": [
+        "Release Metadata",
+        "Environment Config",
+        "Deploy Target",
+        "Approval Gates",
+        "Build Cache",
+        "Release Notes"
+      ],
+      "ops": [
+        "Release Checks",
+        "Rollback Logic",
+        "Monitoring",
+        "Audit Trail",
+        "Canary Deploy",
+        "Incident Recovery"
+      ]
+    },
+    "monitoring-observability": {
+      "title": "Observability architecture",
+      "entry": [
+        "Services",
+        "Users",
+        "Platform Events",
+        "Telemetry Sources"
+      ],
+      "core": [
+        "Collectors",
+        "Metrics Pipeline",
+        "Tracing Layer",
+        "Alert Engine",
+        "Log Aggregation",
+        "Analysis Rules"
+      ],
+      "data": [
+        "Logs Store",
+        "Metrics DB",
+        "Trace Backend",
+        "Dashboards",
+        "SLO Store",
+        "Incident Timeline"
+      ],
+      "ops": [
+        "SLO Tracking",
+        "Incident Response",
+        "Root Cause Analysis",
+        "Ops Automation",
+        "Alert Routing",
+        "Health Checks"
+      ]
+    },
+    "security-zero-trust": {
+      "title": "Zero-trust security architecture",
+      "entry": [
+        "Users",
+        "Devices",
+        "Workloads",
+        "Applications"
+      ],
+      "core": [
+        "Identity Provider",
+        "Policy Engine",
+        "Access Gateway",
+        "Risk Engine",
+        "Session Broker",
+        "Trust Engine"
+      ],
+      "data": [
+        "Session Logs",
+        "Audit Trail",
+        "Secrets Vault",
+        "Threat Intel",
+        "Device Registry",
+        "Policy State"
+      ],
+      "ops": [
+        "MFA",
+        "Conditional Access",
+        "Threat Detection",
+        "Compliance Reporting",
+        "Access Reviews",
+        "Incident Response"
+      ]
+    },
+    "devsecops": {
+      "title": "DevSecOps architecture",
+      "entry": [
+        "Developers",
+        "Code Repos",
+        "Pipelines",
+        "Artifacts"
+      ],
+      "core": [
+        "Static Analysis",
+        "Dependency Scan",
+        "Secrets Detection",
+        "Policy Controls",
+        "Risk Prioritization",
+        "Remediation Workflow"
+      ],
+      "data": [
+        "Findings DB",
+        "Remediation Queue",
+        "SBOM",
+        "Compliance Reports",
+        "Vulnerability DB",
+        "Change Timeline"
+      ],
+      "ops": [
+        "Guardrails",
+        "Vulnerability Fixing",
+        "Alerts",
+        "Audit Trails",
+        "Approval Gates",
+        "Runtime Checks"
+      ]
+    },
+    "container-orchestration": {
+      "title": "Container orchestration architecture",
+      "entry": [
+        "Developers",
+        "GitOps Events",
+        "Container Registry",
+        "Workload Specs"
+      ],
+      "core": [
+        "Control Plane",
+        "Scheduler",
+        "Worker Nodes",
+        "Ingress Layer",
+        "Service Mesh",
+        "Runtime Agents"
+      ],
+      "data": [
+        "Image Registry",
+        "Secrets Store",
+        "Persistent Storage",
+        "Service Mesh",
+        "Config Map",
+        "Volume Layer"
+      ],
+      "ops": [
+        "Autoscaling",
+        "Health Checks",
+        "Rollbacks",
+        "Runtime Monitoring",
+        "Load Balancing",
+        "Resource Tuning"
+      ]
+    },
+    "database": {
+      "title": "Database architecture",
+      "entry": [
+        "Applications",
+        "Jobs",
+        "Analysts",
+        "API Clients"
+      ],
+      "core": [
+        "Connection Layer",
+        "Query Engine",
+        "Storage Engine",
+        "Index Layer",
+        "Transaction Manager",
+        "Schema Layer"
+      ],
+      "data": [
+        "Replication",
+        "Cache Layer",
+        "Backups",
+        "Data Warehouse",
+        "Read Replicas",
+        "Data Mart"
+      ],
+      "ops": [
+        "Access Control",
+        "Monitoring",
+        "Recovery",
+        "Performance Tuning",
+        "Integrity Checks",
+        "Backup Policy"
+      ]
+    },
+    "data-streaming": {
+      "title": "Streaming data architecture",
+      "entry": [
+        "Producers",
+        "Events",
+        "Sensors",
+        "Change Streams"
+      ],
+      "core": [
+        "Ingress Layer",
+        "Broker",
+        "Stream Processor",
+        "Consumer Groups",
+        "Partitions",
+        "Schema Validation"
+      ],
+      "data": [
+        "Event Store",
+        "Retention",
+        "Schema Registry",
+        "Replay Queue",
+        "Message Topics",
+        "Offsets"
+      ],
+      "ops": [
+        "Delivery Checks",
+        "Replay",
+        "Backpressure",
+        "Monitoring",
+        "Dead Letter Queue",
+        "Latency Tracking"
+      ]
+    },
+    "data-engineering": {
+      "title": "Data engineering architecture",
+      "entry": [
+        "Sources",
+        "ETL Jobs",
+        "Analysts",
+        "External Feeds"
+      ],
+      "core": [
+        "Ingestion",
+        "Transformation",
+        "Validation",
+        "Scheduling",
+        "Workflow Orchestration",
+        "Quality Rules"
+      ],
+      "data": [
+        "Raw Storage",
+        "Curated Data",
+        "Warehouse",
+        "Pipelines",
+        "Lakehouse",
+        "Data Catalog"
+      ],
+      "ops": [
+        "Quality Checks",
+        "Lineage",
+        "Monitoring",
+        "Retry Logic",
+        "SLA Tracking",
+        "Data Governance"
+      ]
+    },
+    "networking": {
+      "title": "Networking architecture",
+      "entry": [
+        "Clients",
+        "Edge Traffic",
+        "Internal Services",
+        "Gateway Traffic"
+      ],
+      "core": [
+        "Ingress",
+        "Load Balancer",
+        "Routing Layer",
+        "Policy Engine",
+        "Proxy Layer",
+        "Service Discovery"
+      ],
+      "data": [
+        "DNS",
+        "Service Discovery",
+        "Traffic Logs",
+        "Telemetry",
+        "Certificate Store",
+        "Topology State"
+      ],
+      "ops": [
+        "Availability",
+        "TLS",
+        "Latency Tracking",
+        "Failover",
+        "Rules Enforcement",
+        "Performance Tuning"
+      ]
+    },
+    "identity-access": {
+      "title": "Identity and access architecture",
+      "entry": [
+        "Users",
+        "Applications",
+        "External IdPs",
+        "Directories"
+      ],
+      "core": [
+        "Identity Provider",
+        "Auth Flow",
+        "Session Layer",
+        "Policy Engine",
+        "Token Service",
+        "Directory Sync"
+      ],
+      "data": [
+        "User Directory",
+        "Consent",
+        "Audit Logs",
+        "Risk Signals",
+        "Group Policies",
+        "Access Tokens"
+      ],
+      "ops": [
+        "MFA",
+        "Access Reviews",
+        "Token Revocation",
+        "Compliance",
+        "Risk Detection",
+        "Revocation"
+      ]
+    },
+    "developer-tools": {
+      "title": "Developer workflow architecture",
+      "entry": [
+        "Developers",
+        "Workspace",
+        "Repositories",
+        "IDE Sessions"
+      ],
+      "core": [
+        "Editor / IDE",
+        "Version Control",
+        "Build Tools",
+        "Testing Layer",
+        "Package Manager",
+        "Task Runner"
+      ],
+      "data": [
+        "Config Files",
+        "Artifacts",
+        "Docs",
+        "Local Cache",
+        "Dependency Graph",
+        "Generated Output"
+      ],
+      "ops": [
+        "Linting",
+        "Debugging",
+        "Release Steps",
+        "Developer Productivity",
+        "Code Review",
+        "Automation"
+      ]
+    },
+    "automation": {
+      "title": "Automation architecture",
+      "entry": [
+        "Operators",
+        "Event Sources",
+        "Triggers",
+        "Workflow Inputs"
+      ],
+      "core": [
+        "Automation Engine",
+        "Workflow Orchestrator",
+        "Task Runner",
+        "Decision Logic",
+        "Execution Queue",
+        "State Machine"
+      ],
+      "data": [
+        "Configs",
+        "Logs",
+        "State Store",
+        "Notifications",
+        "Run History",
+        "Task Metadata"
+      ],
+      "ops": [
+        "Retries",
+        "Monitoring",
+        "Scheduling",
+        "Approval Gates",
+        "Recovery Logic",
+        "Runbook Automation"
+      ]
+    }
+  },
+  "tools": {
+    "OpenAI": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://platform.openai.com/docs/overview"
+      ],
+      "productSet": [
+        {
+          "name": "API Platform",
+          "role": "Model access and inference",
+          "modules": [
+            "Prompt Layer",
+            "Model Gateway",
+            "Inference Runtime",
+            "Safety Filters",
+            "Token Management",
+            "Rate Limiting"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Safety Filters",
+          "Token Management",
+          "Rate Limiting"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "OpenAI is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Anthropic": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://docs.anthropic.com/en"
+      ],
+      "productSet": [
+        {
+          "name": "Claude API",
+          "role": "Conversational AI models",
+          "modules": [
+            "Prompt Interface",
+            "Model Runtime",
+            "Context Management",
+            "Safety Layer",
+            "Response Generation",
+            "Token Accounting"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Prompt Interface",
+          "Model Runtime",
+          "Context Management",
+          "Safety Layer",
+          "Response Generation",
+          "Token Accounting"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "Anthropic is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Google Gemini": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://ai.google.dev/gemini-api/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Gemini Models",
+          "role": "Multimodal AI models",
+          "modules": [
+            "Multimodal Input",
+            "Model Inference",
+            "Context Handling",
+            "Safety Checks",
+            "Tool Use",
+            "Output Streaming"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Multimodal Input",
+          "Model Inference",
+          "Context Handling",
+          "Safety Checks",
+          "Tool Use",
+          "Output Streaming"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "Google Gemini is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "GitHub Copilot": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://docs.github.com/en/copilot"
+      ],
+      "productSet": [
+        {
+          "name": "Copilot IDE Integration",
+          "role": "Developer coding assistance",
+          "modules": [
+            "IDE Extension",
+            "Context Provider",
+            "Model Service",
+            "Suggestion Engine",
+            "Inline Chat",
+            "Code Review"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "IDE Extension",
+          "Context Provider",
+          "Model Service",
+          "Suggestion Engine",
+          "Inline Chat",
+          "Code Review"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "GitHub Copilot is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Amazon Bedrock": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://aws.amazon.com/bedrock"
+      ],
+      "productSet": [
+        {
+          "name": "Foundation Models Service",
+          "role": "Managed AI model access",
+          "modules": [
+            "Model API",
+            "Access Control",
+            "Inference",
+            "Vector Storage",
+            "Knowledge Base",
+            "Prompt Management"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Model API",
+          "Access Control",
+          "Inference",
+          "Vector Storage",
+          "Knowledge Base",
+          "Prompt Management"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "Amazon Bedrock is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Azure OpenAI": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://azure.microsoft.com/products/ai-services/openai-service"
+      ],
+      "productSet": [
+        {
+          "name": "Enterprise OpenAI",
+          "role": "Managed OpenAI service",
+          "modules": [
+            "API Endpoint",
+            "Deployment Management",
+            "Model Selection",
+            "Content Filtering",
+            "Monitoring",
+            "Access Control"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "API Endpoint",
+          "Deployment Management",
+          "Model Selection",
+          "Content Filtering",
+          "Monitoring",
+          "Access Control"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "Azure OpenAI is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Hugging Face": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://huggingface.co/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Model Hub & Inference",
+          "role": "Open-source AI platform",
+          "modules": [
+            "Model Repository",
+            "Inference API",
+            "Training Spaces",
+            "Datasets",
+            "Community",
+            "Monetization"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Model Repository",
+          "Inference API",
+          "Training Spaces",
+          "Datasets",
+          "Community",
+          "Monetization"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "Hugging Face is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "LangChain": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://python.langchain.com/docs"
+      ],
+      "productSet": [
+        {
+          "name": "LLM Orchestration",
+          "role": "Framework for LLM apps",
+          "modules": [
+            "Chain Orchestration",
+            "Prompt Templates",
+            "Memory Management",
+            "Tool Integration",
+            "Agent Loop",
+            "Output Parsing"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Chain Orchestration",
+          "Prompt Templates",
+          "Memory Management",
+          "Tool Integration",
+          "Agent Loop",
+          "Output Parsing"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "LangChain is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "LlamaIndex": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://docs.llamaindex.ai"
+      ],
+      "productSet": [
+        {
+          "name": "Data Framework",
+          "role": "Retrieval for LLM apps",
+          "modules": [
+            "Data Connector",
+            "Indexing",
+            "Retriever",
+            "Query Engine",
+            "Response Synthesis",
+            "Evaluation"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Data Connector",
+          "Indexing",
+          "Retriever",
+          "Query Engine",
+          "Response Synthesis",
+          "Evaluation"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "LlamaIndex is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "PyTorch": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://pytorch.org/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Deep Learning Framework",
+          "role": "Neural network training",
+          "modules": [
+            "Tensor Engine",
+            "Autograd",
+            "Neural Modules",
+            "Optimizers",
+            "Data Loaders",
+            "Distributed Training"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Tensor Engine",
+          "Autograd",
+          "Neural Modules",
+          "Optimizers",
+          "Data Loaders",
+          "Distributed Training"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "PyTorch is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "TensorFlow": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://www.tensorflow.org/api_docs"
+      ],
+      "productSet": [
+        {
+          "name": "ML Platform",
+          "role": "Machine learning framework",
+          "modules": [
+            "Keras API",
+            "Data Pipeline",
+            "Model Building",
+            "Training Loop",
+            "Deployment",
+            "TensorBoard"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Keras API",
+          "Data Pipeline",
+          "Model Building",
+          "Training Loop",
+          "Deployment",
+          "TensorBoard"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "TensorFlow is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "AWS": {
+      "family": "cloud-platform",
+      "officialDocs": [
+        "https://docs.aws.amazon.com"
+      ],
+      "productSet": [
+        {
+          "name": "Compute Services",
+          "role": "EC2, Lambda, ECS",
+          "modules": [
+            "EC2 Instances",
+            "Lambda Functions",
+            "Container Services",
+            "Auto Scaling",
+            "Load Balancing",
+            "IAM"
+          ]
+        },
+        {
+          "name": "Storage & Database",
+          "role": "S3, RDS, DynamoDB",
+          "modules": [
+            "S3 Buckets",
+            "EBS Volumes",
+            "RDS Databases",
+            "DynamoDB",
+            "ElastiCache",
+            "Glacier"
+          ]
+        },
+        {
+          "name": "Networking",
+          "role": "VPC, Route53, CloudFront",
+          "modules": [
+            "VPC",
+            "Subnets",
+            "Route53",
+            "CloudFront",
+            "API Gateway",
+            "Direct Connect"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "API Requests",
+          "Deployment Events",
+          "Control Plane Requests"
+        ],
+        "core": [
+          "Identity & Access",
+          "Compute Layer",
+          "Networking",
+          "Runtime Services",
+          "Regions",
+          "Autoscaling"
+        ],
+        "data": [
+          "EC2 Instances",
+          "Lambda Functions",
+          "Container Services",
+          "Auto Scaling",
+          "Load Balancing",
+          "IAM"
+        ],
+        "ops": [
+          "Monitoring",
+          "Security Policies",
+          "Scaling",
+          "Cost Controls",
+          "Resilience",
+          "Governance"
+        ]
+      },
+      "notes": "AWS is modeled from official documentation. Product-specific architecture with 3 components."
+    },
+    "Azure": {
+      "family": "cloud-platform",
+      "officialDocs": [
+        "https://learn.microsoft.com/azure"
+      ],
+      "productSet": [
+        {
+          "name": "Compute",
+          "role": "VMs, App Service, Functions",
+          "modules": [
+            "Virtual Machines",
+            "App Service",
+            "Functions",
+            "Container Instances",
+            "Batch",
+            "Auto Scale"
+          ]
+        },
+        {
+          "name": "Storage & Data",
+          "role": "Storage Account, SQL Database",
+          "modules": [
+            "Blob Storage",
+            "File Shares",
+            "SQL Database",
+            "Cosmos DB",
+            "Data Lake",
+            "Redis Cache"
+          ]
+        },
+        {
+          "name": "Networking",
+          "role": "VNet, Load Balancer, CDN",
+          "modules": [
+            "Virtual Network",
+            "Load Balancer",
+            "Application Gateway",
+            "CDN",
+            "DNS",
+            "Firewall"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "API Requests",
+          "Deployment Events",
+          "Control Plane Requests"
+        ],
+        "core": [
+          "Identity & Access",
+          "Compute Layer",
+          "Networking",
+          "Runtime Services",
+          "Regions",
+          "Autoscaling"
+        ],
+        "data": [
+          "Virtual Machines",
+          "App Service",
+          "Functions",
+          "Container Instances",
+          "Batch",
+          "Auto Scale"
+        ],
+        "ops": [
+          "Monitoring",
+          "Security Policies",
+          "Scaling",
+          "Cost Controls",
+          "Resilience",
+          "Governance"
+        ]
+      },
+      "notes": "Azure is modeled from official documentation. Product-specific architecture with 3 components."
+    },
+    "Google Cloud Platform": {
+      "family": "cloud-platform",
+      "officialDocs": [
+        "https://cloud.google.com/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Compute",
+          "role": "GCE, App Engine, Cloud Run",
+          "modules": [
+            "Compute Engine",
+            "App Engine",
+            "Cloud Run",
+            "GKE",
+            "Cloud Functions",
+            "Bare Metal"
+          ]
+        },
+        {
+          "name": "Data & Storage",
+          "role": "Cloud Storage, BigQuery",
+          "modules": [
+            "Cloud Storage",
+            "Cloud SQL",
+            "BigQuery",
+            "Firestore",
+            "Spanner",
+            "Memorystore"
+          ]
+        },
+        {
+          "name": "Networking",
+          "role": "VPC, Load Balancing, CDN",
+          "modules": [
+            "VPC",
+            "Cloud Load Balancing",
+            "Cloud CDN",
+            "Cloud DNS",
+            "Cloud Armor",
+            "Interconnect"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "API Requests",
+          "Deployment Events",
+          "Control Plane Requests"
+        ],
+        "core": [
+          "Identity & Access",
+          "Compute Layer",
+          "Networking",
+          "Runtime Services",
+          "Regions",
+          "Autoscaling"
+        ],
+        "data": [
+          "Compute Engine",
+          "App Engine",
+          "Cloud Run",
+          "GKE",
+          "Cloud Functions",
+          "Bare Metal"
+        ],
+        "ops": [
+          "Monitoring",
+          "Security Policies",
+          "Scaling",
+          "Cost Controls",
+          "Resilience",
+          "Governance"
+        ]
+      },
+      "notes": "Google Cloud Platform is modeled from official documentation. Product-specific architecture with 3 components."
+    },
+    "Vercel": {
+      "family": "cloud-platform",
+      "officialDocs": [
+        "https://vercel.com/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Frontend Platform",
+          "role": "Deployment and edge",
+          "modules": [
+            "Git Integration",
+            "Build System",
+            "Edge Functions",
+            "Serverless Functions",
+            "CDN",
+            "Monitoring"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "API Requests",
+          "Deployment Events",
+          "Control Plane Requests"
+        ],
+        "core": [
+          "Identity & Access",
+          "Compute Layer",
+          "Networking",
+          "Runtime Services",
+          "Regions",
+          "Autoscaling"
+        ],
+        "data": [
+          "Git Integration",
+          "Build System",
+          "Edge Functions",
+          "Serverless Functions",
+          "CDN",
+          "Monitoring"
+        ],
+        "ops": [
+          "Monitoring",
+          "Security Policies",
+          "Scaling",
+          "Cost Controls",
+          "Resilience",
+          "Governance"
+        ]
+      },
+      "notes": "Vercel is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Terraform": {
+      "family": "infrastructure-as-code",
+      "officialDocs": [
+        "https://www.terraform.io/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Infrastructure Provisioning",
+          "role": "IaC for multi-cloud",
+          "modules": [
+            "Config Language",
+            "State Management",
+            "Provider Plugins",
+            "Resource Graph",
+            "Plan & Apply",
+            "Module System"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Repo",
+          "Config Inputs",
+          "Environment Specs"
+        ],
+        "core": [
+          "IaC Templates",
+          "State Layer",
+          "Provisioning Engine",
+          "Resource Graph",
+          "Policy Engine",
+          "Change Planner"
+        ],
+        "data": [
+          "Config Language",
+          "State Management",
+          "Provider Plugins",
+          "Resource Graph",
+          "Plan & Apply",
+          "Module System"
+        ],
+        "ops": [
+          "Validation",
+          "Drift Detection",
+          "Rollback",
+          "Compliance Checks",
+          "Audits",
+          "Automation"
+        ]
+      },
+      "notes": "Terraform is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Ansible": {
+      "family": "infrastructure-as-code",
+      "officialDocs": [
+        "https://docs.ansible.com"
+      ],
+      "productSet": [
+        {
+          "name": "Configuration Management",
+          "role": "Playbook automation",
+          "modules": [
+            "Inventory",
+            "Playbooks",
+            "Modules",
+            "Roles",
+            "Handlers",
+            "Variables"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Repo",
+          "Config Inputs",
+          "Environment Specs"
+        ],
+        "core": [
+          "IaC Templates",
+          "State Layer",
+          "Provisioning Engine",
+          "Resource Graph",
+          "Policy Engine",
+          "Change Planner"
+        ],
+        "data": [
+          "Inventory",
+          "Playbooks",
+          "Modules",
+          "Roles",
+          "Handlers",
+          "Variables"
+        ],
+        "ops": [
+          "Validation",
+          "Drift Detection",
+          "Rollback",
+          "Compliance Checks",
+          "Audits",
+          "Automation"
+        ]
+      },
+      "notes": "Ansible is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "CloudFormation": {
+      "family": "infrastructure-as-code",
+      "officialDocs": [
+        "https://docs.aws.amazon.com/cloudformation"
+      ],
+      "productSet": [
+        {
+          "name": "AWS Stack Provisioning",
+          "role": "AWS infrastructure as code",
+          "modules": [
+            "Templates",
+            "Stack Management",
+            "Change Sets",
+            "Drift Detection",
+            "Rollback",
+            "Intrinsic Functions"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Repo",
+          "Config Inputs",
+          "Environment Specs"
+        ],
+        "core": [
+          "IaC Templates",
+          "State Layer",
+          "Provisioning Engine",
+          "Resource Graph",
+          "Policy Engine",
+          "Change Planner"
+        ],
+        "data": [
+          "Templates",
+          "Stack Management",
+          "Change Sets",
+          "Drift Detection",
+          "Rollback",
+          "Intrinsic Functions"
+        ],
+        "ops": [
+          "Validation",
+          "Drift Detection",
+          "Rollback",
+          "Compliance Checks",
+          "Audits",
+          "Automation"
+        ]
+      },
+      "notes": "CloudFormation is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Pulumi": {
+      "family": "infrastructure-as-code",
+      "officialDocs": [
+        "https://www.pulumi.com/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Code-driven IaC",
+          "role": "Infrastructure using code",
+          "modules": [
+            "Program SDK",
+            "State Backend",
+            "Deployment Engine",
+            "Policy Engine",
+            "Automation API",
+            "Secrets"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Repo",
+          "Config Inputs",
+          "Environment Specs"
+        ],
+        "core": [
+          "IaC Templates",
+          "State Layer",
+          "Provisioning Engine",
+          "Resource Graph",
+          "Policy Engine",
+          "Change Planner"
+        ],
+        "data": [
+          "Program SDK",
+          "State Backend",
+          "Deployment Engine",
+          "Policy Engine",
+          "Automation API",
+          "Secrets"
+        ],
+        "ops": [
+          "Validation",
+          "Drift Detection",
+          "Rollback",
+          "Compliance Checks",
+          "Audits",
+          "Automation"
+        ]
+      },
+      "notes": "Pulumi is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "GitHub Actions": {
+      "family": "ci-cd-pipeline",
+      "officialDocs": [
+        "https://docs.github.com/en/actions"
+      ],
+      "productSet": [
+        {
+          "name": "Workflow Automation",
+          "role": "GitHub native CI/CD",
+          "modules": [
+            "Workflow Definition",
+            "Event Triggers",
+            "Jobs",
+            "Runners",
+            "Actions",
+            "Artifacts & Deployment"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Events",
+          "Change Requests",
+          "Merge Triggers"
+        ],
+        "core": [
+          "Source Control",
+          "Build Pipeline",
+          "Test Stage",
+          "Artifact Store",
+          "Deployment Engine",
+          "Release Workflow"
+        ],
+        "data": [
+          "Workflow Definition",
+          "Event Triggers",
+          "Jobs",
+          "Runners",
+          "Actions",
+          "Artifacts & Deployment"
+        ],
+        "ops": [
+          "Release Checks",
+          "Rollback Logic",
+          "Monitoring",
+          "Audit Trail",
+          "Canary Deploy",
+          "Incident Recovery"
+        ]
+      },
+      "notes": "GitHub Actions is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "GitLab CI": {
+      "family": "ci-cd-pipeline",
+      "officialDocs": [
+        "https://docs.gitlab.com/ee/ci"
+      ],
+      "productSet": [
+        {
+          "name": "Pipeline Engine",
+          "role": "Built-in CI/CD",
+          "modules": [
+            "Pipeline Definition",
+            "Runners",
+            "Jobs",
+            "Stages",
+            "Artifacts",
+            "Environments"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Events",
+          "Change Requests",
+          "Merge Triggers"
+        ],
+        "core": [
+          "Source Control",
+          "Build Pipeline",
+          "Test Stage",
+          "Artifact Store",
+          "Deployment Engine",
+          "Release Workflow"
+        ],
+        "data": [
+          "Pipeline Definition",
+          "Runners",
+          "Jobs",
+          "Stages",
+          "Artifacts",
+          "Environments"
+        ],
+        "ops": [
+          "Release Checks",
+          "Rollback Logic",
+          "Monitoring",
+          "Audit Trail",
+          "Canary Deploy",
+          "Incident Recovery"
+        ]
+      },
+      "notes": "GitLab CI is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Jenkins": {
+      "family": "ci-cd-pipeline",
+      "officialDocs": [
+        "https://www.jenkins.io/doc"
+      ],
+      "productSet": [
+        {
+          "name": "Automation Server",
+          "role": "Distributed CI/CD",
+          "modules": [
+            "Controller",
+            "Agents",
+            "Pipelines",
+            "Build Jobs",
+            "Artifact Storage",
+            "Plugins"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Events",
+          "Change Requests",
+          "Merge Triggers"
+        ],
+        "core": [
+          "Source Control",
+          "Build Pipeline",
+          "Test Stage",
+          "Artifact Store",
+          "Deployment Engine",
+          "Release Workflow"
+        ],
+        "data": [
+          "Controller",
+          "Agents",
+          "Pipelines",
+          "Build Jobs",
+          "Artifact Storage",
+          "Plugins"
+        ],
+        "ops": [
+          "Release Checks",
+          "Rollback Logic",
+          "Monitoring",
+          "Audit Trail",
+          "Canary Deploy",
+          "Incident Recovery"
+        ]
+      },
+      "notes": "Jenkins is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "CircleCI": {
+      "family": "ci-cd-pipeline",
+      "officialDocs": [
+        "https://circleci.com/docs"
+      ],
+      "productSet": [
+        {
+          "name": "SaaS CI/CD",
+          "role": "Continuous integration",
+          "modules": [
+            "Orbs",
+            "Jobs",
+            "Workflows",
+            "Executors",
+            "Caching",
+            "Notifications"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Events",
+          "Change Requests",
+          "Merge Triggers"
+        ],
+        "core": [
+          "Source Control",
+          "Build Pipeline",
+          "Test Stage",
+          "Artifact Store",
+          "Deployment Engine",
+          "Release Workflow"
+        ],
+        "data": [
+          "Orbs",
+          "Jobs",
+          "Workflows",
+          "Executors",
+          "Caching",
+          "Notifications"
+        ],
+        "ops": [
+          "Release Checks",
+          "Rollback Logic",
+          "Monitoring",
+          "Audit Trail",
+          "Canary Deploy",
+          "Incident Recovery"
+        ]
+      },
+      "notes": "CircleCI is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Argo CD": {
+      "family": "ci-cd-pipeline",
+      "officialDocs": [
+        "https://argo-cd.readthedocs.io"
+      ],
+      "productSet": [
+        {
+          "name": "GitOps Deployment",
+          "role": "Declarative CD for K8s",
+          "modules": [
+            "Git Repository",
+            "Application CRD",
+            "Sync Engine",
+            "Health Assessment",
+            "SSO",
+            "Webhooks"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Events",
+          "Change Requests",
+          "Merge Triggers"
+        ],
+        "core": [
+          "Source Control",
+          "Build Pipeline",
+          "Test Stage",
+          "Artifact Store",
+          "Deployment Engine",
+          "Release Workflow"
+        ],
+        "data": [
+          "Git Repository",
+          "Application CRD",
+          "Sync Engine",
+          "Health Assessment",
+          "SSO",
+          "Webhooks"
+        ],
+        "ops": [
+          "Release Checks",
+          "Rollback Logic",
+          "Monitoring",
+          "Audit Trail",
+          "Canary Deploy",
+          "Incident Recovery"
+        ]
+      },
+      "notes": "Argo CD is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Prometheus": {
+      "family": "monitoring-observability",
+      "officialDocs": [
+        "https://prometheus.io/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Metrics Collection",
+          "role": "Time-series monitoring",
+          "modules": [
+            "Scraper",
+            "TSDB",
+            "Alerting Engine",
+            "Query Language",
+            "Exporters",
+            "Service Discovery"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Services",
+          "Users",
+          "Platform Events",
+          "Telemetry Sources"
+        ],
+        "core": [
+          "Collectors",
+          "Metrics Pipeline",
+          "Tracing Layer",
+          "Alert Engine",
+          "Log Aggregation",
+          "Analysis Rules"
+        ],
+        "data": [
+          "Scraper",
+          "TSDB",
+          "Alerting Engine",
+          "Query Language",
+          "Exporters",
+          "Service Discovery"
+        ],
+        "ops": [
+          "SLO Tracking",
+          "Incident Response",
+          "Root Cause Analysis",
+          "Ops Automation",
+          "Alert Routing",
+          "Health Checks"
+        ]
+      },
+      "notes": "Prometheus is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Grafana": {
+      "family": "monitoring-observability",
+      "officialDocs": [
+        "https://grafana.com/docs/grafana"
+      ],
+      "productSet": [
+        {
+          "name": "Visualization & Alerting",
+          "role": "Dashboard and monitoring",
+          "modules": [
+            "Data Sources",
+            "Panels",
+            "Dashboards",
+            "Alerts",
+            "Users & Auth",
+            "Provisioning"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Services",
+          "Users",
+          "Platform Events",
+          "Telemetry Sources"
+        ],
+        "core": [
+          "Collectors",
+          "Metrics Pipeline",
+          "Tracing Layer",
+          "Alert Engine",
+          "Log Aggregation",
+          "Analysis Rules"
+        ],
+        "data": [
+          "Data Sources",
+          "Panels",
+          "Dashboards",
+          "Alerts",
+          "Users & Auth",
+          "Provisioning"
+        ],
+        "ops": [
+          "SLO Tracking",
+          "Incident Response",
+          "Root Cause Analysis",
+          "Ops Automation",
+          "Alert Routing",
+          "Health Checks"
+        ]
+      },
+      "notes": "Grafana is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Datadog": {
+      "family": "monitoring-observability",
+      "officialDocs": [
+        "https://docs.datadoghq.com"
+      ],
+      "productSet": [
+        {
+          "name": "SaaS Monitoring",
+          "role": "Full-stack observability",
+          "modules": [
+            "Agents",
+            "Metrics Pipeline",
+            "Logs",
+            "Traces",
+            "Dashboards",
+            "Alerting"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Services",
+          "Users",
+          "Platform Events",
+          "Telemetry Sources"
+        ],
+        "core": [
+          "Collectors",
+          "Metrics Pipeline",
+          "Tracing Layer",
+          "Alert Engine",
+          "Log Aggregation",
+          "Analysis Rules"
+        ],
+        "data": [
+          "Agents",
+          "Metrics Pipeline",
+          "Logs",
+          "Traces",
+          "Dashboards",
+          "Alerting"
+        ],
+        "ops": [
+          "SLO Tracking",
+          "Incident Response",
+          "Root Cause Analysis",
+          "Ops Automation",
+          "Alert Routing",
+          "Health Checks"
+        ]
+      },
+      "notes": "Datadog is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "New Relic": {
+      "family": "monitoring-observability",
+      "officialDocs": [
+        "https://docs.newrelic.com"
+      ],
+      "productSet": [
+        {
+          "name": "Application Monitoring",
+          "role": "APM and observability",
+          "modules": [
+            "APM Agents",
+            "Metrics Collection",
+            "Log Management",
+            "Distributed Tracing",
+            "Dashboards",
+            "Alerts"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Services",
+          "Users",
+          "Platform Events",
+          "Telemetry Sources"
+        ],
+        "core": [
+          "Collectors",
+          "Metrics Pipeline",
+          "Tracing Layer",
+          "Alert Engine",
+          "Log Aggregation",
+          "Analysis Rules"
+        ],
+        "data": [
+          "APM Agents",
+          "Metrics Collection",
+          "Log Management",
+          "Distributed Tracing",
+          "Dashboards",
+          "Alerts"
+        ],
+        "ops": [
+          "SLO Tracking",
+          "Incident Response",
+          "Root Cause Analysis",
+          "Ops Automation",
+          "Alert Routing",
+          "Health Checks"
+        ]
+      },
+      "notes": "New Relic is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "ELK Stack": {
+      "family": "monitoring-observability",
+      "officialDocs": [
+        "https://www.elastic.co/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Elasticsearch",
+          "role": "Search and analytics",
+          "modules": [
+            "Search Engine",
+            "Indexing",
+            "Aggregations",
+            "Query DSL",
+            "Security",
+            "Monitoring"
+          ]
+        },
+        {
+          "name": "Logstash",
+          "role": "Log processing",
+          "modules": [
+            "Input Plugins",
+            "Filters",
+            "Output Plugins",
+            "Pipelines",
+            "Performance",
+            "Plugins"
+          ]
+        },
+        {
+          "name": "Kibana",
+          "role": "Visualization",
+          "modules": [
+            "Dashboards",
+            "Visualizations",
+            "Canvas",
+            "Alerting",
+            "Dev Tools",
+            "Management"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Services",
+          "Users",
+          "Platform Events",
+          "Telemetry Sources"
+        ],
+        "core": [
+          "Collectors",
+          "Metrics Pipeline",
+          "Tracing Layer",
+          "Alert Engine",
+          "Log Aggregation",
+          "Analysis Rules"
+        ],
+        "data": [
+          "Search Engine",
+          "Indexing",
+          "Aggregations",
+          "Query DSL",
+          "Security",
+          "Monitoring"
+        ],
+        "ops": [
+          "SLO Tracking",
+          "Incident Response",
+          "Root Cause Analysis",
+          "Ops Automation",
+          "Alert Routing",
+          "Health Checks"
+        ]
+      },
+      "notes": "ELK Stack is modeled from official documentation. Product-specific architecture with 3 components."
+    },
+    "Zscaler": {
+      "family": "security-zero-trust",
+      "officialDocs": [
+        "https://help.zscaler.com"
+      ],
+      "productSet": [
+        {
+          "name": "ZIA",
+          "role": "Secure internet access",
+          "modules": [
+            "User Trust",
+            "Web Gateway",
+            "Firewall",
+            "DNS",
+            "DLP",
+            "Threat Engine"
+          ]
+        },
+        {
+          "name": "ZPA",
+          "role": "Zero-trust app access",
+          "modules": [
+            "Identity Policy",
+            "App Segmentation",
+            "Connector",
+            "Access Control",
+            "Audit",
+            "Enforcement"
+          ]
+        },
+        {
+          "name": "ZDX",
+          "role": "Digital experience",
+          "modules": [
+            "Telemetry",
+            "Diagnostics",
+            "Network Insights",
+            "Analytics",
+            "AI Insights",
+            "Support"
+          ]
+        },
+        {
+          "name": "ZCC",
+          "role": "Cloud configuration",
+          "modules": [
+            "Asset Inventory",
+            "Cloud Posture",
+            "Policy",
+            "Risk Detection",
+            "Remediation",
+            "Compliance"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "Devices",
+          "Workloads",
+          "Applications"
+        ],
+        "core": [
+          "Identity Provider",
+          "Policy Engine",
+          "Access Gateway",
+          "Risk Engine",
+          "Session Broker",
+          "Trust Engine"
+        ],
+        "data": [
+          "User Trust",
+          "Web Gateway",
+          "Firewall",
+          "DNS",
+          "DLP",
+          "Threat Engine"
+        ],
+        "ops": [
+          "MFA",
+          "Conditional Access",
+          "Threat Detection",
+          "Compliance Reporting",
+          "Access Reviews",
+          "Incident Response"
+        ]
+      },
+      "notes": "Zscaler is modeled from official documentation. Product-specific architecture with 4 components."
+    },
+    "Cloudflare": {
+      "family": "security-zero-trust",
+      "officialDocs": [
+        "https://developers.cloudflare.com"
+      ],
+      "productSet": [
+        {
+          "name": "Edge Network & Security",
+          "role": "CDN and security",
+          "modules": [
+            "Edge Cache",
+            "WAF",
+            "DDoS Protection",
+            "Bot Management",
+            "Rate Limiting",
+            "Page Rules"
+          ]
+        },
+        {
+          "name": "Zero Trust",
+          "role": "Access and gateway",
+          "modules": [
+            "Access",
+            "Gateway",
+            "Secure Email",
+            "CASB",
+            "DLP",
+            "Browser Isolation"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "Devices",
+          "Workloads",
+          "Applications"
+        ],
+        "core": [
+          "Identity Provider",
+          "Policy Engine",
+          "Access Gateway",
+          "Risk Engine",
+          "Session Broker",
+          "Trust Engine"
+        ],
+        "data": [
+          "Edge Cache",
+          "WAF",
+          "DDoS Protection",
+          "Bot Management",
+          "Rate Limiting",
+          "Page Rules"
+        ],
+        "ops": [
+          "MFA",
+          "Conditional Access",
+          "Threat Detection",
+          "Compliance Reporting",
+          "Access Reviews",
+          "Incident Response"
+        ]
+      },
+      "notes": "Cloudflare is modeled from official documentation. Product-specific architecture with 2 components."
+    },
+    "Okta": {
+      "family": "identity-access",
+      "officialDocs": [
+        "https://developer.okta.com/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Identity Platform",
+          "role": "IAM and SSO",
+          "modules": [
+            "Identity Provider",
+            "SSO",
+            "MFA",
+            "Directory",
+            "API Access",
+            "Workflows"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "Applications",
+          "External IdPs",
+          "Directories"
+        ],
+        "core": [
+          "Identity Provider",
+          "Auth Flow",
+          "Session Layer",
+          "Policy Engine",
+          "Token Service",
+          "Directory Sync"
+        ],
+        "data": [
+          "Identity Provider",
+          "SSO",
+          "MFA",
+          "Directory",
+          "API Access",
+          "Workflows"
+        ],
+        "ops": [
+          "MFA",
+          "Access Reviews",
+          "Token Revocation",
+          "Compliance",
+          "Risk Detection",
+          "Revocation"
+        ]
+      },
+      "notes": "Okta is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Palo Alto Networks": {
+      "family": "security-zero-trust",
+      "officialDocs": [
+        "https://docs.paloaltonetworks.com"
+      ],
+      "productSet": [
+        {
+          "name": "Firewall Platform",
+          "role": "Network security",
+          "modules": [
+            "Threat Prevention",
+            "Intrusion Detection",
+            "SSL Inspection",
+            "Policy Engine",
+            "Logging",
+            "Reporting"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "Devices",
+          "Workloads",
+          "Applications"
+        ],
+        "core": [
+          "Identity Provider",
+          "Policy Engine",
+          "Access Gateway",
+          "Risk Engine",
+          "Session Broker",
+          "Trust Engine"
+        ],
+        "data": [
+          "Threat Prevention",
+          "Intrusion Detection",
+          "SSL Inspection",
+          "Policy Engine",
+          "Logging",
+          "Reporting"
+        ],
+        "ops": [
+          "MFA",
+          "Conditional Access",
+          "Threat Detection",
+          "Compliance Reporting",
+          "Access Reviews",
+          "Incident Response"
+        ]
+      },
+      "notes": "Palo Alto Networks is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "CrowdStrike": {
+      "family": "security-zero-trust",
+      "officialDocs": [
+        "https://falcon.crowdstrike.com/documentation"
+      ],
+      "productSet": [
+        {
+          "name": "Falcon Platform",
+          "role": "Endpoint protection",
+          "modules": [
+            "Agent",
+            "Prevention Engine",
+            "Detection Engine",
+            "Response",
+            "Investigation",
+            "Threat Intel"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "Devices",
+          "Workloads",
+          "Applications"
+        ],
+        "core": [
+          "Identity Provider",
+          "Policy Engine",
+          "Access Gateway",
+          "Risk Engine",
+          "Session Broker",
+          "Trust Engine"
+        ],
+        "data": [
+          "Agent",
+          "Prevention Engine",
+          "Detection Engine",
+          "Response",
+          "Investigation",
+          "Threat Intel"
+        ],
+        "ops": [
+          "MFA",
+          "Conditional Access",
+          "Threat Detection",
+          "Compliance Reporting",
+          "Access Reviews",
+          "Incident Response"
+        ]
+      },
+      "notes": "CrowdStrike is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Snyk": {
+      "family": "devsecops",
+      "officialDocs": [
+        "https://docs.snyk.io"
+      ],
+      "productSet": [
+        {
+          "name": "Security Platform",
+          "role": "Vulnerability scanning",
+          "modules": [
+            "Code Scan",
+            "Dependency Scan",
+            "SAST",
+            "Policy",
+            "Fix Automation",
+            "Reporting"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Code Repos",
+          "Pipelines",
+          "Artifacts"
+        ],
+        "core": [
+          "Static Analysis",
+          "Dependency Scan",
+          "Secrets Detection",
+          "Policy Controls",
+          "Risk Prioritization",
+          "Remediation Workflow"
+        ],
+        "data": [
+          "Code Scan",
+          "Dependency Scan",
+          "SAST",
+          "Policy",
+          "Fix Automation",
+          "Reporting"
+        ],
+        "ops": [
+          "Guardrails",
+          "Vulnerability Fixing",
+          "Alerts",
+          "Audit Trails",
+          "Approval Gates",
+          "Runtime Checks"
+        ]
+      },
+      "notes": "Snyk is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Trivy": {
+      "family": "devsecops",
+      "officialDocs": [
+        "https://aquasecurity.github.io/trivy"
+      ],
+      "productSet": [
+        {
+          "name": "Vulnerability Scanner",
+          "role": "Container & code scanning",
+          "modules": [
+            "Artifact Scanner",
+            "Vulnerability DB",
+            "Policy Checks",
+            "SBOM",
+            "Reporting",
+            "CI Integration"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Code Repos",
+          "Pipelines",
+          "Artifacts"
+        ],
+        "core": [
+          "Static Analysis",
+          "Dependency Scan",
+          "Secrets Detection",
+          "Policy Controls",
+          "Risk Prioritization",
+          "Remediation Workflow"
+        ],
+        "data": [
+          "Artifact Scanner",
+          "Vulnerability DB",
+          "Policy Checks",
+          "SBOM",
+          "Reporting",
+          "CI Integration"
+        ],
+        "ops": [
+          "Guardrails",
+          "Vulnerability Fixing",
+          "Alerts",
+          "Audit Trails",
+          "Approval Gates",
+          "Runtime Checks"
+        ]
+      },
+      "notes": "Trivy is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Kubernetes": {
+      "family": "container-orchestration",
+      "officialDocs": [
+        "https://kubernetes.io/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Cluster Control",
+          "role": "Container orchestration",
+          "modules": [
+            "Control Plane",
+            "API Server",
+            "Scheduler",
+            "Kubelet",
+            "Container Runtime",
+            "Network Plugin"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "GitOps Events",
+          "Container Registry",
+          "Workload Specs"
+        ],
+        "core": [
+          "Control Plane",
+          "Scheduler",
+          "Worker Nodes",
+          "Ingress Layer",
+          "Service Mesh",
+          "Runtime Agents"
+        ],
+        "data": [
+          "Control Plane",
+          "API Server",
+          "Scheduler",
+          "Kubelet",
+          "Container Runtime",
+          "Network Plugin"
+        ],
+        "ops": [
+          "Autoscaling",
+          "Health Checks",
+          "Rollbacks",
+          "Runtime Monitoring",
+          "Load Balancing",
+          "Resource Tuning"
+        ]
+      },
+      "notes": "Kubernetes is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Docker": {
+      "family": "container-orchestration",
+      "officialDocs": [
+        "https://docs.docker.com"
+      ],
+      "productSet": [
+        {
+          "name": "Container Runtime",
+          "role": "Containerization",
+          "modules": [
+            "Docker Daemon",
+            "Container Runtime",
+            "Image Build",
+            "Registry",
+            "Storage",
+            "Networking"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "GitOps Events",
+          "Container Registry",
+          "Workload Specs"
+        ],
+        "core": [
+          "Control Plane",
+          "Scheduler",
+          "Worker Nodes",
+          "Ingress Layer",
+          "Service Mesh",
+          "Runtime Agents"
+        ],
+        "data": [
+          "Docker Daemon",
+          "Container Runtime",
+          "Image Build",
+          "Registry",
+          "Storage",
+          "Networking"
+        ],
+        "ops": [
+          "Autoscaling",
+          "Health Checks",
+          "Rollbacks",
+          "Runtime Monitoring",
+          "Load Balancing",
+          "Resource Tuning"
+        ]
+      },
+      "notes": "Docker is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Helm": {
+      "family": "container-orchestration",
+      "officialDocs": [
+        "https://helm.sh/docs"
+      ],
+      "productSet": [
+        {
+          "name": "K8s Package Manager",
+          "role": "Kubernetes packaging",
+          "modules": [
+            "Charts",
+            "Repositories",
+            "Release Management",
+            "Templating",
+            "Hooks",
+            "Values"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "GitOps Events",
+          "Container Registry",
+          "Workload Specs"
+        ],
+        "core": [
+          "Control Plane",
+          "Scheduler",
+          "Worker Nodes",
+          "Ingress Layer",
+          "Service Mesh",
+          "Runtime Agents"
+        ],
+        "data": [
+          "Charts",
+          "Repositories",
+          "Release Management",
+          "Templating",
+          "Hooks",
+          "Values"
+        ],
+        "ops": [
+          "Autoscaling",
+          "Health Checks",
+          "Rollbacks",
+          "Runtime Monitoring",
+          "Load Balancing",
+          "Resource Tuning"
+        ]
+      },
+      "notes": "Helm is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "OpenShift": {
+      "family": "container-orchestration",
+      "officialDocs": [
+        "https://docs.openshift.com"
+      ],
+      "productSet": [
+        {
+          "name": "Enterprise K8s",
+          "role": "Red Hat container platform",
+          "modules": [
+            "Kubernetes",
+            "Container Runtime",
+            "Registry",
+            "Networking",
+            "Storage",
+            "Developer Tools"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "GitOps Events",
+          "Container Registry",
+          "Workload Specs"
+        ],
+        "core": [
+          "Control Plane",
+          "Scheduler",
+          "Worker Nodes",
+          "Ingress Layer",
+          "Service Mesh",
+          "Runtime Agents"
+        ],
+        "data": [
+          "Kubernetes",
+          "Container Runtime",
+          "Registry",
+          "Networking",
+          "Storage",
+          "Developer Tools"
+        ],
+        "ops": [
+          "Autoscaling",
+          "Health Checks",
+          "Rollbacks",
+          "Runtime Monitoring",
+          "Load Balancing",
+          "Resource Tuning"
+        ]
+      },
+      "notes": "OpenShift is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "PostgreSQL": {
+      "family": "database",
+      "officialDocs": [
+        "https://www.postgresql.org/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Relational Database",
+          "role": "SQL database engine",
+          "modules": [
+            "Query Engine",
+            "Storage Engine",
+            "Transaction Manager",
+            "Indexing",
+            "Replication",
+            "Backup"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Applications",
+          "Jobs",
+          "Analysts",
+          "API Clients"
+        ],
+        "core": [
+          "Connection Layer",
+          "Query Engine",
+          "Storage Engine",
+          "Index Layer",
+          "Transaction Manager",
+          "Schema Layer"
+        ],
+        "data": [
+          "Query Engine",
+          "Storage Engine",
+          "Transaction Manager",
+          "Indexing",
+          "Replication",
+          "Backup"
+        ],
+        "ops": [
+          "Access Control",
+          "Monitoring",
+          "Recovery",
+          "Performance Tuning",
+          "Integrity Checks",
+          "Backup Policy"
+        ]
+      },
+      "notes": "PostgreSQL is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "MongoDB": {
+      "family": "database",
+      "officialDocs": [
+        "https://docs.mongodb.com"
+      ],
+      "productSet": [
+        {
+          "name": "NoSQL Database",
+          "role": "Document-oriented database",
+          "modules": [
+            "Document Store",
+            "Query Language",
+            "Indexing",
+            "Transactions",
+            "Replication",
+            "Sharding"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Applications",
+          "Jobs",
+          "Analysts",
+          "API Clients"
+        ],
+        "core": [
+          "Connection Layer",
+          "Query Engine",
+          "Storage Engine",
+          "Index Layer",
+          "Transaction Manager",
+          "Schema Layer"
+        ],
+        "data": [
+          "Document Store",
+          "Query Language",
+          "Indexing",
+          "Transactions",
+          "Replication",
+          "Sharding"
+        ],
+        "ops": [
+          "Access Control",
+          "Monitoring",
+          "Recovery",
+          "Performance Tuning",
+          "Integrity Checks",
+          "Backup Policy"
+        ]
+      },
+      "notes": "MongoDB is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Redis": {
+      "family": "database",
+      "officialDocs": [
+        "https://redis.io/documentation"
+      ],
+      "productSet": [
+        {
+          "name": "In-Memory Store",
+          "role": "Cache and session store",
+          "modules": [
+            "Memory Store",
+            "Data Structures",
+            "Persistence",
+            "Replication",
+            "Pub/Sub",
+            "Scripting"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Applications",
+          "Jobs",
+          "Analysts",
+          "API Clients"
+        ],
+        "core": [
+          "Connection Layer",
+          "Query Engine",
+          "Storage Engine",
+          "Index Layer",
+          "Transaction Manager",
+          "Schema Layer"
+        ],
+        "data": [
+          "Memory Store",
+          "Data Structures",
+          "Persistence",
+          "Replication",
+          "Pub/Sub",
+          "Scripting"
+        ],
+        "ops": [
+          "Access Control",
+          "Monitoring",
+          "Recovery",
+          "Performance Tuning",
+          "Integrity Checks",
+          "Backup Policy"
+        ]
+      },
+      "notes": "Redis is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Supabase": {
+      "family": "database",
+      "officialDocs": [
+        "https://supabase.com/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Backend Platform",
+          "role": "Open-source Firebase alternative",
+          "modules": [
+            "Database",
+            "Auth",
+            "Storage",
+            "Realtime",
+            "Edge Functions",
+            "APIs"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Applications",
+          "Jobs",
+          "Analysts",
+          "API Clients"
+        ],
+        "core": [
+          "Connection Layer",
+          "Query Engine",
+          "Storage Engine",
+          "Index Layer",
+          "Transaction Manager",
+          "Schema Layer"
+        ],
+        "data": [
+          "Database",
+          "Auth",
+          "Storage",
+          "Realtime",
+          "Edge Functions",
+          "APIs"
+        ],
+        "ops": [
+          "Access Control",
+          "Monitoring",
+          "Recovery",
+          "Performance Tuning",
+          "Integrity Checks",
+          "Backup Policy"
+        ]
+      },
+      "notes": "Supabase is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Kafka": {
+      "family": "data-streaming",
+      "officialDocs": [
+        "https://kafka.apache.org/documentation"
+      ],
+      "productSet": [
+        {
+          "name": "Event Streaming",
+          "role": "Distributed streaming platform",
+          "modules": [
+            "Brokers",
+            "Topics",
+            "Producers",
+            "Consumers",
+            "Partitions",
+            "Replication"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Producers",
+          "Events",
+          "Sensors",
+          "Change Streams"
+        ],
+        "core": [
+          "Ingress Layer",
+          "Broker",
+          "Stream Processor",
+          "Consumer Groups",
+          "Partitions",
+          "Schema Validation"
+        ],
+        "data": [
+          "Brokers",
+          "Topics",
+          "Producers",
+          "Consumers",
+          "Partitions",
+          "Replication"
+        ],
+        "ops": [
+          "Delivery Checks",
+          "Replay",
+          "Backpressure",
+          "Monitoring",
+          "Dead Letter Queue",
+          "Latency Tracking"
+        ]
+      },
+      "notes": "Kafka is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "RabbitMQ": {
+      "family": "data-streaming",
+      "officialDocs": [
+        "https://www.rabbitmq.com/documentation.html"
+      ],
+      "productSet": [
+        {
+          "name": "Message Broker",
+          "role": "Message queue system",
+          "modules": [
+            "Exchanges",
+            "Queues",
+            "Bindings",
+            "Consumers",
+            "Clustering",
+            "Plugins"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Producers",
+          "Events",
+          "Sensors",
+          "Change Streams"
+        ],
+        "core": [
+          "Ingress Layer",
+          "Broker",
+          "Stream Processor",
+          "Consumer Groups",
+          "Partitions",
+          "Schema Validation"
+        ],
+        "data": [
+          "Exchanges",
+          "Queues",
+          "Bindings",
+          "Consumers",
+          "Clustering",
+          "Plugins"
+        ],
+        "ops": [
+          "Delivery Checks",
+          "Replay",
+          "Backpressure",
+          "Monitoring",
+          "Dead Letter Queue",
+          "Latency Tracking"
+        ]
+      },
+      "notes": "RabbitMQ is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "NATS": {
+      "family": "data-streaming",
+      "officialDocs": [
+        "https://docs.nats.io"
+      ],
+      "productSet": [
+        {
+          "name": "Cloud Messaging",
+          "role": "Lightweight messaging",
+          "modules": [
+            "Server",
+            "Publish-Subscribe",
+            "Queuing",
+            "Streaming",
+            "KV Store",
+            "Object Store"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Producers",
+          "Events",
+          "Sensors",
+          "Change Streams"
+        ],
+        "core": [
+          "Ingress Layer",
+          "Broker",
+          "Stream Processor",
+          "Consumer Groups",
+          "Partitions",
+          "Schema Validation"
+        ],
+        "data": [
+          "Server",
+          "Publish-Subscribe",
+          "Queuing",
+          "Streaming",
+          "KV Store",
+          "Object Store"
+        ],
+        "ops": [
+          "Delivery Checks",
+          "Replay",
+          "Backpressure",
+          "Monitoring",
+          "Dead Letter Queue",
+          "Latency Tracking"
+        ]
+      },
+      "notes": "NATS is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Airflow": {
+      "family": "data-engineering",
+      "officialDocs": [
+        "https://airflow.apache.org/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Workflow Orchestration",
+          "role": "Data pipeline orchestration",
+          "modules": [
+            "Scheduler",
+            "Executor",
+            "DAG Management",
+            "Task",
+            "Plugins",
+            "Monitoring"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Sources",
+          "ETL Jobs",
+          "Analysts",
+          "External Feeds"
+        ],
+        "core": [
+          "Ingestion",
+          "Transformation",
+          "Validation",
+          "Scheduling",
+          "Workflow Orchestration",
+          "Quality Rules"
+        ],
+        "data": [
+          "Scheduler",
+          "Executor",
+          "DAG Management",
+          "Task",
+          "Plugins",
+          "Monitoring"
+        ],
+        "ops": [
+          "Quality Checks",
+          "Lineage",
+          "Monitoring",
+          "Retry Logic",
+          "SLA Tracking",
+          "Data Governance"
+        ]
+      },
+      "notes": "Airflow is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "dbt": {
+      "family": "data-engineering",
+      "officialDocs": [
+        "https://docs.getdbt.com"
+      ],
+      "productSet": [
+        {
+          "name": "Data Transformation",
+          "role": "ELT and transformation",
+          "modules": [
+            "Models",
+            "Tests",
+            "Seeds",
+            "Snapshots",
+            "Packages",
+            "Docs"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Sources",
+          "ETL Jobs",
+          "Analysts",
+          "External Feeds"
+        ],
+        "core": [
+          "Ingestion",
+          "Transformation",
+          "Validation",
+          "Scheduling",
+          "Workflow Orchestration",
+          "Quality Rules"
+        ],
+        "data": [
+          "Models",
+          "Tests",
+          "Seeds",
+          "Snapshots",
+          "Packages",
+          "Docs"
+        ],
+        "ops": [
+          "Quality Checks",
+          "Lineage",
+          "Monitoring",
+          "Retry Logic",
+          "SLA Tracking",
+          "Data Governance"
+        ]
+      },
+      "notes": "dbt is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "NGINX": {
+      "family": "networking",
+      "officialDocs": [
+        "https://nginx.org/en/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Web Server & Proxy",
+          "role": "HTTP server and reverse proxy",
+          "modules": [
+            "Server Core",
+            "Reverse Proxy",
+            "Load Balancer",
+            "SSL/TLS",
+            "Caching",
+            "Modules"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Clients",
+          "Edge Traffic",
+          "Internal Services",
+          "Gateway Traffic"
+        ],
+        "core": [
+          "Ingress",
+          "Load Balancer",
+          "Routing Layer",
+          "Policy Engine",
+          "Proxy Layer",
+          "Service Discovery"
+        ],
+        "data": [
+          "Server Core",
+          "Reverse Proxy",
+          "Load Balancer",
+          "SSL/TLS",
+          "Caching",
+          "Modules"
+        ],
+        "ops": [
+          "Availability",
+          "TLS",
+          "Latency Tracking",
+          "Failover",
+          "Rules Enforcement",
+          "Performance Tuning"
+        ]
+      },
+      "notes": "NGINX is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "GitHub": {
+      "family": "developer-tools",
+      "officialDocs": [
+        "https://docs.github.com/en"
+      ],
+      "productSet": [
+        {
+          "name": "Platform",
+          "role": "Version control and collaboration",
+          "modules": [
+            "Repository",
+            "Branching",
+            "Pull Requests",
+            "Actions",
+            "Packages",
+            "Security"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Workspace",
+          "Repositories",
+          "IDE Sessions"
+        ],
+        "core": [
+          "Editor / IDE",
+          "Version Control",
+          "Build Tools",
+          "Testing Layer",
+          "Package Manager",
+          "Task Runner"
+        ],
+        "data": [
+          "Repository",
+          "Branching",
+          "Pull Requests",
+          "Actions",
+          "Packages",
+          "Security"
+        ],
+        "ops": [
+          "Linting",
+          "Debugging",
+          "Release Steps",
+          "Developer Productivity",
+          "Code Review",
+          "Automation"
+        ]
+      },
+      "notes": "GitHub is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "GitLab": {
+      "family": "developer-tools",
+      "officialDocs": [
+        "https://docs.gitlab.com"
+      ],
+      "productSet": [
+        {
+          "name": "DevOps Platform",
+          "role": "Full DevOps lifecycle",
+          "modules": [
+            "Repository",
+            "Pipelines",
+            "Registry",
+            "Wiki",
+            "Issues",
+            "Security"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Workspace",
+          "Repositories",
+          "IDE Sessions"
+        ],
+        "core": [
+          "Editor / IDE",
+          "Version Control",
+          "Build Tools",
+          "Testing Layer",
+          "Package Manager",
+          "Task Runner"
+        ],
+        "data": [
+          "Repository",
+          "Pipelines",
+          "Registry",
+          "Wiki",
+          "Issues",
+          "Security"
+        ],
+        "ops": [
+          "Linting",
+          "Debugging",
+          "Release Steps",
+          "Developer Productivity",
+          "Code Review",
+          "Automation"
+        ]
+      },
+      "notes": "GitLab is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "VS Code": {
+      "family": "developer-tools",
+      "officialDocs": [
+        "https://code.visualstudio.com/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Editor",
+          "role": "Code editor and IDE",
+          "modules": [
+            "Editor Core",
+            "Extensions",
+            "Terminal",
+            "Debugging",
+            "Source Control",
+            "Settings"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Workspace",
+          "Repositories",
+          "IDE Sessions"
+        ],
+        "core": [
+          "Editor / IDE",
+          "Version Control",
+          "Build Tools",
+          "Testing Layer",
+          "Package Manager",
+          "Task Runner"
+        ],
+        "data": [
+          "Editor Core",
+          "Extensions",
+          "Terminal",
+          "Debugging",
+          "Source Control",
+          "Settings"
+        ],
+        "ops": [
+          "Linting",
+          "Debugging",
+          "Release Steps",
+          "Developer Productivity",
+          "Code Review",
+          "Automation"
+        ]
+      },
+      "notes": "VS Code is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Git": {
+      "family": "developer-tools",
+      "officialDocs": [
+        "https://git-scm.com/doc"
+      ],
+      "productSet": [
+        {
+          "name": "Version Control",
+          "role": "Distributed version control",
+          "modules": [
+            "Repository",
+            "Objects",
+            "Refs",
+            "Index",
+            "Hooks",
+            "Merging"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Workspace",
+          "Repositories",
+          "IDE Sessions"
+        ],
+        "core": [
+          "Editor / IDE",
+          "Version Control",
+          "Build Tools",
+          "Testing Layer",
+          "Package Manager",
+          "Task Runner"
+        ],
+        "data": [
+          "Repository",
+          "Objects",
+          "Refs",
+          "Index",
+          "Hooks",
+          "Merging"
+        ],
+        "ops": [
+          "Linting",
+          "Debugging",
+          "Release Steps",
+          "Developer Productivity",
+          "Code Review",
+          "Automation"
+        ]
+      },
+      "notes": "Git is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Python": {
+      "family": "automation",
+      "officialDocs": [
+        "https://docs.python.org/3"
+      ],
+      "productSet": [
+        {
+          "name": "Programming Language",
+          "role": "Scripting and automation",
+          "modules": [
+            "Interpreter",
+            "Runtime",
+            "Standard Library",
+            "Package Manager",
+            "Virtual Env",
+            "REPL"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Operators",
+          "Event Sources",
+          "Triggers",
+          "Workflow Inputs"
+        ],
+        "core": [
+          "Automation Engine",
+          "Workflow Orchestrator",
+          "Task Runner",
+          "Decision Logic",
+          "Execution Queue",
+          "State Machine"
+        ],
+        "data": [
+          "Interpreter",
+          "Runtime",
+          "Standard Library",
+          "Package Manager",
+          "Virtual Env",
+          "REPL"
+        ],
+        "ops": [
+          "Retries",
+          "Monitoring",
+          "Scheduling",
+          "Approval Gates",
+          "Recovery Logic",
+          "Runbook Automation"
+        ]
+      },
+      "notes": "Python is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Go": {
+      "family": "automation",
+      "officialDocs": [
+        "https://golang.org/doc"
+      ],
+      "productSet": [
+        {
+          "name": "Systems Language",
+          "role": "Cloud-native development",
+          "modules": [
+            "Compiler",
+            "Runtime",
+            "Goroutines",
+            "Channels",
+            "Packages",
+            "Standard Library"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Operators",
+          "Event Sources",
+          "Triggers",
+          "Workflow Inputs"
+        ],
+        "core": [
+          "Automation Engine",
+          "Workflow Orchestrator",
+          "Task Runner",
+          "Decision Logic",
+          "Execution Queue",
+          "State Machine"
+        ],
+        "data": [
+          "Compiler",
+          "Runtime",
+          "Goroutines",
+          "Channels",
+          "Packages",
+          "Standard Library"
+        ],
+        "ops": [
+          "Retries",
+          "Monitoring",
+          "Scheduling",
+          "Approval Gates",
+          "Recovery Logic",
+          "Runbook Automation"
+        ]
+      },
+      "notes": "Go is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Bash/Shell": {
+      "family": "automation",
+      "officialDocs": [
+        "https://www.gnu.org/software/bash/manual"
+      ],
+      "productSet": [
+        {
+          "name": "Shell Interpreter",
+          "role": "Command execution and scripting",
+          "modules": [
+            "Parser",
+            "Executor",
+            "Builtins",
+            "Pipes",
+            "Redirection",
+            "Functions"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Operators",
+          "Event Sources",
+          "Triggers",
+          "Workflow Inputs"
+        ],
+        "core": [
+          "Automation Engine",
+          "Workflow Orchestrator",
+          "Task Runner",
+          "Decision Logic",
+          "Execution Queue",
+          "State Machine"
+        ],
+        "data": [
+          "Parser",
+          "Executor",
+          "Builtins",
+          "Pipes",
+          "Redirection",
+          "Functions"
+        ],
+        "ops": [
+          "Retries",
+          "Monitoring",
+          "Scheduling",
+          "Approval Gates",
+          "Recovery Logic",
+          "Runbook Automation"
+        ]
+      },
+      "notes": "Bash/Shell is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Tavily": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://tavily.com/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Research API",
+          "role": "AI-powered research",
+          "modules": [
+            "Search Engine",
+            "Content Processing",
+            "Research Synthesis",
+            "API",
+            "Caching",
+            "Analytics"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Search Engine",
+          "Content Processing",
+          "Research Synthesis",
+          "API",
+          "Caching",
+          "Analytics"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "Tavily is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "LangGraph": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://langchain-ai.github.io/langgraph"
+      ],
+      "productSet": [
+        {
+          "name": "Graph Orchestration",
+          "role": "Agent workflow framework",
+          "modules": [
+            "Graph Definition",
+            "Node Execution",
+            "State Management",
+            "Edge Routing",
+            "Recursion",
+            "Interrupts"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Graph Definition",
+          "Node Execution",
+          "State Management",
+          "Edge Routing",
+          "Recursion",
+          "Interrupts"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "LangGraph is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Weaviate": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://weaviate.io/developers/weaviate"
+      ],
+      "productSet": [
+        {
+          "name": "Vector Database",
+          "role": "Vector storage and search",
+          "modules": [
+            "Vector Store",
+            "Indexing",
+            "Search",
+            "GraphQL API",
+            "RAG Integration",
+            "Monitoring"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Vector Store",
+          "Indexing",
+          "Search",
+          "GraphQL API",
+          "RAG Integration",
+          "Monitoring"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "Weaviate is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Pinecone": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://docs.pinecone.io"
+      ],
+      "productSet": [
+        {
+          "name": "Managed Vector DB",
+          "role": "Serverless vector database",
+          "modules": [
+            "Vector Index",
+            "Query Engine",
+            "Metadata Filtering",
+            "Namespaces",
+            "Pod Types",
+            "Analytics"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Vector Index",
+          "Query Engine",
+          "Metadata Filtering",
+          "Namespaces",
+          "Pod Types",
+          "Analytics"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "Pinecone is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Scikit-learn": {
+      "family": "ai-ml",
+      "officialDocs": [
+        "https://scikit-learn.org/stable"
+      ],
+      "productSet": [
+        {
+          "name": "ML Library",
+          "role": "Traditional machine learning",
+          "modules": [
+            "Estimators",
+            "Transformers",
+            "Pipelines",
+            "Model Selection",
+            "Metrics",
+            "Datasets"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Apps",
+          "Agents"
+        ],
+        "core": [
+          "Prompt Layer",
+          "Model Gateway",
+          "Inference Runtime",
+          "Context Retrieval",
+          "Safety Filters",
+          "Evaluation Loop"
+        ],
+        "data": [
+          "Estimators",
+          "Transformers",
+          "Pipelines",
+          "Model Selection",
+          "Metrics",
+          "Datasets"
+        ],
+        "ops": [
+          "Monitoring",
+          "Governance",
+          "Feedback Loop",
+          "Model Versioning",
+          "Prompt Management",
+          "Usage Controls"
+        ]
+      },
+      "notes": "Scikit-learn is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Jupyter": {
+      "family": "developer-tools",
+      "officialDocs": [
+        "https://jupyter.org/documentation"
+      ],
+      "productSet": [
+        {
+          "name": "Notebook Environment",
+          "role": "Interactive computing",
+          "modules": [
+            "Kernel",
+            "Frontend",
+            "Notebook Format",
+            "Nbconvert",
+            "Widgets",
+            "Extensions"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Workspace",
+          "Repositories",
+          "IDE Sessions"
+        ],
+        "core": [
+          "Editor / IDE",
+          "Version Control",
+          "Build Tools",
+          "Testing Layer",
+          "Package Manager",
+          "Task Runner"
+        ],
+        "data": [
+          "Kernel",
+          "Frontend",
+          "Notebook Format",
+          "Nbconvert",
+          "Widgets",
+          "Extensions"
+        ],
+        "ops": [
+          "Linting",
+          "Debugging",
+          "Release Steps",
+          "Developer Productivity",
+          "Code Review",
+          "Automation"
+        ]
+      },
+      "notes": "Jupyter is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "DigitalOcean": {
+      "family": "cloud-platform",
+      "officialDocs": [
+        "https://docs.digitalocean.com"
+      ],
+      "productSet": [
+        {
+          "name": "Cloud Platform",
+          "role": "Developer-friendly cloud",
+          "modules": [
+            "Droplets",
+            "Spaces",
+            "Databases",
+            "Kubernetes",
+            "App Platform",
+            "Networking"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "API Requests",
+          "Deployment Events",
+          "Control Plane Requests"
+        ],
+        "core": [
+          "Identity & Access",
+          "Compute Layer",
+          "Networking",
+          "Runtime Services",
+          "Regions",
+          "Autoscaling"
+        ],
+        "data": [
+          "Droplets",
+          "Spaces",
+          "Databases",
+          "Kubernetes",
+          "App Platform",
+          "Networking"
+        ],
+        "ops": [
+          "Monitoring",
+          "Security Policies",
+          "Scaling",
+          "Cost Controls",
+          "Resilience",
+          "Governance"
+        ]
+      },
+      "notes": "DigitalOcean is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Linode": {
+      "family": "cloud-platform",
+      "officialDocs": [
+        "https://www.linode.com/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Cloud Hosting",
+          "role": "Akamai cloud platform",
+          "modules": [
+            "Compute",
+            "Storage",
+            "Networking",
+            "Kubernetes",
+            "Databases",
+            "Monitoring"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "API Requests",
+          "Deployment Events",
+          "Control Plane Requests"
+        ],
+        "core": [
+          "Identity & Access",
+          "Compute Layer",
+          "Networking",
+          "Runtime Services",
+          "Regions",
+          "Autoscaling"
+        ],
+        "data": [
+          "Compute",
+          "Storage",
+          "Networking",
+          "Kubernetes",
+          "Databases",
+          "Monitoring"
+        ],
+        "ops": [
+          "Monitoring",
+          "Security Policies",
+          "Scaling",
+          "Cost Controls",
+          "Resilience",
+          "Governance"
+        ]
+      },
+      "notes": "Linode is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Chef": {
+      "family": "infrastructure-as-code",
+      "officialDocs": [
+        "https://docs.chef.io"
+      ],
+      "productSet": [
+        {
+          "name": "Configuration Management",
+          "role": "Infrastructure automation",
+          "modules": [
+            "Recipes",
+            "Cookbooks",
+            "Attributes",
+            "Providers",
+            "Resources",
+            "Testing"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Repo",
+          "Config Inputs",
+          "Environment Specs"
+        ],
+        "core": [
+          "IaC Templates",
+          "State Layer",
+          "Provisioning Engine",
+          "Resource Graph",
+          "Policy Engine",
+          "Change Planner"
+        ],
+        "data": [
+          "Recipes",
+          "Cookbooks",
+          "Attributes",
+          "Providers",
+          "Resources",
+          "Testing"
+        ],
+        "ops": [
+          "Validation",
+          "Drift Detection",
+          "Rollback",
+          "Compliance Checks",
+          "Audits",
+          "Automation"
+        ]
+      },
+      "notes": "Chef is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "SaltStack": {
+      "family": "infrastructure-as-code",
+      "officialDocs": [
+        "https://docs.saltproject.io"
+      ],
+      "productSet": [
+        {
+          "name": "Configuration Orchestration",
+          "role": "Event-driven automation",
+          "modules": [
+            "Master",
+            "Minion",
+            "State",
+            "Pillar",
+            "Execution Modules",
+            "Returners"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Repo",
+          "Config Inputs",
+          "Environment Specs"
+        ],
+        "core": [
+          "IaC Templates",
+          "State Layer",
+          "Provisioning Engine",
+          "Resource Graph",
+          "Policy Engine",
+          "Change Planner"
+        ],
+        "data": [
+          "Master",
+          "Minion",
+          "State",
+          "Pillar",
+          "Execution Modules",
+          "Returners"
+        ],
+        "ops": [
+          "Validation",
+          "Drift Detection",
+          "Rollback",
+          "Compliance Checks",
+          "Audits",
+          "Automation"
+        ]
+      },
+      "notes": "SaltStack is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Azure DevOps Pipelines": {
+      "family": "ci-cd-pipeline",
+      "officialDocs": [
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines"
+      ],
+      "productSet": [
+        {
+          "name": "CI/CD Service",
+          "role": "Microsoft pipeline automation",
+          "modules": [
+            "Pipelines",
+            "Jobs",
+            "Tasks",
+            "Stages",
+            "Approvals",
+            "Artifacts"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Events",
+          "Change Requests",
+          "Merge Triggers"
+        ],
+        "core": [
+          "Source Control",
+          "Build Pipeline",
+          "Test Stage",
+          "Artifact Store",
+          "Deployment Engine",
+          "Release Workflow"
+        ],
+        "data": [
+          "Pipelines",
+          "Jobs",
+          "Tasks",
+          "Stages",
+          "Approvals",
+          "Artifacts"
+        ],
+        "ops": [
+          "Release Checks",
+          "Rollback Logic",
+          "Monitoring",
+          "Audit Trail",
+          "Canary Deploy",
+          "Incident Recovery"
+        ]
+      },
+      "notes": "Azure DevOps Pipelines is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Tekton": {
+      "family": "ci-cd-pipeline",
+      "officialDocs": [
+        "https://tekton.dev/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Cloud-Native CI/CD",
+          "role": "Kubernetes-native pipelines",
+          "modules": [
+            "Tasks",
+            "Pipelines",
+            "Runs",
+            "PipelineResources",
+            "Triggers",
+            "Results"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Git Events",
+          "Change Requests",
+          "Merge Triggers"
+        ],
+        "core": [
+          "Source Control",
+          "Build Pipeline",
+          "Test Stage",
+          "Artifact Store",
+          "Deployment Engine",
+          "Release Workflow"
+        ],
+        "data": [
+          "Tasks",
+          "Pipelines",
+          "Runs",
+          "PipelineResources",
+          "Triggers",
+          "Results"
+        ],
+        "ops": [
+          "Release Checks",
+          "Rollback Logic",
+          "Monitoring",
+          "Audit Trail",
+          "Canary Deploy",
+          "Incident Recovery"
+        ]
+      },
+      "notes": "Tekton is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Jaeger": {
+      "family": "monitoring-observability",
+      "officialDocs": [
+        "https://www.jaegertracing.io/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Distributed Tracing",
+          "role": "Trace collection and analysis",
+          "modules": [
+            "Agent",
+            "Collector",
+            "Query",
+            "Storage",
+            "UI",
+            "Instrumentation"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Services",
+          "Users",
+          "Platform Events",
+          "Telemetry Sources"
+        ],
+        "core": [
+          "Collectors",
+          "Metrics Pipeline",
+          "Tracing Layer",
+          "Alert Engine",
+          "Log Aggregation",
+          "Analysis Rules"
+        ],
+        "data": [
+          "Agent",
+          "Collector",
+          "Query",
+          "Storage",
+          "UI",
+          "Instrumentation"
+        ],
+        "ops": [
+          "SLO Tracking",
+          "Incident Response",
+          "Root Cause Analysis",
+          "Ops Automation",
+          "Alert Routing",
+          "Health Checks"
+        ]
+      },
+      "notes": "Jaeger is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "OpenTelemetry": {
+      "family": "monitoring-observability",
+      "officialDocs": [
+        "https://opentelemetry.io/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Observability Standard",
+          "role": "Telemetry framework",
+          "modules": [
+            "Traces",
+            "Metrics",
+            "Logs",
+            "Baggage",
+            "Exporters",
+            "Instrumentation"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Services",
+          "Users",
+          "Platform Events",
+          "Telemetry Sources"
+        ],
+        "core": [
+          "Collectors",
+          "Metrics Pipeline",
+          "Tracing Layer",
+          "Alert Engine",
+          "Log Aggregation",
+          "Analysis Rules"
+        ],
+        "data": [
+          "Traces",
+          "Metrics",
+          "Logs",
+          "Baggage",
+          "Exporters",
+          "Instrumentation"
+        ],
+        "ops": [
+          "SLO Tracking",
+          "Incident Response",
+          "Root Cause Analysis",
+          "Ops Automation",
+          "Alert Routing",
+          "Health Checks"
+        ]
+      },
+      "notes": "OpenTelemetry is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Loki": {
+      "family": "monitoring-observability",
+      "officialDocs": [
+        "https://grafana.com/docs/loki"
+      ],
+      "productSet": [
+        {
+          "name": "Log Aggregation",
+          "role": "Grafana log storage",
+          "modules": [
+            "Distributor",
+            "Ingester",
+            "Querier",
+            "Compactor",
+            "Query Language",
+            "Caching"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Services",
+          "Users",
+          "Platform Events",
+          "Telemetry Sources"
+        ],
+        "core": [
+          "Collectors",
+          "Metrics Pipeline",
+          "Tracing Layer",
+          "Alert Engine",
+          "Log Aggregation",
+          "Analysis Rules"
+        ],
+        "data": [
+          "Distributor",
+          "Ingester",
+          "Querier",
+          "Compactor",
+          "Query Language",
+          "Caching"
+        ],
+        "ops": [
+          "SLO Tracking",
+          "Incident Response",
+          "Root Cause Analysis",
+          "Ops Automation",
+          "Alert Routing",
+          "Health Checks"
+        ]
+      },
+      "notes": "Loki is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Splunk": {
+      "family": "monitoring-observability",
+      "officialDocs": [
+        "https://docs.splunk.com"
+      ],
+      "productSet": [
+        {
+          "name": "Data Platform",
+          "role": "Search and analytics",
+          "modules": [
+            "Indexer",
+            "Search Head",
+            "Forwarder",
+            "Query Language",
+            "Dashboards",
+            "Alerts"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Services",
+          "Users",
+          "Platform Events",
+          "Telemetry Sources"
+        ],
+        "core": [
+          "Collectors",
+          "Metrics Pipeline",
+          "Tracing Layer",
+          "Alert Engine",
+          "Log Aggregation",
+          "Analysis Rules"
+        ],
+        "data": [
+          "Indexer",
+          "Search Head",
+          "Forwarder",
+          "Query Language",
+          "Dashboards",
+          "Alerts"
+        ],
+        "ops": [
+          "SLO Tracking",
+          "Incident Response",
+          "Root Cause Analysis",
+          "Ops Automation",
+          "Alert Routing",
+          "Health Checks"
+        ]
+      },
+      "notes": "Splunk is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Elastic": {
+      "family": "monitoring-observability",
+      "officialDocs": [
+        "https://www.elastic.co/guide"
+      ],
+      "productSet": [
+        {
+          "name": "Search & Analytics",
+          "role": "Search platform",
+          "modules": [
+            "Elasticsearch",
+            "Kibana",
+            "Beats",
+            "Logstash",
+            "Canvas",
+            "Alerting"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Services",
+          "Users",
+          "Platform Events",
+          "Telemetry Sources"
+        ],
+        "core": [
+          "Collectors",
+          "Metrics Pipeline",
+          "Tracing Layer",
+          "Alert Engine",
+          "Log Aggregation",
+          "Analysis Rules"
+        ],
+        "data": [
+          "Elasticsearch",
+          "Kibana",
+          "Beats",
+          "Logstash",
+          "Canvas",
+          "Alerting"
+        ],
+        "ops": [
+          "SLO Tracking",
+          "Incident Response",
+          "Root Cause Analysis",
+          "Ops Automation",
+          "Alert Routing",
+          "Health Checks"
+        ]
+      },
+      "notes": "Elastic is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "HashiCorp Vault": {
+      "family": "security-zero-trust",
+      "officialDocs": [
+        "https://www.vaultproject.io/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Secrets Management",
+          "role": "Secure secrets store",
+          "modules": [
+            "Auth Methods",
+            "Secret Engines",
+            "Audit",
+            "Encryption",
+            "Lease Management",
+            "Replication"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "Devices",
+          "Workloads",
+          "Applications"
+        ],
+        "core": [
+          "Identity Provider",
+          "Policy Engine",
+          "Access Gateway",
+          "Risk Engine",
+          "Session Broker",
+          "Trust Engine"
+        ],
+        "data": [
+          "Auth Methods",
+          "Secret Engines",
+          "Audit",
+          "Encryption",
+          "Lease Management",
+          "Replication"
+        ],
+        "ops": [
+          "MFA",
+          "Conditional Access",
+          "Threat Detection",
+          "Compliance Reporting",
+          "Access Reviews",
+          "Incident Response"
+        ]
+      },
+      "notes": "HashiCorp Vault is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Falco": {
+      "family": "security-zero-trust",
+      "officialDocs": [
+        "https://falco.org/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Runtime Security",
+          "role": "Threat detection",
+          "modules": [
+            "Kernel Module",
+            "eBPF",
+            "Rules Engine",
+            "Outputs",
+            "Plugins",
+            "Dashboard"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "Devices",
+          "Workloads",
+          "Applications"
+        ],
+        "core": [
+          "Identity Provider",
+          "Policy Engine",
+          "Access Gateway",
+          "Risk Engine",
+          "Session Broker",
+          "Trust Engine"
+        ],
+        "data": [
+          "Kernel Module",
+          "eBPF",
+          "Rules Engine",
+          "Outputs",
+          "Plugins",
+          "Dashboard"
+        ],
+        "ops": [
+          "MFA",
+          "Conditional Access",
+          "Threat Detection",
+          "Compliance Reporting",
+          "Access Reviews",
+          "Incident Response"
+        ]
+      },
+      "notes": "Falco is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Keycloak": {
+      "family": "identity-access",
+      "officialDocs": [
+        "https://www.keycloak.org/documentation.html"
+      ],
+      "productSet": [
+        {
+          "name": "Identity Server",
+          "role": "Open-source IAM",
+          "modules": [
+            "Realms",
+            "Users",
+            "Roles",
+            "Clients",
+            "Protocols",
+            "Federation"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "Applications",
+          "External IdPs",
+          "Directories"
+        ],
+        "core": [
+          "Identity Provider",
+          "Auth Flow",
+          "Session Layer",
+          "Policy Engine",
+          "Token Service",
+          "Directory Sync"
+        ],
+        "data": [
+          "Realms",
+          "Users",
+          "Roles",
+          "Clients",
+          "Protocols",
+          "Federation"
+        ],
+        "ops": [
+          "MFA",
+          "Access Reviews",
+          "Token Revocation",
+          "Compliance",
+          "Risk Detection",
+          "Revocation"
+        ]
+      },
+      "notes": "Keycloak is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "OAuth 2.0": {
+      "family": "identity-access",
+      "officialDocs": [
+        "https://oauth.net/2"
+      ],
+      "productSet": [
+        {
+          "name": "Authorization Protocol",
+          "role": "Industry standard auth",
+          "modules": [
+            "Authorization Code",
+            "Token Endpoint",
+            "Scopes",
+            "Grants",
+            "PKCE",
+            "Refresh Tokens"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "Applications",
+          "External IdPs",
+          "Directories"
+        ],
+        "core": [
+          "Identity Provider",
+          "Auth Flow",
+          "Session Layer",
+          "Policy Engine",
+          "Token Service",
+          "Directory Sync"
+        ],
+        "data": [
+          "Authorization Code",
+          "Token Endpoint",
+          "Scopes",
+          "Grants",
+          "PKCE",
+          "Refresh Tokens"
+        ],
+        "ops": [
+          "MFA",
+          "Access Reviews",
+          "Token Revocation",
+          "Compliance",
+          "Risk Detection",
+          "Revocation"
+        ]
+      },
+      "notes": "OAuth 2.0 is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "SAML": {
+      "family": "identity-access",
+      "officialDocs": [
+        "https://oasis-open.org/standards/#samlv2.0"
+      ],
+      "productSet": [
+        {
+          "name": "Enterprise Identity",
+          "role": "XML-based SSO",
+          "modules": [
+            "Identity Provider",
+            "Service Provider",
+            "Assertions",
+            "Bindings",
+            "Protocols",
+            "Metadata"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "Applications",
+          "External IdPs",
+          "Directories"
+        ],
+        "core": [
+          "Identity Provider",
+          "Auth Flow",
+          "Session Layer",
+          "Policy Engine",
+          "Token Service",
+          "Directory Sync"
+        ],
+        "data": [
+          "Identity Provider",
+          "Service Provider",
+          "Assertions",
+          "Bindings",
+          "Protocols",
+          "Metadata"
+        ],
+        "ops": [
+          "MFA",
+          "Access Reviews",
+          "Token Revocation",
+          "Compliance",
+          "Risk Detection",
+          "Revocation"
+        ]
+      },
+      "notes": "SAML is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "OpenID Connect": {
+      "family": "identity-access",
+      "officialDocs": [
+        "https://openid.net/connect"
+      ],
+      "productSet": [
+        {
+          "name": "Identity Layer",
+          "role": "OAuth 2.0 identity extension",
+          "modules": [
+            "Authorization Code",
+            "ID Token",
+            "UserInfo",
+            "Discovery",
+            "Session",
+            "Logout"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Users",
+          "Applications",
+          "External IdPs",
+          "Directories"
+        ],
+        "core": [
+          "Identity Provider",
+          "Auth Flow",
+          "Session Layer",
+          "Policy Engine",
+          "Token Service",
+          "Directory Sync"
+        ],
+        "data": [
+          "Authorization Code",
+          "ID Token",
+          "UserInfo",
+          "Discovery",
+          "Session",
+          "Logout"
+        ],
+        "ops": [
+          "MFA",
+          "Access Reviews",
+          "Token Revocation",
+          "Compliance",
+          "Risk Detection",
+          "Revocation"
+        ]
+      },
+      "notes": "OpenID Connect is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Docker Swarm": {
+      "family": "container-orchestration",
+      "officialDocs": [
+        "https://docs.docker.com/engine/swarm"
+      ],
+      "productSet": [
+        {
+          "name": "Docker Clustering",
+          "role": "Native container orchestration",
+          "modules": [
+            "Manager",
+            "Worker",
+            "Services",
+            "Tasks",
+            "Overlay Network",
+            "Secrets"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "GitOps Events",
+          "Container Registry",
+          "Workload Specs"
+        ],
+        "core": [
+          "Control Plane",
+          "Scheduler",
+          "Worker Nodes",
+          "Ingress Layer",
+          "Service Mesh",
+          "Runtime Agents"
+        ],
+        "data": [
+          "Manager",
+          "Worker",
+          "Services",
+          "Tasks",
+          "Overlay Network",
+          "Secrets"
+        ],
+        "ops": [
+          "Autoscaling",
+          "Health Checks",
+          "Rollbacks",
+          "Runtime Monitoring",
+          "Load Balancing",
+          "Resource Tuning"
+        ]
+      },
+      "notes": "Docker Swarm is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Nomad": {
+      "family": "container-orchestration",
+      "officialDocs": [
+        "https://www.nomadproject.io/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Workload Orchestrator",
+          "role": "Flexible orchestration",
+          "modules": [
+            "Agent",
+            "Server",
+            "Scheduler",
+            "Jobs",
+            "Allocations",
+            "Drivers"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "GitOps Events",
+          "Container Registry",
+          "Workload Specs"
+        ],
+        "core": [
+          "Control Plane",
+          "Scheduler",
+          "Worker Nodes",
+          "Ingress Layer",
+          "Service Mesh",
+          "Runtime Agents"
+        ],
+        "data": [
+          "Agent",
+          "Server",
+          "Scheduler",
+          "Jobs",
+          "Allocations",
+          "Drivers"
+        ],
+        "ops": [
+          "Autoscaling",
+          "Health Checks",
+          "Rollbacks",
+          "Runtime Monitoring",
+          "Load Balancing",
+          "Resource Tuning"
+        ]
+      },
+      "notes": "Nomad is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Cassandra": {
+      "family": "database",
+      "officialDocs": [
+        "https://cassandra.apache.org/doc"
+      ],
+      "productSet": [
+        {
+          "name": "Distributed NoSQL",
+          "role": "Wide-column store",
+          "modules": [
+            "Node",
+            "Cluster",
+            "Partitioner",
+            "Replication",
+            "Consistency",
+            "Read Repair"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Applications",
+          "Jobs",
+          "Analysts",
+          "API Clients"
+        ],
+        "core": [
+          "Connection Layer",
+          "Query Engine",
+          "Storage Engine",
+          "Index Layer",
+          "Transaction Manager",
+          "Schema Layer"
+        ],
+        "data": [
+          "Node",
+          "Cluster",
+          "Partitioner",
+          "Replication",
+          "Consistency",
+          "Read Repair"
+        ],
+        "ops": [
+          "Access Control",
+          "Monitoring",
+          "Recovery",
+          "Performance Tuning",
+          "Integrity Checks",
+          "Backup Policy"
+        ]
+      },
+      "notes": "Cassandra is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "ClickHouse": {
+      "family": "database",
+      "officialDocs": [
+        "https://clickhouse.com/docs/en/intro"
+      ],
+      "productSet": [
+        {
+          "name": "Analytical Database",
+          "role": "OLAP database",
+          "modules": [
+            "Table Engines",
+            "Columns",
+            "Compression",
+            "Replication",
+            "Distributed",
+            "Merges"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Applications",
+          "Jobs",
+          "Analysts",
+          "API Clients"
+        ],
+        "core": [
+          "Connection Layer",
+          "Query Engine",
+          "Storage Engine",
+          "Index Layer",
+          "Transaction Manager",
+          "Schema Layer"
+        ],
+        "data": [
+          "Table Engines",
+          "Columns",
+          "Compression",
+          "Replication",
+          "Distributed",
+          "Merges"
+        ],
+        "ops": [
+          "Access Control",
+          "Monitoring",
+          "Recovery",
+          "Performance Tuning",
+          "Integrity Checks",
+          "Backup Policy"
+        ]
+      },
+      "notes": "ClickHouse is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "TimescaleDB": {
+      "family": "database",
+      "officialDocs": [
+        "https://docs.timescale.com"
+      ],
+      "productSet": [
+        {
+          "name": "Time-Series Database",
+          "role": "PostgreSQL extension",
+          "modules": [
+            "Hypertables",
+            "Chunks",
+            "Compression",
+            "Continuous Aggregates",
+            "Retention",
+            "Automation"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Applications",
+          "Jobs",
+          "Analysts",
+          "API Clients"
+        ],
+        "core": [
+          "Connection Layer",
+          "Query Engine",
+          "Storage Engine",
+          "Index Layer",
+          "Transaction Manager",
+          "Schema Layer"
+        ],
+        "data": [
+          "Hypertables",
+          "Chunks",
+          "Compression",
+          "Continuous Aggregates",
+          "Retention",
+          "Automation"
+        ],
+        "ops": [
+          "Access Control",
+          "Monitoring",
+          "Recovery",
+          "Performance Tuning",
+          "Integrity Checks",
+          "Backup Policy"
+        ]
+      },
+      "notes": "TimescaleDB is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Pulsar": {
+      "family": "data-streaming",
+      "officialDocs": [
+        "https://pulsar.apache.org/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Messaging Platform",
+          "role": "Distributed pub-sub",
+          "modules": [
+            "Brokers",
+            "BookKeepers",
+            "Topics",
+            "Subscriptions",
+            "Geo-Replication",
+            "Functions"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Producers",
+          "Events",
+          "Sensors",
+          "Change Streams"
+        ],
+        "core": [
+          "Ingress Layer",
+          "Broker",
+          "Stream Processor",
+          "Consumer Groups",
+          "Partitions",
+          "Schema Validation"
+        ],
+        "data": [
+          "Brokers",
+          "BookKeepers",
+          "Topics",
+          "Subscriptions",
+          "Geo-Replication",
+          "Functions"
+        ],
+        "ops": [
+          "Delivery Checks",
+          "Replay",
+          "Backpressure",
+          "Monitoring",
+          "Dead Letter Queue",
+          "Latency Tracking"
+        ]
+      },
+      "notes": "Pulsar is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Great Expectations": {
+      "family": "data-engineering",
+      "officialDocs": [
+        "https://docs.greatexpectations.io"
+      ],
+      "productSet": [
+        {
+          "name": "Data Quality",
+          "role": "Data validation",
+          "modules": [
+            "Datasets",
+            "Expectations",
+            "Validation",
+            "Profiling",
+            "Data Docs",
+            "Checkpoints"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Sources",
+          "ETL Jobs",
+          "Analysts",
+          "External Feeds"
+        ],
+        "core": [
+          "Ingestion",
+          "Transformation",
+          "Validation",
+          "Scheduling",
+          "Workflow Orchestration",
+          "Quality Rules"
+        ],
+        "data": [
+          "Datasets",
+          "Expectations",
+          "Validation",
+          "Profiling",
+          "Data Docs",
+          "Checkpoints"
+        ],
+        "ops": [
+          "Quality Checks",
+          "Lineage",
+          "Monitoring",
+          "Retry Logic",
+          "SLA Tracking",
+          "Data Governance"
+        ]
+      },
+      "notes": "Great Expectations is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Apache Spark": {
+      "family": "data-engineering",
+      "officialDocs": [
+        "https://spark.apache.org/docs/latest"
+      ],
+      "productSet": [
+        {
+          "name": "Distributed Computing",
+          "role": "Large-scale data processing",
+          "modules": [
+            "Resilient RDD",
+            "DataFrames",
+            "SQL",
+            "MLlib",
+            "Streaming",
+            "GraphX"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Sources",
+          "ETL Jobs",
+          "Analysts",
+          "External Feeds"
+        ],
+        "core": [
+          "Ingestion",
+          "Transformation",
+          "Validation",
+          "Scheduling",
+          "Workflow Orchestration",
+          "Quality Rules"
+        ],
+        "data": [
+          "Resilient RDD",
+          "DataFrames",
+          "SQL",
+          "MLlib",
+          "Streaming",
+          "GraphX"
+        ],
+        "ops": [
+          "Quality Checks",
+          "Lineage",
+          "Monitoring",
+          "Retry Logic",
+          "SLA Tracking",
+          "Data Governance"
+        ]
+      },
+      "notes": "Apache Spark is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Apache Flink": {
+      "family": "data-engineering",
+      "officialDocs": [
+        "https://nightlies.apache.org/flink/flink-docs-master"
+      ],
+      "productSet": [
+        {
+          "name": "Stream Processing",
+          "role": "Unified streaming framework",
+          "modules": [
+            "Source",
+            "Operator",
+            "Sink",
+            "Window",
+            "State",
+            "Checkpoint"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Sources",
+          "ETL Jobs",
+          "Analysts",
+          "External Feeds"
+        ],
+        "core": [
+          "Ingestion",
+          "Transformation",
+          "Validation",
+          "Scheduling",
+          "Workflow Orchestration",
+          "Quality Rules"
+        ],
+        "data": [
+          "Source",
+          "Operator",
+          "Sink",
+          "Window",
+          "State",
+          "Checkpoint"
+        ],
+        "ops": [
+          "Quality Checks",
+          "Lineage",
+          "Monitoring",
+          "Retry Logic",
+          "SLA Tracking",
+          "Data Governance"
+        ]
+      },
+      "notes": "Apache Flink is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "HAProxy": {
+      "family": "networking",
+      "officialDocs": [
+        "http://www.haproxy.org/#docs"
+      ],
+      "productSet": [
+        {
+          "name": "Load Balancer",
+          "role": "High-availability proxy",
+          "modules": [
+            "Frontend",
+            "Backend",
+            "ACL",
+            "Routing",
+            "Health Check",
+            "Monitoring"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Clients",
+          "Edge Traffic",
+          "Internal Services",
+          "Gateway Traffic"
+        ],
+        "core": [
+          "Ingress",
+          "Load Balancer",
+          "Routing Layer",
+          "Policy Engine",
+          "Proxy Layer",
+          "Service Discovery"
+        ],
+        "data": [
+          "Frontend",
+          "Backend",
+          "ACL",
+          "Routing",
+          "Health Check",
+          "Monitoring"
+        ],
+        "ops": [
+          "Availability",
+          "TLS",
+          "Latency Tracking",
+          "Failover",
+          "Rules Enforcement",
+          "Performance Tuning"
+        ]
+      },
+      "notes": "HAProxy is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Envoy": {
+      "family": "networking",
+      "officialDocs": [
+        "https://www.envoyproxy.io/docs/envoy/latest"
+      ],
+      "productSet": [
+        {
+          "name": "Service Proxy",
+          "role": "Communication bus",
+          "modules": [
+            "Listener",
+            "Route",
+            "Cluster",
+            "Endpoint",
+            "Filters",
+            "Observability"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Clients",
+          "Edge Traffic",
+          "Internal Services",
+          "Gateway Traffic"
+        ],
+        "core": [
+          "Ingress",
+          "Load Balancer",
+          "Routing Layer",
+          "Policy Engine",
+          "Proxy Layer",
+          "Service Discovery"
+        ],
+        "data": [
+          "Listener",
+          "Route",
+          "Cluster",
+          "Endpoint",
+          "Filters",
+          "Observability"
+        ],
+        "ops": [
+          "Availability",
+          "TLS",
+          "Latency Tracking",
+          "Failover",
+          "Rules Enforcement",
+          "Performance Tuning"
+        ]
+      },
+      "notes": "Envoy is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Istio": {
+      "family": "networking",
+      "officialDocs": [
+        "https://istio.io/latest/docs"
+      ],
+      "productSet": [
+        {
+          "name": "Service Mesh",
+          "role": "Microservices platform",
+          "modules": [
+            "Pilot",
+            "Mixer",
+            "Citadel",
+            "Gateway",
+            "VirtualService",
+            "DestinationRule"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Clients",
+          "Edge Traffic",
+          "Internal Services",
+          "Gateway Traffic"
+        ],
+        "core": [
+          "Ingress",
+          "Load Balancer",
+          "Routing Layer",
+          "Policy Engine",
+          "Proxy Layer",
+          "Service Discovery"
+        ],
+        "data": [
+          "Pilot",
+          "Mixer",
+          "Citadel",
+          "Gateway",
+          "VirtualService",
+          "DestinationRule"
+        ],
+        "ops": [
+          "Availability",
+          "TLS",
+          "Latency Tracking",
+          "Failover",
+          "Rules Enforcement",
+          "Performance Tuning"
+        ]
+      },
+      "notes": "Istio is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Linkerd": {
+      "family": "networking",
+      "officialDocs": [
+        "https://linkerd.io/2.14/overview"
+      ],
+      "productSet": [
+        {
+          "name": "Lightweight Service Mesh",
+          "role": "Minimal mesh",
+          "modules": [
+            "Data Plane",
+            "Control Plane",
+            "Proxy",
+            "Identity",
+            "Policy",
+            "Telemetry"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Clients",
+          "Edge Traffic",
+          "Internal Services",
+          "Gateway Traffic"
+        ],
+        "core": [
+          "Ingress",
+          "Load Balancer",
+          "Routing Layer",
+          "Policy Engine",
+          "Proxy Layer",
+          "Service Discovery"
+        ],
+        "data": [
+          "Data Plane",
+          "Control Plane",
+          "Proxy",
+          "Identity",
+          "Policy",
+          "Telemetry"
+        ],
+        "ops": [
+          "Availability",
+          "TLS",
+          "Latency Tracking",
+          "Failover",
+          "Rules Enforcement",
+          "Performance Tuning"
+        ]
+      },
+      "notes": "Linkerd is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Cilium": {
+      "family": "networking",
+      "officialDocs": [
+        "https://docs.cilium.io"
+      ],
+      "productSet": [
+        {
+          "name": "eBPF Networking",
+          "role": "Container networking",
+          "modules": [
+            "eBPF Programs",
+            "Network Policies",
+            "Service Mesh",
+            "Load Balancing",
+            "Debugging",
+            "Monitoring"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Clients",
+          "Edge Traffic",
+          "Internal Services",
+          "Gateway Traffic"
+        ],
+        "core": [
+          "Ingress",
+          "Load Balancer",
+          "Routing Layer",
+          "Policy Engine",
+          "Proxy Layer",
+          "Service Discovery"
+        ],
+        "data": [
+          "eBPF Programs",
+          "Network Policies",
+          "Service Mesh",
+          "Load Balancing",
+          "Debugging",
+          "Monitoring"
+        ],
+        "ops": [
+          "Availability",
+          "TLS",
+          "Latency Tracking",
+          "Failover",
+          "Rules Enforcement",
+          "Performance Tuning"
+        ]
+      },
+      "notes": "Cilium is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "WireGuard": {
+      "family": "networking",
+      "officialDocs": [
+        "https://www.wireguard.com/quickstart"
+      ],
+      "productSet": [
+        {
+          "name": "VPN Protocol",
+          "role": "Modern VPN",
+          "modules": [
+            "Kernel Module",
+            "Interface",
+            "Peer",
+            "Handshake",
+            "Transport",
+            "Encryption"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Clients",
+          "Edge Traffic",
+          "Internal Services",
+          "Gateway Traffic"
+        ],
+        "core": [
+          "Ingress",
+          "Load Balancer",
+          "Routing Layer",
+          "Policy Engine",
+          "Proxy Layer",
+          "Service Discovery"
+        ],
+        "data": [
+          "Kernel Module",
+          "Interface",
+          "Peer",
+          "Handshake",
+          "Transport",
+          "Encryption"
+        ],
+        "ops": [
+          "Availability",
+          "TLS",
+          "Latency Tracking",
+          "Failover",
+          "Rules Enforcement",
+          "Performance Tuning"
+        ]
+      },
+      "notes": "WireGuard is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "JetBrains IntelliJ": {
+      "family": "developer-tools",
+      "officialDocs": [
+        "https://www.jetbrains.com/help/idea"
+      ],
+      "productSet": [
+        {
+          "name": "IDE",
+          "role": "Java and polyglot IDE",
+          "modules": [
+            "Editor",
+            "Indexing",
+            "Inspections",
+            "Refactoring",
+            "Debugging",
+            "Plugins"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Workspace",
+          "Repositories",
+          "IDE Sessions"
+        ],
+        "core": [
+          "Editor / IDE",
+          "Version Control",
+          "Build Tools",
+          "Testing Layer",
+          "Package Manager",
+          "Task Runner"
+        ],
+        "data": [
+          "Editor",
+          "Indexing",
+          "Inspections",
+          "Refactoring",
+          "Debugging",
+          "Plugins"
+        ],
+        "ops": [
+          "Linting",
+          "Debugging",
+          "Release Steps",
+          "Developer Productivity",
+          "Code Review",
+          "Automation"
+        ]
+      },
+      "notes": "JetBrains IntelliJ is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Bitbucket": {
+      "family": "developer-tools",
+      "officialDocs": [
+        "https://bitbucket.org/product/guides"
+      ],
+      "productSet": [
+        {
+          "name": "Git Platform",
+          "role": "Atlassian source control",
+          "modules": [
+            "Repositories",
+            "Pipelines",
+            "Pull Requests",
+            "Issues",
+            "Permissions",
+            "Webhooks"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Workspace",
+          "Repositories",
+          "IDE Sessions"
+        ],
+        "core": [
+          "Editor / IDE",
+          "Version Control",
+          "Build Tools",
+          "Testing Layer",
+          "Package Manager",
+          "Task Runner"
+        ],
+        "data": [
+          "Repositories",
+          "Pipelines",
+          "Pull Requests",
+          "Issues",
+          "Permissions",
+          "Webhooks"
+        ],
+        "ops": [
+          "Linting",
+          "Debugging",
+          "Release Steps",
+          "Developer Productivity",
+          "Code Review",
+          "Automation"
+        ]
+      },
+      "notes": "Bitbucket is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Cursor": {
+      "family": "developer-tools",
+      "officialDocs": [
+        "https://cursor.sh"
+      ],
+      "productSet": [
+        {
+          "name": "AI Code Editor",
+          "role": "IDE with AI assistance",
+          "modules": [
+            "Editor",
+            "AI Chat",
+            "Code Completion",
+            "Terminal",
+            "Extensions",
+            "Workspace"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Workspace",
+          "Repositories",
+          "IDE Sessions"
+        ],
+        "core": [
+          "Editor / IDE",
+          "Version Control",
+          "Build Tools",
+          "Testing Layer",
+          "Package Manager",
+          "Task Runner"
+        ],
+        "data": [
+          "Editor",
+          "AI Chat",
+          "Code Completion",
+          "Terminal",
+          "Extensions",
+          "Workspace"
+        ],
+        "ops": [
+          "Linting",
+          "Debugging",
+          "Release Steps",
+          "Developer Productivity",
+          "Code Review",
+          "Automation"
+        ]
+      },
+      "notes": "Cursor is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "OWASP": {
+      "family": "devsecops",
+      "officialDocs": [
+        "https://owasp.org/www-project-top-ten"
+      ],
+      "productSet": [
+        {
+          "name": "Security Standards",
+          "role": "Web application security",
+          "modules": [
+            "OWASP Top 10",
+            "Testing Guide",
+            "Cheat Sheets",
+            "Projects",
+            "Community",
+            "Training"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Code Repos",
+          "Pipelines",
+          "Artifacts"
+        ],
+        "core": [
+          "Static Analysis",
+          "Dependency Scan",
+          "Secrets Detection",
+          "Policy Controls",
+          "Risk Prioritization",
+          "Remediation Workflow"
+        ],
+        "data": [
+          "OWASP Top 10",
+          "Testing Guide",
+          "Cheat Sheets",
+          "Projects",
+          "Community",
+          "Training"
+        ],
+        "ops": [
+          "Guardrails",
+          "Vulnerability Fixing",
+          "Alerts",
+          "Audit Trails",
+          "Approval Gates",
+          "Runtime Checks"
+        ]
+      },
+      "notes": "OWASP is modeled from official documentation. Product-specific architecture with 1 component."
+    },
+    "Sonarqube": {
+      "family": "devsecops",
+      "officialDocs": [
+        "https://docs.sonarqube.org/latest"
+      ],
+      "productSet": [
+        {
+          "name": "Code Quality Platform",
+          "role": "Code analysis and quality",
+          "modules": [
+            "Scanner",
+            "Server",
+            "Analysis",
+            "Quality Gate",
+            "Issues",
+            "Reporting"
+          ]
+        }
+      ],
+      "diagramBlueprint": {
+        "entry": [
+          "Developers",
+          "Code Repos",
+          "Pipelines",
+          "Artifacts"
+        ],
+        "core": [
+          "Static Analysis",
+          "Dependency Scan",
+          "Secrets Detection",
+          "Policy Controls",
+          "Risk Prioritization",
+          "Remediation Workflow"
+        ],
+        "data": [
+          "Scanner",
+          "Server",
+          "Analysis",
+          "Quality Gate",
+          "Issues",
+          "Reporting"
+        ],
+        "ops": [
+          "Guardrails",
+          "Vulnerability Fixing",
+          "Alerts",
+          "Audit Trails",
+          "Approval Gates",
+          "Runtime Checks"
+        ]
+      },
+      "notes": "Sonarqube is modeled from official documentation. Product-specific architecture with 1 component."
+    }
+  }
+}

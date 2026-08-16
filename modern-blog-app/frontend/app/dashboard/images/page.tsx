@@ -427,7 +427,7 @@ export default function ImagesPage() {
         </h1>
       </div>
       <p className="text-slate-800 dark:text-slate-200 mb-8">
-        Upload and manage your blog featured images with automatic compression
+        Upload and manage featured images while generating architecture diagrams for active DB tools and the industry catalog.
       </p>
 
       {/* Upload Section */}
@@ -435,7 +435,7 @@ export default function ImagesPage() {
         <div className="mb-6 rounded-lg border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-800 dark:bg-cyan-900/20">
           <h3 className="text-lg font-semibold text-cyan-900 dark:text-cyan-200">AI Tool Images (Admin Batch)</h3>
           <p className="mt-1 text-sm text-cyan-800 dark:text-cyan-300">
-            Generate tool-wise learning images and track exactly how many are done.
+            Generate tool-wise architecture diagrams for all active DB entries and matching industry catalog tools.
           </p>
 
           <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-4">

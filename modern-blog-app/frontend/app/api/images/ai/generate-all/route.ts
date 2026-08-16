@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import industryToolsData from '@/data/industry-tools.json';
 import { verifyAdminAuth } from '@/lib/apiAuth';
-import { renderArchitectureDiagram } from '@/lib/architectureDiagram';
+import { findToolArchitectureEntry, renderArchitectureDiagram, resolveArchitectureProfile } from '@/lib/architectureDiagram';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 45;
@@ -132,6 +133,28 @@ function getLearningGuide(mode: BatchGenerateBody['learningMode']): string {
   return 'Use three layers in one visual: Basic concepts, Intermediate workflow, and Advanced operations.';
 }
 
+function getIndustryCatalogTools(category?: string) {
+  const categories = Array.isArray((industryToolsData as any)?.categories) ? (industryToolsData as any).categories : [];
+
+  return categories
+    .filter((group: any) => {
+      if (!category) return true;
+      const target = category.toLowerCase();
+      return (
+        String(group.displayName || '').toLowerCase().includes(target) ||
+        String(group.id || '').toLowerCase().includes(target)
+      );
+    })
+    .flatMap((group: any) =>
+      (group.tools || []).map((tool: any) => ({
+        tool_name: String(tool.name || '').trim(),
+        category: String(group.displayName || group.id || 'Industry Catalog'),
+        description: String(tool.description || ''),
+      }))
+    )
+    .filter((tool: any) => tool.tool_name);
+}
+
 function buildPrompt(input: {
   toolName: string;
   category: string;
@@ -247,16 +270,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       countQuery = countQuery.ilike('category', category);
     }
 
-    const { count: totalCount } = await countQuery;
-    const totalTools = totalCount || 0;
+    const { count: databaseToolCount } = await countQuery;
+    const totalDbTools = databaseToolCount || 0;
 
     let toolsQuery = supabase
       .from('tools_coverage_metadata')
       .select('tool_name, category, description, priority')
       .eq('is_active', true)
       .order('priority', { ascending: false })
-      .order('tool_name', { ascending: true })
-      .range(offset, offset + limit - 1);
+      .order('tool_name', { ascending: true });
 
     if (category) {
       toolsQuery = toolsQuery.ilike('category', category);
@@ -267,24 +289,50 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: toolsError.message }, { status: 500 });
     }
 
+    const dbTools = (tools || []).map((tool: any) => ({
+      tool_name: String(tool.tool_name || '').trim(),
+      category: String(tool.category || 'General'),
+      description: String(tool.description || ''),
+    }));
+
+    const industryTools = getIndustryCatalogTools(category);
+    const seen = new Set<string>();
+    const allTools = [...dbTools, ...industryTools].filter((tool) => {
+      const key = (tool.tool_name || '').toLowerCase();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    const limitedTools = allTools.slice(offset, offset + limit);
+
     const generated: Array<Record<string, any>> = [];
     const failed: Array<Record<string, any>> = [];
     let quotaStop = false;
 
-    for (const tool of tools || []) {
+    for (const tool of limitedTools) {
       const toolName = sanitizeText(tool.tool_name || '', 90);
       if (!toolName) continue;
 
       try {
         const defaults = categoryDefaults(tool.category || 'General');
-        const generatedImage = await renderArchitectureDiagram({
-          toolName,
-          category: tool.category || 'General',
-          description: tool.description || defaults.useCase,
+        const toolCategory = tool.category || category || 'General';
+        const registryEntry = findToolArchitectureEntry(toolName, toolCategory);
+        const resolvedProfile = resolveArchitectureProfile(toolName, toolCategory, tool.description || defaults.useCase, defaults.useCase) || {
           components: defaults.modules,
           keyFeatures: defaults.features,
-          learningMode: body.learningMode || 'all-levels',
+          description: tool.description || defaults.useCase,
           useCase: defaults.useCase,
+        };
+
+        const generatedImage = await renderArchitectureDiagram({
+          toolName,
+          category: toolCategory,
+          description: resolvedProfile.description,
+          components: resolvedProfile.components,
+          keyFeatures: resolvedProfile.keyFeatures,
+          learningMode: body.learningMode || 'all-levels',
+          useCase: resolvedProfile.useCase,
         });
         const uploaded = await uploadImageToSupabase({
           supabase,
@@ -293,6 +341,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           toolName,
           model: generatedImage.renderer,
         });
+
+        await supabase
+          .from('tools_coverage_metadata')
+          .update({
+            architecture_family: registryEntry?.family || toolCategory,
+            architecture_metadata: registryEntry ? {
+              family: registryEntry.family,
+              productSet: registryEntry.productSet,
+              diagramBlueprint: registryEntry.diagramBlueprint,
+              officialDocs: registryEntry.officialDocs || {},
+              description: registryEntry.description || tool.description || resolvedProfile.description,
+              notes: registryEntry.notes || resolvedProfile.useCase,
+            } : {},
+            diagram_image_path: uploaded.path,
+            diagram_updated_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('tool_name', toolName);
 
         generated.push({
           tool: toolName,
@@ -317,13 +383,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const processed = generated.length + failed.length;
     const nextOffset = offset + processed;
-    const hasMore = !quotaStop && nextOffset < totalTools;
+    const combinedToolCount = allTools.length;
+    const hasMore = !quotaStop && nextOffset < combinedToolCount;
 
     const responseStatus = generated.length === 0 && failed.length > 0 ? 502 : failed.length > 0 ? 207 : 200;
 
     return NextResponse.json({
       success: generated.length > 0 || failed.length === 0,
-      total_tools: totalTools,
+      total_tools: combinedToolCount,
       offset,
       requested_limit: limit,
       processed,

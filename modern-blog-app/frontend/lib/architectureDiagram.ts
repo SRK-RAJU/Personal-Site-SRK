@@ -1,5 +1,134 @@
+import registryData from '@/data/tool-architecture-registry.json';
+import { getToolArchitectureBlueprint } from '@/lib/toolArchitectureBlueprints';
+
 const KROKI_RENDER_URL = process.env.KROKI_RENDER_URL || 'https://kroki.io/plantuml/png';
 const MAX_LABEL_LENGTH = 80;
+
+interface RegistryProductSet {
+  name: string;
+  role: string;
+  modules: string[];
+}
+
+interface RegistryArchitectureEntry {
+  family: string;
+  productSet: RegistryProductSet[];
+  diagramBlueprint: {
+    entry: string[];
+    core: string[];
+    data: string[];
+    ops: string[];
+  };
+  officialDocs?: {
+    home?: string;
+    architecture?: string;
+    documentation?: string;
+  };
+  description?: string;
+  notes?: string;
+}
+
+const registryTools = (registryData as any)?.tools ?? {};
+const TOOL_NAME_ALIASES: Record<string, string> = {
+  'microsoft azure': 'Azure',
+  'google cloud': 'Google Cloud Platform',
+  'google cloud platform': 'Google Cloud Platform',
+  'anthropic claude': 'Anthropic',
+  'claude': 'Anthropic',
+  'github actions': 'GitHub Actions',
+  'gitlab ci': 'GitLab CI',
+  'azure devops': 'Azure DevOps Pipelines',
+  'azure devops pipelines': 'Azure DevOps Pipelines',
+  'google gemini': 'Google Gemini',
+  'cloudflare': 'Cloudflare',
+  'mongodb': 'MongoDB',
+  'postgresql': 'PostgreSQL',
+  'elastic': 'ELK Stack',
+  'elasticsearch': 'ELK Stack',
+  'vs code': 'VS Code',
+  'jetbrains intellij': 'JetBrains IntelliJ',
+  'jetbrains': 'JetBrains IntelliJ',
+  'hashicorp vault': 'HashiCorp Vault',
+  'openid connect': 'OpenID Connect',
+  'oauth 2.0': 'OAuth 2.0',
+};
+
+function normalizeToolName(value: string): string {
+  const cleaned = (value || '')
+    .toLowerCase()
+    .replace(/\s*\([^)]*\)/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return cleaned || '';
+}
+
+export function findToolArchitectureEntry(toolName: string, category?: string): RegistryArchitectureEntry | null {
+  const rawName = (toolName || '').trim();
+  if (!rawName) return null;
+
+  const aliases = [rawName, TOOL_NAME_ALIASES[normalizeToolName(rawName)] || '', rawName.replace(/\s+\&\s+/g, ' and ')];
+  const normalizedCandidates = Array.from(new Set(aliases.map(normalizeToolName).filter(Boolean)));
+
+  for (const [key, value] of Object.entries(registryTools)) {
+    const normalizedKey = normalizeToolName(key);
+    if (normalizedCandidates.includes(normalizedKey)) {
+      return value as RegistryArchitectureEntry;
+    }
+  }
+
+  const categoryMatch = (category || '').toLowerCase();
+  if (categoryMatch) {
+    for (const [key, value] of Object.entries(registryTools)) {
+      const entry = value as RegistryArchitectureEntry;
+      const familyName = (entry.family || '').toLowerCase();
+      if (familyName.includes(categoryMatch) || categoryMatch.includes(familyName)) {
+        return entry;
+      }
+    }
+  }
+
+  return null;
+}
+
+export function resolveArchitectureProfile(toolName: string, category?: string, description?: string, useCase?: string) {
+  const registryEntry = findToolArchitectureEntry(toolName, category);
+
+  if (!registryEntry) {
+    return null;
+  }
+
+  const productModules = (registryEntry.productSet || []).flatMap((product) => product.modules || []);
+  const blueprintModules = [
+    ...(registryEntry.diagramBlueprint?.entry || []),
+    ...(registryEntry.diagramBlueprint?.core || []),
+    ...(registryEntry.diagramBlueprint?.data || []),
+    ...(registryEntry.diagramBlueprint?.ops || []),
+  ];
+
+  return {
+    components: uniqueLabels(Array.from(new Set([...productModules, ...blueprintModules])), [
+      toolName || 'Platform',
+      'Control Plane',
+      'Data Plane',
+      'Integrations',
+      'Observability',
+    ]),
+    keyFeatures: uniqueLabels(Array.from(new Set([
+      ...(registryEntry.notes ? [registryEntry.notes] : []),
+      ...blueprintModules,
+      ...(registryEntry.productSet || []).map((product) => product.role),
+    ])), [
+      'Policy management',
+      'Access control',
+      'Automation',
+      'Monitoring',
+    ]),
+    description: description || registryEntry.description || `${toolName} architecture overview`,
+    useCase: useCase || registryEntry.notes || `Enterprise deployment and operations of ${toolName}`,
+  };
+}
 
 type DiagramLearningMode = 'basic' | 'intermediate' | 'advanced' | 'all-levels';
 
@@ -282,9 +411,50 @@ function buildToolSpecificProfile(toolName: string, category: string, components
   };
 }
 
+function buildToolInternalArchitecture(toolName: string, category: string, components: string[], features: string[]) {
+  const baseToolName = toolName || 'Platform';
+  const family = getToolArchitectureBlueprint(toolName, category);
+  const baseCore = [
+    `${baseToolName} API Layer`,
+    `${baseToolName} Runtime`,
+    `${baseToolName} Control Plane`,
+    `${baseToolName} Execution Engine`,
+    `${baseToolName} Routing Layer`,
+    `${baseToolName} Service Mesh`,
+  ];
+  const baseData = [
+    `${baseToolName} State Store`,
+    `${baseToolName} Metadata`,
+    `${baseToolName} Cache`,
+    `${baseToolName} Event Stream`,
+    `${baseToolName} Config Layer`,
+    `${baseToolName} Artifact Store`,
+  ];
+  const baseOps = [
+    `${baseToolName} Security`,
+    `${baseToolName} Observability`,
+    `${baseToolName} Recovery`,
+    `${baseToolName} Policy Engine`,
+    `${baseToolName} Audit Trail`,
+    `${baseToolName} Automation`,
+  ];
+
+  return {
+    entry: [
+      `${baseToolName} Client`,
+      `${baseToolName} Access Layer`,
+      `${baseToolName} Integration Inputs`,
+      ...family.entry,
+    ],
+    core: Array.from(new Set([...baseCore, ...family.core, ...components, ...features])).slice(0, 6),
+    data: Array.from(new Set([...baseData, ...family.data, ...components])).slice(0, 6),
+    ops: Array.from(new Set([...baseOps, ...family.ops, ...features])).slice(0, 6),
+  };
+}
+
 export function buildArchitecturePlantUml(input: ArchitectureDiagramInput): string {
   const toolName = cleanLabel(input.toolName, 'Technology Platform');
-  const title = cleanLabel(input.postTitle || `${toolName} architecture`, `${toolName} architecture`);
+  const title = cleanLabel(input.postTitle || `${toolName} tool architecture`, `${toolName} tool architecture`);
   const category = cleanLabel(input.category || 'Technology', 'Technology');
   const description = cleanLabel(input.description || '', '');
   const audience = cleanLabel(input.audience || 'Engineers and technology learners', 'Engineers and technology learners');
@@ -307,13 +477,32 @@ export function buildArchitecturePlantUml(input: ArchitectureDiagramInput): stri
   ]);
   const mode = input.learningMode || 'all-levels';
   const theme = themeForTool(toolName);
-  const profile = buildToolSpecificProfile(toolName, category, components, features);
-  const layoutDirection = Array.from(toolName).reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % 2 === 0 ? 'left to right direction' : 'top to bottom direction';
+  const registryEntry = findToolArchitectureEntry(toolName, category);
+  const resolvedProfile = resolveArchitectureProfile(toolName, category, description, useCase);
+  const finalComponents = resolvedProfile?.components || components;
+  const finalFeatures = resolvedProfile?.keyFeatures || features;
+  const profile = buildToolSpecificProfile(toolName, category, finalComponents, finalFeatures);
+  const blueprint = registryEntry
+    ? {
+        title: registryEntry.family || `${toolName} architecture`,
+        entry: registryEntry.diagramBlueprint.entry || [],
+        core: registryEntry.diagramBlueprint.core || [],
+        data: registryEntry.diagramBlueprint.data || [],
+        ops: registryEntry.diagramBlueprint.ops || [],
+      }
+    : getToolArchitectureBlueprint(toolName, category);
+  const architecture = buildToolInternalArchitecture(toolName, category, finalComponents, finalFeatures);
+  const layoutDirection = 'left to right direction';
 
-  const componentIds = profile.core.map((_, index) => `component${index}`);
-  const entryIds = profile.entry.map((_, index) => `entry${index}`);
-  const opsIds = profile.ops.map((_, index) => `ops${index}`);
-  const visibleFeatureIds = features.slice(0, 4).map((_, index) => `feature${index}`);
+  const entryModules = Array.from(new Set([...architecture.entry, ...blueprint.entry, ...profile.entry])).slice(0, 4);
+  const coreModules = Array.from(new Set([...architecture.core, ...blueprint.core, ...profile.core])).slice(0, 6);
+  const dataModules = Array.from(new Set([...architecture.data, ...blueprint.data, ...finalComponents])).slice(0, 6);
+  const opsModules = Array.from(new Set([...architecture.ops, ...blueprint.ops, ...profile.ops, ...finalFeatures])).slice(0, 6);
+
+  const entryIds = entryModules.map((_, index) => `entry${index}`);
+  const coreIds = coreModules.map((_, index) => `core${index}`);
+  const dataIds = dataModules.map((_, index) => `data${index}`);
+  const opsIds = opsModules.map((_, index) => `ops${index}`);
 
   const lines = [
     '@startuml',
@@ -337,26 +526,26 @@ export function buildArchitecturePlantUml(input: ArchitectureDiagramInput): stri
     `  BorderColor ${theme.accent}`,
     '  FontColor #0F172A',
     '}',
-    `rectangle "Users / Teams" as users`,
-    'package "Entry and access" {',
+    `actor "Users / Teams" as users`,
+    'package "Tool surface" {',
   ];
 
-  entryIds.forEach((id, index) => {
-    lines.push(`  rectangle "${escapePlantUmlText(profile.entry[index])}" as ${id}`);
+  entryModules.forEach((part, index) => {
+    lines.push(`  rectangle "${escapePlantUmlText(part)}" as ${entryIds[index]}`);
   });
-  lines.push('}', 'package "Core platform" {');
-  componentIds.forEach((id, index) => {
-    lines.push(`  rectangle "${escapePlantUmlText(profile.core[index])}" as ${id}`);
+  lines.push('}', 'package "Core execution" {');
+  coreModules.forEach((part, index) => {
+    lines.push(`  rectangle "${escapePlantUmlText(part)}" as ${coreIds[index]}`);
   });
-  lines.push('}', 'package "Operations and control" {');
-  opsIds.forEach((id, index) => {
-    lines.push(`  rectangle "${escapePlantUmlText(profile.ops[index])}" as ${id}`);
+  lines.push('}', 'package "Data and integrations" {');
+  dataModules.forEach((part, index) => {
+    lines.push(`  rectangle "${escapePlantUmlText(part)}" as ${dataIds[index]}`);
   });
-  lines.push('}', 'package "Learning highlights" {');
-  visibleFeatureIds.forEach((id, index) => {
-    lines.push(`  rectangle "${escapePlantUmlText(features[index] || 'Operational intelligence')}" as ${id}`);
+  lines.push('}', 'package "Operations and governance" {');
+  opsModules.forEach((part, index) => {
+    lines.push(`  rectangle "${escapePlantUmlText(part)}" as ${opsIds[index]}`);
   });
-  lines.push('}', `rectangle "${mode === 'basic' ? 'Basics' : mode === 'intermediate' ? 'Workflow' : 'Advanced Ops'}" as governance`);
+  lines.push('}', `rectangle "${mode === 'basic' ? 'Basics' : mode === 'intermediate' ? 'Workflow' : mode === 'advanced' ? 'Advanced Ops' : 'Basics | Workflow | Advanced Ops'}" as learningGate`);
 
   lines.push('users --> entry0');
   entryIds.forEach((id, index) => {
@@ -365,32 +554,43 @@ export function buildArchitecturePlantUml(input: ArchitectureDiagramInput): stri
     }
   });
 
-  if (entryIds.length > 0 && componentIds.length > 0) {
-    lines.push(`${entryIds[entryIds.length - 1]} --> ${componentIds[0]}`);
+  if (entryIds.length > 0 && coreIds.length > 0) {
+    lines.push(`${entryIds[entryIds.length - 1]} --> ${coreIds[0]}`);
   }
 
-  componentIds.forEach((id, index) => {
-    if (index < componentIds.length - 1) {
-      lines.push(`${id} --> ${componentIds[index + 1]}`);
+  coreIds.forEach((id, index) => {
+    if (index < coreIds.length - 1) {
+      lines.push(`${id} --> ${coreIds[index + 1]}`);
+    }
+    if (dataIds.length > 0) {
+      lines.push(`${id} --> ${dataIds[index % dataIds.length]}`);
     }
     if (opsIds.length > 0) {
-      lines.push(`${id} ..> ${opsIds[index % opsIds.length]}`);
-    }
-    if (visibleFeatureIds.length > 0) {
-      lines.push(`${id} ..> ${visibleFeatureIds[index % visibleFeatureIds.length]}`);
+      lines.push(`${id} ..> ${opsIds[index % opsIds.length]} : control`);
     }
   });
 
-  if (opsIds.length > 0 && componentIds.length > 0) {
-    lines.push(`${opsIds[opsIds.length - 1]} --> governance`);
+  if (dataIds.length > 0 && opsIds.length > 0) {
+    dataIds.forEach((id, index) => {
+      const next = dataIds[index + 1] || opsIds[0];
+      if (index < dataIds.length - 1) {
+        lines.push(`${id} --> ${next}`);
+      }
+    });
+    lines.push(`${dataIds[dataIds.length - 1]} --> ${opsIds[0]}`);
   }
 
-  if (visibleFeatureIds.length > 0 && opsIds.length > 0) {
-    lines.push(`${visibleFeatureIds[0]} ..> ${opsIds[0]} : feedback`);
-  }
+  opsIds.forEach((id, index) => {
+    if (index < opsIds.length - 1) {
+      lines.push(`${id} --> ${opsIds[index + 1]}`);
+    }
+  });
+
+  lines.push('core0 ..> learningGate : learning path');
+  lines.push('ops0 ..> learningGate : governance');
 
   lines.push(
-    `note right of governance\nOriginal conceptual architecture for ${escapePlantUmlText(toolName)}\nCategory: ${escapePlantUmlText(category)}\nLearning: ${escapePlantUmlText(learningLabel(mode))}\nAudience: ${escapePlantUmlText(audience)}\nUse case: ${escapePlantUmlText(useCase)}\nend note`,
+    `note right of learningGate\n${escapePlantUmlText(toolName)} internal architecture\nFamily: ${escapePlantUmlText(blueprint.title)}\nCategory: ${escapePlantUmlText(category)}\nLearning: ${escapePlantUmlText(learningLabel(mode))}\nAudience: ${escapePlantUmlText(audience)}\nUse case: ${escapePlantUmlText(useCase)}\nend note`,
     '@enduml',
   );
 
