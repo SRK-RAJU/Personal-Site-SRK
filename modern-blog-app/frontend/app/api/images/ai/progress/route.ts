@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/apiAuth';
+import industryToolsData from '@/data/industry-tools.json';
 
 export const dynamic = 'force-dynamic';
 
@@ -60,6 +61,28 @@ async function listAllStorageFiles(supabase: any, bucket: string): Promise<any[]
   return files;
 }
 
+function getIndustryCatalogTools(category?: string) {
+  const categories = Array.isArray((industryToolsData as any)?.categories) ? (industryToolsData as any).categories : [];
+
+  return categories
+    .filter((group: any) => {
+      if (!category) return true;
+      const target = category.toLowerCase();
+      return (
+        String(group.displayName || '').toLowerCase().includes(target) ||
+        String(group.id || '').toLowerCase().includes(target)
+      );
+    })
+    .flatMap((group: any) =>
+      (group.tools || []).map((tool: any) => ({
+        tool_name: String(tool.name || '').trim(),
+        category: String(group.displayName || group.id || 'Industry Catalog'),
+        description: String(tool.description || ''),
+      }))
+    )
+    .filter((tool: any) => tool.tool_name);
+}
+
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const auth = await verifyAdminAuth(request);
@@ -91,10 +114,26 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: toolsError.message }, { status: 500 });
     }
 
+    const dbTools = (toolsData || []).map((tool: any) => ({
+      tool_name: String(tool.tool_name || '').trim(),
+      category: String(tool.category || 'General'),
+      description: String(tool.description || ''),
+    }));
+
+    // Merge with industry catalog tools
+    const industryTools = getIndustryCatalogTools(category);
+    const seen = new Set<string>();
+    const allTools = [...dbTools, ...industryTools].filter((tool) => {
+      const key = (tool.tool_name || '').toLowerCase();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
     const files = await listAllStorageFiles(supabase, IMAGE_STORAGE_BUCKET);
     const aiFiles = files.filter((file: any) => typeof file?.name === 'string' && file.name.startsWith('ai-'));
 
-    const tools = (toolsData || []).map((tool: any, index: number) => {
+    const tools = allTools.map((tool: any, index: number) => {
       const toolName = String(tool.tool_name || '').trim();
       const toolSlug = slugify(toolName);
       const prefix = `ai-${toolSlug}-`;
