@@ -6,15 +6,27 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-sans)', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
+        display: ['var(--font-display)', 'var(--font-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
+      },
       colors: {
         primary: '#0f172a',
         secondary: '#64748b',
         accent: '#06b6d4',
         'accent-light': '#cffafe',
+        // Theme tokens (see styles/globals.css) so utilities like text-fg / bg-surface follow light/dark.
+        fg: 'rgb(var(--fg-rgb) / <alpha-value>)',
+        surface: 'rgb(var(--surface-rgb) / <alpha-value>)',
+        brand: {
+          DEFAULT: 'rgb(var(--accent-rgb) / <alpha-value>)',
+          2: 'rgb(var(--accent2-rgb) / <alpha-value>)',
+        },
         neon: {
-          cyan: '#06b6d4',
+          cyan: '#22d3ee',
           blue: '#3b82f6',
-          purple: '#a855f7',
+          purple: '#8b5cf6',
           pink: '#ec4899',
           green: '#10b981',
         },
@@ -54,8 +66,23 @@ module.exports = {
         'neon-glow': 'neon-glow 2s ease-in-out infinite',
         'cyber-pulse': 'cyber-pulse 1.5s ease-in-out infinite',
         'grid-flow': 'grid-flow 8s linear infinite',
+        marquee: 'marquee 45s linear infinite',
+        'fade-up': 'fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both',
+        aurora: 'aurora 22s ease-in-out infinite alternate',
       },
       keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        fadeUp: {
+          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        aurora: {
+          '0%': { transform: 'translate3d(-2%, -1%, 0) scale(1)' },
+          '100%': { transform: 'translate3d(2%, 2%, 0) scale(1.08)' },
+        },
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },

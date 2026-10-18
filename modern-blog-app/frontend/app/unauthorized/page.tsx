@@ -8,31 +8,31 @@ export default function UnauthorizedPage() {
         <div className="auth-card text-center">
           <FaLock className="text-6xl text-red-500 mx-auto mb-4" />
 
-          <h1 className="text-3xl font-bold mb-2 text-slate-900 dark:text-white">
+          <h1 className="mb-2 text-3xl font-bold text-[rgb(var(--fg-rgb))]">
             Access Denied
           </h1>
 
-          <p className="text-slate-800 dark:text-slate-200 mb-8">
+          <p className="mb-8 text-[var(--fg-muted)]">
             You do not have permission to access this page. Admin access required.
           </p>
 
           <div className="flex gap-4 flex-col">
             <Link
               href="/"
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+              className="btn-primary w-full justify-center"
             >
               Go to Home
             </Link>
             <Link
               href="/dashboard"
-              className="inline-block bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-900 dark:text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+              className="btn-secondary w-full justify-center"
             >
               Back to Dashboard
             </Link>
           </div>
         </div>
 
-        <div className="mt-8 p-6 bg-slate-800/70 rounded-lg text-slate-100 text-sm">
+        <div className="page-panel mt-6 text-sm">
           <p className="font-semibold mb-2">Need Admin Access?</p>
           <p>
             Contact your site administrator to request higher privileges.

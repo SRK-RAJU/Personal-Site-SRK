@@ -19,13 +19,18 @@ export async function GET(request: NextRequest) {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
+    const { searchParams } = new URL(request.url);
+    const parsedLimit = parseInt(searchParams.get('limit') || '1000', 10);
+    // Callers such as the home page ask for a handful of posts; never download the whole table for that.
+    const limit = Math.min(Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : 1000, 1000);
+
     // Query AI posts directly
     const { data, error, count } = await supabase
       .from('ai_generated_posts')
       .select('*', { count: 'exact' })
       .eq('status', 'published')
       .order('published_at', { ascending: false })
-      .limit(10000);
+      .limit(limit);
 
     if (error) {
       return NextResponse.json({ 

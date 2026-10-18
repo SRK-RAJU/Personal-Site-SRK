@@ -16,6 +16,7 @@ export default function Blog() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<'all' | 'human' | 'ai'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showAllCategories, setShowAllCategories] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -85,10 +86,15 @@ export default function Blog() {
     : groupedPosts.filter(([category]) => category === selectedCategory);
 
   const categories = ['all', ...groupedPosts.map(([category]) => category)];
+  const MAX_VISIBLE_CATEGORY_CHIPS = 12;
+  // With many categories keep the selected one visible even while the list is collapsed.
+  const visibleCategoryChips = showAllCategories || categories.length <= MAX_VISIBLE_CATEGORY_CHIPS
+    ? categories
+    : Array.from(new Set([...categories.slice(0, MAX_VISIBLE_CATEGORY_CHIPS), selectedCategory]));
 
   return (
-    <div className="min-h-screen w-full futurist-grid-bg">
-      <section className="section-padding border-b border-cyan-200/60 dark:border-cyan-900/40">
+    <div className="w-full">
+      <section className="section-padding">
         <div className="container-max">
           <motion.div
             className="futurist-hero text-center max-w-4xl mx-auto"
@@ -96,10 +102,11 @@ export default function Blog() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="mb-4 text-4xl font-bold text-slate-900 dark:text-white sm:mb-6 sm:text-5xl md:text-6xl">
+            <p className="eyebrow justify-center">Blog</p>
+            <h1 className="mb-4 mt-3 text-4xl font-bold sm:mb-6 sm:text-5xl md:text-6xl">
               <span className="gradient-text">Latest</span> Posts
             </h1>
-            <p className="text-slate-800 dark:text-slate-100 text-base sm:text-lg max-w-2xl mx-auto font-semibold leading-8">
+            <p className="text-[var(--fg-muted)] text-base sm:text-lg max-w-2xl mx-auto leading-8">
               Fresh admin-published posts across AI/ML, cloud, DevOps, security, and platform engineering.
             </p>
             {searchQuery && (
@@ -109,21 +116,15 @@ export default function Blog() {
             )}
 
             {/* Navigation Buttons */}
-            <div className="mt-8 flex flex-wrap gap-4 justify-center mb-6">
-              <button
-                disabled
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-600 to-fuchsia-600 text-white font-bold shadow-lg cursor-not-allowed opacity-100"
-              >
+            <div className="mt-8 flex flex-wrap gap-3 justify-center mb-6">
+              <button disabled className="btn-primary !px-6 !py-3">
                 <FaBook className="text-lg" />
                 Posts
               </button>
-              <Link
-                href="/tools"
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-lg border-2 border-cyan-400 dark:border-cyan-600 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 font-bold transition-all hover:scale-105 transform duration-200"
-              >
+              <Link href="/tools" className="btn-secondary group !px-6 !py-3">
                 <FaRocket className="text-lg" />
                 View Tools
-                <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                <FaArrowRight className="text-xs group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
 
@@ -134,12 +135,12 @@ export default function Blog() {
         </div>
       </section>
 
-      <section className="section-padding">
+      <section className="section-padding !pt-0">
         <div className="container-max">
           {loading ? (
             <div className="text-center py-16 sm:py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-violet-500 border-t-transparent mx-auto"></div>
-              <p className="mt-4 text-slate-800 dark:text-slate-200">Loading articles...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-[rgb(var(--accent-rgb))] border-t-transparent mx-auto"></div>
+              <p className="mt-4 text-[var(--fg-muted)]">Loading articles...</p>
             </div>
           ) : error ? (
             <motion.div
@@ -149,24 +150,34 @@ export default function Blog() {
             >
               <div className="text-6xl mb-4">⚠️</div>
               <h3 className="text-2xl sm:text-3xl font-bold mb-2">Unable to load posts</h3>
-              <p className="text-slate-800 dark:text-slate-200 mb-6">{error}</p>
+              <p className="text-[var(--fg-muted)] mb-6">{error}</p>
             </motion.div>
           ) : posts.length > 0 ? (
             <>
-              <div className="mb-8 flex flex-wrap gap-2">
-                {categories.map((category) => {
+              <div className="mb-4 flex flex-wrap gap-2">
+                {visibleCategoryChips.map((category) => {
                   const isActive = selectedCategory === category;
                   const label = category === 'all' ? 'All topics' : category;
                   return (
                     <button
                       key={category}
                       onClick={() => setSelectedCategory(category)}
-                      className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${isActive ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-cyan-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200'}`}
+                      aria-pressed={isActive}
+                      className="chip"
                     >
                       {label}
                     </button>
                   );
                 })}
+                {categories.length > MAX_VISIBLE_CATEGORY_CHIPS && (
+                  <button
+                    onClick={() => setShowAllCategories((value) => !value)}
+                    className="chip !border-dashed"
+                    aria-expanded={showAllCategories}
+                  >
+                    {showAllCategories ? 'Show fewer' : `+${categories.length - visibleCategoryChips.length} more topics`}
+                  </button>
+                )}
               </div>
 
               <div className="mb-10 flex flex-wrap gap-2">
@@ -180,7 +191,8 @@ export default function Blog() {
                     <button
                       key={opt.id}
                       onClick={() => setSourceFilter(opt.id as 'all' | 'human' | 'ai')}
-                      className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${isActive ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-cyan-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200'}`}
+                      aria-pressed={isActive}
+                      className="chip"
                     >
                       {opt.label}
                     </button>
@@ -189,7 +201,7 @@ export default function Blog() {
               </div>
 
               {visibleGroups.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-700 dark:border-slate-700 dark:text-slate-300">
+                <div className="rounded-2xl border border-dashed border-[var(--line-strong)] p-10 text-center text-[var(--fg-muted)]">
                   No posts found for this category yet.
                 </div>
               ) : (
@@ -210,7 +222,7 @@ export default function Blog() {
                           <Link href={`/blog/${post.slug}`} className="group block h-full">
                             <div className="futurist-card flex h-full flex-col overflow-hidden">
                               {post.featured_image_url && (
-                                <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-cyan-500/20 to-pink-500/20 mb-4 sm:mb-6 rounded-lg border border-cyan-200 dark:border-cyan-800">
+                                <div className="relative h-40 sm:h-48 overflow-hidden bg-[rgb(var(--fg-rgb)/0.05)] mb-4 sm:mb-6 rounded-xl border border-[var(--line)]">
                                   <Image
                                     src={post.featured_image_url}
                                     alt={post.title}
@@ -238,37 +250,37 @@ export default function Blog() {
                                 </div>
                               )}
 
-                              <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 line-clamp-2 group-hover:text-cyan-500 transition-colors">
+                              <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 line-clamp-2 group-hover:text-[rgb(var(--accent-rgb))] transition-colors">
                                 {post.title}
                               </h3>
 
-                              <p className="text-slate-800 dark:text-slate-200 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-3 flex-1">
+                              <p className="text-[var(--fg-muted)] text-sm sm:text-base mb-4 sm:mb-6 line-clamp-3 flex-1">
                                 {post.excerpt || post.content?.slice(0, 150)}
                               </p>
 
-                              <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-800 dark:text-slate-200">
+                              <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-4 border-t border-[var(--line)] text-xs sm:text-sm text-[var(--fg-muted)]">
                                 {post.published_at && (
                                   <div className="flex items-center gap-1.5">
-                                    <FaCalendar className="text-violet-500" />
+                                    <FaCalendar className="text-[rgb(var(--accent-rgb))]" />
                                     <span>{new Date(post.published_at).toLocaleDateString()}</span>
                                   </div>
                                 )}
 
                                 {(post.author_name || post.author) && (
                                   <div className="flex items-center gap-1.5">
-                                    <FaUser className="text-blue-500" />
+                                    <FaUser className="text-[rgb(var(--accent-rgb))]" />
                                     <span>{post.author_name || post.author || 'Raju'}</span>
                                   </div>
                                 )}
 
                                 {post.view_count !== undefined && (
                                   <div className="flex items-center gap-1.5">
-                                    <FaEye className="text-purple-500" />
+                                    <FaEye className="text-[rgb(var(--accent-rgb))]" />
                                     <span>{post.view_count}</span>
                                   </div>
                                 )}
 
-                                <FaArrowRight className="ml-auto text-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <FaArrowRight className="ml-auto text-[rgb(var(--accent-rgb))] opacity-0 group-hover:opacity-100 transition-opacity" />
                               </div>
                             </div>
                           </Link>

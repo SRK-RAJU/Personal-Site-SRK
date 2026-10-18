@@ -1,0 +1,8 @@
+-- SUPERSEDED - nothing to run here.
+--
+-- This file used to schedule '*/2 3 * * 1' (every 2 minutes, but only inside the 03:00 hour on Mondays, and it
+-- called a different function URL). That window only allowed ~15 generator calls per week, so most categories
+-- never got a post.
+--
+-- Use schedule_ai_scheduler.sql instead: it removes the old jobs (including 'ai_scheduler_sweep_2min') and
+-- creates the single 'ai_scheduler_weekly_sweep' job that works through every category and batch.

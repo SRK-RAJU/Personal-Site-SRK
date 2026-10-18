@@ -47,7 +47,7 @@ export default function DashboardUsersPage() {
     <div className="space-y-6">
       <div className="dashboard-card">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600/10 text-violet-600">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[rgb(var(--accent-rgb)/0.25)] bg-[rgb(var(--accent-rgb)/0.1)] text-[rgb(var(--accent-rgb))]">
             <FaUsers className="text-xl" />
           </div>
           <div>

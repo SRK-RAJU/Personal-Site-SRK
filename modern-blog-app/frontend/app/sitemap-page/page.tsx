@@ -40,7 +40,7 @@ export default function SitemapPage() {
         <motion.div variants={itemVariants} className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
+            className="inline-flex items-center gap-2 font-semibold text-[rgb(var(--accent-rgb))] transition-opacity hover:opacity-80"
           >
             <FaArrowLeft className="text-sm" />
             Back to Home
@@ -49,10 +49,10 @@ export default function SitemapPage() {
 
         {/* Header */}
         <motion.div variants={itemVariants} className="page-hero">
-          <h1 className="text-5xl sm:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-pink-600">
+          <h1 className="gradient-text mb-4 text-5xl font-bold sm:text-6xl">
             Site Map
           </h1>
-          <p className="text-lg text-slate-800 dark:text-slate-200">
+          <p className="text-lg text-[var(--fg-muted)]">
             Explore all pages and resources available on Raju Tech. Find everything you need with ease.
           </p>
         </motion.div>
@@ -64,7 +64,7 @@ export default function SitemapPage() {
         >
           {[
             { label: 'Total Pages', value: sitemapLinks.length, icon: FaFileAlt },
-            { label: 'Last Updated', value: new Date().toLocaleDateString(), icon: FaHome },
+            { label: 'Last Updated', value: new Date().toISOString().slice(0, 10), icon: FaHome },
             { label: 'Crawlable', value: '100%', icon: FaBook },
           ].map((stat, idx) => {
             const Icon = stat.icon;
@@ -75,10 +75,10 @@ export default function SitemapPage() {
                 variants={itemVariants}
               >
                 <div className="flex items-center gap-3 mb-2">
-                  <Icon className="text-violet-600 dark:text-violet-400 text-xl" />
-                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{stat.label}</p>
+                  <Icon className="text-xl text-[rgb(var(--accent-rgb))]" />
+                  <p className="text-sm font-semibold text-[var(--fg-muted)]">{stat.label}</p>
                 </div>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
+                <p className="text-2xl font-bold text-[rgb(var(--fg-rgb))]">{stat.value}</p>
               </motion.div>
             );
           })}
@@ -94,7 +94,7 @@ export default function SitemapPage() {
             const priorityColors = {
               'High': 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300',
               'Medium': 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300',
-              'Low': 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300',
+              'Low': 'border border-[rgb(var(--accent-rgb)/0.25)] bg-[rgb(var(--accent-rgb)/0.1)] text-[rgb(var(--accent-rgb))]',
             };
 
             return (
@@ -104,22 +104,22 @@ export default function SitemapPage() {
               >
                 <Link href={link.href}>
                   <motion.div
-                    className="card-hover border-2 border-violet-200 dark:border-violet-800/50 hover:border-violet-500 dark:hover:border-violet-500 p-6 h-full cursor-pointer group"
+                    className="futurist-card group h-full cursor-pointer p-6"
                     whileHover={{ y: -5 }}
                   >
                     <div className="flex items-start justify-between mb-4">
-                      <Icon className="text-3xl text-violet-600 dark:text-violet-400 group-hover:scale-110 transition-transform" />
+                      <Icon className="text-3xl text-[rgb(var(--accent-rgb))] transition-transform group-hover:scale-110" />
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${priorityColors[link.priority as keyof typeof priorityColors]}`}>
                         {link.priority}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+                    <h3 className="mb-2 text-xl font-bold text-[rgb(var(--fg-rgb))] transition-colors group-hover:text-[rgb(var(--accent-rgb))]">
                       {link.label}
                     </h3>
-                    <p className="text-slate-800 dark:text-slate-200 text-sm">
+                    <p className="text-sm text-[var(--fg-muted)]">
                       {link.description}
                     </p>
-                    <div className="mt-4 text-violet-600 dark:text-violet-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-4 text-sm font-semibold text-[rgb(var(--accent-rgb))] opacity-0 transition-opacity group-hover:opacity-100">
                       Visit page →
                     </div>
                   </motion.div>
@@ -130,13 +130,13 @@ export default function SitemapPage() {
         </motion.div>
 
         {/* XML Sitemap Link */}
-        <motion.div variants={itemVariants} className="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700/50 rounded-xl">
-          <p className="text-sm text-slate-800 dark:text-slate-200 mb-2">For search engines:</p>
+        <motion.div variants={itemVariants} className="page-panel mt-12">
+          <p className="mb-2 text-sm text-[var(--fg-muted)]">For search engines:</p>
           <a
             href="/sitemap.xml"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors"
+            className="inline-flex items-center gap-2 font-semibold text-[rgb(var(--accent-rgb))] transition-opacity hover:opacity-80"
           >
             <FaFileAlt /> View XML Sitemap
           </a>

@@ -39,7 +39,7 @@ export default function About() {
         <motion.div variants={itemVariants} className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
+            className="inline-flex items-center gap-2 text-[rgb(var(--accent-rgb))] hover:opacity-80 font-semibold transition-opacity"
           >
             <FaArrowLeft className="text-sm" />
             Back to Home
@@ -48,16 +48,16 @@ export default function About() {
 
         {/* Header - Combined Names */}
         <motion.div variants={itemVariants} className="page-hero">
-          <h1 className="mb-4 text-5xl font-bold bg-gradient-to-r from-violet-600 via-blue-600 to-purple-600 bg-clip-text text-transparent sm:text-6xl">
+          <h1 className="mb-4 text-5xl font-bold gradient-text sm:text-6xl">
             Raju
           </h1>
-          <h2 className="mb-2 text-2xl font-semibold text-slate-800 dark:text-slate-200">
+          <h2 className="mb-2 text-2xl font-semibold text-[rgb(var(--fg-rgb))]">
             Full-Stack Developer, DevOps, Security & Cloud Engineer
           </h2>
-          <p className="mb-4 text-lg font-semibold text-violet-600 dark:text-violet-400">
+          <p className="mb-4 text-lg font-semibold text-[rgb(var(--accent-rgb))]">
             Personal Tech Blog & AI Content Platform
           </p>
-          <p className="text-lg text-slate-800 dark:text-slate-200">
+          <p className="text-lg text-[var(--fg-muted)]">
             Building modern web applications and cloud solutions with a focus on performance and security.
           </p>
         </motion.div>
@@ -65,7 +65,7 @@ export default function About() {
         {/* About & Journey Section */}
         <motion.section variants={itemVariants} className="page-panel mb-10">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <FaRocket className="text-blue-600" /> My Story
+            <FaRocket className="text-[rgb(var(--accent-rgb))]" /> My Story
           </h2>
           <div className="space-y-4 text-slate-800 dark:text-slate-200 leading-relaxed">
             <p className="text-lg">
@@ -86,14 +86,14 @@ export default function About() {
         {/* Skills Grid - Comprehensive Tech Stack */}
         <motion.section variants={itemVariants} className="mb-12">
           <h2 className="text-2xl font-bold mb-8 flex items-center gap-2">
-            <FaTools className="text-blue-600" /> Skills & Expertise
+            <FaTools className="text-[rgb(var(--accent-rgb))]" /> Skills & Expertise
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* Cloud & DevOps */}
-            <div className="rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-6 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
+            <div className="page-panel">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
-                <FaCloud className="text-blue-500" /> Cloud & Infrastructure
+                <FaCloud className="text-[rgb(var(--accent-rgb))]" /> Cloud & Infrastructure
               </h3>
               <ul className="grid grid-cols-1 gap-2 text-slate-800 dark:text-slate-200 text-sm">
                 <li>• AWS (EC2, S3, RDS, Lambda, Route53)</li>
@@ -110,9 +110,9 @@ export default function About() {
             </div>
 
             {/* Full-Stack Development */}
-            <div className="rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-6 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
+            <div className="page-panel">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
-                <FaCode className="text-purple-500" /> Full-Stack Development
+                <FaCode className="text-[rgb(var(--accent-rgb))]" /> Full-Stack Development
               </h3>
               <ul className="grid grid-cols-1 gap-2 text-slate-800 dark:text-slate-200 text-sm">
                 <li>• React & Next.js 13+ Frontend</li>
@@ -129,9 +129,9 @@ export default function About() {
             </div>
 
             {/* Security & DevOps */}
-            <div className="rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-6 shadow-lg shadow-violet-500/10 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
+            <div className="page-panel">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
-                <FaDatabase className="text-red-500" /> Security & DevOps
+                <FaDatabase className="text-[rgb(var(--accent-rgb))]" /> Security & DevOps
               </h3>
               <ul className="grid grid-cols-1 gap-2 text-slate-800 dark:text-slate-200 text-sm">
                 <li>• Zscaler Zero Trust Security</li>
@@ -177,17 +177,14 @@ export default function About() {
         {/* CTA Section */}
         <motion.section 
           variants={itemVariants} 
-          className="mb-10 rounded-[1.75rem] bg-[linear-gradient(135deg,_rgba(124,58,237,0.95),_rgba(59,130,246,0.95),_rgba(236,72,153,0.95))] p-8 text-center text-white shadow-2xl shadow-violet-500/20 sm:text-left lg:p-10"
+          className="page-hero mb-10 text-center sm:text-left lg:!p-10"
         >
           <h2 className="text-3xl font-bold mb-4">Let's Connect</h2>
-          <p className="mb-8 text-blue-100 max-w-2xl">
+          <p className="mb-8 max-w-2xl text-[var(--fg-muted)]">
             Feel free to reach out if you want to discuss web development, share ideas, or just chat about tech. I'm always open to technical conversations and learning opportunities.
           </p>
           <div className="flex flex-wrap justify-center sm:justify-start gap-4">
-            <Link 
-              href="/contact" 
-              className="bg-white text-blue-600 px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform"
-            >
+            <Link href="/contact" className="btn-primary !px-8 !py-3">
               Send an Email
             </Link>
           </div>
@@ -202,7 +199,7 @@ export default function About() {
           {/* Logo Row - Cloud, DevOps, Security, Development */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
             {/* Cloud Logo */}
-            <div className="flex flex-col items-center rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-4 shadow-lg shadow-violet-500/10 transition-transform hover:scale-105 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
+            <div className="page-panel flex flex-col items-center !p-4 transition-transform hover:scale-105">
               <div className="w-20 h-20 mb-3">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                   <defs>
@@ -220,7 +217,7 @@ export default function About() {
             </div>
 
             {/* DevOps Logo */}
-            <div className="flex flex-col items-center rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-4 shadow-lg shadow-violet-500/10 transition-transform hover:scale-105 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
+            <div className="page-panel flex flex-col items-center !p-4 transition-transform hover:scale-105">
               <div className="w-20 h-20 mb-3">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                   <defs>
@@ -242,7 +239,7 @@ export default function About() {
             </div>
 
             {/* Security Logo */}
-            <div className="flex flex-col items-center rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-4 shadow-lg shadow-violet-500/10 transition-transform hover:scale-105 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
+            <div className="page-panel flex flex-col items-center !p-4 transition-transform hover:scale-105">
               <div className="w-20 h-20 mb-3">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                   <defs>
@@ -261,7 +258,7 @@ export default function About() {
             </div>
 
             {/* Development Logo */}
-            <div className="flex flex-col items-center rounded-[1.25rem] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(239,246,255,0.92))] p-4 shadow-lg shadow-violet-500/10 transition-transform hover:scale-105 dark:border-violet-800/40 dark:bg-[linear-gradient(135deg,_rgba(2,6,23,0.95),_rgba(15,23,42,0.92))]">
+            <div className="page-panel flex flex-col items-center !p-4 transition-transform hover:scale-105">
               <div className="w-20 h-20 mb-3">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                   <defs>

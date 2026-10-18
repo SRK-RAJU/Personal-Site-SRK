@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
         {/* Back Button */}
         <Link
           href="/auth/login"
-          className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 mb-8 font-semibold transition-colors"
+          className="mb-8 inline-flex items-center gap-2 font-semibold text-[rgb(var(--accent-rgb))] transition-opacity hover:opacity-80"
         >
           <FaArrowLeft className="text-sm" />
           Back to Login
@@ -61,27 +61,27 @@ export default function ForgotPasswordPage() {
 
         {/* Card */}
         <div className="auth-card">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-900/30 mb-6 mx-auto">
-            <FaEnvelope className="text-violet-600 dark:text-violet-400 text-xl" />
+          <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-2xl border border-[rgb(var(--accent-rgb)/0.25)] bg-[rgb(var(--accent-rgb)/0.1)]">
+            <FaEnvelope className="text-xl text-[rgb(var(--accent-rgb))]" />
           </div>
 
-          <h1 className="text-3xl font-bold text-center mb-2 text-slate-900 dark:text-white">
+          <h1 className="mb-2 text-center text-3xl font-bold text-[rgb(var(--fg-rgb))]">
             Reset Password
           </h1>
           
-          <p className="text-center text-slate-800 dark:text-slate-200 mb-8">
+          <p className="mb-8 text-center text-[var(--fg-muted)]">
             Enter your email address and we'll send you a link to reset your password.
           </p>
 
           {/* Success Message */}
           {submitted && (
-            <div className="mb-6 p-4 bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 rounded-lg flex items-start gap-3">
-              <FaCheckCircle className="text-violet-600 dark:text-violet-400 mt-0.5 flex-shrink-0" />
+            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-[rgb(var(--accent-rgb)/0.25)] bg-[rgb(var(--accent-rgb)/0.08)] p-4">
+              <FaCheckCircle className="mt-0.5 flex-shrink-0 text-[rgb(var(--accent-rgb))]" />
               <div>
-                <p className="font-semibold text-violet-900 dark:text-violet-300">
+                <p className="font-semibold text-[rgb(var(--fg-rgb))]">
                   Check your email
                 </p>
-                <p className="text-sm text-violet-800 dark:text-violet-200">
+                <p className="text-sm text-[var(--fg-muted)]">
                   We've sent a password reset link to {email}
                 </p>
               </div>
@@ -100,7 +100,7 @@ export default function ForgotPasswordPage() {
           {!submitted && (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                <label htmlFor="email" className="mb-2 block text-sm font-semibold text-[rgb(var(--fg-rgb))]">
                   Email Address
                 </label>
                 <input
@@ -109,7 +109,7 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
+                  className="field"
                   disabled={loading}
                 />
               </div>
@@ -117,7 +117,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading || !email.trim()}
-                className="w-full bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 disabled:from-slate-400 disabled:to-slate-400 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed"
+                className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -130,11 +130,11 @@ export default function ForgotPasswordPage() {
               </button>
 
               <div className="text-center">
-                <p className="text-sm text-slate-800 dark:text-slate-200">
+                <p className="text-sm text-[var(--fg-muted)]">
                   Remember your password?{' '}
                   <Link
                     href="/auth/login"
-                    className="font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors"
+                    className="font-semibold text-[rgb(var(--accent-rgb))] transition-opacity hover:opacity-80"
                   >
                     Sign in
                   </Link>
@@ -146,18 +146,18 @@ export default function ForgotPasswordPage() {
           {/* Additional Info */}
           {submitted && (
             <div className="space-y-4 text-center">
-              <p className="text-sm text-slate-800 dark:text-slate-200">
+              <p className="text-sm text-[var(--fg-muted)]">
                 Didn't receive the email? Check your spam folder or{' '}
                 <button
                   onClick={handleSubmit}
-                  className="font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors"
+                  className="font-semibold text-[rgb(var(--accent-rgb))] transition-opacity hover:opacity-80"
                 >
                   try again
                 </button>
               </p>
               <Link
                 href="/auth/login"
-                className="inline-block text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
+                className="inline-block font-semibold text-[rgb(var(--accent-rgb))] transition-opacity hover:opacity-80"
               >
                 Back to Login
               </Link>
@@ -166,9 +166,9 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Help Text */}
-        <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg text-center">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
-            <span className="font-semibold">💡 Tip:</span> Check your email within 10 minutes. The reset link expires after that for security.
+        <div className="page-panel mt-6 text-center">
+          <p className="text-sm text-[var(--fg-muted)]">
+            <span className="font-semibold text-[rgb(var(--accent-rgb))]">Tip:</span> Check your email within 10 minutes. The reset link expires after that for security.
           </p>
         </div>
       </div>

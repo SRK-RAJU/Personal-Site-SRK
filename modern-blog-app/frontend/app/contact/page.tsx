@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FaEnvelope, FaMapMarkerAlt, FaPaperPlane, FaArrowLeft } from 'react-icons/fa';
@@ -18,10 +18,14 @@ export default function Contact() {
     { question: 'What is 2 × 4?' },
   ];
 
-  const [captchaQuestion, setCaptchaQuestion] = useState(() => {
+  // Start with a fixed question so the server and client render the same HTML; the random one is picked after mount.
+  const [captchaQuestion, setCaptchaQuestion] = useState(questions[0].question.trim());
+
+  useEffect(() => {
     const item = questions[Math.floor(Math.random() * questions.length)];
-    return item.question.trim();
-  });
+    setCaptchaQuestion(item.question.trim());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const chooseCaptchaQuestion = () => {
     const item = questions[Math.floor(Math.random() * questions.length)];
@@ -109,7 +113,7 @@ export default function Contact() {
         <motion.div variants={itemVariants} className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
+            className="inline-flex items-center gap-2 font-semibold text-[rgb(var(--accent-rgb))] transition-opacity hover:opacity-80"
           >
             <FaArrowLeft className="text-sm" />
             Back to Home
@@ -118,8 +122,8 @@ export default function Contact() {
 
         {/* Header */}
         <motion.div variants={itemVariants} className="page-hero">
-          <h1 className="mb-4 text-5xl font-bold text-slate-900 dark:text-white sm:text-6xl">Get In Touch</h1>
-          <p className="text-lg text-slate-800 dark:text-slate-200">
+          <h1 className="gradient-text mb-4 text-5xl font-bold sm:text-6xl">Get In Touch</h1>
+          <p className="text-lg text-[var(--fg-muted)]">
             Have a project, question, or just want to discuss Anything? I'd love to hear from you.
           </p>
         </motion.div>
@@ -129,7 +133,7 @@ export default function Contact() {
           <motion.div variants={itemVariants} className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="page-panel space-y-6 sm:p-8">
               {submitted && (
-                <div role="status" aria-live="polite" className="bg-violet-100 dark:bg-violet-900 border border-violet-400 dark:border-violet-700 text-violet-800 dark:text-violet-200 p-4 rounded-lg flex items-center gap-2">
+                <div role="status" aria-live="polite" className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-700 dark:text-emerald-300">
                   <span className="text-xl">✓</span>
                   <span>Thanks for your message! I'll get back to you shortly.</span>
                 </div>
@@ -160,7 +164,7 @@ export default function Contact() {
 
               {/* Name */}
               <div>
-                <label htmlFor="name" className="block font-semibold text-slate-900 dark:text-white mb-2">
+                <label htmlFor="name" className="mb-2 block font-semibold text-[rgb(var(--fg-rgb))]">
                   Name *
                 </label>
                 <input
@@ -170,14 +174,14 @@ export default function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="field"
                   placeholder="John Doe"
                 />
               </div>
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block font-semibold text-slate-900 dark:text-white mb-2">
+                <label htmlFor="email" className="mb-2 block font-semibold text-[rgb(var(--fg-rgb))]">
                   Email *
                 </label>
                 <input
@@ -187,14 +191,14 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="field"
                   placeholder="john@example.com"
                 />
               </div>
 
               {/* Subject */}
               <div>
-                <label htmlFor="subject" className="block font-semibold text-slate-900 dark:text-white mb-2">
+                <label htmlFor="subject" className="mb-2 block font-semibold text-[rgb(var(--fg-rgb))]">
                   Subject *
                 </label>
                 <input
@@ -204,14 +208,14 @@ export default function Contact() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="field"
                   placeholder="Technical discussion, feedback, or question"
                 />
               </div>
 
               {/* Message */}
               <div>
-                <label htmlFor="message" className="block font-semibold text-slate-900 dark:text-white mb-2">
+                <label htmlFor="message" className="mb-2 block font-semibold text-[rgb(var(--fg-rgb))]">
                   Message *
                 </label>
                 <textarea
@@ -221,7 +225,7 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
+                  className="field min-h-36 resize-y"
                   placeholder="Tell me about your question, idea, or feedback..."
                 />
               </div>
@@ -229,14 +233,14 @@ export default function Contact() {
               {/* Human verification */}
               <div>
                 <div className="flex items-center justify-between gap-4 mb-2">
-                  <label htmlFor="captchaAnswer" className="block font-semibold text-slate-900 dark:text-white">
+                  <label htmlFor="captchaAnswer" className="block font-semibold text-[rgb(var(--fg-rgb))]">
                     <span>{captchaQuestion}</span>{' '}
                     <span aria-hidden="true" className="text-red-500">*</span>
                   </label>
                   <button
                     type="button"
                     onClick={chooseCaptchaQuestion}
-                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                    className="rounded text-sm text-[rgb(var(--accent-rgb))] hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--accent-rgb))]"
                   >
                     Try another one
                   </button>
@@ -248,7 +252,7 @@ export default function Contact() {
                   value={formData.captchaAnswer}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="field"
                   placeholder="Enter the answer"
                   aria-label="Human verification answer"
                 />
@@ -258,7 +262,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <FaPaperPlane />
                 {loading ? 'Sending...' : 'Send Message'}
@@ -269,16 +273,16 @@ export default function Contact() {
           {/* Contact Information */}
           <motion.div variants={itemVariants} className="space-y-6">
             <div className="page-panel">
-              <h3 className="text-xl font-bold mb-6 text-slate-900 dark:text-white">Contact Information</h3>
+              <h3 className="mb-6 text-xl font-bold text-[rgb(var(--fg-rgb))]">Contact Information</h3>
 
               {/* Email */}
               <div className="mb-6 flex gap-3">
-                <div className="text-blue-600 flex-shrink-0 mt-1">
+                <div className="mt-1 flex-shrink-0 text-[rgb(var(--accent-rgb))]">
                   <FaEnvelope size={20} />
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-900 dark:text-white">Email</p>
-                  <a href="mailto:contact@rjexa.com" className="text-blue-600 dark:text-blue-400 hover:underline">
+                  <p className="font-semibold text-[rgb(var(--fg-rgb))]">Email</p>
+                  <a href="mailto:contact@rjexa.com" className="text-[rgb(var(--accent-rgb))] hover:underline">
                     contact@rjexa.com
                   </a>
                 </div>
@@ -286,20 +290,20 @@ export default function Contact() {
 
               {/* Location */}
               <div className="mb-6 flex gap-3">
-                <div className="text-blue-600 flex-shrink-0 mt-1">
+                <div className="mt-1 flex-shrink-0 text-[rgb(var(--accent-rgb))]">
                   <FaMapMarkerAlt size={20} />
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-900 dark:text-white">Location</p>
-                  <p className="text-slate-800 dark:text-slate-200">Hyderabad, India</p>
+                  <p className="font-semibold text-[rgb(var(--fg-rgb))]">Location</p>
+                  <p className="text-[var(--fg-muted)]">Hyderabad, India</p>
                 </div>
               </div>
             </div>
 
             {/* FAQ Box */}
             <div className="page-panel">
-              <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white">Quick Facts</h3>
-              <ul className="space-y-2 text-sm text-slate-800 dark:text-slate-200">
+              <h3 className="mb-4 text-lg font-bold text-[rgb(var(--fg-rgb))]">Quick Facts</h3>
+              <ul className="space-y-2 text-sm text-[var(--fg-muted)]">
                 <li>✓ Response time: 24-48 hours</li>
                 <li>✓ Open to technical discussions</li>
                 <li>✓ Happy to connect on open-source ideas</li>
@@ -313,7 +317,7 @@ export default function Contact() {
 
         {/* Personal Topics */}
         <motion.section variants={itemVariants} className="page-panel mt-10 sm:p-8">
-          <h2 className="text-2xl font-bold mb-6">Topics I Explore</h2>
+          <h2 className="mb-6 text-2xl font-bold text-[rgb(var(--fg-rgb))]">Topics I Explore</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               'Infrastructure as Code (IaC)',
@@ -330,8 +334,8 @@ export default function Contact() {
               'Technical writing',
               'Cloud migration learnings',
             ].map((topic, idx) => (
-              <div key={idx} className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                <p className="text-slate-900 dark:text-white font-medium">• {topic}</p>
+              <div key={idx} className="page-panel !p-3">
+                <p className="font-medium text-[rgb(var(--fg-rgb))]">• {topic}</p>
               </div>
             ))}
           </div>

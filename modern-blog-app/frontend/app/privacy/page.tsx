@@ -62,7 +62,7 @@ export default function Privacy() {
         <motion.div variants={itemVariants} className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
+            className="inline-flex items-center gap-2 font-semibold text-[rgb(var(--accent-rgb))] transition-opacity hover:opacity-80"
           >
             <FaArrowLeft className="text-sm" />
             Back to Home
@@ -70,17 +70,17 @@ export default function Privacy() {
         </motion.div>
 
         <motion.div variants={itemVariants} className="page-hero">
-          <h1 className="mb-4 text-5xl font-bold text-slate-900 dark:text-white sm:text-6xl">Privacy Policy</h1>
-          <p className="text-lg text-slate-800 dark:text-slate-200">Last Updated: {lastUpdated}</p>
+          <h1 className="gradient-text mb-4 text-5xl font-bold sm:text-6xl">Privacy Policy</h1>
+          <p className="text-lg text-[var(--fg-muted)]">Last Updated: {lastUpdated}</p>
         </motion.div>
 
         <motion.div variants={itemVariants} className="space-y-8">
           {sections.map((section, index) => (
             <div key={index} className="page-panel">
-              <h2 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
+              <h2 className="mb-4 text-2xl font-bold text-[rgb(var(--fg-rgb))]">
                 {section.title}
               </h2>
-              <div className="prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
+              <div className="prose dark:prose-invert max-w-none whitespace-pre-wrap text-[var(--fg-muted)]">
                 {section.content}
               </div>
             </div>
@@ -91,12 +91,12 @@ export default function Privacy() {
           variants={itemVariants}
           className="page-panel mt-10 text-center sm:p-8"
         >
-          <p className="text-slate-800 dark:text-slate-200 mb-4">
+          <p className="mb-4 text-[var(--fg-muted)]">
             Have questions about this privacy policy?
           </p>
           <Link
             href="/contact"
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition"
+            className="btn-primary"
           >
             Get in Touch
           </Link>

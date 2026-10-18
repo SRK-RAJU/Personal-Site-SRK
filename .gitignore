@@ -25,6 +25,9 @@ diag/
 
 # Database & migrations
 *.sql
+!modern-blog-app/frontend/supabase-functions/schedule_ai_scheduler.sql
+!modern-blog-app/frontend/supabase-functions/schedule_ai_scheduler_2min.sql
+!modern-blog-app/frontend/supabase-functions/scheduler_diagnostics.sql
 *.sqlite
 *.db
 .prisma/

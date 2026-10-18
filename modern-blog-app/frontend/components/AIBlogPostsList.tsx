@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { FaCalendar, FaRobot, FaTools, FaShieldAlt, FaArrowRight, FaClock, FaNewspaper, FaStar } from 'react-icons/fa';
+import { FaCalendar, FaRobot, FaTools, FaShieldAlt, FaArrowRight, FaClock } from 'react-icons/fa';
 import axios from 'axios';
 import { formatDate } from '@/lib/ai-utils';
 
@@ -43,7 +43,7 @@ export default function AIBlogPostsList() {
             read_time_minutes: post.read_time_minutes || Math.ceil((post.content?.length || 0) / 200),
             view_count: post.view_count || 0,
           })).slice(0, 6);
-          
+
           setPosts(aiPosts);
           if (aiPosts.length === 0) {
             setError('No AI posts available yet');
@@ -65,8 +65,8 @@ export default function AIBlogPostsList() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
+        staggerChildren: 0.08,
+        delayChildren: 0.1,
       },
     },
   };
@@ -84,59 +84,41 @@ export default function AIBlogPostsList() {
   };
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8">
+    <section className="relative border-y border-[var(--line)] bg-[rgb(var(--fg-rgb)/0.025)] py-14 sm:py-20">
       <div className="container-max">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mb-10 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-950/90 via-purple-950/80 to-slate-900/90 p-8 shadow-2xl shadow-purple-950/30"
-        >
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-purple-400/30 bg-purple-500/10 px-3 py-1 text-sm font-semibold text-purple-200">
-                <FaStar className="text-purple-300" />
-                Posts
-              </div>
-              <div className="flex items-center gap-3">
-                <FaNewspaper className="text-3xl text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text" />
-                <h2 className="text-3xl md:text-4xl font-bold text-white">
-                  Latest AI Posts
-                </h2>
-              </div>
-              <p className="mt-3 max-w-3xl text-base text-slate-300">
-                AI-generated posts appear here when an admin triggers a new generation from the dashboard.
-              </p>
-            </div>
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 self-start rounded-full border border-purple-400/30 bg-white/5 px-4 py-2 text-sm font-semibold text-purple-200 transition hover:bg-white/10"
-            >
-              Explore all posts
-              <FaArrowRight />
-            </Link>
+        <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-2xl">
+            <p className="eyebrow">
+              <FaRobot className="text-sm" />
+              AI weekly reports
+            </p>
+            <h2 className="section-title mt-3">Latest AI posts</h2>
+            <p className="mt-3 text-[var(--fg-muted)]">
+              Fresh category reports, generated each week by the scheduler (or on demand by an admin from the dashboard).
+            </p>
           </div>
-        </motion.div>
+          <Link href="/blog" className="btn-secondary self-start !text-sm md:self-auto">
+            Explore all posts
+            <FaArrowRight className="text-xs" />
+          </Link>
+        </div>
 
         {loading ? (
-          <div className="text-center py-16">
-            <div className="inline-block">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gradient-to-r from-purple-500 to-pink-500"></div>
-            </div>
-            <p className="mt-4 text-gray-400">Loading AI-generated posts...</p>
+          <div className="py-16 text-center">
+            <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-[rgb(var(--accent-rgb))] border-t-transparent" />
+            <p className="mt-4 text-sm text-[var(--fg-muted)]">Loading AI-generated posts…</p>
           </div>
         ) : error ? (
-          <div className="rounded-3xl border border-rose-400/20 bg-rose-500/10 p-8 text-center text-rose-100">
-            <p className="text-lg font-semibold">Unable to load AI posts right now.</p>
-            <p className="mt-2 text-sm text-rose-100/80">{error}</p>
+          <div className="rounded-2xl border border-rose-400/25 bg-rose-500/10 p-8 text-center">
+            <p className="text-lg font-semibold text-rose-300">Unable to load AI posts right now.</p>
+            <p className="mt-2 text-sm text-[var(--fg-muted)]">{error}</p>
           </div>
         ) : posts.length === 0 ? (
-          <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-10 text-center">
-            <p className="text-sm uppercase tracking-[0.25em] text-violet-300 mb-4">No AI posts yet</p>
-            <h3 className="text-3xl font-bold text-white mb-2">No generated posts are available yet.</h3>
-            <p className="text-slate-300 max-w-2xl mx-auto">
-              An admin can trigger the AI post generation manually from the dashboard when needed.
+          <div className="rounded-2xl border border-dashed border-[var(--line-strong)] p-10 text-center">
+            <p className="eyebrow justify-center">No AI posts yet</p>
+            <h3 className="mt-3 text-2xl font-bold">No generated posts are available yet.</h3>
+            <p className="mx-auto mt-2 max-w-2xl text-[var(--fg-muted)]">
+              The weekly scheduler will publish them, or an admin can generate them from the dashboard.
             </p>
           </div>
         ) : (
@@ -145,7 +127,7 @@ export default function AIBlogPostsList() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid grid-cols-1 gap-6 xl:grid-cols-3"
+            className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
           >
             {posts.map((post, index) => {
               const isFeatured = index === 0;
@@ -153,80 +135,75 @@ export default function AIBlogPostsList() {
                 <motion.article
                   key={post.id}
                   variants={itemVariants}
-                  className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${isFeatured
-                    ? 'border-purple-400/40 bg-gradient-to-br from-purple-950/70 via-slate-900/80 to-slate-900/70 shadow-purple-950/30 xl:col-span-1'
-                    : 'border-white/10 bg-gradient-to-br from-slate-900/70 to-slate-800/70 hover:border-purple-400/30'}`}
+                  className={`futurist-card group flex h-full flex-col overflow-hidden ${
+                    isFeatured ? 'md:col-span-2 xl:col-span-1 !border-[rgb(var(--accent-rgb)/0.4)]' : ''
+                  }`}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-pink-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[rgb(var(--accent-rgb)/0.14)] blur-3xl transition-opacity duration-300 group-hover:opacity-100" />
 
-                  <div className="relative flex h-full flex-col p-6">
-                    <div className="mb-4 flex items-center justify-between">
-                      <div className="flex items-center gap-2 rounded-full border border-purple-400/20 bg-purple-500/10 px-3 py-1 text-xs font-semibold text-purple-200">
-                        <FaRobot className="text-purple-300" />
-                        {isFeatured ? 'Featured Update' : 'AI Generated'}
-                      </div>
-                      {isFeatured && (
-                        <div className="rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1 text-xs font-semibold text-pink-200">
-                          New
-                        </div>
-                      )}
+                  <div className="relative flex h-full flex-col">
+                    <div className="mb-4 flex items-center justify-between gap-2">
+                      <span className="futurist-pill">
+                        <FaRobot />
+                        {isFeatured ? 'Featured update' : 'AI generated'}
+                      </span>
+                      {isFeatured && <span className="badge-vibrant">New</span>}
                     </div>
 
-                    <h3 className="mb-3 text-xl font-bold text-white transition group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-300 group-hover:to-pink-300 group-hover:bg-clip-text">
+                    {post.category && (
+                      <p className="mb-2 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--fg-subtle)]">{post.category}</p>
+                    )}
+
+                    <h3 className="mb-3 font-display text-xl font-semibold leading-snug transition-colors group-hover:text-[rgb(var(--accent-rgb))]">
                       {post.title}
                     </h3>
 
-                    <p className="mb-4 flex-grow text-sm leading-6 text-slate-300 line-clamp-3">
-                      {post.excerpt}
-                    </p>
+                    <p className="mb-4 line-clamp-3 flex-grow text-sm leading-6 text-[var(--fg-muted)]">{post.excerpt}</p>
 
-                    <div className="mb-4 rounded-2xl border border-violet-400/20 bg-slate-950/70 p-3 shadow-inner shadow-violet-950/20">
-                      <div className="mb-3 flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400">
-                          <FaTools className="text-purple-300" />
-                          Tool Coverage
+                    <div className="mb-4 rounded-xl border border-[var(--line)] bg-[rgb(var(--fg-rgb)/0.03)] p-3">
+                      <div className="mb-2.5 flex items-center justify-between">
+                        <div className="flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--fg-subtle)]">
+                          <FaTools className="text-[rgb(var(--accent-rgb))]" />
+                          Tool coverage
                         </div>
-                        <span className="rounded-full border border-violet-400/20 bg-violet-500/10 px-2.5 py-1 text-[11px] font-medium text-violet-200">
-                          {post.tools_covered.length} tools
-                        </span>
+                        <span className="badge !text-[0.68rem]">{post.tools_covered.length} tools</span>
                       </div>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1.5">
                         {post.tools_covered.slice(0, 4).map((tool) => (
-                          <span key={tool} className="rounded-full border border-violet-400/20 bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 px-2.75 py-1 text-[11px] font-medium text-slate-100 shadow-sm shadow-violet-950/20">
+                          <span key={tool} className="badge-secondary !text-[0.68rem]">
                             {tool}
                           </span>
                         ))}
                         {post.tools_covered.length > 4 && (
-                          <span className="rounded-full border border-white/10 bg-slate-800/70 px-2.5 py-1 text-[11px] text-slate-400">
-                            +{post.tools_covered.length - 4} more
-                          </span>
+                          <span className="badge-secondary !text-[0.68rem]">+{post.tools_covered.length - 4} more</span>
                         )}
                       </div>
                     </div>
 
-                    <div className="mb-5 flex flex-wrap items-center gap-3 text-xs text-slate-400">
+                    <div className="mb-5 flex flex-wrap items-center gap-2 text-xs text-[var(--fg-muted)]">
                       {post.cves_mentioned > 0 && (
-                        <div className="flex items-center gap-1.5 rounded-full bg-red-500/10 px-2.5 py-1">
-                          <FaShieldAlt className="text-red-400" />
-                          <span>{post.cves_mentioned} CVEs</span>
-                        </div>
+                        <span className="flex items-center gap-1.5 rounded-full bg-red-500/10 px-2.5 py-1 text-red-400">
+                          <FaShieldAlt />
+                          {post.cves_mentioned} CVEs
+                        </span>
                       )}
-                      <div className="flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1">
-                        <FaClock className="text-slate-400" />
-                        <span>{post.read_time_minutes} min read</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1">
-                        <FaCalendar className="text-slate-400" />
-                        <span>{formatDate(new Date(post.published_at))}</span>
-                      </div>
+                      <span className="flex items-center gap-1.5 rounded-full bg-[rgb(var(--fg-rgb)/0.06)] px-2.5 py-1">
+                        <FaClock />
+                        {post.read_time_minutes} min read
+                      </span>
+                      <span className="flex items-center gap-1.5 rounded-full bg-[rgb(var(--fg-rgb)/0.06)] px-2.5 py-1">
+                        <FaCalendar />
+                        {formatDate(new Date(post.published_at))}
+                      </span>
                     </div>
 
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-purple-200 transition group-hover:text-purple-100"
+                      className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-[rgb(var(--accent-rgb))]"
                     >
                       Read full update
-                      <FaArrowRight className="transition group-hover:translate-x-1" />
+                      <FaArrowRight className="text-xs transition group-hover:translate-x-1" />
+                      <span className="absolute inset-0" aria-hidden="true" />
                     </Link>
                   </div>
                 </motion.article>

@@ -1,26 +1,25 @@
-# Supabase Scheduler Setup (Category + Batch, 5-Minute Gap)
+# Supabase Scheduler Setup (one-time)
 
-This setup supports:
-- One cron job
-- Preview/prod mode switch
-- Secure forwarding with secret headers
-- One category per run with 5-minute spacing
-- Batch-wise generation with automatic batch rotation (same behavior as manual admin when batch is not forced)
+Weekly AI post generation for every category and batch, driven by Supabase (`pg_cron` → Edge Function → your Vercel API).
 
-## 1) Vercel API Requirement
+How the sweep works, how to deploy/operate it and how to troubleshoot it is documented in
+[supabase-functions/AI_SCHEDULER_DEPLOY.md](../supabase-functions/AI_SCHEDULER_DEPLOY.md). This file only covers the one-time setup.
 
-The generation API accepts either:
-- Admin auth (existing dashboard/manual flow)
-- `x-cron-secret` header (new scheduler flow)
+## 1) Where each setting lives
 
-Set in Vercel environment variables:
-- `CRON_SECRET=<strong-random-secret>`
+| Place | Settings |
+|-------|----------|
+| Vercel (Preview and Production) | `CRON_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `GEMINI_API_KEY`, `TAVILY_API_KEY` |
+| Supabase Edge Function secrets | `CRON_TO_FUNCTION_SECRET`, `PROD_BASE_URL`, `PROD_CRON_SECRET`, `PREVIEW_BASE_URL`, `PREVIEW_CRON_SECRET` (+ optional `SCHEDULER_*`, see the deploy guide) |
+| Supabase defaults (do not add) | `SUPABASE_URL`, `SUPABASE_SECRET_KEYS`, `SUPABASE_PUBLISHABLE_KEYS` |
+| Supabase Vault | `ai_sched_fn_url`, `ai_sched_anon_key`, `ai_sched_cron_secret` |
 
-Use different secret values for preview and production environments.
+`PROD_CRON_SECRET` (Supabase) must equal `CRON_SECRET` (Vercel). Use different values for preview and production.
+`ai_sched_anon_key` has to be the legacy JWT `anon` key because the cron call sends it as `apikey` and `Authorization: Bearer`.
 
-## 2) Supabase SQL (extensions, config, logs, cron)
+## 2) Tables, extensions and secrets
 
-Run in Supabase SQL editor:
+Run in the Supabase SQL editor:
 
 ```sql
 create extension if not exists pg_cron;
@@ -31,29 +30,9 @@ create table if not exists public.ai_scheduler_config (
   id int primary key default 1,
   enabled boolean not null default false,
   mode text not null default 'preview' check (mode in ('preview', 'prod')),
-  min_interval_minutes int not null default 5 check (min_interval_minutes >= 1),
-  weekly_dow int not null default 1 check (weekly_dow between 0 and 6),
+  min_interval_minutes int not null default 2 check (min_interval_minutes >= 1),
+  weekly_dow int not null default 1 check (weekly_dow between 0 and 6),      -- 0 = Sunday, 1 = Monday (UTC)
   weekly_start_hour_utc int not null default 3 check (weekly_start_hour_utc between 0 and 23),
-  categories text[] not null default array[
-    'AI/ML',
-    'Cloud Platform',
-    'Infrastructure as Code',
-    'CI/CD Pipeline',
-    'Monitoring/Observability',
-    'Security/Zero-Trust',
-    'Container/Orchestration',
-    'Configuration Management',
-    'Service Mesh',
-    'Database',
-    'Data Engineering',
-    'Data Streaming',
-    'API Gateway',
-    'Networking',
-    'Identity & Access',
-    'DevSecOps',
-    'Developer Tools',
-    'Automation'
-  ],
   cursor int not null default 0,
   week_key text not null default '',
   processed_this_week int not null default 0,
@@ -62,9 +41,7 @@ create table if not exists public.ai_scheduler_config (
   updated_at timestamptz not null default now()
 );
 
-insert into public.ai_scheduler_config (id)
-values (1)
-on conflict (id) do nothing;
+insert into public.ai_scheduler_config (id) values (1) on conflict (id) do nothing;
 
 create table if not exists public.ai_scheduler_runs (
   id bigserial primary key,
@@ -72,27 +49,42 @@ create table if not exists public.ai_scheduler_runs (
   mode text,
   category text,
   batch int,
-  status text not null,
+  status text not null,   -- started | success | error | skipped | completed
   details jsonb
 );
+```
 
--- Vault secrets used by cron -> edge function call
-select vault.create_secret('https://YOUR_PROJECT_REF.supabase.co/functions/v1/ai-scheduler-dispatch', 'ai_sched_fn_url')
-where not exists (select 1 from vault.secrets where name = 'ai_sched_fn_url');
+Older installs also have a `categories text[]` column on `ai_scheduler_config`. It is no longer used: the category list always comes from
+`tools_coverage_metadata`. It can stay or be dropped.
 
-select vault.create_secret('YOUR_SUPABASE_ANON_KEY', 'ai_sched_anon_key')
-where not exists (select 1 from vault.secrets where name = 'ai_sched_anon_key');
+Categories are free text. If the old 18-category `valid_category` CHECK constraint is still on `tools_coverage_metadata`, remove it
+(the 478-tool catalog has 69 categories):
 
-select vault.create_secret('YOUR_CRON_TO_FUNCTION_SECRET', 'ai_sched_cron_secret')
-where not exists (select 1 from vault.secrets where name = 'ai_sched_cron_secret');
+```sql
+alter table public.tools_coverage_metadata drop constraint if exists valid_category;
+```
 
--- One cron job: run weekly on Monday at 03:00 UTC (recommended)
-select cron.unschedule('ai_scheduler_every_5m')
-where exists (select 1 from cron.job where jobname = 'ai_scheduler_every_5m');
+Vault secrets (replace the placeholders; `schedule_ai_scheduler.sql` creates them only when missing):
 
+```sql
+select vault.create_secret('https://YOUR_PROJECT_REF.supabase.co/functions/v1/ai-scheduler-dispatch', 'ai_sched_fn_url');
+select vault.create_secret('YOUR_SUPABASE_ANON_KEY', 'ai_sched_anon_key');
+select vault.create_secret('YOUR_CRON_TO_FUNCTION_SECRET', 'ai_sched_cron_secret');
+```
+
+## 3) Edge function
+
+Source: [supabase-functions/ai-scheduler-dispatch/index.ts](../supabase-functions/ai-scheduler-dispatch/index.ts). Deploy it as described in the deploy guide.
+Keep that file as the only copy of the code; do not paste it into other documents.
+
+## 4) Cron job
+
+Run the tracked `supabase-functions/schedule_ai_scheduler.sql` file in the Supabase SQL editor. It creates one job:
+
+```sql
 select cron.schedule(
-  'ai_scheduler_every_5m',
-  '0 3 * * 1',
+  'ai_scheduler_weekly_sweep',
+  '*/2 * * * *',
   $$
   select net.http_post(
     url := (select decrypted_secret from vault.decrypted_secrets where name = 'ai_sched_fn_url'),
@@ -102,542 +94,28 @@ select cron.schedule(
       'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'ai_sched_anon_key'),
       'x-supa-cron-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'ai_sched_cron_secret')
     ),
-    body := '{}'::jsonb
+    body := jsonb_build_object('source', 'supabase-scheduler'),
+    timeout_milliseconds := 150000
   );
   $$
 );
 ```
 
-## 3) Supabase Edge Function: ai-scheduler-dispatch
+The job only "ticks"; the function decides whether a tick starts, continues or skips a sweep. Never schedule a second job for the same function.
 
-Create function file with this code:
-
-```ts
-import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-type ConfigRow = {
-  id: number;
-  enabled: boolean;
-  mode: "preview" | "prod";
-  min_interval_minutes: number;
-  weekly_dow: number;
-  weekly_start_hour_utc: number;
-  categories: string[];
-  cursor: number;
-  week_key: string;
-  processed_this_week: number;
-  batch_cursor?: Record<string, number> | null;
-  last_run_at: string | null;
-};
-
-function utcWeekKey(d: Date): string {
-  const year = d.getUTCFullYear();
-  const start = new Date(Date.UTC(year, 0, 1));
-  const day = Math.floor((d.getTime() - start.getTime()) / 86400000);
-  const week = Math.ceil((day + start.getUTCDay() + 1) / 7);
-  return `${year}-W${String(week).padStart(2, "0")}`;
-}
-
-function getWeeklyStartUtc(now: Date, weeklyDow: number, weeklyHourUtc: number): Date {
-  const dayStart = new Date(Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate(),
-    0,
-    0,
-    0,
-    0
-  ));
-  const currentDow = dayStart.getUTCDay();
-  const delta = (currentDow - weeklyDow + 7) % 7;
-  dayStart.setUTCDate(dayStart.getUTCDate() - delta);
-  dayStart.setUTCHours(weeklyHourUtc, 0, 0, 0);
-
-  if (dayStart.getTime() > now.getTime()) {
-    dayStart.setUTCDate(dayStart.getUTCDate() - 7);
-  }
-
-  return dayStart;
-}
-
-async function logRun(
-  supabase: any,
-  status: string,
-  mode?: string,
-  category?: string,
-  batch?: number,
-  details?: Record<string, unknown>
-) {
-  await supabase.from("ai_scheduler_runs").insert({
-    status,
-    mode: mode ?? null,
-    category: category ?? null,
-    batch: batch ?? null,
-    details: details ?? null,
-  });
-}
-
-function getServiceRoleKey(): string {
-  const secretKeysRaw = Deno.env.get("SUPABASE_SECRET_KEYS") || "{}";
-  try {
-    const parsed = JSON.parse(secretKeysRaw);
-    const role = parsed?.default;
-    if (typeof role === "string" && role.trim()) {
-      return role.trim();
-    }
-  } catch {
-    // fall back to legacy env
-  }
-  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-}
-
-async function getCategoryBatchCount(supabase: any, category: string): Promise<number> {
-  const schedulerBatchSize = 4;
-  const { count, error } = await supabase
-    .from("tools_coverage_metadata")
-    .select("id", { count: "exact", head: true })
-    .eq("is_active", true)
-    .ilike("category", category);
-
-  if (error) {
-    return 0;
-  }
-
-  const totalTools = count || 0;
-  if (totalTools <= 0) {
-    return 0;
-  }
-
-  return Math.ceil(totalTools / schedulerBatchSize);
-}
-
-async function getActiveCategories(supabase: any): Promise<string[]> {
-  const { data, error } = await supabase
-    .from("tools_coverage_metadata")
-    .select("category")
-    .eq("is_active", true)
-    .not("category", "is", null)
-    .order("category", { ascending: true });
-
-  if (error || !data) {
-    return [];
-  }
-
-  const rows = data as Array<{ category?: string | null }>;
-  const normalized = rows
-    .map((row) => String(row.category || "").trim())
-    .filter((value) => value.length > 0);
-
-  const categories: string[] = Array.from(new Set(normalized));
-
-  return categories;
-}
-
-serve(async (req) => {
-  try {
-    const inboundSecret = req.headers.get("x-supa-cron-secret") || "";
-    const expectedInbound = Deno.env.get("CRON_TO_FUNCTION_SECRET") || "";
-    if (!expectedInbound || inboundSecret !== expectedInbound) {
-      return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), { status: 401 });
-    }
-
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-    const serviceRole = getServiceRoleKey();
-    if (!supabaseUrl || !serviceRole) {
-      return new Response(JSON.stringify({ ok: false, error: "Missing Supabase env" }), { status: 500 });
-    }
-
-    const supabase = createClient(supabaseUrl, serviceRole);
-
-    const { data: cfgData, error: cfgErr } = await supabase
-      .from("ai_scheduler_config")
-      .select("*")
-      .eq("id", 1)
-      .single();
-
-    const cfg = (cfgData ?? null) as ConfigRow | null;
-
-    if (cfgErr || !cfg) {
-      await logRun(supabase, "error", undefined, undefined, undefined, { step: "load_config", message: cfgErr?.message });
-      return new Response(JSON.stringify({ ok: false, error: "Config load failed" }), { status: 500 });
-    }
-
-    if (!cfg.enabled) {
-      await logRun(supabase, "skipped", cfg.mode, undefined, undefined, { reason: "disabled" });
-      return Response.json({ ok: true, skipped: true, reason: "disabled" });
-    }
-
-    const now = new Date();
-    // Only forward on the configured weekly day/hour (UTC). Cron may still invoke frequently.
-    const isWeeklyHour = now.getUTCDay() === cfg.weekly_dow && now.getUTCHours() === cfg.weekly_start_hour_utc;
-    if (!isWeeklyHour) {
-      await logRun(supabase, "skipped", cfg.mode, undefined, undefined, { reason: "outside_weekly_window" });
-      return Response.json({ ok: true, skipped: true, reason: "outside_weekly_window" });
-    }
-
-    if (cfg.last_run_at) {
-      const last = new Date(cfg.last_run_at).getTime();
-      const diffMin = (Date.now() - last) / 60000;
-      if (diffMin < cfg.min_interval_minutes) {
-        await logRun(supabase, "skipped", cfg.mode, undefined, undefined, { reason: "min_interval", diffMin });
-        return Response.json({ ok: true, skipped: true, reason: "min_interval" });
-      }
-    }
-
-    const currentWeek = utcWeekKey(now);
-    let cursor = cfg.cursor;
-    let processed = cfg.processed_this_week;
-    let weekKey = cfg.week_key || "";
-    let batchCursor: Record<string, number> =
-      cfg.batch_cursor && typeof cfg.batch_cursor === "object"
-        ? { ...(cfg.batch_cursor as Record<string, number>) }
-        : {};
-
-    if (weekKey !== currentWeek) {
-      cursor = 0;
-      processed = 0;
-      weekKey = currentWeek;
-      batchCursor = {};
-    }
-
-    const dbCategories = await getActiveCategories(supabase);
-    const cfgCategories = Array.isArray(cfg.categories)
-      ? cfg.categories.map((c) => (c || "").trim()).filter((c) => c.length > 0)
-      : [];
-
-    const categories = dbCategories.length > 0 ? dbCategories : cfgCategories;
-    if (categories.length === 0) {
-      await logRun(supabase, "skipped", cfg.mode, undefined, undefined, { reason: "no_categories" });
-      return Response.json({ ok: true, skipped: true, reason: "no_categories" });
-    }
-
-    if (processed >= categories.length) {
-      await logRun(supabase, "skipped", cfg.mode, undefined, undefined, { reason: "week_completed", currentWeek });
-      return Response.json({ ok: true, skipped: true, reason: "week_completed" });
-    }
-
-    const idx = cursor % categories.length;
-    const category = categories[idx];
-    const batchCount = await getCategoryBatchCount(supabase, category);
-    if (batchCount <= 0) {
-      const nextCursor = (idx + 1) % categories.length;
-      const nextProcessed = processed + 1;
-
-      await supabase
-        .from("ai_scheduler_config")
-        .update({
-          cursor: nextCursor,
-          processed_this_week: nextProcessed,
-          week_key: weekKey,
-          batch_cursor: {
-            ...batchCursor,
-            [category]: 0,
-          },
-          last_run_at: now.toISOString(),
-          updated_at: now.toISOString(),
-        })
-        .eq("id", 1);
-
-      await logRun(supabase, "skipped", cfg.mode, category, undefined, {
-        reason: "no_active_tools_in_category",
-        cursor: nextCursor,
-        processed_this_week: nextProcessed,
-      });
-
-      return Response.json({
-        ok: true,
-        skipped: true,
-        reason: "no_active_tools_in_category",
-        mode: cfg.mode,
-        category,
-        cursor: nextCursor,
-        processed_this_week: nextProcessed,
-        total_categories: categories.length,
-      });
-    }
-
-    const currentBatch = Number(batchCursor[category] || 0);
-    const nextBatch = Math.min(batchCount, Math.max(1, currentBatch + 1));
-    const targetBase = cfg.mode === "prod"
-      ? (Deno.env.get("PROD_BASE_URL") || "")
-      : (Deno.env.get("PREVIEW_BASE_URL") || "");
-
-    const targetSecret = cfg.mode === "prod"
-      ? (Deno.env.get("PROD_CRON_SECRET") || "")
-      : (Deno.env.get("PREVIEW_CRON_SECRET") || "");
-
-    if (!targetBase || !targetSecret) {
-      await logRun(supabase, "error", cfg.mode, category, undefined, { reason: "missing_target_env" });
-      return new Response(JSON.stringify({ ok: false, error: "Missing target env vars" }), { status: 500 });
-    }
-
-    const targetUrl = `${targetBase.replace(/\/+$/, "")}/api/posts/ai/generate`;
-
-    const forwardRes = await fetch(targetUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-cron-secret": targetSecret,
-        "x-trigger-source": "supabase-scheduler",
-      },
-      body: JSON.stringify({
-        source: "supabase-scheduler",
-        mode: "single-category",
-        category,
-        batch: nextBatch,
-      }),
-    });
-
-    const forwardText = await forwardRes.text();
-    const ok = forwardRes.ok;
-    let forwardPayload: Record<string, unknown> | null = null;
-    try {
-      forwardPayload = JSON.parse(forwardText);
-    } catch {
-      forwardPayload = null;
-    }
-
-    const skipped = Boolean(forwardPayload && (forwardPayload as { skipped?: unknown }).skipped === true);
-    const reasonValue = forwardPayload ? (forwardPayload as { reason?: unknown }).reason : "";
-    const reason = typeof reasonValue === "string" ? reasonValue : "";
-    const completedSuccessfully =
-      ok &&
-      (forwardPayload?.success === true || forwardPayload?.ok === true || !forwardPayload) &&
-      !(skipped && reason.toLowerCase() === "generation already in progress");
-
-    let nextCursor = cursor;
-    let nextProcessed = processed;
-
-    if (completedSuccessfully) {
-      if (nextBatch >= batchCount) {
-        batchCursor[category] = 0;
-        nextCursor = (idx + 1) % categories.length;
-        nextProcessed = processed + 1;
-      } else {
-        batchCursor[category] = nextBatch;
-      }
-    }
-
-    await supabase
-      .from("ai_scheduler_config")
-      .update({
-        cursor: nextCursor,
-        processed_this_week: nextProcessed,
-        week_key: weekKey,
-        batch_cursor: batchCursor,
-        last_run_at: now.toISOString(),
-        updated_at: now.toISOString(),
-      })
-      .eq("id", 1);
-
-    await logRun(
-      supabase,
-      completedSuccessfully ? "success" : (ok && skipped ? "skipped" : "error"),
-      cfg.mode,
-      category,
-      nextBatch,
-      {
-        status: forwardRes.status,
-        body: forwardText.slice(0, 2000),
-        skipped,
-        reason,
-        completed_successfully: completedSuccessfully,
-        batch: nextBatch,
-        batch_count: batchCount,
-        cursor: nextCursor,
-        processed_this_week: nextProcessed,
-      }
-    );
-
-    return Response.json({
-      ok: completedSuccessfully,
-      upstream_ok: ok,
-      mode: cfg.mode,
-      category,
-      batch: nextBatch,
-      batch_count: batchCount,
-      status: forwardRes.status,
-      skipped,
-      reason,
-      cursor: nextCursor,
-      processed_this_week: nextProcessed,
-      total_categories: categories.length
-    });
-  } catch (e) {
-    return new Response(JSON.stringify({ ok: false, error: String(e) }), { status: 500 });
-  }
-});
-```
-
-## 4) Edge Function Environment Variables
-
-Set these function secrets in Supabase:
-- `CRON_TO_FUNCTION_SECRET`
-- `PREVIEW_BASE_URL`
-- `PROD_BASE_URL`
-- `PREVIEW_CRON_SECRET`
-- `PROD_CRON_SECRET`
-- `SUPABASE_URL`
-
-Default secrets are provided by Supabase automatically:
-- `SUPABASE_SECRET_KEYS` (preferred for admin/server operations)
-- `SUPABASE_PUBLISHABLE_KEYS` (preferred for public client operations)
-- Legacy: `SUPABASE_SERVICE_ROLE_KEY` and `SUPABASE_ANON_KEY` may still exist
-
-You usually do not need to manually add `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_ANON_KEY` in Edge Function secrets.
-
-Note: the SQL cron caller in this guide sets both `apikey` and `Authorization: Bearer ...` headers when invoking the Edge Function. Keep `ai_sched_anon_key` as the legacy JWT `anon` key for this pattern.
-
-### Environment Ownership (Important)
-
-- Vercel envs are for your Next.js API route.
-- Supabase Edge Function secrets are for the scheduler function.
-- They are not the same set and should not be copied 1:1.
-
-Set in Vercel (Preview and Production projects/environments):
-- `CRON_SECRET`
-
-Set in Supabase Edge Function Secrets:
-- `CRON_TO_FUNCTION_SECRET`
-- `PREVIEW_BASE_URL`
-- `PROD_BASE_URL`
-- `PREVIEW_CRON_SECRET`
-- `PROD_CRON_SECRET`
-
-Supabase-provided defaults (do not re-add unless needed):
-- `SUPABASE_URL`
-- `SUPABASE_SECRET_KEYS`
-- `SUPABASE_PUBLISHABLE_KEYS`
-
-## 5) Preview First, Then Prod
-
-Enable preview mode first:
+## 5) Preview first, then production
 
 ```sql
-update public.ai_scheduler_config
-set enabled = true, mode = 'preview', min_interval_minutes = 5, updated_at = now()
-where id = 1;
+-- test against the preview deployment
+update public.ai_scheduler_config set enabled = true, mode = 'preview', min_interval_minutes = 2 where id = 1;
+
+-- switch to production
+update public.ai_scheduler_config set mode = 'prod' where id = 1;
+
+-- emergency stop
+update public.ai_scheduler_config set enabled = false where id = 1;
 ```
 
-Switch to production after testing:
+## 6) Will the posts show on the blog?
 
-```sql
-update public.ai_scheduler_config
-set mode = 'prod', updated_at = now()
-where id = 1;
-```
-
-Emergency stop:
-
-```sql
-update public.ai_scheduler_config
-set enabled = false, updated_at = now()
-where id = 1;
-```
-
-## 6) Will Posts Show in Blog Page?
-
-Yes. Your blog listing API already includes AI-generated posts (enabled by default), so once a scheduled post is saved with published status, it will be shown in blog/posts pages.
-
-## 7) Category + Batch Rotation Behavior
-
-- Every 5 minutes the scheduler picks the next category from `categories` by `cursor`.
-- For that category, the scheduler computes the next batch using `batch_cursor` and forwards it as `batch`.
-- The API can also auto-rotate when `batch` is not passed, but this scheduler uses explicit per-category batch state.
-
-Important: category names must exactly match values stored in `tools_coverage_metadata.category`. If names do not match, the scheduler will keep running but may not find tools for that category.
-
-DB-valid category set (from schema `valid_category` constraint):
-- AI/ML
-- Cloud Platform
-- Infrastructure as Code
-- CI/CD Pipeline
-- Monitoring/Observability
-- Security/Zero-Trust
-- Container/Orchestration
-- Configuration Management
-- Service Mesh
-- Networking
-- Database
-- Data Streaming
-- Data Engineering
-- API Gateway
-- Identity & Access
-- DevSecOps
-- Automation
-- Developer Tools
-
-## 8) If It Is Already Running, How To Update Safely
-
-1. Pause scheduler:
-
-```sql
-update public.ai_scheduler_config
-set enabled = false, updated_at = now()
-where id = 1;
-```
-
-2. Redeploy Edge Function with the latest code from this document.
-
-3. Ensure Vercel `CRON_SECRET` values are set correctly for both Preview and Production.
-
-4. Confirm Supabase Edge Function secrets are updated:
-- `PREVIEW_BASE_URL`
-- `PROD_BASE_URL`
-- `PREVIEW_CRON_SECRET`
-- `PROD_CRON_SECRET`
-- `CRON_TO_FUNCTION_SECRET`
-
-5. Optional reset for a clean weekly cycle:
-
-```sql
-update public.ai_scheduler_config
-set cursor = 0,
-    processed_this_week = 0,
-    week_key = '',
-    last_run_at = null,
-    updated_at = now()
-where id = 1;
-```
-
-6. Re-enable scheduler in the target mode:
-
-```sql
-update public.ai_scheduler_config
-set enabled = true, mode = 'preview', min_interval_minutes = 5, updated_at = now()
-where id = 1;
-```
-
-7. After preview validation, switch to production:
-
-```sql
-update public.ai_scheduler_config
-set mode = 'prod', min_interval_minutes = 5, updated_at = now()
-where id = 1;
-```
-
-8. Verify latest runs:
-
-```sql
-select run_at, mode, category, status
-from public.ai_scheduler_runs
-order by run_at desc
-limit 20;
-```
-
-
-
-
-select enabled,
-       mode,
-       weekly_dow,
-       weekly_start_hour_utc,
-       min_interval_minutes,
-       cursor,
-       processed_this_week,
-       week_key,
-       batch_cursor,
-       last_run_at
-from public.ai_scheduler_config
-where id = 1;
+Yes. The blog API merges `ai_generated_posts` with `status = 'published'`, so every saved post appears in the blog and category listings.

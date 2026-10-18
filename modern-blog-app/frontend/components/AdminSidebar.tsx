@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 import { useAuth } from '@/lib/authContext';
 import {
   FaHome,
@@ -14,15 +15,23 @@ import {
   FaBars,
   FaTimes,
   FaGlobeAmericas,
+  FaMoon,
+  FaSun,
 } from 'react-icons/fa';
 
 export function AdminSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { user, signOut, userRole } = useAuth();
+  const { resolvedTheme, setTheme } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const updateLayout = () => {
@@ -101,7 +110,7 @@ export function AdminSidebar() {
             setIsOpen(!isOpen);
           }
         }}
-        className="fixed right-4 top-4 z-[60] rounded-xl border border-cyan-800/40 bg-slate-950/90 p-2.5 text-cyan-100 shadow-lg shadow-cyan-900/30 backdrop-blur transition hover:scale-105 lg:hidden"
+        className="fixed right-4 top-4 z-[60] rounded-xl border border-[var(--line-strong)] bg-[rgb(var(--bg-rgb)/0.9)] p-2.5 text-[rgb(var(--fg-rgb))] shadow-lg backdrop-blur transition hover:scale-105 lg:hidden"
         aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
       >
         {isOpen ? <FaTimes /> : <FaBars />}
@@ -114,25 +123,25 @@ export function AdminSidebar() {
         onMouseLeave={() => {
           if (isDesktop && !isOpen) setIsCollapsed(true);
         }}
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col border-r border-cyan-900/40 bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.12),_transparent_34%),linear-gradient(180deg,_rgba(2,6,23,0.96),_rgba(15,23,42,0.96))] text-white shadow-2xl shadow-cyan-950/50 backdrop-blur-xl transition-all duration-300 ${
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col border-r border-[var(--line)] bg-[rgb(var(--bg-rgb)/0.9)] text-[rgb(var(--fg-rgb))] shadow-2xl shadow-black/30 backdrop-blur-2xl transition-all duration-300 ${
           isDesktop ? (isCollapsed ? 'w-20' : 'w-72') : 'w-72'
         } ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
-        <div className="border-b border-cyan-900/40 px-4 py-5 lg:px-3">
+        <div className="border-b border-[var(--line)] px-4 py-5 lg:px-3">
           <Link href="/dashboard" className={`flex items-center ${isCollapsed && isDesktop ? 'justify-center' : 'gap-3'}`}>
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-fuchsia-500 text-lg font-semibold text-white shadow-lg shadow-cyan-500/30">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 via-sky-400 to-indigo-500 font-display text-lg font-bold text-slate-950 shadow-lg shadow-cyan-500/30">
               A
             </div>
             {!isCollapsed && (
               <div>
-                <p className="text-lg font-semibold text-white">Admin Panel</p>
-                <p className="text-sm text-slate-400">Control center</p>
+                <p className="font-display text-lg font-semibold">Admin Panel</p>
+                <p className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-[var(--fg-subtle)]">Control center</p>
               </div>
             )}
           </Link>
         </div>
 
-        <nav className="flex-1 space-y-2 p-3">
+        <nav className="flex-1 space-y-1.5 p-3">
           {allowedNavItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
@@ -144,12 +153,12 @@ export function AdminSidebar() {
                     setIsOpen(false);
                   }
                 }}
-                className={`flex items-center rounded-2xl px-3 py-3 text-sm font-semibold transition-all duration-200 ${
+                className={`flex items-center rounded-xl border px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                   isCollapsed && isDesktop ? 'justify-center' : 'gap-3'
                 } ${
                   isActive
-                    ? 'bg-gradient-to-r from-cyan-500/90 to-fuchsia-500/90 text-white shadow-lg shadow-cyan-500/30'
-                    : 'text-slate-200 hover:bg-cyan-500/10 hover:text-cyan-100'
+                    ? 'border-[rgb(var(--accent-rgb)/0.35)] bg-[rgb(var(--accent-rgb)/0.12)] text-[rgb(var(--accent-rgb))]'
+                    : 'border-transparent text-[var(--fg-muted)] hover:bg-[rgb(var(--fg-rgb)/0.06)] hover:text-[rgb(var(--fg-rgb))]'
                 }`}
                 title={isCollapsed && isDesktop ? item.label : undefined}
               >
@@ -160,18 +169,28 @@ export function AdminSidebar() {
           })}
         </nav>
 
-        <div className="space-y-4 border-t border-cyan-900/40 p-3">
+        <div className="space-y-3 border-t border-[var(--line)] p-3">
           {!isCollapsed && (
-            <div className="rounded-2xl border border-cyan-900/40 bg-cyan-500/5 p-4 text-sm">
-              <p className="text-slate-400">Signed in as</p>
-              <p className="mt-1 truncate font-semibold text-white">{user?.email}</p>
-              <p className="mt-1 text-xs uppercase tracking-[0.2em] text-cyan-300">{userRole}</p>
+            <div className="rounded-xl border border-[var(--line)] bg-[rgb(var(--fg-rgb)/0.04)] p-4 text-sm">
+              <p className="text-[var(--fg-subtle)]">Signed in as</p>
+              <p className="mt-1 truncate font-semibold">{user?.email}</p>
+              <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-[0.2em] text-[rgb(var(--accent-rgb))]">{userRole}</p>
             </div>
           )}
 
           <button
+            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            className={`flex w-full items-center justify-center rounded-xl border border-[var(--line)] px-4 py-2.5 text-sm font-medium text-[var(--fg-muted)] transition hover:bg-[rgb(var(--fg-rgb)/0.06)] hover:text-[rgb(var(--fg-rgb))] ${isCollapsed && isDesktop ? 'px-2' : 'gap-2'}`}
+            title="Toggle theme"
+            aria-label="Toggle theme"
+          >
+            {mounted && resolvedTheme === 'dark' ? <FaSun /> : <FaMoon />}
+            {!isCollapsed && <span>{mounted && resolvedTheme === 'dark' ? 'Light theme' : 'Dark theme'}</span>}
+          </button>
+
+          <button
             onClick={handleSignOut}
-            className={`flex w-full items-center justify-center rounded-2xl bg-red-600/90 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-500 ${isCollapsed && isDesktop ? 'px-2' : 'gap-2'}`}
+            className={`btn-danger w-full ${isCollapsed && isDesktop ? '!px-2' : ''}`}
             title={isCollapsed && isDesktop ? 'Sign out' : undefined}
           >
             <FaSignOutAlt />

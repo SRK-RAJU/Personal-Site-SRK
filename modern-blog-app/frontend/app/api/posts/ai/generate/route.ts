@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/apiAuth';
 
 export const dynamic = 'force-dynamic';
-export const maxDuration = 45;
+export const maxDuration = 60;
 
 function getTavilyApiKey(): string {
   return process.env.TAVILY_API_KEY || process.env.TAVILY_API || '';
@@ -51,7 +51,18 @@ const DEFAULT_TOOL_BATCH_SIZE = 4;
 const MAX_GENERATION_TOOLS = 4;
 const GENERATION_TOOL_BATCH_SIZE = Math.min(DEFAULT_TOOL_BATCH_SIZE, MAX_GENERATION_TOOLS);
 const GEMINI_MAX_OUTPUT_TOKENS = 900;
-const GEMINI_TIMEOUT_MS = 45000;
+// Time budget for one request (maxDuration is 60s). External calls are sized so that Tavily + Gemini + the
+// database save always finish before the platform kills the function, which would leave a stale 'running' lock.
+const REQUEST_DEADLINE_MS = 55000;
+const TAVILY_TIMEOUT_MS = 10000;
+const TAVILY_MIN_ATTEMPT_MS = 2000;
+const GEMINI_TIMEOUT_MS = 30000;
+const GEMINI_MIN_ATTEMPT_MS = 5000;
+const GEMINI_RESERVE_FOR_TAVILY_MS = 25000; // Tavily never eats the time Gemini needs
+const SAVE_RESERVE_MS = 4000; // time kept for saving the post and writing the log
+const MIN_TIME_FOR_POST_MS = 20000; // below this, a further post in the same request would only get the compact fallback text
+// A request can never outlive maxDuration, so a 'running' log row older than this belongs to a killed request.
+const GENERATION_LOCK_TTL_MS = 2 * 60 * 1000;
 const DEFAULT_CATEGORY_CATALOG = [
   'AI/ML',
   'Cloud Platform',
@@ -115,6 +126,16 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+class NonRetryableError extends Error {}
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
 async function withRetry<T>(fn: () => Promise<T>, attempts = 3, baseDelay = 800): Promise<T> {
   let lastErr: any;
   for (let i = 0; i < attempts; i++) {
@@ -122,6 +143,7 @@ async function withRetry<T>(fn: () => Promise<T>, attempts = 3, baseDelay = 800)
       return await fn();
     } catch (err) {
       lastErr = err;
+      if (err instanceof NonRetryableError || i === attempts - 1) break;
       const wait = baseDelay * Math.pow(2, i);
       console.warn(`[withRetry] attempt ${i + 1} failed, retrying in ${wait}ms`, (err as any)?.message || err);
       await sleep(wait);
@@ -348,38 +370,37 @@ async function getToolCategories(): Promise<string[]> {
 
 async function getToolsForGeneration(limit: number = TOOLS_COVERAGE_QUERY_LIMIT, batchIndex?: number, category?: string, batchSize: number = GENERATION_TOOL_BATCH_SIZE): Promise<{name: string, category: string}[]> {
   const supabase = getSupabaseClient();
-  if (!supabase) return [];
-
-  try {
-    let query = supabase
-      .from('tools_coverage_metadata')
-      .select('tool_name, category')
-      .eq('is_active', true)
-      .order('priority', { ascending: false })
-      .order('tool_name', { ascending: true })
-      .limit(Math.max(limit, 1000));
-
-    if (category && category.trim()) {
-      query = query.ilike('category', category.trim());
-    }
-
-    const { data, error } = await query;
-
-    if (error || !data) return [];
-
-    const activeTools = (data as any[])
-      .map((tool: any) => ({ name: tool.tool_name, category: tool.category }))
-      .filter((tool) => tool.name);
-
-    const batch = (typeof batchIndex === 'number' && batchIndex > 0) ? Math.floor(batchIndex) : 1;
-    const effectiveBatchSize = Math.min(Math.max(1, Math.floor(batchSize)), MAX_GENERATION_TOOLS);
-    const start = (batch - 1) * effectiveBatchSize;
-    const end = start + effectiveBatchSize;
-
-    return activeTools.slice(start, end);
-  } catch (err) {
-    return [];
+  if (!supabase) {
+    throw new Error('Supabase client unavailable while loading generation tools');
   }
+
+  let query = supabase
+    .from('tools_coverage_metadata')
+    .select('tool_name, category')
+    .eq('is_active', true)
+    .order('priority', { ascending: false })
+    .order('tool_name', { ascending: true })
+    .limit(Math.max(limit, 1000));
+
+  if (category && category.trim()) {
+    query = query.ilike('category', category.trim());
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    throw new Error(`Failed to load generation tools: ${error.message}`);
+  }
+
+  const activeTools = (data ?? [])
+    .map((tool: any) => ({ name: tool.tool_name, category: tool.category }))
+    .filter((tool) => tool.name);
+
+  const batch = (typeof batchIndex === 'number' && batchIndex > 0) ? Math.floor(batchIndex) : 1;
+  const effectiveBatchSize = Math.min(Math.max(1, Math.floor(batchSize)), MAX_GENERATION_TOOLS);
+  const start = (batch - 1) * effectiveBatchSize;
+  const end = start + effectiveBatchSize;
+
+  return activeTools.slice(start, end);
 }
 
 async function countToolsForCategory(category?: string): Promise<number> {
@@ -620,11 +641,20 @@ function buildTavilySearchQuery(toolsWithCategories: {name: string, category: st
   return baseQuery;
 }
 
-async function searchTrendContext(toolsWithCategories: {name: string, category: string}[]): Promise<TrendSearchContext> {
+async function searchTrendContext(toolsWithCategories: {name: string, category: string}[], deadlineAt?: number): Promise<TrendSearchContext> {
   const tavilyApiKey = getTavilyApiKey();
   if (!tavilyApiKey) {
     return { results: [], queryCount: 0 };
   }
+
+  // Tavily is optional context: never let it use the time Gemini needs, and never hang the whole request.
+  const nextTavilyTimeout = (): number => {
+    const remaining = deadlineAt ? deadlineAt - Date.now() - GEMINI_RESERVE_FOR_TAVILY_MS : TAVILY_TIMEOUT_MS;
+    if (remaining < TAVILY_MIN_ATTEMPT_MS) {
+      throw new NonRetryableError('Tavily skipped: not enough time left in this request');
+    }
+    return Math.min(TAVILY_TIMEOUT_MS, remaining);
+  };
 
   const category = toolsWithCategories[0]?.category;
   const toolQueries = [buildTavilySearchQuery(toolsWithCategories, category)].slice(0, MAX_TAVILY_SEARCH_QUERIES);
@@ -647,14 +677,17 @@ async function searchTrendContext(toolsWithCategories: {name: string, category: 
 
     try {
       await sleep(SEQUENTIAL_REQUEST_DELAY_MS);
-      const response = await withRetry(() => tvly.search(searchBody, {
-        days: 7,
-        maxResults: TAVILY_SEARCH_MAX_RESULTS,
-        searchDepth: TAVILY_SEARCH_DEPTH,
-        topic: TAVILY_SEARCH_TOPIC,
-        includeAnswer: false,
-        includeUsage: true,
-      }), 2, 800);
+      const response = await withRetry(() => {
+        const timeoutMs = nextTavilyTimeout();
+        return withTimeout(tvly.search(searchBody, {
+          days: 7,
+          maxResults: TAVILY_SEARCH_MAX_RESULTS,
+          searchDepth: TAVILY_SEARCH_DEPTH,
+          topic: TAVILY_SEARCH_TOPIC,
+          includeAnswer: false,
+          includeUsage: true,
+        }), timeoutMs, 'Tavily search');
+      }, 2, 800);
 
       const results = (response.results || []).map((result: any) => ({
         title: result.title || 'No title',
@@ -689,14 +722,17 @@ async function searchTrendContext(toolsWithCategories: {name: string, category: 
       console.warn('[TAVILY-SEARCH] No trend results from batched queries, falling back to generic research search.');
       await sleep(1200);
       try {
-const fallbackResponse: any = await withRetry(() => tvly.search(buildTavilySearchQuery(toolsWithCategories, category) + ' Focus on the last 7 days of relevant news and vulnerabilities.', {
+const fallbackResponse: any = await withRetry(() => {
+        const timeoutMs = nextTavilyTimeout();
+        return withTimeout(tvly.search(buildTavilySearchQuery(toolsWithCategories, category) + ' Focus on the last 7 days of relevant news and vulnerabilities.', {
           days: 7,
           maxResults: TAVILY_SEARCH_MAX_RESULTS,
           searchDepth: TAVILY_SEARCH_DEPTH,
           topic: TAVILY_SEARCH_TOPIC,
           includeAnswer: false,
           includeUsage: true,
-        }), 2, 1000);
+        }), timeoutMs, 'Tavily fallback search');
+      }, 2, 1000);
 
         return {
           results: (fallbackResponse.results || []).map((result: any) => ({
@@ -716,86 +752,93 @@ const fallbackResponse: any = await withRetry(() => tvly.search(buildTavilySearc
   return { results: dedupedResults, queryCount: toolQueries.length };
 }
 
-async function generateWithGoogleGemini(systemPrompt: string, context: string, model: string, attempts = 2, modelIndex = 0): Promise<string> {
+async function generateWithGoogleGemini(systemPrompt: string, context: string, model: string, attempts = 2, modelIndex = 0, deadlineAt?: number): Promise<string> {
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY || '';
   if (!apiKey) throw new Error('Google Gemini API key is missing');
 
   const modelCandidates = getGeminiModelCandidates(model);
   const selectedModel = modelCandidates[modelIndex] || modelCandidates[0] || 'gemini-3.1-flash-lite';
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
 
-  try {
-    await sleep(SEQUENTIAL_REQUEST_DELAY_MS);
-    const response = await withRetry(async () => {
-      const c = new AbortController();
-      const t = setTimeout(() => c.abort(), GEMINI_TIMEOUT_MS);
-      try {
-        return await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(selectedModel)}:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            signal: c.signal,
-            body: JSON.stringify({
-              systemInstruction: {
-                role: 'system',
-                parts: [{ text: systemPrompt }],
+  // Never start an attempt that cannot finish before the request deadline; the caller then falls back to the
+  // compact markdown so the post is still saved and the generation lock is released.
+  const nextGeminiTimeout = (): number => {
+    const remaining = deadlineAt ? deadlineAt - Date.now() - SAVE_RESERVE_MS : GEMINI_TIMEOUT_MS;
+    if (remaining < GEMINI_MIN_ATTEMPT_MS) {
+      throw new NonRetryableError('Gemini skipped: not enough time left in this request');
+    }
+    return Math.min(GEMINI_TIMEOUT_MS, remaining);
+  };
+
+  await sleep(SEQUENTIAL_REQUEST_DELAY_MS);
+  const response = await withRetry(async () => {
+    const timeoutMs = nextGeminiTimeout();
+    const c = new AbortController();
+    const t = setTimeout(() => c.abort(), timeoutMs);
+    try {
+      return await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(selectedModel)}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: c.signal,
+          body: JSON.stringify({
+            systemInstruction: {
+              role: 'system',
+              parts: [{ text: systemPrompt }],
+            },
+            contents: [
+              {
+                role: 'user',
+                parts: [{ text: `Synthesize a concise report mapping current tech shifts to these tracking vectors using the following telemetry context:\n\n${context}` }],
               },
-              contents: [
-                {
-                  role: 'user',
-                  parts: [{ text: `Synthesize a concise report mapping current tech shifts to these tracking vectors using the following telemetry context:\n\n${context}` }],
-                },
-              ],
-              generationConfig: {
-                temperature: 0.5,
-                topP: 0.9,
-                maxOutputTokens: GEMINI_MAX_OUTPUT_TOKENS,
-              },
-            }),
-          }
-        );
-      } finally {
-        clearTimeout(t);
-      }
-    }, 2, 1000);
-
-    if (!response.ok) {
-      const body = await response.text().catch(() => '');
-      const retryAfterHeader = response.headers.get('retry-after');
-      const retryAfterSeconds = retryAfterHeader ? Number(retryAfterHeader) : 0;
-      const isRateLimit = response.status === 429 || response.status === 503;
-
-      if (response.status === 404) {
-        console.error('[GEMINI] Model not found or unsupported for generateContent', { status: response.status, body, model: selectedModel });
-      } else {
-        console.error('[GEMINI] API request failed', { status: response.status, body, model: selectedModel, retryAfterSeconds });
-      }
-
-      if (isRateLimit && attempts > 0) {
-        const waitMs = retryAfterSeconds > 0 ? retryAfterSeconds * 1000 + 500 : 1800;
-        const nextModelIndex = modelIndex + 1;
-        const hasFallbackModel = nextModelIndex < modelCandidates.length;
-
-        console.warn(`[GEMINI] ${selectedModel} hit a rate limit, retrying after ${waitMs}ms with ${hasFallbackModel ? modelCandidates[nextModelIndex] : selectedModel}.`);
-        await sleep(waitMs);
-
-        if (hasFallbackModel) {
-          return generateWithGoogleGemini(systemPrompt, context, model, attempts - 1, nextModelIndex);
+            ],
+            generationConfig: {
+              temperature: 0.5,
+              topP: 0.9,
+              maxOutputTokens: GEMINI_MAX_OUTPUT_TOKENS,
+            },
+          }),
         }
+      );
+    } finally {
+      clearTimeout(t);
+    }
+  }, 2, 1000);
 
-        return generateWithGoogleGemini(systemPrompt, context, model, attempts - 1, modelIndex);
-      }
+  if (!response.ok) {
+    const body = await response.text().catch(() => '');
+    const retryAfterHeader = response.headers.get('retry-after');
+    const retryAfterSeconds = retryAfterHeader ? Number(retryAfterHeader) : 0;
+    const isRateLimit = response.status === 429 || response.status === 503;
 
-      throw new Error(`Gemini API error: ${response.status} ${body}`);
+    if (response.status === 404) {
+      console.error('[GEMINI] Model not found or unsupported for generateContent', { status: response.status, body, model: selectedModel });
+    } else {
+      console.error('[GEMINI] API request failed', { status: response.status, body, model: selectedModel, retryAfterSeconds });
     }
 
-    const payload = await response.json();
-    return payload.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  } finally {
-    clearTimeout(timeout);
+    const waitMs = retryAfterSeconds > 0 ? retryAfterSeconds * 1000 + 500 : 1800;
+    const timeLeftMs = deadlineAt ? deadlineAt - Date.now() - SAVE_RESERVE_MS : Number.POSITIVE_INFINITY;
+
+    if (isRateLimit && attempts > 0 && timeLeftMs > waitMs + GEMINI_MIN_ATTEMPT_MS) {
+      const nextModelIndex = modelIndex + 1;
+      const hasFallbackModel = nextModelIndex < modelCandidates.length;
+
+      console.warn(`[GEMINI] ${selectedModel} hit a rate limit, retrying after ${waitMs}ms with ${hasFallbackModel ? modelCandidates[nextModelIndex] : selectedModel}.`);
+      await sleep(waitMs);
+
+      if (hasFallbackModel) {
+        return generateWithGoogleGemini(systemPrompt, context, model, attempts - 1, nextModelIndex, deadlineAt);
+      }
+
+      return generateWithGoogleGemini(systemPrompt, context, model, attempts - 1, modelIndex, deadlineAt);
+    }
+
+    throw new Error(`Gemini API error: ${response.status} ${body}`);
   }
+
+  const payload = await response.json();
+  return payload.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
 
@@ -948,7 +991,8 @@ async function generateBlogPost(
   toolsWithCategories: {name: string, category: string}[],
   trendNews: SearchResult[],
   excludedTopics: ExcludedTopic[],
-  category?: string
+  category?: string,
+  deadlineAt?: number
 ): Promise<GeneratedPost | null> {
   if (!getAiApiKey()) return null;
   const systemPrompt = createSystemPrompt(excludedTopics, toolsWithCategories, category);
@@ -963,7 +1007,7 @@ async function generateBlogPost(
   let generatedMarkdown = '';
 
   try {
-    generatedMarkdown = await generateWithGoogleGemini(systemPrompt, context, selectedModel, 1);
+    generatedMarkdown = await generateWithGoogleGemini(systemPrompt, context, selectedModel, 1, 0, deadlineAt);
   } catch (err) {
     console.warn('[GENERATION] Main Gemini generation call failed, using compact fallback content.', (err as any)?.message || err);
   }
@@ -989,7 +1033,7 @@ async function generateBlogPost(
     const batchPrompt = `Provide short 2-3 sentence summaries for each of the following tools. For each tool, start the section with a markdown heading exactly in this format: ### <Tool Name>\n\nThen write 2-3 concise sentences. Return ONLY those headings and summaries concatenated, no extra commentary.\n\nTools:\n${missingTools.join(', ')}`;
 
     try {
-      const fallbackSummaries = await generateWithGoogleGemini(systemPrompt, batchPrompt, selectedModel, 1);
+      const fallbackSummaries = await generateWithGoogleGemini(systemPrompt, batchPrompt, selectedModel, 1, 0, deadlineAt);
       if (fallbackSummaries && fallbackSummaries.trim().length > 0) {
         finalMarkdown = `${generatedMarkdown.trim()}\n\n${fallbackSummaries.trim()}`;
       }
@@ -1142,7 +1186,7 @@ async function releaseStaleGenerationLocks(): Promise<void> {
   if (!supabase) return;
 
   try {
-    const staleBefore = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+    const staleBefore = new Date(Date.now() - GENERATION_LOCK_TTL_MS).toISOString();
     const { error } = await supabase
       .from('ai_generation_logs')
       .update({
@@ -1165,7 +1209,7 @@ async function hasActiveGenerationInProgress(): Promise<boolean> {
   if (!supabase) return false;
 
   try {
-    const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+    const since = new Date(Date.now() - GENERATION_LOCK_TTL_MS).toISOString();
     const { data, error } = await supabase
       .from('ai_generation_logs')
       .select('run_id')
@@ -1182,6 +1226,9 @@ async function hasActiveGenerationInProgress(): Promise<boolean> {
 async function handleGenerationRequest(request: NextRequest): Promise<NextResponse> {
   const runId = generateRunId();
   const startTime = Date.now();
+  const deadlineAt = startTime + REQUEST_DEADLINE_MS;
+  // True while another full post (search + generation + save) can still finish inside this request.
+  const hasTimeForAnotherPost = () => deadlineAt - Date.now() > MIN_TIME_FOR_POST_MS;
 
   try {
     if (process.env.NEXT_PHASE === 'phase-production-build') {
@@ -1272,6 +1319,10 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
 
       for (const category of selectedCategories) {
         const categorySlug = getTodaySlug(category);
+        if (!hasTimeForAnotherPost()) {
+          generated.push({ category, skipped: true, reason: 'Request time limit reached - run again for the remaining categories' });
+          continue;
+        }
         if (!isAdmin && !isSupabaseSchedulerRun) {
           const { alreadyGenerated } = await checkIfAlreadyGeneratedToday(category);
           if (alreadyGenerated) {
@@ -1288,9 +1339,9 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
         }
 
         const excludedTopics = await getExcludedTopics();
-        const trendSearch = await searchTrendContext(toolsWithCategories);
+        const trendSearch = await searchTrendContext(toolsWithCategories, deadlineAt);
         const trendNews = trendSearch.results;
-        const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics, category);
+        const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics, category, deadlineAt);
 
         if (!post) {
           generated.push({ category, skipped: true, reason: 'Generation failed' });
@@ -1340,6 +1391,11 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
       let geminiCallsCount = 0;
       const batchesToRun = Math.max(1, batchesRequested);
       for (let bi = 0; bi < batchesToRun; bi++) {
+        if (bi > 0 && !hasTimeForAnotherPost()) {
+          geminiCalls.push({ category, skipped: true, reason: 'Request time limit reached', batch_index: startBatchForCategory + bi });
+          break;
+        }
+
         const currentBatchIndex = startBatchForCategory + bi;
         const toolsWithCategories = await getToolsForGeneration(TOOLS_COVERAGE_QUERY_LIMIT, currentBatchIndex, category, generationToolBatchSize);
         if (!toolsWithCategories.length) {
@@ -1349,10 +1405,10 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
         }
 
         const excludedTopics = await getExcludedTopics();
-        const trendSearch = await searchTrendContext(toolsWithCategories);
+        const trendSearch = await searchTrendContext(toolsWithCategories, deadlineAt);
         const trendNews = trendSearch.results;
 
-        const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics, category);
+        const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics, category, deadlineAt);
 
         if (!post) {
           geminiCalls.push({ category, skipped: true, reason: 'Generation failed', batch_index: currentBatchIndex });
@@ -1364,12 +1420,32 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
         geminiCalls.push({ category, saved: saveResult.saved, post: { title: saveResult.savedPost?.title || post.title, slug: saveResult.savedPost?.slug || post.slug, cves_mentioned: post.cves_mentioned }, backupPath: saveResult.backupPath, batch_index: currentBatchIndex });
       }
 
+      const savedCount = geminiCalls.filter((c) => c.saved).length;
+
       if (geminiCallsCount === 0) {
-        await logGeneration(runId, { run_id: runId, status: 'partial', posts_generated: 0, posts_published: 0, error_message: 'No posts generated' });
-        return NextResponse.json({ success: true, skipped: true, mode: 'single-category', category, reason: 'No posts generated' }, { status: 200 });
+        // "No tools" is a clean no-op for the scheduler; any other reason means nothing was produced and it should retry.
+        const onlyEmptyBatches = geminiCalls.length > 0 && geminiCalls.every((c) => c.reason === 'No tools found for category');
+        const reason = onlyEmptyBatches ? 'No tools found for category' : 'No posts generated';
+        await logGeneration(runId, { run_id: runId, status: 'partial', posts_generated: 0, posts_published: 0, error_message: reason });
+        return NextResponse.json({ success: true, skipped: true, mode: 'single-category', category, reason, posts_saved: 0, generated: geminiCalls }, { status: 200 });
       }
 
-      await logGeneration(runId, { run_id: runId, status: 'success', posts_generated: geminiCallsCount, posts_published: geminiCalls.filter(c => c.saved).length });
+      if (savedCount === 0) {
+        // Posts were generated but none reached the database: report a failure so the scheduler retries
+        // (bounded) instead of counting this batch as done. The generated text is kept in the backup files.
+        await logGeneration(runId, { run_id: runId, status: 'partial', posts_generated: geminiCallsCount, posts_published: 0, error_message: 'Generated posts could not be saved' });
+        return NextResponse.json({
+          success: false,
+          error: 'Generated posts could not be saved to the database',
+          mode: 'single-category',
+          category,
+          posts_saved: 0,
+          generated: geminiCalls,
+          backup_paths: geminiCalls.map(c => c.backupPath).filter(Boolean),
+        }, { status: 502 });
+      }
+
+      await logGeneration(runId, { run_id: runId, status: 'success', posts_generated: geminiCallsCount, posts_published: savedCount });
       const duration = Math.round((Date.now() - startTime) / 1000);
       const promptDetails = getCategoryPromptDetails(category);
 
@@ -1385,6 +1461,7 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
         tavily_enabled: !!getTavilyApiKey(),
         tavily_search_queries: 0,
         gemini_calls: geminiCallsCount,
+        posts_saved: savedCount,
         db_tool_count: geminiCalls.reduce((s, c) => s + ((c.post && c.post.tools_covered) ? c.post.tools_covered.length : 0), 0),
         generated: geminiCalls,
         batch: startBatchForCategory,
@@ -1418,10 +1495,10 @@ async function handleGenerationRequest(request: NextRequest): Promise<NextRespon
     }
 
     const excludedTopics = await getExcludedTopics();
-    const trendSearch = await searchTrendContext(toolsWithCategories);
+    const trendSearch = await searchTrendContext(toolsWithCategories, deadlineAt);
     const trendNews = trendSearch.results;
 
-    const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics, category);
+    const post = await generateBlogPost(toolsWithCategories, trendNews, excludedTopics, category, deadlineAt);
 
     if (!post) {
       await logGeneration(runId, { run_id: runId, status: 'failed', posts_generated: 0, posts_published: 0, error_message: 'Empty payload' });

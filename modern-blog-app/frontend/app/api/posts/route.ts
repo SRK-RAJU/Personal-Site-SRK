@@ -89,13 +89,15 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const published = searchParams.get('published');
-    const limit = parseInt(searchParams.get('limit') || '10000');
+    const parsedLimit = parseInt(searchParams.get('limit') || '10000', 10);
+    const limit = Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : 10000;
     const order = searchParams.get('order') || 'published_at';
     const ascending = searchParams.get('ascending') === 'true';
     const includeAI = searchParams.get('includeAI') !== 'false'; // Include AI posts by default
     const category = searchParams.get('category') || '';
 
-    // Query regular posts - NO LIMIT, fetch all
+    // Query regular posts. The limit is applied per source: the top N of the merged list always lies
+    // within the top N of each source, so small requests (home page widgets) no longer download every post.
     let query = supabase.from('posts').select('id, title, slug, excerpt, content, category, featured_image_url, published, published_at, author, read_time_minutes, view_count, created_at, updated_at');
 
     if (published === 'true') {
@@ -106,9 +108,9 @@ export async function GET(request: NextRequest) {
       query = query.ilike('category', `%${category}%`);
     }
 
-    const { data: regularPosts, error: regularError } = await query.order(order, { ascending });
+    const { data: regularPosts, error: regularError } = await query.order(order, { ascending }).limit(limit);
 
-    // Query AI-generated posts if requested - NO LIMIT, fetch all
+    // Query AI-generated posts if requested
     let aiPosts: any[] = [];
     if (includeAI) {
       try {
@@ -116,7 +118,8 @@ export async function GET(request: NextRequest) {
           .from('ai_generated_posts')
           .select('*')
           .eq('status', 'published')
-          .order(order, { ascending });
+          .order(order, { ascending })
+          .limit(limit);
 
         if (category) {
           aiQuery = aiQuery.ilike('category', `%${category}%`);

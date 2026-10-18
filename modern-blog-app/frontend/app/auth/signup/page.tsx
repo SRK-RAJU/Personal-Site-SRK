@@ -103,7 +103,7 @@ export default function SignupPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[rgb(var(--accent-rgb))] border-t-transparent mx-auto mb-4"></div>
           <p>Loading...</p>
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function SignupPage() {
         {/* Back Button */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-slate-200 hover:text-white mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-[var(--fg-muted)] hover:text-[rgb(var(--fg-rgb))] mb-8 transition-colors"
         >
           <FaArrowLeft className="text-sm" />
           Back to Site
@@ -140,7 +140,7 @@ export default function SignupPage() {
 
           {/* Success Message */}
           {success && (
-            <div className="mb-6 p-4 bg-violet-100 dark:bg-violet-900/20 border border-violet-300 dark:border-violet-700 text-violet-700 dark:text-violet-200 rounded-lg text-sm">
+            <div className="mb-6 rounded-xl border border-[rgb(var(--accent-rgb)/0.25)] bg-[rgb(var(--accent-rgb)/0.1)] p-4 text-sm text-[rgb(var(--fg-rgb))]">
               {success}
             </div>
           )}
@@ -157,7 +157,7 @@ export default function SignupPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Your full name"
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="field"
                 disabled={loading}
                 required
               />
@@ -173,7 +173,7 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="field"
                 disabled={loading}
                 required
               />
@@ -190,7 +190,7 @@ export default function SignupPage() {
                   value={password}
                   onChange={(e) => handlePasswordChange(e.target.value)}
                   placeholder="Create a strong password"
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="field !pr-11"
                   disabled={loading}
                   required
                 />
@@ -209,7 +209,7 @@ export default function SignupPage() {
                   <p
                     className={
                       password.length >= 8
-                        ? 'text-violet-600 dark:text-violet-400'
+                        ? 'text-[rgb(var(--accent-rgb))]'
                         : 'text-red-600 dark:text-red-400'
                     }
                   >
@@ -223,7 +223,7 @@ export default function SignupPage() {
                   <p
                     className={
                       /[A-Z]/.test(password)
-                        ? 'text-violet-600 dark:text-violet-400'
+                        ? 'text-[rgb(var(--accent-rgb))]'
                         : 'text-red-600 dark:text-red-400'
                     }
                   >
@@ -237,7 +237,7 @@ export default function SignupPage() {
                   <p
                     className={
                       /[a-z]/.test(password)
-                        ? 'text-violet-600 dark:text-violet-400'
+                        ? 'text-[rgb(var(--accent-rgb))]'
                         : 'text-red-600 dark:text-red-400'
                     }
                   >
@@ -251,7 +251,7 @@ export default function SignupPage() {
                   <p
                     className={
                       /[0-9]/.test(password)
-                        ? 'text-violet-600 dark:text-violet-400'
+                        ? 'text-[rgb(var(--accent-rgb))]'
                         : 'text-red-600 dark:text-red-400'
                     }
                   >
@@ -265,7 +265,7 @@ export default function SignupPage() {
                   <p
                     className={
                       /[!@#$%^&*]/.test(password)
-                        ? 'text-violet-600 dark:text-violet-400'
+                        ? 'text-[rgb(var(--accent-rgb))]'
                         : 'text-red-600 dark:text-red-400'
                     }
                   >
@@ -290,7 +290,7 @@ export default function SignupPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm your password"
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="field"
                 disabled={loading}
                 required
               />
@@ -305,18 +305,18 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading || passwordErrors.length > 0}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-semibold py-2 rounded-lg transition-colors"
+              className="btn-primary w-full !py-2.5"
             >
               {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
 
           {/* Login Link */}
-          <p className="mt-6 text-center text-slate-800 dark:text-slate-200">
+          <p className="mt-6 text-center text-[var(--fg-muted)]">
             Already have an account?{' '}
             <Link
               href="/auth/login"
-              className="text-blue-600 hover:text-blue-700 dark:hover:text-blue-400 font-semibold"
+              className="text-[rgb(var(--accent-rgb))] hover:underline font-semibold"
             >
               Sign in
             </Link>

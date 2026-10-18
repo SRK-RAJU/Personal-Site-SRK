@@ -38,7 +38,7 @@ const markdownComponents = {
   ol: ({ node, ...props }: any) => <ol className="list-decimal pl-6 my-4 space-y-2" {...props} />,
   li: ({ node, ...props }: any) => <li className="text-lg leading-8 text-slate-800 dark:text-slate-200" {...props} />,
   strong: ({ node, ...props }: any) => <strong className="font-semibold text-slate-900 dark:text-white" {...props} />,
-  a: ({ node, ...props }: any) => <a className="text-violet-600 dark:text-violet-400 underline" {...props} />,
+  a: ({ node, ...props }: any) => <a className="text-[rgb(var(--accent-rgb))] underline underline-offset-4" {...props} />,
 };
 
 function buildSlugCandidates(slug: string): string[] {
@@ -155,35 +155,35 @@ function renderTechnologyStackContent(content: string): JSX.Element | null {
   const featuredTools = cards.flatMap((card) => card.tools.slice(0, 2)).slice(0, 8);
 
   return (
-    <div className="my-8 overflow-hidden rounded-3xl border border-violet-300/40 bg-gradient-to-br from-slate-950 via-violet-950/90 to-slate-900 p-6 shadow-[0_20px_60px_rgba(109,40,217,0.2)] dark:border-violet-700/40">
+    <div className="page-panel my-8 overflow-hidden !p-6">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-violet-300">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-[rgb(var(--accent-rgb))]">
             Ecosystem Overview
           </p>
-          <h3 className="mt-2 text-2xl font-semibold text-white">
+          <h3 className="mt-2 text-2xl font-semibold text-[rgb(var(--fg-rgb))]">
             Technology Stack
           </h3>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--fg-muted)]">
             A compact view of the platforms, services, and operational tooling shaping the current landscape.
           </p>
         </div>
-        <div className="rounded-full border border-violet-400/30 bg-white/10 px-3 py-1 text-sm font-medium text-violet-100">
+        <div className="futurist-pill">
           {cards.length} focus areas
         </div>
       </div>
 
       {featuredTools.length > 0 && (
-        <div className="mb-5 rounded-2xl border border-violet-400/20 bg-white/10 p-3 backdrop-blur-sm">
-          <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-violet-200">
-            <FaStar className="text-violet-300" />
+        <div className="mb-5 rounded-2xl border border-[rgb(var(--accent-rgb)/0.2)] bg-[rgb(var(--fg-rgb)/0.03)] p-3 backdrop-blur-sm">
+          <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-[rgb(var(--accent-rgb))]">
+            <FaStar className="text-[rgb(var(--accent-rgb))]" />
             Highlighted tools
           </div>
           <div className="flex flex-wrap gap-2">
             {featuredTools.map((tool) => (
               <span
                 key={tool}
-                className="rounded-full border border-violet-400/20 bg-gradient-to-r from-violet-500/20 to-cyan-500/20 px-2.75 py-1 text-xs font-semibold text-violet-50"
+                className="futurist-pill !px-2.5 !py-1 !text-xs"
               >
                 {tool}
               </span>
@@ -198,15 +198,15 @@ function renderTechnologyStackContent(content: string): JSX.Element | null {
           return (
             <div
               key={`${card.title}-${index}`}
-              className="group rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-400/40 hover:bg-white/15"
+              className="futurist-card group !p-4"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-cyan-500 text-white shadow-lg transition-transform duration-300 group-hover:scale-105">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[rgb(var(--accent-rgb)/0.25)] bg-[rgb(var(--accent-rgb)/0.1)] text-[rgb(var(--accent-rgb))] transition-transform duration-300 group-hover:scale-105">
                   <Icon className="text-lg" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-white">{card.title}</h4>
-                  <p className="text-sm text-slate-300">{card.tools.length} tools</p>
+                  <h4 className="font-semibold text-[rgb(var(--fg-rgb))]">{card.title}</h4>
+                  <p className="text-sm text-[var(--fg-muted)]">{card.tools.length} tools</p>
                 </div>
               </div>
 
@@ -214,7 +214,7 @@ function renderTechnologyStackContent(content: string): JSX.Element | null {
                 {card.tools.slice(0, 8).map((tool) => (
                   <span
                     key={tool}
-                    className="rounded-full border border-violet-400/20 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-100 transition-colors duration-300 hover:bg-violet-500/20"
+                    className="futurist-pill !px-2.5 !py-1 !text-xs"
                   >
                     {tool}
                   </span>
@@ -406,7 +406,7 @@ export default async function BlogPostPage({
   const { introText, sections } = parseMarkdownSections(post.content || '');
 
   return (
-    <article className="w-full futurist-grid-bg">
+    <article className="w-full">
       <script
         type="application/ld+json"
         // Escape "<" so post content can never break out of the script tag (stored-XSS hardening)
@@ -419,7 +419,7 @@ export default async function BlogPostPage({
             {/* Back Button */}
             <Link
               href="/blog"
-              className="mb-6 inline-flex items-center gap-2 font-semibold text-cyan-600 transition-colors hover:text-cyan-700 dark:text-cyan-300 dark:hover:text-cyan-200"
+              className="mb-6 inline-flex items-center gap-2 font-semibold text-[rgb(var(--accent-rgb))] transition-opacity hover:opacity-80"
             >
               <FaArrowLeft className="text-sm" />
               Back to Articles
@@ -443,12 +443,12 @@ export default async function BlogPostPage({
             <div className="mt-8 flex flex-wrap gap-6 text-sm text-slate-800 dark:text-slate-200 sm:text-base">
               {post.author_name && (
                 <div className="flex items-center gap-2">
-                  <FaUser className="text-violet-500" />
+                  <FaUser className="text-[rgb(var(--accent-rgb))]" />
                   <span className="font-semibold">{post.author_name}</span>
                 </div>
               )}
               <div className="flex items-center gap-2">
-                <FaCalendar className="text-violet-500" />
+                <FaCalendar className="text-[rgb(var(--accent-rgb))]" />
                 <span>
                   {new Date(post.published_at).toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -472,7 +472,7 @@ export default async function BlogPostPage({
       {post.featured_image_url && (
         <section className="py-8">
           <div className="container-max">
-            <div className="mx-auto max-w-4xl overflow-hidden rounded-[1.75rem] border border-white/70 bg-white/70 shadow-2xl shadow-violet-500/10 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70">
+            <div className="futurist-card mx-auto max-w-4xl !p-0">
               <Image
                 src={post.featured_image_url}
                 alt={post.title}
@@ -503,7 +503,7 @@ export default async function BlogPostPage({
             <div className="prose prose-slate dark:prose-invert mb-12 max-w-none">
               {sections.length > 0 && (
                 <div className="futurist-card mb-6 p-4">
-                  <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-violet-700 dark:text-violet-300">
+                  <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-[rgb(var(--accent-rgb))]">
                     Table of Contents
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -511,7 +511,7 @@ export default async function BlogPostPage({
                       <a
                         key={`${section.title}-${index}`}
                         href={`#section-${index}`}
-                        className="rounded-full border border-violet-200 bg-white/80 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-violet-400 hover:bg-violet-50 hover:text-violet-700 dark:border-violet-800 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:border-violet-500 dark:hover:bg-violet-950/40"
+                        className="futurist-pill"
                       >
                         {section.title}
                       </a>
@@ -531,16 +531,16 @@ export default async function BlogPostPage({
                       open={index === 0}
                       className="group futurist-card overflow-hidden"
                     >
-                      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 font-semibold text-slate-900 transition hover:bg-violet-50 dark:text-white dark:hover:bg-violet-950/30">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 font-semibold text-[rgb(var(--fg-rgb))] transition hover:bg-[rgb(var(--accent-rgb)/0.06)]">
                         <div className="flex items-center gap-3">
-                          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-blue-500 text-sm font-bold text-white shadow-lg">
+                          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgb(var(--accent-rgb)/0.25)] bg-[rgb(var(--accent-rgb)/0.1)] text-sm font-bold text-[rgb(var(--accent-rgb))]">
                             {getSectionIcon(index)}
                           </span>
                           <span>{section.title}</span>
                         </div>
-                        <FaChevronDown className="text-lg text-violet-600 transition duration-300 group-open:rotate-180 dark:text-violet-300" />
+                        <FaChevronDown className="text-lg text-[rgb(var(--accent-rgb))] transition duration-300 group-open:rotate-180" />
                       </summary>
-                      <div className="overflow-hidden border-t border-slate-200 bg-gradient-to-b from-slate-50/80 to-white/70 px-4 pb-4 pt-3 transition-all duration-300 dark:border-slate-700 dark:from-slate-900/80 dark:to-slate-950/70">
+                      <div className="overflow-hidden border-t border-[var(--line)] bg-[rgb(var(--fg-rgb)/0.02)] px-4 pb-4 pt-3 transition-all duration-300">
                         {renderMarkdownContent(section.body)}
                       </div>
                     </details>
@@ -559,7 +559,7 @@ export default async function BlogPostPage({
                     <Link
                       key={tag}
                       href={`/blog?tag=${encodeURIComponent(tag)}`}
-                      className="px-4 py-2 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 rounded-full text-sm font-semibold hover:bg-violet-200 dark:hover:bg-violet-900/50 transition-colors"
+                      className="futurist-pill"
                     >
                       #{tag}
                     </Link>
@@ -569,26 +569,26 @@ export default async function BlogPostPage({
             )}
 
             {/* Call to Action */}
-            <div className="futurist-card mt-12 bg-[linear-gradient(135deg,_rgba(14,165,233,0.12),_rgba(236,72,153,0.1))] dark:bg-[linear-gradient(135deg,_rgba(14,165,233,0.2),_rgba(236,72,153,0.16))]">
-              <h3 className="mb-4 text-2xl font-bold text-slate-900 dark:text-white">
+            <div className="futurist-card mt-12">
+              <h3 className="mb-4 text-2xl font-bold text-[rgb(var(--fg-rgb))]">
                 Want More Tech Insights?
               </h3>
-              <p className="text-slate-800 dark:text-slate-200 mb-6">
+              <p className="mb-6 text-[var(--fg-muted)]">
                 Subscribe to my blog for the latest updates on web development, cloud architecture, and DevOps practices.
               </p>
-              <button className="rounded-lg bg-gradient-to-r from-violet-600 to-blue-600 px-6 py-3 font-semibold text-white transition-all hover:from-violet-700 hover:to-blue-700 hover:shadow-lg">
+              <button className="btn-primary">
                 Subscribe Now
               </button>
             </div>
 
             {/* More Posts */}
             <div className="mt-12 border-t border-slate-200 pt-12 dark:border-slate-700">
-              <h3 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">
+              <h3 className="mb-6 text-2xl font-bold text-[rgb(var(--fg-rgb))]">
                 More from Blog
               </h3>
               <Link
                 href="/blog"
-                className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-semibold transition-colors"
+                className="inline-flex items-center gap-2 font-semibold text-[rgb(var(--accent-rgb))] transition-opacity hover:opacity-80"
               >
                 View All Articles →
               </Link>
