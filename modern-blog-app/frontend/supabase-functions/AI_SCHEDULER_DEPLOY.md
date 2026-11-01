@@ -1,6 +1,6 @@
 # AI Scheduler: deploy, operate, troubleshoot
 
-Pipeline: `pg_cron` (every 2 min) → Supabase Edge Function `ai-scheduler-dispatch` → Vercel `POST /api/posts/ai/generate` → Tavily + Gemini → `ai_generated_posts`.
+Pipeline: `pg_cron` (every 2 min) → Supabase Edge Function `ai-agent-posts` (source folder `ai-scheduler-dispatch`) → Vercel `POST /api/posts/ai/generate` → Tavily + Gemini → `ai_generated_posts`.
 
 Files:
 - Edge function: [ai-scheduler-dispatch/index.ts](ai-scheduler-dispatch/index.ts)
@@ -24,7 +24,7 @@ Files:
 | 1 | Cron was `0 3 * * 1` (once a week) but one call only forwards **one** batch | 1 post per week: the first category's first batch |
 | 2 | The 2-minute "sweep" file used `*/2 3 * * 1` (only the 03:00 hour) and the function only accepted exactly that hour | at most 30 ticks per week for 146 batches |
 | 3 | `min_interval` compared against the **end** of the previous call (and ignored `x-sweep`) | every second tick skipped, only ~15 calls in that hour, 7 of 69 categories |
-| 4 | The SQL files called `/functions/v1/ai-agent-posts`, the function is `ai-scheduler-dispatch` | a wrong URL means nothing runs at all |
+| 4 | The cron URL must end with the *deployed* function name. In this project that is `ai-agent-posts`; `ai-scheduler-dispatch` is only the source folder in the repo | a mismatch returns 404 and nothing runs at all |
 | 5 | The old weekly job was never unscheduled when the sweep job was added | two jobs fired together and could forward the same batch twice |
 | 6 | A failed batch never advanced, so the sweep stayed on it forever; "no posts generated", an HTML login page (HTTP 200) or a failed database insert counted as success and skipped batches | later categories never ran, or were skipped without a post |
 | 7 | A request killed by the platform left a `running` lock for 10 minutes, blocking 5 ticks | long gaps in the sweep |
@@ -48,18 +48,18 @@ Files:
    | optional `SCHEDULER_INTERVAL_GRACE_SECONDS` | 20 (absorbs cron jitter) |
    | optional `SCHEDULER_CHUNK_SIZE`, `SCHEDULER_PER_CALL_DELAY` | 1 and 0; keep as is |
 
-3. **Deploy the function** (the CLI expects `supabase/functions/ai-scheduler-dispatch/index.ts`, so copy this folder there first, or paste the file in Dashboard → Edge Functions):
+3. **Deploy the function** into the existing `ai-agent-posts` function (keep that name so the cron URL stays valid). Dashboard: Edge Functions → `ai-agent-posts` → code editor → paste `ai-scheduler-dispatch/index.ts` → Deploy updates. CLI: copy the file to `supabase/functions/ai-agent-posts/index.ts` first, then:
 
    ```bash
-   supabase functions deploy ai-scheduler-dispatch --project-ref YOUR_PROJECT_REF
+   supabase functions deploy ai-agent-posts --project-ref YOUR_PROJECT_REF
    ```
 
 4. **Cron job**: run `schedule_ai_scheduler.sql` in the Supabase SQL editor. It removes every old scheduler job, creates the single `ai_scheduler_weekly_sweep` job (`*/2 * * * *`) and sets `enabled = true`, `mode = 'prod'`, `min_interval_minutes = 2`.
-   Make sure the vault secret `ai_sched_fn_url` ends with `/functions/v1/ai-scheduler-dispatch`.
+   Before running it, the three Vault secrets (`ai_sched_fn_url`, `ai_sched_anon_key`, `ai_sched_cron_secret`) must hold your real values (how to set them is at the top of the SQL file): the script stops without changing anything if one is missing or still a `YOUR_...` placeholder. `ai_sched_fn_url` must end with `/functions/v1/ai-agent-posts` (the deployed function's name).
 5. **Check the plan without generating anything** (dry run):
 
    ```bash
-   curl -s -X POST "https://YOUR_PROJECT_REF.supabase.co/functions/v1/ai-scheduler-dispatch" \
+   curl -s -X POST "https://YOUR_PROJECT_REF.supabase.co/functions/v1/ai-agent-posts" \
      -H "Authorization: Bearer YOUR_ANON_JWT" \
      -H "x-supa-cron-secret: YOUR_CRON_TO_FUNCTION_SECRET" \
      -H "x-dry-run: 1"
@@ -101,7 +101,7 @@ Files:
 
 | What you see | Cause | Fix |
 |--------------|-------|-----|
-| Only one post per week | cron is `0 3 * * 1` | run `schedule_ai_scheduler.sql` |
+| Only one post per week, always the first category's first batch (e.g. "Advertising & AdTech") | the **old** Edge Function and/or the old once-a-week cron are still live. Vercel deploys do not update Supabase. The old function only worked in the exact Monday 03:00 UTC hour and forwarded one batch per call | redeploy the function and run `schedule_ai_scheduler.sql`, then run the dry run (Deploy, step 5): the new function answers `"dry_run": true`, the old one answers `outside_weekly_window` |
 | `net._http_response` status 404 | wrong function URL in vault `ai_sched_fn_url` | `vault.update_secret(...)` (see the SQL file) |
 | status 401 from the function | `x-supa-cron-secret` ≠ `CRON_TO_FUNCTION_SECRET` | make both identical |
 | `Missing target env vars` in `ai_scheduler_runs` | `PROD_BASE_URL` / `PROD_CRON_SECRET` not set (or `mode = 'preview'` without the preview ones) | set the secrets, check `mode` |

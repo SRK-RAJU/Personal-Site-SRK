@@ -13,7 +13,7 @@ limit 20;
 
 -- 3) What did the edge function answer to each tick? (pg_net keeps roughly the last 6 hours)
 --    reason = disabled | min_interval | waiting_for_weekly_start | week_completed | claimed_by_another_tick
---    status_code 404 => the URL in vault 'ai_sched_fn_url' is wrong (must end with /ai-scheduler-dispatch)
+--    status_code 404 => the URL in vault 'ai_sched_fn_url' is wrong (must end with the deployed function's name, /ai-agent-posts)
 --    status_code 401 => x-supa-cron-secret does not match the function secret CRON_TO_FUNCTION_SECRET
 select id, status_code, timed_out, error_msg, left(content::text, 300) as body, created
 from net._http_response

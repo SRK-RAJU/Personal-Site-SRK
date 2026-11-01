@@ -64,17 +64,17 @@ Categories are free text. If the old 18-category `valid_category` CHECK constrai
 alter table public.tools_coverage_metadata drop constraint if exists valid_category;
 ```
 
-Vault secrets (replace the placeholders; `schedule_ai_scheduler.sql` creates them only when missing):
+Vault secrets. Run these once in the SQL Editor with your real values (never commit real values). `schedule_ai_scheduler.sql` stops without changing anything if one of them is missing or still a `YOUR_...` placeholder:
 
 ```sql
-select vault.create_secret('https://YOUR_PROJECT_REF.supabase.co/functions/v1/ai-scheduler-dispatch', 'ai_sched_fn_url');
+select vault.create_secret('https://YOUR_PROJECT_REF.supabase.co/functions/v1/ai-agent-posts', 'ai_sched_fn_url');
 select vault.create_secret('YOUR_SUPABASE_ANON_KEY', 'ai_sched_anon_key');
 select vault.create_secret('YOUR_CRON_TO_FUNCTION_SECRET', 'ai_sched_cron_secret');
 ```
 
 ## 3) Edge function
 
-Source: [supabase-functions/ai-scheduler-dispatch/index.ts](../supabase-functions/ai-scheduler-dispatch/index.ts). Deploy it as described in the deploy guide.
+Source: [supabase-functions/ai-scheduler-dispatch/index.ts](../supabase-functions/ai-scheduler-dispatch/index.ts). It is deployed as the existing `ai-agent-posts` Edge Function (see the deploy guide).
 Keep that file as the only copy of the code; do not paste it into other documents.
 
 ## 4) Cron job
