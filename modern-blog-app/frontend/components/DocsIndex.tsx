@@ -7,7 +7,7 @@ import { FaArrowRight, FaSearch } from 'react-icons/fa';
 export interface DocsIndexCategory {
   id: string;
   name: string;
-  toolNames: string[];
+  tools: Array<{ name: string; slug: string }>;
 }
 
 export default function DocsIndex({ categories }: { categories: DocsIndexCategory[] }) {
@@ -15,11 +15,11 @@ export default function DocsIndex({ categories }: { categories: DocsIndexCategor
   const needle = query.trim().toLowerCase();
 
   const results = useMemo(() => {
-    if (!needle) return categories.map((category) => ({ category, matches: [] as string[] }));
+    if (!needle) return categories.map((category) => ({ category, matches: [] as DocsIndexCategory['tools'] }));
     return categories
       .map((category) => ({
         category,
-        matches: category.toolNames.filter((tool) => tool.toLowerCase().includes(needle)),
+        matches: category.tools.filter((tool) => tool.name.toLowerCase().includes(needle)),
       }))
       .filter(({ category, matches }) => category.name.toLowerCase().includes(needle) || matches.length > 0);
   }, [categories, needle]);
@@ -53,27 +53,39 @@ export default function DocsIndex({ categories }: { categories: DocsIndexCategor
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {results.map(({ category, matches }) => {
-            const shown = (matches.length > 0 ? matches : category.toolNames).slice(0, 4);
-            const rest = category.toolNames.length - shown.length;
+            const shown = (needle && matches.length > 0 ? matches : category.tools).slice(0, 4);
+            const rest = category.tools.length - shown.length;
             return (
-              <Link key={category.id} href={`/docs/${category.id}`} className="futurist-card group flex h-full flex-col">
-                <h2 className="font-display text-lg font-semibold leading-snug group-hover:text-[rgb(var(--accent-rgb))]">{category.name}</h2>
+              <article key={category.id} className="futurist-card flex h-full flex-col">
+                <h2 className="font-display text-lg font-semibold leading-snug">
+                  <Link href={`/docs/${category.id}`} className="transition-colors hover:text-[rgb(var(--accent-rgb))]">
+                    {category.name}
+                  </Link>
+                </h2>
                 <p className="mt-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--fg-subtle)]">
-                  {category.toolNames.length} tools
+                  {category.tools.length} tools
+                  {needle && matches.length > 0 && ` · ${matches.length} match${matches.length === 1 ? '' : 'es'}`}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-1.5">
                   {shown.map((tool) => (
-                    <span key={tool} className="badge-secondary !text-[0.7rem]">
-                      {tool}
-                    </span>
+                    <Link
+                      key={tool.name}
+                      href={`/docs/${category.id}#${tool.slug}`}
+                      className="badge-secondary !text-[0.7rem] transition-colors hover:border-[var(--line-strong)] hover:text-[rgb(var(--fg-rgb))]"
+                    >
+                      {tool.name}
+                    </Link>
                   ))}
-                  {rest > 0 && <span className="badge-secondary !text-[0.7rem]">+{rest} more</span>}
+                  {!needle && rest > 0 && <span className="badge-secondary !text-[0.7rem]">+{rest} more</span>}
                 </div>
-                <span className="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-semibold text-[rgb(var(--accent-rgb))]">
-                  Open guide
-                  <FaArrowRight className="text-xs transition group-hover:translate-x-1" />
-                </span>
-              </Link>
+                <Link
+                  href={`/docs/${category.id}`}
+                  className="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-semibold text-[rgb(var(--accent-rgb))] hover:underline"
+                >
+                  Browse category
+                  <FaArrowRight className="text-xs" />
+                </Link>
+              </article>
             );
           })}
         </div>

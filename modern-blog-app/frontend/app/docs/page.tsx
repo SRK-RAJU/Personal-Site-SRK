@@ -17,7 +17,7 @@ export default function DocsPage() {
   const categories = getCategories().map((category) => ({
     id: category.id,
     name: category.name,
-    toolNames: category.tools.map((tool) => tool.name),
+    tools: category.tools.map((tool) => ({ name: tool.name, slug: tool.slug })),
   }));
 
   return (
