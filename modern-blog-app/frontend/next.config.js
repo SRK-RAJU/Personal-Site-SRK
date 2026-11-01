@@ -1,3 +1,12 @@
+// Only this project's Supabase storage may be optimized (a wildcard would let anyone host images for the optimizer to fetch).
+const supabaseHost = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || '').hostname;
+  } catch {
+    return '';
+  }
+})();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -11,7 +20,7 @@ const nextConfig = {
       // Supabase storage
       {
         protocol: 'https',
-        hostname: '*.supabase.co',
+        hostname: supabaseHost || 'supabase-host-not-configured.invalid',
       },
       // Local development
       {

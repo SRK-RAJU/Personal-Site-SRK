@@ -576,9 +576,9 @@ export default async function BlogPostPage({
               <p className="mb-6 text-[var(--fg-muted)]">
                 Subscribe to my blog for the latest updates on web development, cloud architecture, and DevOps practices.
               </p>
-              <button className="btn-primary">
-                Subscribe Now
-              </button>
+              <Link href="/feed.xml" className="btn-primary">
+                              Subscribe via RSS
+                            </Link>
             </div>
 
             {/* More Posts */}

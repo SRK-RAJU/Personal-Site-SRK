@@ -45,22 +45,25 @@ export async function GET() {
 
   if (supabase) {
     try {
-      const [{ data: regular }, { data: ai }] = await Promise.all([
+      const [regularRes, aiRes] = await Promise.all([
         supabase
           .from('posts')
-          .select('title, slug, excerpt, content, published_at, updated_at, author')
+          .select('*')
           .eq('published', true)
           .order('published_at', { ascending: false })
           .limit(50),
         supabase
           .from('ai_generated_posts')
-          .select('title, slug, excerpt, content, published_at, updated_at, author, author_name, status')
+          .select('*')
           .in('status', ['published', 'live', 'active', ''])
           .order('published_at', { ascending: false })
           .limit(50),
       ]);
 
-      posts = [...(regular || []), ...(ai || [])]
+      if (regularRes.error) console.warn('[feed] posts query failed:', regularRes.error.message);
+      if (aiRes.error) console.warn('[feed] ai_generated_posts query failed:', aiRes.error.message);
+
+      posts = [...(regularRes.data || []), ...(aiRes.data || [])]
         .filter(
           (post: FeedPost): post is FeedPost & { slug: string } => {
             const slug = post?.slug;
