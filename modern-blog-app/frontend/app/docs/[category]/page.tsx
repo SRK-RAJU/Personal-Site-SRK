@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FaArrowLeft, FaExternalLinkAlt, FaNewspaper } from 'react-icons/fa';
-import { getCategories, getCategory, type CatalogTool } from '@/lib/toolCatalog';
+import { getCategories, getCategory, getCategoryPlaybook, type CatalogTool } from '@/lib/toolCatalog';
 import { SITE_NAME, SITE_URL } from '@/lib/siteMeta';
 
 // Built once at deploy time from local data files (no database access, no runtime cost).
@@ -25,13 +25,18 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   };
 }
 
-function ToolSection({ tool }: { tool: CatalogTool }) {
+function ToolSection({ tool, currentCategory }: { tool: CatalogTool; currentCategory: string }) {
   const guide = tool.guide;
   return (
     <section id={tool.slug} className="futurist-card scroll-mt-28">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <h2 className="font-display text-2xl font-semibold">{tool.name}</h2>
         <div className="flex flex-wrap gap-2">
+          {guide && (
+            <span className={guide.scope === 'expanded' ? 'badge-vibrant' : 'badge-secondary'}>
+              {guide.scope === 'expanded' ? 'Expanded editorial notes' : 'Catalog-based reference'}
+            </span>
+          )}
           {tool.officialUrl && (
             <a href={tool.officialUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary !px-3 !py-1.5 !text-xs">
               Official site <FaExternalLinkAlt className="text-[0.6rem]" />
@@ -90,11 +95,39 @@ function ToolSection({ tool }: { tool: CatalogTool }) {
         </div>
       )}
 
+      {guide?.scope === 'catalog-reference' && (
+        <p className="mt-4 rounded-lg border border-[var(--line)] bg-[rgb(var(--fg-rgb)/0.025)] p-3 text-xs leading-5 text-[var(--fg-subtle)]">
+          This is a catalog-based reference and general evaluation checklist, not a vendor-verified setup manual. Confirm the exact product, edition, and steps in the official references below.
+        </p>
+      )}
+
+      {guide && guide.catalogCategories.length > 1 && (
+        <p className="mt-4 text-xs text-[var(--fg-subtle)]">
+          Also listed in: {guide.catalogCategories.filter((name) => name !== currentCategory).join(' · ')}
+        </p>
+      )}
+
       {guide && guide.alternatives.length > 0 && (
         <p className="mt-5 text-sm text-[var(--fg-muted)]">
           <span className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">Alternatives </span>
           {guide.alternatives.join(' · ')}
         </p>
+      )}
+
+      {guide && guide.references.length > 0 && (
+        <div className="mt-5 border-t border-[var(--line)] pt-4">
+          <h3 className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">Official references</h3>
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {guide.references.map((url) => (
+              <li key={url}>
+                <a href={url} target="_blank" rel="noopener noreferrer" className="badge-secondary !text-[0.7rem]">
+                  {new URL(url).hostname.replace(/^www\./, '')}
+                  <FaExternalLinkAlt className="ml-1 inline text-[0.55rem]" aria-hidden="true" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {tool.components.length > 0 && (
@@ -133,8 +166,8 @@ export default async function DocsCategoryPage({ params }: { params: Promise<{ c
   const category = getCategory(id);
   if (!category) notFound();
 
-  const hasGuides = category.tools.some((tool) => tool.guide);
-  const allGuided = category.tools.every((tool) => tool.guide);
+  const playbook = getCategoryPlaybook(id);
+  const expandedGuides = category.tools.filter((tool) => tool.guide?.scope === 'expanded').length;
 
   const breadcrumbs = {
     '@context': 'https://schema.org',
@@ -161,7 +194,13 @@ export default async function DocsCategoryPage({ params }: { params: Promise<{ c
           <p className="eyebrow">Knowledge base</p>
           <h1 className="gradient-text mt-3 break-words text-3xl font-bold sm:text-5xl">{category.name}</h1>
           <p className="mt-4 max-w-3xl text-lg text-[var(--fg-muted)]">
-            {category.tools.length} tools. Each section includes a short description, official links and weekly coverage; architecture context appears where available.
+            {category.tools.length} category listings, with {new Set(category.tools.map((tool) => tool.name.toLowerCase())).size} distinct tool names.
+            Each entry links to its official product/documentation sources and weekly coverage.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-[var(--fg-subtle)]">
+            {expandedGuides > 0
+              ? `${expandedGuides} tools have expanded editorial notes; the rest have catalog-based reference guides. The latter are not vendor-verified setup manuals. Use the official links for exact product, plan, and version instructions.`
+              : 'These are catalog-based reference guides, not vendor-verified setup manuals. Use the official links for exact product, plan, and version instructions.'}
           </p>
           <div className="mt-5 flex flex-wrap gap-2" aria-label="Tools in this category">
             {category.tools.map((tool) => (
@@ -172,25 +211,47 @@ export default async function DocsCategoryPage({ params }: { params: Promise<{ c
           </div>
         </header>
 
-        {!allGuided && (
-          <p className="mb-6 rounded-xl border border-[var(--line)] bg-[rgb(var(--fg-rgb)/0.03)] p-4 text-sm text-[var(--fg-muted)]">
-            {hasGuides
-              ? 'Step-by-step guides (why, where, how) are being added tool by tool. Sections without one show the short description and official links.'
-              : 'Step-by-step guides (why, where, how) are being added progressively. For now each section shows a short description and the official links.'}
-          </p>
+        {playbook && (
+          <div className="mb-8 space-y-5">
+            <section className="page-panel">
+              <h2 className="mb-3 text-2xl font-bold">Category overview</h2>
+              <p className="leading-7 text-[var(--fg-muted)]">{playbook.overview}</p>
+              <p className="mt-3 text-sm text-[var(--fg-subtle)]">{playbook.operations}</p>
+            </section>
+
+            <section className="page-panel">
+              <h2 className="mb-3 text-2xl font-bold">Architecture and workflow</h2>
+              <p className="leading-7 text-[var(--fg-muted)]">{playbook.architecture}</p>
+              <h3 className="mt-5 font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">Common use cases</h3>
+              <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-6 text-[var(--fg-muted)]">
+                {playbook.useCases.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+              <h3 className="mt-5 font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">Lifecycle</h3>
+              <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm leading-6 text-[var(--fg-muted)]">
+                {playbook.workflow.map((item) => <li key={item}>{item}</li>)}
+              </ol>
+            </section>
+
+            <section className="page-panel">
+              <h2 className="mb-3 text-2xl font-bold">How to evaluate tools</h2>
+              <ol className="list-decimal space-y-2 pl-5 text-sm leading-6 text-[var(--fg-muted)]">
+                {playbook.decisionQuestions.map((item) => <li key={item}>{item}</li>)}
+              </ol>
+              <h3 className="mt-5 font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">Security and governance</h3>
+              <p className="mt-2 leading-7 text-[var(--fg-muted)]">{playbook.controls}</p>
+              <h3 className="mt-5 font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">Pilot and production rollout</h3>
+              <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm leading-6 text-[var(--fg-muted)]">
+                {playbook.rollout.map((item) => <li key={item}>{item}</li>)}
+              </ol>
+            </section>
+          </div>
         )}
 
         <div className="space-y-6">
           {category.tools.map((tool) => (
-            <ToolSection key={tool.slug} tool={tool} />
+            <ToolSection key={tool.slug} tool={tool} currentCategory={category.name} />
           ))}
         </div>
-
-        {hasGuides && (
-          <p className="mt-8 text-xs text-[var(--fg-subtle)]">
-            Guides are written with AI assistance from general product knowledge. Always confirm details in the official documentation linked above.
-          </p>
-        )}
       </div>
     </div>
   );

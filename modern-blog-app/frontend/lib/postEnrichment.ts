@@ -179,13 +179,31 @@ async function verifyCves(markdown: string, budgetMs: number) {
 function cveSection(verified: CveDetail[], removedCount: number): string {
   const sorted = [...verified].sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
   const lines = ['## CVE Details', '', ...sorted.map(cveLine), ''];
-  const notes = [
-    'CVE data from NVD (nvd.nist.gov) and CVE.org; provided as-is, so verify before acting. CVE® is a registered trademark of The MITRE Corporation, used under the CVE Terms of Use (https://www.cve.org/Legal/TermsOfUse).',
-  ];
+  const year = new Date().getUTCFullYear();
+  lines.push(
+    `NVD data source: [National Vulnerability Database](https://nvd.nist.gov/). Verify records with the source before acting.`
+  );
+  lines.push('');
+  lines.push(
+    `Copyright © 1999-${year}, The MITRE Corporation. CVE® is a registered trademark of The MITRE Corporation.`
+  );
+  lines.push('');
+  lines.push(
+    `CVE Usage: MITRE hereby grants you a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute Common Vulnerabilities and Exposures (CVE®). Any copy you make for such purposes is authorized provided that you reproduce MITRE's copyright designation and this license in any such copy.`
+  );
+  lines.push('');
+  lines.push(
+    `DISCLAIMERS: ALL DOCUMENTS AND THE INFORMATION CONTAINED THEREIN PROVIDED BY MITRE ARE PROVIDED ON AN "AS IS" BASIS AND THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS OR IS SPONSORED BY (IF ANY), THE MITRE CORPORATION, ITS BOARD OF TRUSTEES, OFFICERS, AGENTS, AND EMPLOYEES, DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION THEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.`
+  );
+  lines.push('');
+  lines.push(`[Full CVE Terms of Use](https://www.cve.org/Legal/TermsOfUse).`);
+  lines.push(
+    `This report's analysis and links are provided by this site; they do not imply MITRE or NIST endorsement.`
+  );
   if (removedCount > 0) {
-    notes.push('CVE identifiers that could not be found in NVD or CVE.org were removed from this report.');
+    lines.push('');
+    lines.push(`Unverified CVE identifiers removed from this report: ${removedCount}.`);
   }
-  lines.push(`_${notes.join(' ')}_`);
   return lines.join('\n');
 }
 

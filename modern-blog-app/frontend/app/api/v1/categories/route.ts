@@ -35,7 +35,8 @@ export async function GET(request: NextRequest) {
       })),
       meta: {
         categories: categories.length,
-        tools: categories.reduce((sum, category) => sum + category.tools.length, 0),
+        catalog_entries: categories.reduce((sum, category) => sum + category.tools.length, 0),
+        distinct_tools: new Set(categories.flatMap((category) => category.tools.map((tool) => tool.name.toLowerCase()))).size,
       },
     },
     { maxAge: 86400, staleWhileRevalidate: 604800 }

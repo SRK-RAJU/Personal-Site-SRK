@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "format": "prettier --write .",
-    "docs:generate": "node scripts/generate-docs.mjs"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "react": "^19.3.1",

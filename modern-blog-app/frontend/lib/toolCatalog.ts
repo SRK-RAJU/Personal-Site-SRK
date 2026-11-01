@@ -1,15 +1,19 @@
 import catalogJson from '@/data/industry-tools.json';
 import registryJson from '@/data/tool-architecture-registry.json';
 import docsJson from '@/data/tool-docs.json';
+import categoryGuidesJson from '@/data/category-docs.json';
 
 /** Static knowledge base built from local data files only: no database rows are used or created. */
 
 export interface ToolGuide {
+  scope: 'expanded' | 'catalog-reference';
+  catalogCategories: string[];
   what: string;
   why: string[];
   where: string[];
   how: string[];
   alternatives: string[];
+  references: string[];
 }
 
 export interface ToolComponent {
@@ -34,6 +38,18 @@ export interface CatalogCategory {
   id: string;
   name: string;
   tools: CatalogTool[];
+}
+
+export interface CategoryPlaybook {
+  overview: string;
+  architecture: string;
+  useCases: string[];
+  workflow: string[];
+  decisionQuestions: string[];
+  controls: string;
+  rollout: string[];
+  operations: string;
+  toolNames: string[];
 }
 
 interface RegistryEntry {
@@ -62,6 +78,7 @@ const registryTools = new Map<string, RegistryEntry>(
 );
 const registryFamilies = registryJson.families as unknown as Record<string, RegistryFamily>;
 const guides = (docsJson as unknown as { tools: Record<string, ToolGuide> }).tools || {};
+const categoryPlaybooks = (categoryGuidesJson as unknown as { categories: Record<string, CategoryPlaybook> }).categories || {};
 
 const isHttpUrl = (value: unknown): value is string => typeof value === 'string' && /^https?:\/\//i.test(value);
 
@@ -73,11 +90,14 @@ function toGuide(raw: unknown): ToolGuide | null {
   const entry = raw as Partial<ToolGuide> | undefined;
   if (!entry || typeof entry.what !== 'string' || !entry.what.trim()) return null;
   return {
+    scope: entry.scope === 'expanded' ? 'expanded' : 'catalog-reference',
+    catalogCategories: toList(entry.catalogCategories),
     what: entry.what.trim(),
     why: toList(entry.why),
     where: toList(entry.where),
     how: toList(entry.how),
     alternatives: toList(entry.alternatives),
+    references: toList(entry.references).filter(isHttpUrl),
   };
 }
 
@@ -117,11 +137,19 @@ export function getCategory(id: string): CatalogCategory | undefined {
   return getCategories().find((category) => category.id === id);
 }
 
+export function getCategoryPlaybook(id: string): CategoryPlaybook | undefined {
+  return categoryPlaybooks[id];
+}
+
 export function getCatalogTotals() {
   const categories = getCategories();
+  const allTools = categories.flatMap((category) => category.tools);
+  const uniqueNames = new Set(allTools.map((tool) => normalize(tool.name)));
   return {
     categories: categories.length,
-    tools: categories.reduce((sum, category) => sum + category.tools.length, 0),
+    catalogEntries: allTools.length,
+    tools: uniqueNames.size,
     guides: categories.reduce((sum, category) => sum + category.tools.filter((tool) => tool.guide).length, 0),
+    expandedGuides: allTools.filter((tool) => tool.guide?.scope === 'expanded').length,
   };
 }

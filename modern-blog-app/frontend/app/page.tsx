@@ -34,9 +34,11 @@ export default async function HomePage() {
 
   // Only plain numbers and names go to the client; the full catalog stays on the server.
   const categories = getCategories();
+  const catalogEntries = categories.reduce((sum, category) => sum + category.tools.length, 0);
   const catalog = {
     categories: categories.length,
-    tools: categories.reduce((sum, category) => sum + category.tools.length, 0),
+    catalogEntries,
+    tools: new Set(categories.flatMap((category) => category.tools.map((tool) => tool.name.toLowerCase()))).size,
     featured: [...categories]
       .sort((a, b) => b.tools.length - a.tools.length || a.name.localeCompare(b.name))
       .slice(0, 12)

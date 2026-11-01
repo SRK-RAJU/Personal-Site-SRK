@@ -135,6 +135,7 @@ function SectionHeading({
 
 export interface HomeCatalog {
   categories: number;
+  catalogEntries: number;
   tools: number;
   featured: Array<{ id: string; name: string; toolCount: number }>;
 }
@@ -162,7 +163,7 @@ export default function Home({
   // Numbers that are still 0 (no analytics collected yet) are left out instead of advertising "0".
   const statTiles: Array<{ icon: IconType; label: string; value: number }> = [
     { icon: FaClock, label: 'Reports', value: stats.articles },
-    { icon: FaFire, label: 'Tools covered', value: stats.topics },
+    { icon: FaFire, label: 'Active catalog entries', value: stats.topics },
     { icon: FaUsers, label: 'Page views', value: stats.total_visits },
     { icon: FaEye, label: 'Views · 30 days', value: stats.monthly_views },
     { icon: FaGlobeAmericas, label: 'Countries', value: stats.countries_reached },
@@ -196,7 +197,7 @@ export default function Home({
             >
               <span className="futurist-pill">
                 <span className="live-dot" aria-hidden="true" />
-                {catalog.categories} categories · {catalog.tools} tools · updated weekly
+                {catalog.tools} distinct tools · {catalog.categories} categories · updated weekly
               </span>
 
               <h1 className="mt-6 font-display text-[2.6rem] font-bold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">

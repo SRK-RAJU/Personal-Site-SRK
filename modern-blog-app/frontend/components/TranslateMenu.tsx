@@ -3,7 +3,7 @@
 import { FaGlobe } from 'react-icons/fa';
 
 // Translation is handed to Google Translate, so no translated copies are stored (they would not fit the 500 MB
-// database limit) and nothing is tracked on this site until the visitor chooses a language.
+// database limit) and nothing is sent to Google until the visitor chooses a language.
 const LANGUAGES: Array<[code: string, label: string]> = [
   ['hi', 'हिन्दी · Hindi'],
   ['te', 'తెలుగు · Telugu'],

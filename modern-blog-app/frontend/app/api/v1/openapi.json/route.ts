@@ -90,7 +90,14 @@ export async function GET() {
                     type: 'object',
                     properties: {
                       data: { type: 'array', items: { $ref: '#/components/schemas/Category' } },
-                      meta: { type: 'object', properties: { categories: { type: 'integer' }, tools: { type: 'integer' } } },
+                      meta: {
+                        type: 'object',
+                        properties: {
+                          categories: { type: 'integer' },
+                          catalog_entries: { type: 'integer' },
+                          distinct_tools: { type: 'integer' },
+                        },
+                      },
                     },
                   },
                 },

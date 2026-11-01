@@ -9,7 +9,7 @@ const totals = getCatalogTotals();
 
 export const metadata: Metadata = {
   title: `Tool documentation by category | ${SITE_NAME}`,
-  description: `A free knowledge base for ${totals.tools} enterprise tools in ${totals.categories} categories: what each tool is, where it fits and where to find its official documentation.`,
+  description: `A static knowledge base for ${totals.tools} distinct tools across ${totals.categories} categories, with catalog descriptions, category context, evaluation checklists, and official links.`,
   alternates: { canonical: '/docs' },
 };
 
@@ -30,8 +30,9 @@ export default function DocsPage() {
           </p>
           <h1 className="gradient-text mt-3 break-words text-3xl font-bold sm:text-5xl">Tool documentation by category</h1>
           <p className="mt-4 max-w-3xl text-lg text-[var(--fg-muted)]">
-            {totals.tools} tools across {totals.categories} categories. Find short descriptions and official links for every tool, with architecture context
-            where available. Step-by-step “why, where and how” guides are being added progressively; tools also appear in weekly reports.
+            {totals.tools} distinct tool names ({totals.catalogEntries} category listings) across {totals.categories} categories.
+            Every category now has a playbook covering workflows, architecture, tool selection, safeguards, and rollout. Each catalog tool has its own reference entry and official links.
+            {totals.expandedGuides < totals.tools && ` ${totals.expandedGuides} tools also have expanded editorial notes; exact configuration remains linked to official docs.`}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/blog" className="btn-primary">

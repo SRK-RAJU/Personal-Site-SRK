@@ -35,7 +35,11 @@ export default function Terms() {
     },
     {
       title: 'Content and links',
-      content: `Content is shared for learning and personal reference. Many posts are generated with AI assistance from public sources and may contain errors or omissions, so I cannot guarantee they are always correct. Verify CVE and security details against official sources (for example cve.org and nvd.nist.gov) before acting on them. External links are provided for convenience only. Product, company and tool names belong to their respective owners and are used only to identify them. CVE® is a registered trademark of The MITRE Corporation; CVE information is used under the CVE Terms of Use (https://www.cve.org/Legal/TermsOfUse).`,
+      content: `Content is shared for learning and personal reference. Some reports use AI assistance and may contain errors or omissions; they are not security, legal, financial, medical, or other professional advice. Verify product setup and security details against current official sources before acting. External links are provided for convenience only. Product and company names belong to their respective owners and are used only to identify products; this site is independent and does not imply vendor sponsorship or endorsement. We do not reproduce vendor documentation, logos, screenshots, or other artwork as our own; any quotations or third-party material remain subject to their own notices and terms.`,
+    },
+    {
+      title: 'Tool guides',
+      content: `Tool and category guides are original editorial explanations intended for education. They are not vendor manuals or a promise that a feature is available in every product edition or version. Links identify sources used for checking; always verify current setup, pricing, licenses, and limitations in the vendor's official documentation. Contact the respective rights holder before reproducing vendor documentation, logos, screenshots, or other protected material.`,
     },
     {
       title: 'Updates',
