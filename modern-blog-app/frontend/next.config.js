@@ -10,7 +10,9 @@ const supabaseHost = (() => {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     // Optimize local images in public folder
     formats: ['image/avif', 'image/webp'],

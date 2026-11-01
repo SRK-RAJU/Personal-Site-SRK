@@ -12,21 +12,22 @@ export interface WebsiteStats {
   countries_reached: number;
 }
 
-export function useWebsiteStats() {
-  const [stats, setStats] = useState<WebsiteStats>({
-    articles: 0,
-    monthly_views: 0,
-    topics: 0,
-    total_visits: 0,
-    countries_reached: 0,
-  });
-  const [loading, setLoading] = useState(true);
+export function useWebsiteStats(initialStats?: WebsiteStats) {
+  const [stats, setStats] = useState<WebsiteStats>(
+    initialStats ?? {
+      articles: 0,
+      monthly_views: 0,
+      topics: 0,
+      total_visits: 0,
+      countries_reached: 0,
+    }
+  );
+  const [loading, setLoading] = useState(!initialStats);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        setLoading(true);
         const response = await axios.get('/api/analytics?action=stats', {
           timeout: 5000 // 5 second timeout
         });
@@ -41,8 +42,7 @@ export function useWebsiteStats() {
         });
         setError(null);
       } catch (err) {
-        // Using default stats
-        // Use sensible defaults on error
+        // Keep whatever is already shown (server-rendered numbers) instead of resetting to 0
         setError('Using default values');
       } finally {
         setLoading(false);
@@ -51,8 +51,8 @@ export function useWebsiteStats() {
 
     fetchStats();
     
-    // Refresh stats every 30 seconds for real-time updates
-    const interval = setInterval(fetchStats, 30000);
+    // Refresh stats every minute (the API response is cached for 60s)
+    const interval = setInterval(fetchStats, 60000);
     return () => clearInterval(interval);
   }, []);
 

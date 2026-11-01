@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { FaEnvelope, FaShieldAlt, FaLock, FaCopyright, FaExternalLinkAlt } from 'react-icons/fa';
 import VisitorCounter from './VisitorCounter';
+import TranslateMenu from './TranslateMenu';
 
 const footerLinks = [
   {
@@ -12,8 +13,18 @@ const footerLinks = [
     links: [
       { label: 'Home', href: '/' },
       { label: 'Posts', href: '/blog' },
+      { label: 'Knowledge base', href: '/docs' },
       { label: 'Tools', href: '/tools' },
       { label: 'Architecture images', href: '/images' },
+    ],
+  },
+  {
+    title: 'Developers',
+    links: [
+      { label: 'Public API', href: '/developers' },
+      { label: 'OpenAPI spec', href: '/api/v1/openapi.json' },
+      { label: 'RSS feed', href: '/feed.xml' },
+      { label: 'Sitemap', href: '/sitemap-page' },
     ],
   },
   {
@@ -21,8 +32,7 @@ const footerLinks = [
     links: [
       { label: 'About', href: '/about' },
       { label: 'Contact', href: '/contact' },
-      { label: 'Sitemap', href: '/sitemap-page' },
-      { label: 'RSS feed', href: '/feed.xml' },
+      { label: 'Email', href: 'mailto:contact@rjexa.com' },
     ],
   },
   {
@@ -30,7 +40,7 @@ const footerLinks = [
     links: [
       { label: 'Privacy Policy', href: '/privacy' },
       { label: 'Terms of Service', href: '/terms' },
-      { label: 'Email', href: 'mailto:contact@rjexa.com' },
+      { label: 'API terms', href: '/developers#terms' },
     ],
   },
 ];
@@ -56,13 +66,13 @@ export default function Footer() {
 
       <div className="container-max py-12 sm:py-16">
         <motion.div
-          className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]"
+          className="grid grid-cols-2 gap-10 md:grid-cols-3 lg:grid-cols-[1.4fr_repeat(4,1fr)]"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.5 }}
         >
-          <div className="space-y-4">
+          <div className="col-span-2 space-y-4 md:col-span-3 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-3" aria-label="Raju Tech home">
               <span className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-300 via-sky-400 to-indigo-500 font-display text-base font-bold shadow-[0_8px_24px_-8px_var(--glow)]">
                 <span className="absolute inset-[1.5px] rounded-[0.7rem] bg-[rgb(var(--bg-rgb))]" />
@@ -129,6 +139,7 @@ export default function Footer() {
             </p>
           </div>
           <div className="flex flex-col items-center gap-3 sm:flex-row">
+            <TranslateMenu variant="labeled" />
             <VisitorCounter />
             <p className="flex items-center gap-1">
               Made with <span className="text-rose-400">♥</span> by

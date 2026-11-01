@@ -8,6 +8,7 @@ import ContentProtectionWrapper from '../components/ContentProtectionWrapper';
 import Providers from '../components/Providers';
 import { AuthProvider } from '../lib/authContext';
 import { Toaster } from 'react-hot-toast';
+import { getSiteDescription } from '../lib/siteMeta';
 
 const fontSans = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
 const fontDisplay = Space_Grotesk({ subsets: ['latin'], variable: '--font-display', display: 'swap' });
@@ -26,7 +27,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://rjexa.com'),
   title: process.env.NEXT_PUBLIC_SITE_NAME || 'Raju Tech',
-  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal tech blog on AI, cloud, security, and modern web development.',
+  description: getSiteDescription(),
   authors: [{ name: process.env.NEXT_PUBLIC_AUTHOR || 'Raju' }],
   alternates: {
     canonical: '/',
@@ -41,14 +42,14 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: process.env.NEXT_PUBLIC_SITE_NAME || 'Raju Tech',
-    description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal tech blog on AI, cloud, security, and modern web development.',
+    description: getSiteDescription(),
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: process.env.NEXT_PUBLIC_SITE_URL || 'https://rjexa.com',
     siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Raju Tech',
-    description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal tech blog on AI, cloud, security, and modern web development.',
+    description: getSiteDescription(),
   },
 };
 

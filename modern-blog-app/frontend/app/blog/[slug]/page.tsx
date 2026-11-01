@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import type { ReactElement } from 'react';
 import { FaArrowLeft, FaCalendar, FaChevronDown, FaCloud, FaCodeBranch, FaCogs, FaCube, FaDatabase, FaLayerGroup, FaRocket, FaServer, FaShieldAlt, FaStar, FaTools, FaUser } from 'react-icons/fa';
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
@@ -130,7 +131,7 @@ function getTechnologyStackIcon(category: string) {
   return FaCogs;
 }
 
-function renderTechnologyStackContent(content: string): JSX.Element | null {
+function renderTechnologyStackContent(content: string): ReactElement | null {
   const lines = content
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -321,10 +322,11 @@ async function incrementViews(postId: string) {
 }
 
 export async function generateMetadata({
-  params,
+  params: paramsPromise,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const params = await paramsPromise;
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rjexa.com';
   const post = await getPost(params.slug);
 
@@ -367,10 +369,11 @@ export async function generateMetadata({
 }
 
 export default async function BlogPostPage({
-  params,
+  params: paramsPromise,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const params = await paramsPromise;
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rjexa.com';
   const post = await getPost(params.slug);
 

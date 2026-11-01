@@ -9,10 +9,10 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   return requireAdminAuth(request, async () => {
     try {
-      const { id } = params;
+      const { id } = await params;
 
       const { error } = await supabase
         .from('posts')
@@ -34,10 +34,10 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   });
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   return requireAdminAuth(request, async () => {
     try {
-      const { id } = params;
+      const { id } = await params;
       const body = await request.json();
 
       const { data, error } = await supabase

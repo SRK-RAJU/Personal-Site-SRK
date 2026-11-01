@@ -1,0 +1,5 @@
+{
+  "generatedAt": null,
+  "note": "Filled by `npm run docs:generate` (scripts/generate-docs.mjs). Keys are tool names exactly as they appear in industry-tools.json.",
+  "tools": {}
+}

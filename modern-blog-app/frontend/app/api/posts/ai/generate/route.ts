@@ -11,6 +11,7 @@ import path from 'path';
 import { tmpdir } from 'os';
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/apiAuth';
+import { enrichPost } from '@/lib/postEnrichment';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -906,6 +907,7 @@ IMPORTANT COVERAGE RULES:
 - Do not include other categories or unrelated tool updates.
 - If multiple tools are present, summarize each category tool in its own section.
 - Finish with a ## Coverage Checklist section listing every tool and category covered.
+- Only mention a CVE identifier if it appears in the provided research context. Never invent, guess or complete CVE IDs.
 
 TOOLS TO COVER:
 ${categoryBreakdown}
@@ -1064,7 +1066,16 @@ async function generateBlogPost(
     : `${finalMarkdown.trim()}\n\n${techStackSection}`;
 
   const excerpt = contentWithTechStack.split('\n').find((line: string) => line.length > 50 && !line.startsWith('#'))?.substring(0, 200) || 'Ecosystem analysis.';
-  const cveMatches = contentWithTechStack.match(/CVE-\d{4}-\d+/g) || [];
+
+  // Verify CVE IDs against NVD / CVE.org and append "CVE Details" + "Sources" (time-boxed, fails open).
+  const enriched = await enrichPost(
+    contentWithTechStack,
+    limitedTrendNews.map((item) => ({ title: item.title, url: item.url, published_date: item.published_date })),
+    deadlineAt ?? Date.now() + 30000
+  );
+  if (enriched.removed.length > 0) {
+    console.warn('[GENERATION] Removed unverifiable CVE identifiers:', enriched.removed.join(', '));
+  }
 
   // Ensure tools_covered lists all tools (DB authoritative)
   const toolsCoveredFinal = allToolNames;
@@ -1072,11 +1083,11 @@ async function generateBlogPost(
   return {
     title,
     slug,
-    content: contentWithTechStack,
+    content: enriched.markdown,
     excerpt,
     category: primaryCategory,
     tools_covered: toolsCoveredFinal,
-    cves_mentioned: cveMatches.length,
+    cves_mentioned: enriched.cveCount,
   };
 }
 

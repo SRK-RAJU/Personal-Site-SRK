@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { getSiteDescription } from '@/lib/siteMeta';
 
 export const revalidate = 1800;
 
@@ -38,7 +39,7 @@ function esc(value: string) {
 export async function GET() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rjexa.com';
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Raju Tech';
-  const description = process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal tech blog.';
+  const description = getSiteDescription();
 
   const supabase = getSupabase();
   let posts: FeedPost[] = [];
@@ -48,13 +49,13 @@ export async function GET() {
       const [regularRes, aiRes] = await Promise.all([
         supabase
           .from('posts')
-          .select('*')
+          .select('title, slug, excerpt, content, published_at, updated_at, author')
           .eq('published', true)
           .order('published_at', { ascending: false })
           .limit(50),
         supabase
           .from('ai_generated_posts')
-          .select('*')
+          .select('title, slug, excerpt, content, published_at, updated_at')
           .in('status', ['published', 'live', 'active', ''])
           .order('published_at', { ascending: false })
           .limit(50),

@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { getCategories } from '@/lib/toolCatalog';
 
 // Regenerate hourly so new AI posts reach search engines without a redeploy.
 export const revalidate = 3600;
@@ -27,7 +28,7 @@ async function getPostEntries(baseUrl: string): Promise<MetadataRoute.Sitemap> {
   try {
     for (const table of ['ai_generated_posts', 'posts'] as const) {
       for (let page = 0; page < MAX_PAGES; page += 1) {
-        let query: any = supabase.from(table).select('slug, published_at');
+        let query: any = supabase.from(table).select('slug, published_at, updated_at');
         query = table === 'posts'
           ? query.eq('published', true)
           : query.in('status', ['published', 'live', 'active', '']);
@@ -121,8 +122,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.5,
     },
+    {
+      url: `${baseUrl}/docs`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/developers`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
   ];
 
+  const docsEntries: MetadataRoute.Sitemap = getCategories().map((category) => ({
+    url: `${baseUrl}/docs/${category.id}`,
+    lastModified,
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }));
+
   const postEntries = await getPostEntries(baseUrl);
-  return [...staticEntries, ...postEntries];
+  return [...staticEntries, ...docsEntries, ...postEntries];
 }

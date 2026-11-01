@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { getClientIp, getGeoInfo } from '@/lib/requestAccess';
+import { getSiteStats } from '@/lib/siteStats';
 
 // Use service role key for all operations to bypass RLS
 const supabaseServiceRole = createClient(
@@ -203,115 +204,13 @@ export async function GET(request: NextRequest) {
     }
 
     if (action === 'stats') {
-      try {
-        // Get stored stats with fallback values
-        const { data: statsData, error: statsError } = await supabase
-          .from('website_stats')
-          .select('*')
-          .single();
+      const extraViews = Array.from(fallbackPageViewCounts.values()).reduce((sum, value) => sum + value, 0);
+      const stats = await getSiteStats({ extraViews });
 
-        if (statsError && statsError.code !== 'PGRST116') {
-          // Don't throw - use fallback values
-        }
-
-        const fallbackStats = {
-          articles: 0,
-          monthly_views: 0,
-          topics: 0,
-          projects: 0,
-          total_visits: 0,
-          countries_reached: 0,
-        };
-
-        // Safely fetch live counts with try-catch for each query
-        try {
-          const { count: articleCount } = await supabase
-            .from('posts')
-            .select('id', { count: 'exact', head: true });
-          if (typeof articleCount === 'number') fallbackStats.articles = articleCount;
-        } catch (err) {
-          // Silent failure - use fallback
-        }
-
-        try {
-          const monthlyViews = await getPageAnalyticsTotalViews();
-          const fallbackViews = Array.from(fallbackPageViewCounts.values()).reduce((sum, value) => sum + value, 0);
-          if (monthlyViews + fallbackViews > 0) fallbackStats.monthly_views = monthlyViews + fallbackViews;
-        } catch (err) {
-          // Silent failure - use fallback
-        }
-
-        // Projects table is no longer used by the main site analytics flow.
-        // Keep the existing fallback value if the table does not exist.
-        
-        try {
-          const { count: topicsCount } = await supabase
-            .from('topics')
-            .select('id', { count: 'exact', head: true });
-          if (typeof topicsCount === 'number') fallbackStats.topics = topicsCount;
-        } catch (err) {
-          try {
-            const { count: toolTopicsCount } = await supabase
-              .from('tools_coverage_metadata')
-              .select('id', { count: 'exact', head: true })
-              .eq('is_active', true);
-            if (typeof toolTopicsCount === 'number') fallbackStats.topics = toolTopicsCount;
-          } catch {
-            // Silent failure - use fallback
-          }
-        }
-
-        try {
-          const { data: totalVisitsData } = await supabase
-            .from('website_stats')
-            .select('total_visits')
-            .single();
-          if (totalVisitsData?.total_visits != null) fallbackStats.total_visits = totalVisitsData.total_visits;
-        } catch (err) {
-          // Silent failure - use fallback
-        }
-
-        // Safe aggregate only (no IP/PII exposed) - how many countries the site has reached.
-        try {
-          const { data: countryRows } = await supabase
-            .from('visitor_logs')
-            .select('country')
-            .not('country', 'is', null)
-            .limit(5000);
-          if (Array.isArray(countryRows)) {
-            const uniqueCountries = new Set(
-              countryRows
-                .map((row: any) => row.country)
-                .filter((country: string) => country && country !== 'Unknown')
-            );
-            fallbackStats.countries_reached = uniqueCountries.size;
-          }
-        } catch (err) {
-          // visitor_logs table may not exist yet - use fallback
-        }
-
-        return NextResponse.json({
-          articles: Math.max(Number(statsData?.articles || 0), fallbackStats.articles),
-          monthly_views: Math.max(Number(statsData?.monthly_views || 0), fallbackStats.monthly_views),
-          topics: Math.max(Number(statsData?.topics || 0), fallbackStats.topics),
-          total_visits: Math.max(Number(statsData?.total_visits || 0), fallbackStats.total_visits),
-          countries_reached: fallbackStats.countries_reached,
-          timestamp: new Date().toISOString(),
-        });
-      } catch (err) {
-        // Return safe fallback values even on complete failure
-        return NextResponse.json(
-          {
-            articles: 0,
-            monthly_views: 0,
-            topics: 0,
-            total_visits: 0,
-            countries_reached: 0,
-            error: 'Using default values',
-          },
-          { status: 200 }
-        );
-      }
+      return NextResponse.json(
+        { ...stats, timestamp: new Date().toISOString() },
+        { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' } }
+      );
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
@@ -358,7 +257,6 @@ export async function POST(request: NextRequest) {
                 id: 1,
                 total_visits: newVisits,
                 monthly_views: newMonthlyViews,
-                updated_at: new Date().toISOString(),
               }, {
                 onConflict: 'id'
               });
@@ -408,7 +306,6 @@ export async function POST(request: NextRequest) {
             monthly_views,
             topics,
             projects,
-            updated_at: new Date().toISOString()
           }, {
             onConflict: 'id'
           });

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 
-const lastUpdated = 'August 8, 2026';
+const lastUpdated = 'November 1, 2026';
 
 export default function Privacy() {
   const containerVariants = {
@@ -35,11 +35,11 @@ export default function Privacy() {
     },
     {
       title: 'How long I keep it',
-      content: `Visit logs (IP address, location, page, timestamp) are retained for a limited period for security and analytics purposes and are periodically cleared. Contact form messages are kept only as long as needed to respond to you.`,
+      content: `Visit logs (IP address, approximate location, page, and timestamp) are used for security and aggregate analytics. Our retention target is 90 days. Cleanup is currently a manual database maintenance task, not an automatic deletion guarantee, so some records may remain longer until the cleanup is run. Contact form messages are kept only as long as needed to respond to you.`,
     },
     {
       title: 'Third-party services',
-      content: `This site runs on platforms like Vercel and Supabase. These providers have their own privacy policies. Approximate location is derived from IP geolocation data provided by the hosting platform (Vercel) — no third-party geo-IP service is called. This site does not use advertising trackers or third-party marketing tools.`,
+      content: `This site runs on platforms like Vercel and Supabase. These providers have their own privacy policies. Approximate location is derived from IP geolocation data provided by the hosting platform (Vercel) — no third-party geo-IP service is called. This site does not use advertising trackers or third-party marketing tools. If you pick a language from the translate menu, your browser opens Google Translate with the address of the page you are on; Google handles that request under its own privacy policy, and nothing is sent to it unless you choose a language.`,
     },
     {
       title: 'Your choices',

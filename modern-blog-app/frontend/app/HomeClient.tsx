@@ -13,21 +13,22 @@ import {
   FaClock,
   FaEye,
   FaFire,
-  FaRocket,
   FaUsers,
-  FaImages,
   FaGlobeAmericas,
   FaSyncAlt,
   FaDocker,
   FaCubes,
   FaShieldAlt,
   FaCheck,
+  FaNewspaper,
+  FaBookOpen,
+  FaGlobe,
+  FaLink,
 } from 'react-icons/fa';
 import TrendingPosts from '@/components/TrendingPosts';
-import RealtimeActivity from '@/components/RealtimeActivity';
-import AIBlogPostsList from '@/components/AIBlogPostsList';
+import AIBlogPostsList, { type AIPost } from '@/components/AIBlogPostsList';
 import ToolsList from '@/components/ToolsList';
-import { useWebsiteStats } from '@/lib/useAnalytics';
+import { useWebsiteStats, type WebsiteStats } from '@/lib/useAnalytics';
 
 interface LearningImagePreview {
   name: string;
@@ -132,29 +133,40 @@ function SectionHeading({
   );
 }
 
-export default function Home() {
-  const { stats: fetchedStats } = useWebsiteStats();
-  const [toolImages, setToolImages] = useState<LearningImagePreview[]>([]);
-  const [animatedStats, setAnimatedStats] = useState<Array<{ icon: IconType; label: string; value: number }>>([
-    { icon: FaClock, label: 'Articles', value: 0 },
-    { icon: FaEye, label: 'Monthly Views', value: 0 },
-    { icon: FaFire, label: 'Topics', value: 0 },
-    { icon: FaUsers, label: 'Total Visits', value: 0 },
-    { icon: FaGlobeAmericas, label: 'Countries Reached', value: 0 },
-  ]);
+export interface HomeCatalog {
+  categories: number;
+  tools: number;
+  featured: Array<{ id: string; name: string; toolCount: number }>;
+}
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setAnimatedStats([
-        { icon: FaClock, label: 'Articles', value: fetchedStats.articles },
-        { icon: FaEye, label: 'Monthly Views', value: fetchedStats.monthly_views },
-        { icon: FaFire, label: 'Topics', value: fetchedStats.topics },
-        { icon: FaUsers, label: 'Total Visits', value: fetchedStats.total_visits },
-        { icon: FaGlobeAmericas, label: 'Countries Reached', value: fetchedStats.countries_reached },
-      ]);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [fetchedStats]);
+export default function Home({
+  initialStats,
+  initialPosts,
+  catalog,
+}: {
+  initialStats: WebsiteStats;
+  initialPosts: AIPost[] | null;
+  catalog: HomeCatalog;
+}) {
+  const { stats } = useWebsiteStats(initialStats);
+  const [toolImages, setToolImages] = useState<LearningImagePreview[]>([]);
+
+  const trust: Array<{ icon: IconType; title: string; text: string }> = [
+    { icon: FaLink, title: 'Source links', text: 'Research links are included when available for a report.' },
+    { icon: FaShieldAlt, title: 'CVEs checked', text: 'CVE IDs are verified against NVD; CISA known-exploited ones are flagged.' },
+    { icon: FaBookOpen, title: 'Knowledge base', text: `Official links and architecture context for ${catalog.tools} tools.` },
+    { icon: FaCode, title: 'Public API & RSS', text: 'JSON, OpenAPI and a feed. Usage terms apply.' },
+    { icon: FaGlobe, title: '16 languages', text: 'Translate any page in one click.' },
+  ];
+
+  // Numbers that are still 0 (no analytics collected yet) are left out instead of advertising "0".
+  const statTiles: Array<{ icon: IconType; label: string; value: number }> = [
+    { icon: FaClock, label: 'Reports', value: stats.articles },
+    { icon: FaFire, label: 'Tools covered', value: stats.topics },
+    { icon: FaUsers, label: 'Page views', value: stats.total_visits },
+    { icon: FaEye, label: 'Views · 30 days', value: stats.monthly_views },
+    { icon: FaGlobeAmericas, label: 'Countries', value: stats.countries_reached },
+  ].filter((tile, index) => index < 2 || tile.value > 0);
 
   useEffect(() => {
     const loadToolImages = async () => {
@@ -184,36 +196,31 @@ export default function Home() {
             >
               <span className="futurist-pill">
                 <span className="live-dot" aria-hidden="true" />
-                Weekly AI-curated tech intelligence
+                {catalog.categories} categories · {catalog.tools} tools · updated weekly
               </span>
 
               <h1 className="mt-6 font-display text-[2.6rem] font-bold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">
-                Architecting the future of{' '}
-                <span className="gradient-text">AI, Cloud, DevOps, Security &amp; Automation</span>
+                Stay ahead of every tool in your{' '}
+                <span className="gradient-text">AI, cloud &amp; security stack</span>
               </h1>
 
               <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--fg-muted)] sm:text-lg">
-                Real-world insights on AI/Automation, Cloud Computing, DevOps, Cybersecurity and Enterprise IT. AI-assisted
-                weekly reports covering hundreds of enterprise tools and frameworks, with practical engineering techniques from
-                production environments.
+                Weekly reports on AI, cloud, DevOps and security tools. Research links are included when available; CVE IDs are checked against NVD when present. Explore official docs and architecture references for tools, with RSS and public API access, in 16 languages.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Link href="/blog" className="btn-primary !px-6 !py-3">
-                  <FaCode />
-                  Explore posts
+                  <FaNewspaper />
+                  Read the latest reports
                   <FaArrowRight className="text-xs" />
                 </Link>
-                <Link href="/tools" className="btn-secondary !px-6 !py-3">
-                  <FaRocket />
-                  Browse tools
+                <Link href="/docs" className="btn-secondary !px-6 !py-3">
+                  <FaBookOpen />
+                  Browse the knowledge base
                 </Link>
-                <Link href="/images" className="btn-ghost !px-4 !py-3">
-                  <FaImages />
-                  Tool images
-                </Link>
-                <Link href="/contact" className="btn-ghost !px-4 !py-3">
-                  Get in touch
+                <Link href="/developers" className="btn-ghost !px-4 !py-3">
+                  <FaCode />
+                  Public API
                 </Link>
               </div>
 
@@ -237,9 +244,9 @@ export default function Home() {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                {animatedStats.map((stat, index) => {
+                {statTiles.map((stat, index) => {
                   const Icon = stat.icon;
-                  const wide = index === animatedStats.length - 1 && animatedStats.length % 2 === 1;
+                  const wide = index === statTiles.length - 1 && statTiles.length % 2 === 1;
                   return (
                     <motion.div
                       key={stat.label}
@@ -273,6 +280,26 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Why readers trust it */}
+      <motion.section className="container-max section-padding-tight" {...reveal}>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {trust.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.title} className="futurist-card flex items-start gap-3 !p-4 sm:block">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[rgb(var(--accent-rgb)/0.3)] bg-[rgb(var(--accent-rgb)/0.1)] text-[rgb(var(--accent-rgb))] sm:mb-3">
+                  <Icon />
+                </span>
+                <div>
+                  <h3 className="font-display text-base font-semibold">{item.title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-[var(--fg-muted)]">{item.text}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </motion.section>
 
       {/* Trending Posts */}
       <motion.section className="section-padding-tight" {...reveal}>
@@ -325,13 +352,29 @@ export default function Home() {
 
       {/* AI-Generated Weekly Insights */}
       <motion.section {...reveal}>
-        <AIBlogPostsList />
+        <AIBlogPostsList initialPosts={initialPosts} />
       </motion.section>
 
-      {/* Real-time Activity Panel */}
+      {/* Knowledge base by category */}
       <motion.section className="container-max section-padding-tight" {...reveal}>
-        <SectionHeading eyebrow="Analytics" title="Live site activity" />
-        <RealtimeActivity />
+        <SectionHeading
+          eyebrow="Knowledge base"
+          title="Explore every category"
+          description={`What each tool is, where it fits and where to find its official docs: ${catalog.tools} tools in ${catalog.categories} categories.`}
+          action={
+            <Link href="/docs" className="btn-secondary !text-sm">
+              All categories <FaArrowRight className="text-xs" />
+            </Link>
+          }
+        />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {catalog.featured.map((category) => (
+            <Link key={category.id} href={`/docs/${category.id}`} className="futurist-card group !p-4">
+              <p className="font-display font-semibold group-hover:text-[rgb(var(--accent-rgb))]">{category.name}</p>
+              <p className="mt-1 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--fg-subtle)]">{category.toolCount} tools</p>
+            </Link>
+          ))}
+        </div>
       </motion.section>
 
       {/* Credentials & Skills */}

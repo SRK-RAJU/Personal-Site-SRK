@@ -17,12 +17,15 @@ import {
 import { useAuth } from '@/lib/authContext';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
+import TranslateMenu from './TranslateMenu';
 
 const navItems = [
   { href: '/', label: 'Home' },
   { href: '/blog', label: 'Posts' },
+  { href: '/docs', label: 'Docs' },
   { href: '/tools', label: 'Tools' },
   { href: '/images', label: 'Images' },
+  { href: '/developers', label: 'API' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ];
@@ -173,6 +176,8 @@ export default function Header() {
             {isDark ? <FaSun className="text-sm" /> : <FaMoon className="text-sm" />}
           </button>
 
+          <TranslateMenu className={iconButton} />
+
           <span className="mx-1 h-5 w-px bg-[var(--line-strong)]" aria-hidden="true" />
 
           {loading ? (
@@ -209,6 +214,7 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-1 xl:hidden">
+          <TranslateMenu className={iconButton} />
           <button onClick={toggleTheme} className={iconButton} aria-label="Toggle theme">
             {isDark ? <FaSun size={15} /> : <FaMoon size={15} />}
           </button>

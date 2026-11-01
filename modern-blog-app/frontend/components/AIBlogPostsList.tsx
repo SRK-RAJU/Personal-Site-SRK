@@ -8,25 +8,30 @@ import axios from 'axios';
 import { formatDate } from '@/lib/ai-utils';
 
 interface AIPost {
-  id: number;
+  id: number | string;
   title: string;
   slug: string;
   excerpt: string;
   category: string;
   published_at: string;
   view_count: number;
-  read_time_minutes: number;
+  read_time_minutes: number | null;
   tools_covered: string[];
   cves_mentioned: number;
-  ai_model: string;
+  ai_model: string | null;
 }
 
-export default function AIBlogPostsList() {
-  const [posts, setPosts] = useState<AIPost[]>([]);
-  const [loading, setLoading] = useState(true);
+export type { AIPost };
+
+export default function AIBlogPostsList({ initialPosts = null }: { initialPosts?: AIPost[] | null }) {
+  const [posts, setPosts] = useState<AIPost[]>(initialPosts ?? []);
+  const [loading, setLoading] = useState(initialPosts === null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // The server already rendered the latest posts (revalidated every few minutes), so skip the extra request.
+    if (initialPosts !== null) return;
+
     const fetchAIPosts = async () => {
       try {
         const response = await axios.get('/api/ai-posts?limit=6', {
@@ -45,9 +50,6 @@ export default function AIBlogPostsList() {
           })).slice(0, 6);
 
           setPosts(aiPosts);
-          if (aiPosts.length === 0) {
-            setError('No AI posts available yet');
-          }
         }
       } catch (err) {
         console.error('Error fetching AI posts:', err);
@@ -58,7 +60,7 @@ export default function AIBlogPostsList() {
     };
 
     fetchAIPosts();
-  }, []);
+  }, [initialPosts]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -78,7 +80,7 @@ export default function AIBlogPostsList() {
       y: 0,
       transition: {
         duration: 0.5,
-        ease: 'easeOut',
+        ease: 'easeOut' as const,
       },
     },
   };
@@ -92,9 +94,9 @@ export default function AIBlogPostsList() {
               <FaRobot className="text-sm" />
               AI weekly reports
             </p>
-            <h2 className="section-title mt-3">Latest AI posts</h2>
+            <h2 className="section-title mt-3">Latest reports</h2>
             <p className="mt-3 text-[var(--fg-muted)]">
-              Fresh category reports, generated each week by the scheduler (or on demand by an admin from the dashboard).
+              Fresh category reports every week, with research links when available and CVE checks when reports mention them.
             </p>
           </div>
           <Link href="/blog" className="btn-secondary self-start !text-sm md:self-auto">
@@ -109,16 +111,22 @@ export default function AIBlogPostsList() {
             <p className="mt-4 text-sm text-[var(--fg-muted)]">Loading AI-generated posts…</p>
           </div>
         ) : error ? (
-          <div className="rounded-2xl border border-rose-400/25 bg-rose-500/10 p-8 text-center">
-            <p className="text-lg font-semibold text-rose-300">Unable to load AI posts right now.</p>
-            <p className="mt-2 text-sm text-[var(--fg-muted)]">{error}</p>
+          <div className="rounded-2xl border border-[var(--line-strong)] bg-[rgb(var(--fg-rgb)/0.03)] p-8 text-center">
+            <p className="text-lg font-semibold">We could not load the latest reports.</p>
+            <p className="mt-2 text-sm text-[var(--fg-muted)]">
+              Please refresh in a moment, or follow the{' '}
+              <a href="/feed.xml" className="text-[rgb(var(--accent-rgb))] underline">
+                RSS feed
+              </a>
+              .
+            </p>
           </div>
         ) : posts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-[var(--line-strong)] p-10 text-center">
-            <p className="eyebrow justify-center">No AI posts yet</p>
-            <h3 className="mt-3 text-2xl font-bold">No generated posts are available yet.</h3>
+            <p className="eyebrow justify-center">New reports every week</p>
+            <h3 className="mt-3 text-2xl font-bold">The first reports are on their way.</h3>
             <p className="mx-auto mt-2 max-w-2xl text-[var(--fg-muted)]">
-              The weekly scheduler will publish them, or an admin can generate them from the dashboard.
+              Browse the knowledge base in the meantime, or subscribe to the RSS feed to be notified.
             </p>
           </div>
         ) : (
@@ -187,10 +195,12 @@ export default function AIBlogPostsList() {
                           {post.cves_mentioned} CVEs
                         </span>
                       )}
-                      <span className="flex items-center gap-1.5 rounded-full bg-[rgb(var(--fg-rgb)/0.06)] px-2.5 py-1">
-                        <FaClock />
-                        {post.read_time_minutes} min read
-                      </span>
+                      {post.read_time_minutes ? (
+                        <span className="flex items-center gap-1.5 rounded-full bg-[rgb(var(--fg-rgb)/0.06)] px-2.5 py-1">
+                          <FaClock />
+                          {post.read_time_minutes} min read
+                        </span>
+                      ) : null}
                       <span className="flex items-center gap-1.5 rounded-full bg-[rgb(var(--fg-rgb)/0.06)] px-2.5 py-1">
                         <FaCalendar />
                         {formatDate(new Date(post.published_at))}
