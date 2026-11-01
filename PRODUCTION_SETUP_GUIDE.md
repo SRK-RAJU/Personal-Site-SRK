@@ -151,6 +151,9 @@ If build succeeds, environment is correctly configured!
 6. Click "Run"
 7. Wait for all tables to be created ✅
 
+If the database schema was installed before the contact form table was added, run
+[CONTACT_MESSAGES_SETUP.sql](modern-blog-app/frontend/docs/CONTACT_MESSAGES_SETUP.sql) once in the Supabase SQL Editor.
+
 ### 3.2 Verify Tables Created
 ```
 In Supabase:
@@ -163,6 +166,7 @@ In Supabase:
   ✓ website_analytics
   ✓ visitor_log
   ✓ ai_blog_settings
+  ✓ contact_messages (RLS enabled; server inserts with the service-role key)
 ```
 
 ---
@@ -346,7 +350,7 @@ Total Monthly Cost: $0.00 forever!
 Before considering your platform live:
 
 - [ ] Supabase project created and verified
-- [ ] All 7 tables created and populated
+- [ ] Required application tables created; verify contact_messages has RLS enabled and no public access policy
 - [ ] Google Gemini API key obtained
 - [ ] Tavily AI API key obtained
 - [ ] .env.local configured with all credentials
@@ -420,4 +424,3 @@ Your platform is working perfectly when:
 **Status**: 🚀 **READY FOR PRODUCTION**
 
 Your AI blogging platform is fully configured for manual admin-triggered generation. Enjoy your DevOps & Security digest whenever you need it!
-

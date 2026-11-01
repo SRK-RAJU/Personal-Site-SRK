@@ -15,10 +15,7 @@
 // }
 
 
-// lib/contentProtection.ts
-// COMMENTED OUT: All content protection code has been disabled for network debugging
-// Re-enable after Supabase integration and API testing is complete
-
+// Browser-side copy deterrents only discourage casual copying and are not enforceable security controls.
 export function disableRightClick() {
   document.addEventListener(
     'contextmenu',

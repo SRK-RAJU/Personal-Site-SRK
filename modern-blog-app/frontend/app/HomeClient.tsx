@@ -154,7 +154,7 @@ export default function Home({
 
   const trust: Array<{ icon: IconType; title: string; text: string }> = [
     { icon: FaLink, title: 'Source links', text: 'Research links are included when available for a report.' },
-    { icon: FaShieldAlt, title: 'CVEs checked', text: 'CVE IDs are verified against NVD; CISA known-exploited ones are flagged.' },
+    { icon: FaShieldAlt, title: 'CVE lookups', text: 'Selected CVE IDs are checked against NVD/CVE.org when lookup capacity allows.' },
     { icon: FaBookOpen, title: 'Knowledge base', text: `Official links and architecture context for ${catalog.tools} tools.` },
     { icon: FaCode, title: 'Public API & RSS', text: 'JSON, OpenAPI and a feed. Usage terms apply.' },
     { icon: FaGlobe, title: '16 languages', text: 'Translate any page in one click.' },
@@ -197,16 +197,16 @@ export default function Home({
             >
               <span className="futurist-pill">
                 <span className="live-dot" aria-hidden="true" />
-                {catalog.tools} distinct tools · {catalog.categories} categories · updated weekly
+                Weekly reports · {catalog.tools} tools · {catalog.categories} categories
               </span>
 
               <h1 className="mt-6 font-display text-[2.6rem] font-bold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">
-                Stay ahead of every tool in your{' '}
+                Stay current across your{' '}
                 <span className="gradient-text">AI, cloud &amp; security stack</span>
               </h1>
 
               <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--fg-muted)] sm:text-lg">
-                Weekly reports on AI, cloud, DevOps and security tools. Research links are included when available; CVE IDs are checked against NVD when present. Explore official docs and architecture references for tools, with RSS and public API access, in 16 languages.
+                Weekly reports on AI, cloud, DevOps and security tools. Research links are included when available; selected CVE IDs are checked against public records when lookup capacity allows. Explore tool guides, RSS and public API access, and translate pages into 16 languages.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">

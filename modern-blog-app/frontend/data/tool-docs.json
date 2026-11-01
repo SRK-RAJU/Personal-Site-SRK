@@ -1,5 +1,5 @@
 {
-  "editorialPolicy": "Original editorial learning guides, not vendor-authored or vendor-approved manuals. Product status, category fit, scope, and citations must be checked against current official sources. The guides explain concepts and evaluation steps; confirm exact features, versions, regional availability, pricing, contracts, implementation, and legal or regulatory requirements with the vendor and qualified professionals.",
+  "editorialPolicy": "Editorial learning guides prepared for this site; they are not vendor-authored or vendor-approved manuals. Product status, category fit, scope, and citations may require current verification. The guides explain concepts and evaluation steps; confirm exact features, versions, regional availability, pricing, contracts, implementation, and legal or regulatory requirements with official sources and qualified professionals. Product names, marks, facts, linked material, and any quoted or licensed content remain subject to their respective rights and terms.",
   "tools": {
     "Cisco": {
       "scope": "expanded",
