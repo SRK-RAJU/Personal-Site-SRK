@@ -13,6 +13,7 @@ import {
   FaSignOutAlt,
   FaSignInAlt,
   FaArrowRight,
+  FaBookOpen,
 } from 'react-icons/fa';
 import { useAuth } from '@/lib/authContext';
 import { usePathname, useRouter } from 'next/navigation';
@@ -214,6 +215,14 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-1 xl:hidden">
+          <Link
+            href="/docs"
+            aria-current={isActivePath(pathname, '/docs') ? 'page' : undefined}
+            className="btn-ghost !gap-1.5 !px-2.5 !py-1.5 !text-sm"
+          >
+            <FaBookOpen aria-hidden="true" />
+            Docs
+          </Link>
           <TranslateMenu className={iconButton} />
           <button onClick={toggleTheme} className={iconButton} aria-label="Toggle theme">
             {isDark ? <FaSun size={15} /> : <FaMoon size={15} />}

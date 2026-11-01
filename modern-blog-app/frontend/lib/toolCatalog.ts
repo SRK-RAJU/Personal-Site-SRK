@@ -7,6 +7,7 @@ import categoryGuidesJson from '@/data/category-docs.json';
 
 export interface ToolGuide {
   scope: 'expanded' | 'catalog-reference';
+  entryKind?: string;
   catalogCategories: string[];
   what: string;
   why: string[];
@@ -91,6 +92,7 @@ function toGuide(raw: unknown): ToolGuide | null {
   if (!entry || typeof entry.what !== 'string' || !entry.what.trim()) return null;
   return {
     scope: entry.scope === 'expanded' ? 'expanded' : 'catalog-reference',
+    entryKind: typeof entry.entryKind === 'string' ? entry.entryKind.trim() : undefined,
     catalogCategories: toList(entry.catalogCategories),
     what: entry.what.trim(),
     why: toList(entry.why),

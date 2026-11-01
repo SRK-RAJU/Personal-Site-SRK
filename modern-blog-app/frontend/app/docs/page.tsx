@@ -31,8 +31,10 @@ export default function DocsPage() {
           <h1 className="gradient-text mt-3 break-words text-3xl font-bold sm:text-5xl">Tool documentation by category</h1>
           <p className="mt-4 max-w-3xl text-lg text-[var(--fg-muted)]">
             {totals.tools} distinct tool names ({totals.catalogEntries} category listings) across {totals.categories} categories.
-            Every category now has a playbook covering workflows, architecture, tool selection, safeguards, and rollout. Each catalog tool has its own reference entry and official links.
-            {totals.expandedGuides < totals.tools && ` ${totals.expandedGuides} tools also have expanded editorial notes; exact configuration remains linked to official docs.`}
+            Category playbooks introduce workflows and selection criteria; individual entries explain the product or standard and link to primary references.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--fg-subtle)]">
+            These are editorial learning resources, not vendor-authored implementation manuals. Catalog groups may contain software, services, standards, or methods; check each entry type and verify current product details with its official source.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/blog" className="btn-primary">

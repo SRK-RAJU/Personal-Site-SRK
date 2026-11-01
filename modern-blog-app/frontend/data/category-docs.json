@@ -1517,7 +1517,7 @@
       ]
     },
     "hr-ops": {
-      "overview": "HR Operations & Payroll covers payroll, time, benefits, workforce scheduling, and HR administration. This category includes ADP, Gusto, Rippling, Workday HCM, Workday, BambooHR, SuccessFactors, and Guidepoint. These products can serve different roles; the catalog grouping is a starting point for comparison, not a claim that they are interchangeable.",
+      "overview": "HR Operations & Payroll covers payroll, time, benefits, workforce scheduling, and HR administration. This category includes ADP, Gusto, Rippling, Workday HCM, Workday, BambooHR, and SuccessFactors. These products can serve different roles; the catalog grouping is a starting point for comparison, not a claim that they are interchangeable.",
       "architecture": "Map the domain as employee master → time and benefits inputs → approvals and calculation → payment → reconciliation. For each stage, record its owner, source of truth, inputs and outputs, trust boundary, and failure behavior. The listed products may cover only one part of this flow; compose services only after validating their documented interfaces.",
       "useCases": [
         "Introduce or improve a workflow concerned with payroll, time, benefits, workforce scheduling, and HR administration.",
@@ -1527,7 +1527,7 @@
       "workflow": [
         "Discovery: document the current process, stakeholders, data classification, integrations, volumes, and the problem to solve.",
         "Requirements: distinguish mandatory capabilities from preferences; set measurable quality, latency, availability, accessibility, recovery, and cost targets as relevant.",
-        "Evaluation: shortlist from ADP, Gusto, Rippling, Workday HCM, Workday, BambooHR, SuccessFactors, and Guidepoint; verify exact product, edition, supported regions, lifecycle, licensing, and official documentation.",
+        "Evaluation: shortlist from ADP, Gusto, Rippling, Workday HCM, Workday, BambooHR, and SuccessFactors; verify exact product, edition, supported regions, lifecycle, licensing, and official documentation.",
         "Pilot: select one bounded workflow; use synthetic or minimized data; assign business and technical owners; define baseline and success criteria.",
         "Validation: exercise normal, denied-access, malformed-input, dependency-outage, export, backup, and recovery cases appropriate to the workflow.",
         "Production: require domain-owner approval; document support, monitoring, access review, change control, rollback, retention, and exit plan."
@@ -1556,8 +1556,7 @@
         "Workday HCM",
         "Workday",
         "BambooHR",
-        "SuccessFactors",
-        "Guidepoint"
+        "SuccessFactors"
       ]
     },
     "manufacturing": {
@@ -2660,7 +2659,7 @@
       ]
     },
     "professional-services": {
-      "overview": "Professional Services & Consulting covers client engagement, consulting delivery, resource, time, and billing workflows. This category includes Accenture (platforms), Deloitte (technology), PwC (digital), FreshBooks, Clutch, Monday.com, Upwork, Freelancer, and Toptal. These products can serve different roles; the catalog grouping is a starting point for comparison, not a claim that they are interchangeable.",
+      "overview": "Professional Services & Consulting covers client engagement, consulting delivery, expert research, resource, time, and billing workflows. This category includes Accenture (platforms), Deloitte (technology), PwC (digital), FreshBooks, Clutch, Guidepoint, Monday.com, Upwork, Freelancer, and Toptal. These providers and products serve different roles; the catalog grouping is a starting point for comparison, not a claim that they are interchangeable.",
       "architecture": "Map the domain as opportunity/contract → staffing and plan → time/deliverable → review/invoice → closeout. For each stage, record its owner, source of truth, inputs and outputs, trust boundary, and failure behavior. The listed products may cover only one part of this flow; compose services only after validating their documented interfaces.",
       "useCases": [
         "Introduce or improve a workflow concerned with client engagement, consulting delivery, resource, time, and billing workflows.",
@@ -2670,7 +2669,7 @@
       "workflow": [
         "Discovery: document the current process, stakeholders, data classification, integrations, volumes, and the problem to solve.",
         "Requirements: distinguish mandatory capabilities from preferences; set measurable quality, latency, availability, accessibility, recovery, and cost targets as relevant.",
-        "Evaluation: shortlist from Accenture (platforms), Deloitte (technology), PwC (digital), FreshBooks, Clutch, Monday.com, Upwork, Freelancer, and Toptal; verify exact product, edition, supported regions, lifecycle, licensing, and official documentation.",
+        "Evaluation: shortlist from Accenture (platforms), Deloitte (technology), PwC (digital), FreshBooks, Clutch, Guidepoint, Monday.com, Upwork, Freelancer, and Toptal; verify the exact provider, service, supported regions, lifecycle, contract, and official information.",
         "Pilot: select one bounded workflow; use synthetic or minimized data; assign business and technical owners; define baseline and success criteria.",
         "Validation: exercise normal, denied-access, malformed-input, dependency-outage, export, backup, and recovery cases appropriate to the workflow.",
         "Production: require domain-owner approval; document support, monitoring, access review, change control, rollback, retention, and exit plan."
@@ -2698,6 +2697,7 @@
         "PwC (digital)",
         "FreshBooks",
         "Clutch",
+        "Guidepoint",
         "Monday.com",
         "Upwork",
         "Freelancer",
@@ -2920,7 +2920,7 @@
       ]
     },
     "enterprise-architecture": {
-      "overview": "Enterprise Architecture & Modeling covers enterprise systems, capabilities, dependencies, portfolios, and change governance. This category includes Sparx Systems Enterprise Architect, ArchiMate (tools), SaaS tools (enterprise), TOGAF, LeanIX, ServiceNow, iServer, and Bizzdesign. These products can serve different roles; the catalog grouping is a starting point for comparison, not a claim that they are interchangeable.",
+      "overview": "Enterprise Architecture & Modeling covers software repositories and modeling platforms used to document capabilities, applications, dependencies, portfolios, and change governance. Standards and methods are listed separately in Architecture Standards & Methods.",
       "architecture": "Map the domain as business capability → application/data map → standards and dependencies → roadmap → review. For each stage, record its owner, source of truth, inputs and outputs, trust boundary, and failure behavior. The listed products may cover only one part of this flow; compose services only after validating their documented interfaces.",
       "useCases": [
         "Introduce or improve a workflow concerned with enterprise systems, capabilities, dependencies, portfolios, and change governance.",
@@ -2930,7 +2930,7 @@
       "workflow": [
         "Discovery: document the current process, stakeholders, data classification, integrations, volumes, and the problem to solve.",
         "Requirements: distinguish mandatory capabilities from preferences; set measurable quality, latency, availability, accessibility, recovery, and cost targets as relevant.",
-        "Evaluation: shortlist from Sparx Systems Enterprise Architect, ArchiMate (tools), SaaS tools (enterprise), TOGAF, LeanIX, ServiceNow, iServer, and Bizzdesign; verify exact product, edition, supported regions, lifecycle, licensing, and official documentation.",
+        "Evaluation: shortlist from Sparx Systems Enterprise Architect, LeanIX, ServiceNow, iServer, and Bizzdesign; verify exact product, edition, supported regions, lifecycle, licensing, and official documentation.",
         "Pilot: select one bounded workflow; use synthetic or minimized data; assign business and technical owners; define baseline and success criteria.",
         "Validation: exercise normal, denied-access, malformed-input, dependency-outage, export, backup, and recovery cases appropriate to the workflow.",
         "Production: require domain-owner approval; document support, monitoring, access review, change control, rollback, retention, and exit plan."
@@ -2954,13 +2954,48 @@
       "operations": "Keep capability and dependency models owned, current, reviewable, and exportable. After launch, review service health, data quality, access, exceptions, support handoffs, vendor changes, costs, retention, and recovery on a scheduled cadence. Treat this chapter as a planning guide; use the official references on each tool entry for exact product-specific setup and limits.",
       "toolNames": [
         "Sparx Systems Enterprise Architect",
-        "ArchiMate (tools)",
-        "SaaS tools (enterprise)",
-        "TOGAF",
         "LeanIX",
         "ServiceNow",
         "iServer",
         "Bizzdesign"
+      ]
+    },
+    "architecture-standards": {
+      "overview": "Architecture Standards & Methods covers shared languages and methods used to describe or govern enterprise architecture. This category includes ArchiMate, a modeling language, and TOGAF, a standard and method. Neither is a software product; modeling or repository software is selected separately.",
+      "architecture": "Separate the architecture method from the modeling notation and the software repository. Use TOGAF where its architecture-development and governance practices fit the organization, and use ArchiMate where a shared modeling language helps communicate relationships. Tailor both to the decisions and stakeholders involved rather than treating framework adoption as an implementation outcome.",
+      "useCases": [
+        "Teach students and new practitioners common concepts for describing enterprise architecture.",
+        "Help architecture teams communicate business, application, data, and technology relationships.",
+        "Establish a repeatable architecture-development and governance approach aligned to the organization."
+      ],
+      "workflow": [
+        "Define the architecture decisions, stakeholders, scope, and existing governance before choosing a standard or method.",
+        "Review the current official specification and licensing or certification terms from The Open Group.",
+        "Choose relevant ArchiMate viewpoints and TOGAF activities; document which parts are tailored or out of scope.",
+        "Select compatible modeling and repository software separately; validate version and notation support.",
+        "Pilot with one architecture question and confirm that the model helps stakeholders make a real decision.",
+        "Maintain model ownership, versioning, review cadence, and alignment with authoritative enterprise records."
+      ],
+      "decisionQuestions": [
+        "Are you choosing a modeling language, an architecture method, or software to store models?",
+        "Which stakeholders and decisions must the standard or method support?",
+        "Does the tool support the required current specification version and viewpoints?",
+        "What training, governance, and ownership will keep models useful and current?",
+        "How will architecture work connect to actual investment, risk, and change decisions?"
+      ],
+      "controls": "Use standards as communication and governance aids, not as evidence that an organization is well architected. Assign owners to models and decisions, control access to sensitive architecture information, retain decision history, and verify any certification claims against the issuing body’s current rules.",
+      "rollout": [
+        "Start with a small architecture question rather than adopting every artifact or viewpoint.",
+        "Name a decision owner, architecture owner, and stakeholder group.",
+        "Use official standards and compatible tools; record version and tailoring choices.",
+        "Train participants in the minimum notation and method needed for the pilot.",
+        "Review whether the model changed or clarified a decision; remove artifacts that add no value.",
+        "Scale only with accountable owners, maintained repository practices, and a defined review cadence."
+      ],
+      "operations": "Review the selected standards and tool support when specifications change. Keep the method tailored, the notation understandable to its audience, and the repository linked to authoritative records. Neither a framework nor a diagram substitutes for architecture ownership or accountable decisions.",
+      "toolNames": [
+        "ArchiMate",
+        "TOGAF"
       ]
     }
   }

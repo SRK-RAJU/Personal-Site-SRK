@@ -33,9 +33,7 @@ function ToolSection({ tool, currentCategory }: { tool: CatalogTool; currentCate
         <h2 className="font-display text-2xl font-semibold">{tool.name}</h2>
         <div className="flex flex-wrap gap-2">
           {guide && (
-            <span className={guide.scope === 'expanded' ? 'badge-vibrant' : 'badge-secondary'}>
-              {guide.scope === 'expanded' ? 'Expanded editorial notes' : 'Catalog-based reference'}
-            </span>
+            <span className="badge-secondary">{guide.entryKind || 'Editorial guide'}</span>
           )}
           {tool.officialUrl && (
             <a href={tool.officialUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary !px-3 !py-1.5 !text-xs">
@@ -69,7 +67,7 @@ function ToolSection({ tool, currentCategory }: { tool: CatalogTool; currentCate
       {guide && (
         <div className="mt-5 grid gap-5 md:grid-cols-3">
           <div>
-            <h3 className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">Why teams use it</h3>
+            <h3 className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">Why to consider it</h3>
             <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-6 text-[var(--fg-muted)]">
               {guide.why.map((item) => (
                 <li key={item}>{item}</li>
@@ -85,7 +83,7 @@ function ToolSection({ tool, currentCategory }: { tool: CatalogTool; currentCate
             </ul>
           </div>
           <div>
-            <h3 className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">How to get started</h3>
+            <h3 className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">Evaluation and safe starting steps</h3>
             <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm leading-6 text-[var(--fg-muted)]">
               {guide.how.map((item) => (
                 <li key={item}>{item}</li>
@@ -95,9 +93,9 @@ function ToolSection({ tool, currentCategory }: { tool: CatalogTool; currentCate
         </div>
       )}
 
-      {guide?.scope === 'catalog-reference' && (
+      {guide && (
         <p className="mt-4 rounded-lg border border-[var(--line)] bg-[rgb(var(--fg-rgb)/0.025)] p-3 text-xs leading-5 text-[var(--fg-subtle)]">
-          This is a catalog-based reference and general evaluation checklist, not a vendor-verified setup manual. Confirm the exact product, edition, and steps in the official references below.
+          Editorial guide, not a vendor-authored setup manual. Confirm current product status, edition, region, licensing, and implementation details in the official references below.
         </p>
       )}
 
@@ -109,7 +107,7 @@ function ToolSection({ tool, currentCategory }: { tool: CatalogTool; currentCate
 
       {guide && guide.alternatives.length > 0 && (
         <p className="mt-5 text-sm text-[var(--fg-muted)]">
-          <span className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">Alternatives </span>
+          <span className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--fg-subtle)]">Related tools or approaches </span>
           {guide.alternatives.join(' · ')}
         </p>
       )}
@@ -167,7 +165,6 @@ export default async function DocsCategoryPage({ params }: { params: Promise<{ c
   if (!category) notFound();
 
   const playbook = getCategoryPlaybook(id);
-  const expandedGuides = category.tools.filter((tool) => tool.guide?.scope === 'expanded').length;
 
   const breadcrumbs = {
     '@context': 'https://schema.org',
@@ -198,9 +195,7 @@ export default async function DocsCategoryPage({ params }: { params: Promise<{ c
             Each entry links to its official product/documentation sources and weekly coverage.
           </p>
           <p className="mt-3 max-w-3xl text-sm text-[var(--fg-subtle)]">
-            {expandedGuides > 0
-              ? `${expandedGuides} tools have expanded editorial notes; the rest have catalog-based reference guides. The latter are not vendor-verified setup manuals. Use the official links for exact product, plan, and version instructions.`
-              : 'These are catalog-based reference guides, not vendor-verified setup manuals. Use the official links for exact product, plan, and version instructions.'}
+            These are editorial learning guides, not vendor-authored manuals. Verify current product features, regional availability, versions, terms, and implementation steps with the official references.
           </p>
           <div className="mt-5 flex flex-wrap gap-2" aria-label="Tools in this category">
             {category.tools.map((tool) => (
@@ -210,6 +205,33 @@ export default async function DocsCategoryPage({ params }: { params: Promise<{ c
             ))}
           </div>
         </header>
+
+        <section className="page-panel mb-8">
+          <h2 className="mb-3 text-xl font-bold">Choose your learning path</h2>
+          <p className="mb-4 text-sm leading-6 text-[var(--fg-muted)]">
+            These paths explain how to use this guide at different experience levels. They are general learning advice, not a substitute for product-specific instructions or local legal requirements.
+          </p>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div>
+              <h3 className="font-semibold">Student or beginner</h3>
+              <p className="mt-1 text-sm leading-6 text-[var(--fg-muted)]">
+                Start with “What it is” and the category overview. Learn the key terms, then follow the vendor’s beginner tutorial in a free or isolated practice environment. Do not use real customer, employer, or sensitive data.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Working practitioner</h3>
+              <p className="mt-1 text-sm leading-6 text-[var(--fg-muted)]">
+                Compare the stated use case with your task. Check supported versions, integrations, permissions, failure handling, accessibility, and operating cost. Test a representative workflow before changing production.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Enterprise team</h3>
+              <p className="mt-1 text-sm leading-6 text-[var(--fg-muted)]">
+                Validate architecture and data boundaries, identity and access, residency and retention, availability and recovery, audit needs, procurement terms, support, migration, and exit. Get security, privacy, legal, compliance, and business-owner review where applicable.
+              </p>
+            </div>
+          </div>
+        </section>
 
         {playbook && (
           <div className="mb-8 space-y-5">

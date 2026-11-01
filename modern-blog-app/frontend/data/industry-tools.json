@@ -475,8 +475,7 @@
         {"name":"Workday HCM","officialUrl":"https://www.workday.com/en-us/products/human-capital-management.html","description":"Human capital management suite","tags":["hr","hcm"]},
         {"name":"Workday","officialUrl":"https://www.workday.com","description":"Cloud HR management and payroll platform","tags":["hr","payroll","enterprise"]},
         {"name":"BambooHR","officialUrl":"https://www.bamboohr.com","description":"HR software for small and medium businesses","tags":["hr","payroll","smb"]},
-        {"name":"SuccessFactors","officialUrl":"https://www.sap.com/products/successfactors.html","description":"SAP cloud HR and workforce management","tags":["hr","enterprise"]},
-        {"name":"Guidepoint","officialUrl":"https://www.guidepoint.com","description":"HR operations and employee experience platform","tags":["hr","operations"]}
+        {"name":"SuccessFactors","officialUrl":"https://www.sap.com/products/successfactors.html","description":"SAP cloud HR and workforce management","tags":["hr","enterprise"]}
       ]
     },
     {
@@ -807,6 +806,7 @@
         {"name":"PwC (digital)","officialUrl":"https://www.pwc.com","description":"Professional services and digital consulting","tags":["consulting"]},
         {"name":"FreshBooks","officialUrl":"https://www.freshbooks.com","description":"Accounting and invoicing for service businesses","tags":["accounting","services"]},
         {"name":"Clutch","officialUrl":"https://clutch.co","description":"Agency and service marketplace","tags":["services","marketplace"]},
+        {"name":"Guidepoint","officialUrl":"https://www.guidepoint.com","description":"Expert network and research services","tags":["research","expert-network"]},
         {"name":"Monday.com","officialUrl":"https://monday.com","description":"Work management for service teams","tags":["services","project"]},
         {"name":"Upwork","officialUrl":"https://www.upwork.com","description":"Freelance marketplace for professional services","tags":["services","marketplace"]},
         {"name":"Freelancer","officialUrl":"https://www.freelancer.com","description":"Freelance services marketplace","tags":["services","marketplace"]},
@@ -883,13 +883,18 @@
       "displayName": "Enterprise Architecture & Modeling",
       "tools": [
         {"name":"Sparx Systems Enterprise Architect","officialUrl":"https://sparxsystems.com/products/ea/index.html","description":"Modeling and architecture tool","tags":["architecture"]},
-        {"name":"ArchiMate (tools)","officialUrl":"https://www.opengroup.org","description":"Enterprise architecture modeling standard and tools","tags":["architecture"]},
-        {"name":"SaaS tools (enterprise)","officialUrl":"https://example.com","description":"Placeholder for enterprise architecture tools","tags":["architecture"]},
-        {"name":"TOGAF","officialUrl":"https://www.opengroup.org/togaf","description":"Enterprise architecture framework","tags":["architecture","framework"]},
         {"name":"LeanIX","officialUrl":"https://www.leanix.net","description":"Enterprise architecture and SaaS portfolio management","tags":["architecture","enterprise"]},
         {"name":"ServiceNow","officialUrl":"https://www.servicenow.com","description":"Workflow and enterprise platform","tags":["architecture","workflow"]},
         {"name":"iServer","officialUrl":"https://www.iserver.com","description":"Enterprise architecture repository and governance","tags":["architecture","governance"]},
         {"name":"Bizzdesign","officialUrl":"https://www.bizzdesign.com","description":"Enterprise architecture and transformation software","tags":["architecture","enterprise"]}
+      ]
+    },
+    {
+      "id": "architecture-standards",
+      "displayName": "Architecture Standards & Methods",
+      "tools": [
+        {"name":"ArchiMate","officialUrl":"https://www.opengroup.org/archimate-forum/archimate-overview","description":"Open enterprise architecture modeling language","tags":["architecture","standard","modeling-language"]},
+        {"name":"TOGAF","officialUrl":"https://www.opengroup.org/togaf","description":"Enterprise architecture standard and method","tags":["architecture","standard","method"]}
       ]
     }
   ]
